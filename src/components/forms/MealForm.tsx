@@ -515,10 +515,10 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
   };
 
   return (
-    <form onSubmit={submit} className="grid gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft">
-      <div className="border border-petrol-800/10 bg-mist/45 p-4">
+    <form onSubmit={submit} className="grid w-full max-w-full gap-4 overflow-hidden border border-petrol-800/10 bg-white p-3 shadow-soft sm:p-4">
+      <div className="min-w-0 overflow-hidden border border-petrol-800/10 bg-mist/45 p-3 sm:p-4">
         
-          <div className="mb-4 border border-petrol-800/10 bg-white p-3">
+          <div className="mb-4 min-w-0 overflow-hidden border border-petrol-800/10 bg-white p-3">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <label className="field-label sm:w-64">
                 Catégorie de favoris
@@ -542,7 +542,7 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
               </p>
             </div>
 
-            <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_8rem_7rem_auto_auto] lg:items-end">
+            <div className="mt-3 grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_8rem_7rem_auto_auto] lg:items-end">
               <label className="field-label">
                 Aliment favori
                 <select
@@ -583,10 +583,10 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
                   <option value="dose">dose</option>
                 </select>
               </label>
-              <button type="button" className="action-button" disabled={!selectedFavoriteProduct} onClick={addFavoriteProductToMeal}>
+              <button type="button" className="action-button w-full lg:w-auto" disabled={!selectedFavoriteProduct} onClick={addFavoriteProductToMeal}>
                 <Plus className="h-4 w-4" /> Ajouter au repas
               </button>
-              <button type="button" className="ghost-button" disabled={!selectedFavoriteCode} onClick={removeSelectedFavorite}>
+              <button type="button" className="ghost-button w-full lg:w-auto" disabled={!selectedFavoriteCode} onClick={removeSelectedFavorite}>
                 <Trash2 className="h-4 w-4" /> Retirer
               </button>
             </div>
@@ -596,7 +596,7 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
           </div>
         
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end">
           <label className="field-label flex-1">
             Rechercher un aliment
             <input
@@ -606,7 +606,7 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
               placeholder="Ex : skyr, banane, compote..."
             />
           </label>
-          <button type="button" className="action-button" disabled={isSearching || searchTerm.trim().length < 2} onClick={runSearch}>
+          <button type="button" className="action-button w-full sm:w-auto" disabled={isSearching || searchTerm.trim().length < 2} onClick={runSearch}>
             <Search className="h-4 w-4" /> {isSearching ? "Recherche..." : "Chercher"}
           </button>
         </div>
@@ -635,10 +635,10 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
         ) : null}
 
         {selectedProduct ? (
-          <div className="mt-4 grid gap-3 border-l-4 border-limeSoft bg-white p-4 sm:grid-cols-[1fr_8rem_7rem_auto_auto] sm:items-end">
-            <div>
+          <div className="mt-4 grid min-w-0 gap-3 overflow-hidden border-l-4 border-limeSoft bg-white p-3 sm:grid-cols-[minmax(0,1fr)_8rem_7rem_auto_auto] sm:items-end sm:p-4">
+            <div className="min-w-0">
               <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">Aliment sélectionné</p>
-              <p className="mt-1 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
+              <p className="mt-1 break-words font-display text-xl font-black tracking-[-0.05em] text-petrol-800 sm:text-2xl">
                 {selectedProduct.name}
               </p>
               <p className="mt-1 text-sm font-bold text-muted">
@@ -673,10 +673,10 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
                 <option value="dose">dose</option>
               </select>
             </label>
-            <button type="button" className="action-button" onClick={addSelectedProduct}>
+            <button type="button" className="action-button w-full sm:w-auto" onClick={addSelectedProduct}>
               <Plus className="h-4 w-4" /> Ajouter
             </button>
-            <button type="button" className="ghost-button" onClick={addSelectedProductToFavorites}>
+            <button type="button" className="ghost-button w-full sm:w-auto" onClick={addSelectedProductToFavorites}>
               Ajouter aux favoris
             </button>
           </div>
@@ -688,9 +688,9 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
           <div className="mt-4 grid gap-2">
             <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">Aliments du repas</p>
             {mealItems.map((item) => (
-              <div key={item.id} className="grid gap-3 border border-petrol-800/10 bg-white p-3 sm:grid-cols-[1fr_8rem_7rem_auto] sm:items-center">
-                <div>
-                  <p className="font-black text-petrol-800">{item.foodName}</p>
+              <div key={item.id} className="grid min-w-0 gap-3 overflow-hidden border border-petrol-800/10 bg-white p-3 sm:grid-cols-[minmax(0,1fr)_8rem_7rem_auto] sm:items-center">
+                <div className="min-w-0">
+                  <p className="break-words font-black text-petrol-800">{item.foodName}</p>
                   <p className="text-xs font-bold text-muted">
                     {getQuantityLabel(item.quantityInput ?? item.quantityGrams, item.quantityUnit ?? "g", item.quantityGrams)} -{" "}
                     {item.calories} kcal - P {formatDecimal(item.protein)} g | G{" "}
@@ -728,7 +728,7 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
                     <option value="dose">dose</option>
                   </select>
                 </label>
-                <button type="button" className="ghost-button" onClick={() => removeItem(item.id)} aria-label="Retirer l'aliment">
+                <button type="button" className="ghost-button w-full sm:w-auto" onClick={() => removeItem(item.id)} aria-label="Retirer l'aliment">
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
@@ -812,18 +812,18 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
         <textarea className="textarea-field" value={form.notes} onChange={(event) => update("notes", event.target.value)} placeholder="Faim, timing autour de l'entraînement, digestion..." />
       </label>
 
-      <div className="flex justify-end gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
         {!isEditing ? (
-          <button type="button" className="ghost-button" onClick={clearDraft}>
+          <button type="button" className="ghost-button w-full sm:w-auto" onClick={clearDraft}>
             <Trash2 className="h-4 w-4" /> Effacer brouillon
           </button>
         ) : null}
         {onCancel ? (
-          <button type="button" className="ghost-button" onClick={onCancel}>
+          <button type="button" className="ghost-button w-full sm:w-auto" onClick={onCancel}>
             <X className="h-4 w-4" /> Annuler
           </button>
         ) : null}
-        <button type="submit" className="action-button">
+        <button type="submit" className="action-button w-full sm:w-auto">
           <Save className="h-4 w-4" /> Enregistrer
         </button>
       </div>

@@ -16,18 +16,27 @@
 }
 
 html {
+  width: 100%;
   min-height: 100%;
+  overflow-x: hidden;
   background: #f4f4ee;
 }
 
 body {
+  width: 100%;
   min-height: 100%;
   margin: 0;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at 18% 4%, rgba(220, 239, 163, 0.72), transparent 26rem),
     radial-gradient(circle at 92% 14%, rgba(227, 233, 233, 0.86), transparent 24rem),
     linear-gradient(135deg, #f4f4ee 0%, #eff1eb 45%, #e1e7e6 100%);
   font-family: Aptos, "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+#root {
+  width: 100%;
+  overflow-x: hidden;
 }
 
 button,
@@ -53,11 +62,11 @@ a {
 
 @layer components {
   .page-shell {
-    @apply mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 pb-28 pt-4 sm:px-6 lg:px-8;
+    @apply mx-auto flex w-full max-w-7xl flex-col gap-5 overflow-x-hidden px-4 pb-28 pt-4 sm:px-6 lg:px-8;
   }
 
   .panel {
-    @apply border border-white/70 bg-white/80 shadow-soft backdrop-blur;
+    @apply min-w-0 overflow-hidden border border-white/70 bg-white/80 shadow-soft backdrop-blur;
   }
 
   .panel-dark {
@@ -77,26 +86,26 @@ a {
   }
 
   .action-button {
-    @apply inline-flex min-h-12 items-center justify-center gap-2 bg-petrol-800 px-5 py-3 text-sm font-black uppercase tracking-[0.08em] text-white transition hover:bg-petrol-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-12 max-w-full items-center justify-center gap-2 whitespace-normal bg-petrol-800 px-5 py-3 text-center text-sm font-black uppercase leading-tight tracking-[0.08em] text-white transition hover:bg-petrol-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .ghost-button {
-    @apply inline-flex min-h-12 items-center justify-center gap-2 border border-petrol-800/15 bg-white px-5 py-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-800 transition hover:border-petrol-800/35 hover:bg-mist/60 active:scale-[0.99];
+    @apply inline-flex min-h-12 max-w-full items-center justify-center gap-2 whitespace-normal border border-petrol-800/15 bg-white px-5 py-3 text-center text-sm font-black uppercase leading-tight tracking-[0.08em] text-petrol-800 transition hover:border-petrol-800/35 hover:bg-mist/60 active:scale-[0.99];
   }
 
   .chip {
-    @apply inline-flex items-center gap-1 bg-sage px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.08em] text-petrol-800;
+    @apply inline-flex max-w-full items-center gap-1 break-words bg-sage px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.08em] text-petrol-800;
   }
 
   .field-label {
-    @apply grid gap-2 text-[0.68rem] font-black uppercase tracking-[0.12em] text-petrol-800;
+    @apply grid min-w-0 gap-2 text-[0.68rem] font-black uppercase tracking-[0.12em] text-petrol-800;
   }
 
   .field {
-    @apply min-h-12 w-full border border-petrol-800/15 bg-white px-3 text-sm font-bold text-ink outline-none transition focus:border-petrol-800;
+    @apply min-h-12 w-full min-w-0 max-w-full border border-petrol-800/15 bg-white px-3 text-sm font-bold text-ink outline-none transition focus:border-petrol-800;
   }
 
   .textarea-field {
-    @apply min-h-24 w-full border border-petrol-800/15 bg-white px-3 py-3 text-sm font-bold text-ink outline-none transition focus:border-petrol-800;
+    @apply min-h-24 w-full min-w-0 max-w-full border border-petrol-800/15 bg-white px-3 py-3 text-sm font-bold text-ink outline-none transition focus:border-petrol-800;
   }
 }
