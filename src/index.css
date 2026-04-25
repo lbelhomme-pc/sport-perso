@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #0c3447;
+  background: #f4f4ee;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: #f4f4ee;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  background:
+    radial-gradient(circle at 18% 4%, rgba(220, 239, 163, 0.72), transparent 26rem),
+    radial-gradient(circle at 92% 14%, rgba(227, 233, 233, 0.86), transparent 24rem),
+    linear-gradient(135deg, #f4f4ee 0%, #eff1eb 45%, #e1e7e6 100%);
+  font-family: Aptos, "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: #dcefa3;
+  color: #00283a;
+}
+
+@layer components {
+  .page-shell {
+    @apply mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 pb-28 pt-4 sm:px-6 lg:px-8;
+  }
+
+  .panel {
+    @apply border border-white/70 bg-white/80 shadow-soft backdrop-blur;
+  }
+
+  .panel-dark {
+    @apply bg-petrol-800 text-white shadow-panel;
+  }
+
+  .eyebrow {
+    @apply text-[0.68rem] font-black uppercase tracking-[0.18em] text-petrol-700;
+  }
+
+  .title-xl {
+    @apply font-display text-4xl font-black leading-[0.92] tracking-[-0.08em] text-petrol-800 sm:text-5xl lg:text-6xl;
+  }
+
+  .title-lg {
+    @apply font-display text-3xl font-black leading-[0.95] tracking-[-0.06em] text-petrol-800 sm:text-4xl;
+  }
+
+  .action-button {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 bg-petrol-800 px-5 py-3 text-sm font-black uppercase tracking-[0.08em] text-white transition hover:bg-petrol-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .ghost-button {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 border border-petrol-800/15 bg-white px-5 py-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-800 transition hover:border-petrol-800/35 hover:bg-mist/60 active:scale-[0.99];
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 bg-sage px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.08em] text-petrol-800;
+  }
+
+  .field-label {
+    @apply grid gap-2 text-[0.68rem] font-black uppercase tracking-[0.12em] text-petrol-800;
+  }
+
+  .field {
+    @apply min-h-12 w-full border border-petrol-800/15 bg-white px-3 text-sm font-bold text-ink outline-none transition focus:border-petrol-800;
+  }
+
+  .textarea-field {
+    @apply min-h-24 w-full border border-petrol-800/15 bg-white px-3 py-3 text-sm font-bold text-ink outline-none transition focus:border-petrol-800;
+  }
+}

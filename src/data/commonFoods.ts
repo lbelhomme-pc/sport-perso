@@ -1,0 +1,1342 @@
+import type { FoodProduct } from "../services/openFoodFactsService";
+
+export const COMMON_FOODS: FoodProduct[] = [
+  {
+    code: "common-banane-nature",
+    name: "Banane nature",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 89,
+    protein100g: 1.1,
+    carbs100g: 22.8,
+    fat100g: 0.3,
+    origin: "common"
+  },
+  {
+    code: "common-pomme-nature",
+    name: "Pomme nature",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 52,
+    protein100g: 0.3,
+    carbs100g: 13.8,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-orange-nature",
+    name: "Orange nature",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 47,
+    protein100g: 0.9,
+    carbs100g: 11.8,
+    fat100g: 0.1,
+    origin: "common"
+  },
+  {
+    code: "common-kiwi-nature",
+    name: "Kiwi nature",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 61,
+    protein100g: 1.1,
+    carbs100g: 14.7,
+    fat100g: 0.5,
+    origin: "common"
+  },
+  {
+    code: "common-riz-basmati-cuit",
+    name: "Riz basmati cuit",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 130,
+    protein100g: 2.7,
+    carbs100g: 28,
+    fat100g: 0.3,
+    origin: "common"
+  },
+  {
+    code: "common-riz-basmati-cru",
+    name: "Riz basmati cru",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 350,
+    protein100g: 7.5,
+    carbs100g: 77,
+    fat100g: 0.8,
+    origin: "common"
+  },
+  {
+    code: "common-flocons-avoine",
+    name: "Flocons d'avoine",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 389,
+    protein100g: 16.9,
+    carbs100g: 66.3,
+    fat100g: 6.9,
+    origin: "common"
+  },
+  {
+    code: "common-skyr-nature",
+    name: "Skyr nature",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 62,
+    protein100g: 11,
+    carbs100g: 4,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-skyr-vanille",
+    name: "Skyr vanille",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 78,
+    protein100g: 9,
+    carbs100g: 9,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-compote-pomme-sans-sucres",
+    name: "Compote pomme sans sucres ajoutés",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 56,
+    protein100g: 0.3,
+    carbs100g: 13,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-compote-pomme",
+    name: "Compote pomme",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 68,
+    protein100g: 0.3,
+    carbs100g: 16,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-fromage-blanc-0",
+    name: "Fromage blanc 0%",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 46,
+    protein100g: 8,
+    carbs100g: 4,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-yaourt-grec",
+    name: "Yaourt grec nature",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 97,
+    protein100g: 9,
+    carbs100g: 3.6,
+    fat100g: 5,
+    origin: "common"
+  },
+  {
+    code: "common-oeuf-entier",
+    name: "Oeuf entier",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 143,
+    protein100g: 12.6,
+    carbs100g: 0.7,
+    fat100g: 9.5,
+    origin: "common"
+  },
+  {
+    code: "common-blanc-poulet-cuit",
+    name: "Blanc de poulet cuit",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 165,
+    protein100g: 31,
+    carbs100g: 0,
+    fat100g: 3.6,
+    origin: "common"
+  },
+  {
+    code: "common-patate-douce-cuite",
+    name: "Patate douce cuite",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 86,
+    protein100g: 1.6,
+    carbs100g: 20.1,
+    fat100g: 0.1,
+    origin: "common"
+  },
+  {
+    code: "common-poelee-legumes",
+    name: "Poêlée de légumes",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 65,
+    protein100g: 2,
+    carbs100g: 8,
+    fat100g: 2.5,
+    origin: "common"
+  },
+  {
+    code: "common-poelee-legumes-sans-matiere-grasse",
+    name: "Poêlée de légumes sans matière grasse",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 45,
+    protein100g: 2,
+    carbs100g: 8,
+    fat100g: 0.5,
+    origin: "common"
+  },
+  {
+    code: "common-poelee-courgettes",
+    name: "Poêlée de courgettes",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 40,
+    protein100g: 1.5,
+    carbs100g: 4,
+    fat100g: 2,
+    origin: "common"
+  },
+  {
+    code: "common-poelee-champignons",
+    name: "Poêlée de champignons",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 55,
+    protein100g: 3,
+    carbs100g: 4,
+    fat100g: 3,
+    origin: "common"
+  },
+  {
+    code: "common-optimum-nutrition-protein-bar",
+    name: "Barre protéinée Optimum Nutrition",
+    brand: "Optimum Nutrition",
+    quantity: "60 g",
+    servingSize: "60 g",
+    servingQuantity: 60,
+    calories100g: 375,
+    protein100g: 33,
+    carbs100g: 38,
+    fat100g: 12,
+    origin: "common"
+  },
+  {
+    code: "common-optimum-nutrition-whey",
+    name: "Whey Optimum Nutrition",
+    brand: "Optimum Nutrition",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 374,
+    protein100g: 78,
+    carbs100g: 6,
+    fat100g: 4,
+    origin: "common"
+  },
+  {
+    code: "common-nutripure-whey-native",
+    name: "Whey native Nutripure",
+    brand: "Nutripure",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 390,
+    protein100g: 80,
+    carbs100g: 6,
+    fat100g: 5,
+    origin: "common"
+  },
+  {
+    code: "common-nutripure-whey-isolate",
+    name: "Whey isolate Nutripure",
+    brand: "Nutripure",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 370,
+    protein100g: 85,
+    carbs100g: 3,
+    fat100g: 2,
+    origin: "common"
+  },
+  {
+    code: "common-nutripure-caseine-micellaire",
+    name: "Caséine micellaire Nutripure",
+    brand: "Nutripure",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 360,
+    protein100g: 80,
+    carbs100g: 5,
+    fat100g: 2,
+    origin: "common"
+  },
+  {
+    code: "common-nutripure-proteine-vegetale",
+    name: "Protéine végétale Nutripure",
+    brand: "Nutripure",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 390,
+    protein100g: 75,
+    carbs100g: 8,
+    fat100g: 8,
+    origin: "common"
+  },
+  {
+    code: "common-nutripure-collagene-peptides",
+    name: "Collagène peptides Nutripure",
+    brand: "Nutripure",
+    quantity: "10 g",
+    servingSize: "10 g",
+    servingQuantity: 10,
+    calories100g: 360,
+    protein100g: 90,
+    carbs100g: 0,
+    fat100g: 0,
+    origin: "common"
+  },
+  {
+    code: "common-myprotein-impact-whey",
+    name: "Impact Whey Protein MyProtein",
+    brand: "MyProtein",
+    quantity: "25 g",
+    servingSize: "25 g",
+    servingQuantity: 25,
+    calories100g: 400,
+    protein100g: 80,
+    carbs100g: 7,
+    fat100g: 6,
+    origin: "common"
+  },
+  {
+    code: "common-bulk-whey-protein",
+    name: "Whey Protein Bulk",
+    brand: "Bulk",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 390,
+    protein100g: 78,
+    carbs100g: 6,
+    fat100g: 6,
+    origin: "common"
+  },
+  {
+    code: "common-foodspring-whey-protein",
+    name: "Whey Protein Foodspring",
+    brand: "Foodspring",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 390,
+    protein100g: 78,
+    carbs100g: 7,
+    fat100g: 6,
+    origin: "common"
+  },
+  {
+    code: "common-decathlon-aptonia-whey",
+    name: "Whey Aptonia Decathlon",
+    brand: "Aptonia Decathlon",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 390,
+    protein100g: 76,
+    carbs100g: 7,
+    fat100g: 6,
+    origin: "common"
+  },
+  {
+    code: "common-clear-whey-isolate",
+    name: "Clear whey isolate",
+    brand: "Aliment simple fitness",
+    quantity: "25 g",
+    servingSize: "25 g",
+    servingQuantity: 25,
+    calories100g: 350,
+    protein100g: 80,
+    carbs100g: 4,
+    fat100g: 1,
+    origin: "common"
+  },
+  {
+    code: "common-nutrimuscle-whey-native",
+    name: "Whey native Nutrimuscle",
+    brand: "Nutrimuscle",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 385,
+    protein100g: 80,
+    carbs100g: 6,
+    fat100g: 5,
+    origin: "common"
+  },
+  {
+    code: "common-eafit-pure-whey",
+    name: "Pure Whey Eafit",
+    brand: "Eafit",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 390,
+    protein100g: 76,
+    carbs100g: 8,
+    fat100g: 6,
+    origin: "common"
+  },
+  {
+    code: "common-eric-favre-iso-zero",
+    name: "Iso Zero Eric Favre",
+    brand: "Eric Favre",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 365,
+    protein100g: 85,
+    carbs100g: 3,
+    fat100g: 1,
+    origin: "common"
+  },
+  {
+    code: "common-prozis-whey-protein",
+    name: "Whey Protein Prozis",
+    brand: "Prozis",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 390,
+    protein100g: 78,
+    carbs100g: 7,
+    fat100g: 6,
+    origin: "common"
+  },
+  {
+    code: "common-barre-proteinee",
+    name: "Barre protéinée",
+    brand: "Aliment simple",
+    quantity: "50 g",
+    servingSize: "50 g",
+    servingQuantity: 50,
+    calories100g: 360,
+    protein100g: 30,
+    carbs100g: 35,
+    fat100g: 11,
+    origin: "common"
+  },
+  {
+    code: "common-danone-hipro-nature",
+    name: "Danone HiPRO nature",
+    brand: "Danone HiPRO",
+    quantity: "160 g",
+    calories100g: 57,
+    protein100g: 10,
+    carbs100g: 3.5,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-danone-hipro-vanille",
+    name: "Danone HiPRO vanille",
+    brand: "Danone HiPRO",
+    quantity: "160 g",
+    calories100g: 75,
+    protein100g: 10,
+    carbs100g: 8,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-danone-hipro-boisson",
+    name: "Danone HiPRO boisson protéinée",
+    brand: "Danone HiPRO",
+    quantity: "300 ml",
+    servingSize: "300 ml",
+    servingQuantity: 300,
+    calories100g: 62,
+    protein100g: 8.3,
+    carbs100g: 5,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-blanc-dinde-cuit",
+    name: "Blanc de dinde cuit",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 135,
+    protein100g: 29,
+    carbs100g: 0,
+    fat100g: 1.5,
+    origin: "common"
+  },
+  {
+    code: "common-escalope-dinde-cuite",
+    name: "Escalope de dinde cuite",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 120,
+    protein100g: 26,
+    carbs100g: 0,
+    fat100g: 1.2,
+    origin: "common"
+  },
+  {
+    code: "common-jambon-dinde",
+    name: "Jambon de dinde",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 110,
+    protein100g: 22,
+    carbs100g: 1,
+    fat100g: 2,
+    origin: "common"
+  },
+  {
+    code: "common-jambon-blanc-degraisse",
+    name: "Jambon blanc découenné dégraissé",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 115,
+    protein100g: 20,
+    carbs100g: 1,
+    fat100g: 3,
+    origin: "common"
+  },
+  {
+    code: "common-steak-hache-5",
+    name: "Steak haché 5%",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 137,
+    protein100g: 21,
+    carbs100g: 0,
+    fat100g: 5,
+    origin: "common"
+  },
+  {
+    code: "common-boeuf-hache-10",
+    name: "Boeuf haché 10%",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 176,
+    protein100g: 20,
+    carbs100g: 0,
+    fat100g: 10,
+    origin: "common"
+  },
+  {
+    code: "common-thon-naturel-egoutte",
+    name: "Thon au naturel égoutté",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 116,
+    protein100g: 26,
+    carbs100g: 0,
+    fat100g: 1,
+    origin: "common"
+  },
+  {
+    code: "common-saumon-cuit",
+    name: "Saumon cuit",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 208,
+    protein100g: 22,
+    carbs100g: 0,
+    fat100g: 13,
+    origin: "common"
+  },
+  {
+    code: "common-cabillaud-cuit",
+    name: "Cabillaud cuit",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 82,
+    protein100g: 18,
+    carbs100g: 0,
+    fat100g: 0.7,
+    origin: "common"
+  },
+  {
+    code: "common-crevettes-cuites",
+    name: "Crevettes cuites",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 99,
+    protein100g: 24,
+    carbs100g: 0.2,
+    fat100g: 0.3,
+    origin: "common"
+  },
+  {
+    code: "common-tofu-ferme",
+    name: "Tofu ferme",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 145,
+    protein100g: 15,
+    carbs100g: 2,
+    fat100g: 9,
+    origin: "common"
+  },
+  {
+    code: "common-tempeh",
+    name: "Tempeh",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 193,
+    protein100g: 20,
+    carbs100g: 9,
+    fat100g: 11,
+    origin: "common"
+  },
+  {
+    code: "common-seitan",
+    name: "Seitan",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 120,
+    protein100g: 24,
+    carbs100g: 4,
+    fat100g: 2,
+    origin: "common"
+  },
+  {
+    code: "common-lentilles-cuites",
+    name: "Lentilles cuites",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 116,
+    protein100g: 9,
+    carbs100g: 20,
+    fat100g: 0.4,
+    origin: "common"
+  },
+  {
+    code: "common-pois-chiches-cuits",
+    name: "Pois chiches cuits",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 164,
+    protein100g: 8.9,
+    carbs100g: 27.4,
+    fat100g: 2.6,
+    origin: "common"
+  },
+  {
+    code: "common-haricots-rouges-cuits",
+    name: "Haricots rouges cuits",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 127,
+    protein100g: 8.7,
+    carbs100g: 22.8,
+    fat100g: 0.5,
+    origin: "common"
+  },
+  {
+    code: "common-riz-complet-cuit",
+    name: "Riz complet cuit",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 112,
+    protein100g: 2.6,
+    carbs100g: 23,
+    fat100g: 0.9,
+    origin: "common"
+  },
+  {
+    code: "common-pates-completes-cuites",
+    name: "Pâtes complètes cuites",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 150,
+    protein100g: 5.8,
+    carbs100g: 30,
+    fat100g: 1.1,
+    origin: "common"
+  },
+  {
+    code: "common-pates-blanches-cuites",
+    name: "Pâtes blanches cuites",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 158,
+    protein100g: 5.8,
+    carbs100g: 31,
+    fat100g: 0.9,
+    origin: "common"
+  },
+  {
+    code: "common-quinoa-cuit",
+    name: "Quinoa cuit",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 120,
+    protein100g: 4.4,
+    carbs100g: 21.3,
+    fat100g: 1.9,
+    origin: "common"
+  },
+  {
+    code: "common-semoule-cuite",
+    name: "Semoule cuite",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 112,
+    protein100g: 3.8,
+    carbs100g: 23,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-boulgour-cuit",
+    name: "Boulgour cuit",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 83,
+    protein100g: 3.1,
+    carbs100g: 18.6,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-pomme-de-terre-vapeur",
+    name: "Pomme de terre vapeur",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 87,
+    protein100g: 1.9,
+    carbs100g: 20,
+    fat100g: 0.1,
+    origin: "common"
+  },
+  {
+    code: "common-pain-complet",
+    name: "Pain complet",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 250,
+    protein100g: 9,
+    carbs100g: 43,
+    fat100g: 4,
+    origin: "common"
+  },
+  {
+    code: "common-wrap-ble",
+    name: "Wrap blé tortilla",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 310,
+    protein100g: 8,
+    carbs100g: 52,
+    fat100g: 8,
+    origin: "common"
+  },
+  {
+    code: "common-galette-riz",
+    name: "Galette de riz",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 387,
+    protein100g: 8,
+    carbs100g: 82,
+    fat100g: 3,
+    origin: "common"
+  },
+  {
+    code: "common-lait-demi-ecreme",
+    name: "Lait demi-écrémé",
+    brand: "Aliment simple fitness",
+    quantity: "100 ml",
+    calories100g: 47,
+    protein100g: 3.3,
+    carbs100g: 4.8,
+    fat100g: 1.6,
+    origin: "common"
+  },
+  {
+    code: "common-lait-ecreme",
+    name: "Lait écrémé",
+    brand: "Aliment simple fitness",
+    quantity: "100 ml",
+    calories100g: 34,
+    protein100g: 3.4,
+    carbs100g: 5,
+    fat100g: 0.1,
+    origin: "common"
+  },
+  {
+    code: "common-cottage-cheese",
+    name: "Cottage cheese",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 98,
+    protein100g: 11,
+    carbs100g: 3.4,
+    fat100g: 4.3,
+    origin: "common"
+  },
+  {
+    code: "common-mozzarella-light",
+    name: "Mozzarella light",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 160,
+    protein100g: 20,
+    carbs100g: 2,
+    fat100g: 8,
+    origin: "common"
+  },
+  {
+    code: "common-mozzarella",
+    name: "Mozzarella",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 250,
+    protein100g: 18,
+    carbs100g: 2,
+    fat100g: 19,
+    origin: "common"
+  },
+  {
+    code: "common-feta",
+    name: "Feta",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 265,
+    protein100g: 14,
+    carbs100g: 4,
+    fat100g: 21,
+    origin: "common"
+  },
+  {
+    code: "common-chevre-frais",
+    name: "Chèvre frais",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 220,
+    protein100g: 12,
+    carbs100g: 3,
+    fat100g: 18,
+    origin: "common"
+  },
+  {
+    code: "common-buche-chevre",
+    name: "Bûche de chèvre",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 300,
+    protein100g: 18,
+    carbs100g: 1,
+    fat100g: 25,
+    origin: "common"
+  },
+  {
+    code: "common-emmental",
+    name: "Emmental",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 380,
+    protein100g: 28,
+    carbs100g: 1,
+    fat100g: 29,
+    origin: "common"
+  },
+  {
+    code: "common-comte",
+    name: "Comté",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 415,
+    protein100g: 27,
+    carbs100g: 0.5,
+    fat100g: 34,
+    origin: "common"
+  },
+  {
+    code: "common-gruyere",
+    name: "Gruyère",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 413,
+    protein100g: 30,
+    carbs100g: 0.4,
+    fat100g: 32,
+    origin: "common"
+  },
+  {
+    code: "common-parmesan",
+    name: "Parmesan",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 431,
+    protein100g: 38,
+    carbs100g: 4,
+    fat100g: 29,
+    origin: "common"
+  },
+  {
+    code: "common-camembert",
+    name: "Camembert",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 300,
+    protein100g: 20,
+    carbs100g: 0.5,
+    fat100g: 24,
+    origin: "common"
+  },
+  {
+    code: "common-brie",
+    name: "Brie",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 334,
+    protein100g: 21,
+    carbs100g: 0.5,
+    fat100g: 28,
+    origin: "common"
+  },
+  {
+    code: "common-roquefort",
+    name: "Roquefort",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 369,
+    protein100g: 21,
+    carbs100g: 2,
+    fat100g: 31,
+    origin: "common"
+  },
+  {
+    code: "common-ricotta",
+    name: "Ricotta",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 174,
+    protein100g: 11,
+    carbs100g: 3,
+    fat100g: 13,
+    origin: "common"
+  },
+  {
+    code: "common-cancoillotte",
+    name: "Cancoillotte",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 120,
+    protein100g: 13,
+    carbs100g: 4,
+    fat100g: 6,
+    origin: "common"
+  },
+  {
+    code: "common-saint-moret",
+    name: "Fromage frais type Saint Môret",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 240,
+    protein100g: 8,
+    carbs100g: 3,
+    fat100g: 22,
+    origin: "common"
+  },
+  {
+    code: "common-philadelphia-light",
+    name: "Fromage frais light",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 160,
+    protein100g: 9,
+    carbs100g: 5,
+    fat100g: 11,
+    origin: "common"
+  },
+  {
+    code: "common-carre-frais-0",
+    name: "Carré frais 0%",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 80,
+    protein100g: 14,
+    carbs100g: 4,
+    fat100g: 0.5,
+    origin: "common"
+  },
+  {
+    code: "common-petit-suisse-0",
+    name: "Petit suisse 0%",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 55,
+    protein100g: 9,
+    carbs100g: 4,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-yaourt-nature",
+    name: "Yaourt nature",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 61,
+    protein100g: 3.5,
+    carbs100g: 4.7,
+    fat100g: 3.3,
+    origin: "common"
+  },
+  {
+    code: "common-yaourt-nature-0",
+    name: "Yaourt nature 0%",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 45,
+    protein100g: 4.5,
+    carbs100g: 5,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-fromage-blanc-3",
+    name: "Fromage blanc 3%",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 75,
+    protein100g: 8,
+    carbs100g: 4,
+    fat100g: 3,
+    origin: "common"
+  },
+  {
+    code: "common-faisselle",
+    name: "Faisselle",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 85,
+    protein100g: 7,
+    carbs100g: 4,
+    fat100g: 5,
+    origin: "common"
+  },
+  {
+    code: "common-kiri",
+    name: "Kiri",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 280,
+    protein100g: 10,
+    carbs100g: 6,
+    fat100g: 24,
+    origin: "common"
+  },
+  {
+    code: "common-vache-qui-rit",
+    name: "Vache qui rit",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 240,
+    protein100g: 12,
+    carbs100g: 6,
+    fat100g: 18,
+    origin: "common"
+  },
+  {
+    code: "common-whey-isolate",
+    name: "Whey isolate",
+    brand: "Aliment simple fitness",
+    quantity: "30 g",
+    servingSize: "30 g",
+    servingQuantity: 30,
+    calories100g: 360,
+    protein100g: 85,
+    carbs100g: 3,
+    fat100g: 1.5,
+    origin: "common"
+  },
+  {
+    code: "common-brocoli-cuit",
+    name: "Brocoli cuit",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 35,
+    protein100g: 2.4,
+    carbs100g: 7.2,
+    fat100g: 0.4,
+    origin: "common"
+  },
+  {
+    code: "common-haricots-verts-cuits",
+    name: "Haricots verts cuits",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 35,
+    protein100g: 1.9,
+    carbs100g: 7.9,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-courgette-cuite",
+    name: "Courgette cuite",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 17,
+    protein100g: 1.2,
+    carbs100g: 3.1,
+    fat100g: 0.3,
+    origin: "common"
+  },
+  {
+    code: "common-epinards-cuits",
+    name: "Épinards cuits",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 23,
+    protein100g: 2.9,
+    carbs100g: 3.8,
+    fat100g: 0.4,
+    origin: "common"
+  },
+  {
+    code: "common-carottes-cuites",
+    name: "Carottes cuites",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 35,
+    protein100g: 0.8,
+    carbs100g: 8.2,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-tomate",
+    name: "Tomate",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 18,
+    protein100g: 0.9,
+    carbs100g: 3.9,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-concombre",
+    name: "Concombre",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 15,
+    protein100g: 0.7,
+    carbs100g: 3.6,
+    fat100g: 0.1,
+    origin: "common"
+  },
+  {
+    code: "common-salade-verte",
+    name: "Salade verte",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 15,
+    protein100g: 1.4,
+    carbs100g: 2.9,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-avocat",
+    name: "Avocat",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 160,
+    protein100g: 2,
+    carbs100g: 8.5,
+    fat100g: 14.7,
+    origin: "common"
+  },
+  {
+    code: "common-amandes",
+    name: "Amandes",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 579,
+    protein100g: 21,
+    carbs100g: 22,
+    fat100g: 50,
+    origin: "common"
+  },
+  {
+    code: "common-noix",
+    name: "Noix",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 654,
+    protein100g: 15,
+    carbs100g: 14,
+    fat100g: 65,
+    origin: "common"
+  },
+  {
+    code: "common-noix-cajou",
+    name: "Noix de cajou",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 553,
+    protein100g: 18,
+    carbs100g: 30,
+    fat100g: 44,
+    origin: "common"
+  },
+  {
+    code: "common-beurre-cacahuete",
+    name: "Beurre de cacahuète",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 588,
+    protein100g: 25,
+    carbs100g: 20,
+    fat100g: 50,
+    origin: "common"
+  },
+  {
+    code: "common-huile-olive",
+    name: "Huile d'olive",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 884,
+    protein100g: 0,
+    carbs100g: 0,
+    fat100g: 100,
+    origin: "common"
+  },
+  {
+    code: "common-fraise",
+    name: "Fraise",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 32,
+    protein100g: 0.7,
+    carbs100g: 7.7,
+    fat100g: 0.3,
+    origin: "common"
+  },
+  {
+    code: "common-myrtille",
+    name: "Myrtille",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 57,
+    protein100g: 0.7,
+    carbs100g: 14.5,
+    fat100g: 0.3,
+    origin: "common"
+  },
+  {
+    code: "common-fruits-rouges",
+    name: "Fruits rouges",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 50,
+    protein100g: 1,
+    carbs100g: 10,
+    fat100g: 0.3,
+    origin: "common"
+  },
+  {
+    code: "common-ananas",
+    name: "Ananas",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 50,
+    protein100g: 0.5,
+    carbs100g: 13,
+    fat100g: 0.1,
+    origin: "common"
+  },
+  {
+    code: "common-poire",
+    name: "Poire",
+    brand: "Aliment simple fitness",
+    quantity: "100 g",
+    calories100g: 57,
+    protein100g: 0.4,
+    carbs100g: 15.2,
+    fat100g: 0.1,
+    origin: "common"
+  }
+];
+
+export const FAVORITE_FOOD_GROUPS = [
+  {
+    id: "fruits",
+    label: "Fruits"
+  },
+  {
+    id: "vegetables",
+    label: "Légumes"
+  },
+  {
+    id: "protein",
+    label: "Viandes / protéines"
+  },
+  {
+    id: "carbs",
+    label: "Féculents"
+  },
+  {
+    id: "dairy",
+    label: "Laitages"
+  },
+  {
+    id: "fats",
+    label: "Bonnes graisses"
+  },
+  {
+    id: "other",
+    label: "Autres"
+  }
+] as const;
+
+function normalize(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+export function searchCommonFoods(query: string): FoodProduct[] {
+  const terms = normalize(query)
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (!terms.length) return [];
+
+  return COMMON_FOODS.filter((food) => {
+    const haystack = normalize([food.name, food.brand, food.code.replace(/-/g, " ")].filter(Boolean).join(" "));
+    return terms.every((term) => {
+      const singular = term.endsWith("s") ? term.slice(0, -1) : term;
+      const plural = `${term}s`;
+      const feminine = term.endsWith("e") ? `${term}e` : term;
+
+      return [term, singular, plural, feminine].some((variant) => haystack.includes(variant));
+    });
+  });
+}
