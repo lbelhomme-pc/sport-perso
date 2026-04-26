@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
-import { BarChart3, CalendarDays, Dumbbell, Scale, Settings, Utensils } from "lucide-react";
+import { BarChart3, CalendarCheck2, CalendarDays, Dumbbell, Scale, Settings, Utensils } from "lucide-react";
 import { MetricCard } from "../components/ui/MetricCard";
 import { SectionCard } from "../components/ui/SectionCard";
 import { EVENT_LABEL } from "../data/defaults";
 import { getDisplayedVersion } from "../data/trainingPlan";
 import { useDashboard } from "../hooks/useDashboard";
+import { DAILY_HABIT_LABELS, useDailyHabits } from "../hooks/useDailyHabits";
+import type { DailyHabitType } from "../types";
 import { formatLongDate, formatShortDate } from "../utils/dates";
 
 function remainingLabel(value: number) {
@@ -72,8 +74,36 @@ function DashboardLink({
   );
 }
 
+function DailyHabitCheck({
+  type,
+  date,
+  checked,
+  onToggle
+}: {
+  type: DailyHabitType;
+  date: string;
+  checked: boolean;
+  onToggle: (date: string, type: DailyHabitType, checked: boolean) => void;
+}) {
+  return (
+    <label className={`flex min-h-14 items-center justify-between gap-3 border p-3 ${checked ? "border-limeSoft bg-limeSoft/70" : "border-petrol-800/10 bg-mist/50"}`}>
+      <span>
+        <span className="block text-sm font-black uppercase tracking-[0.1em] text-petrol-800">{DAILY_HABIT_LABELS[type]}</span>
+        <span className="text-xs font-bold text-muted">{checked ? "Coché aujourd'hui" : "À faire / vérifier"}</span>
+      </span>
+      <input
+        className="h-6 w-6 shrink-0 accent-petrol-800"
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onToggle(date, type, event.target.checked)}
+      />
+    </label>
+  );
+}
+
 export default function DashboardPage() {
   const dashboard = useDashboard();
+  const { getHabit, toggleHabit } = useDailyHabits(dashboard.today);
   const steps = dashboard.todayContext?.steps ?? 0;
   const completion =
     dashboard.weekSummary.planned > 0
@@ -133,6 +163,10 @@ export default function DashboardPage() {
             <div className="grid gap-2 sm:grid-cols-2">
               <DashboardLink to="/planning" icon={CalendarDays} label="Planning" hint="Voir et enregistrer" />
               <DashboardLink to="/meals" icon={Utensils} label="Repas" hint="Calories, pas, favoris" />
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <DailyHabitCheck type="allergies" date={dashboard.today} checked={getHabit(dashboard.today, "allergies")} onToggle={toggleHabit} />
+              <DailyHabitCheck type="duolingo" date={dashboard.today} checked={getHabit(dashboard.today, "duolingo")} onToggle={toggleHabit} />
             </div>
           </div>
         </div>
@@ -228,7 +262,8 @@ export default function DashboardPage() {
         </SectionCard>
       </div>
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
+        <DashboardLink to="/calendar" icon={CalendarCheck2} label="Calendrier" hint="Habitudes et sport" />
         <DashboardLink to="/sessions" icon={Dumbbell} label="Séances" hint="Ajouter ou corriger" />
         <DashboardLink to="/meals" icon={Utensils} label="Repas" hint="Modifier les aliments" />
         <DashboardLink to="/weight" icon={Scale} label="Poids" hint="Saisir une pesée" />

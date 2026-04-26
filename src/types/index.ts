@@ -18,10 +18,19 @@ export type EnergyLevel = "fatigue" | "normal" | "strong";
 
 export type BmrSex = "male" | "female";
 
+export type DailyHabitType = "allergies" | "duolingo";
+
 export type DailyContext = {
   date: string;
   energyLevel: EnergyLevel;
   steps?: number;
+  updatedAt?: string;
+};
+
+export type DailyHabitEntry = {
+  date: string;
+  type: DailyHabitType;
+  completed: boolean;
   updatedAt?: string;
 };
 
@@ -210,6 +219,7 @@ export type AppData = {
   meals: Meal[];
   weights: WeightEntry[];
   dailyContexts: DailyContext[];
+  dailyHabits: DailyHabitEntry[];
   sessionChecklists: SessionChecklistState[];
   plannedSessionOverrides: PlannedSessionOverride[];
   calibrations: ExerciseCalibration[];

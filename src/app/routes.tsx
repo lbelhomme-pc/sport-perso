@@ -1,6 +1,7 @@
 import {
   BarChart3,
   CalendarDays,
+  CalendarCheck2,
   Dumbbell,
   Home,
   Scale,
@@ -8,6 +9,7 @@ import {
   Utensils
 } from "lucide-react";
 import DashboardPage from "../pages/DashboardPage";
+import CalendarPage from "../pages/CalendarPage";
 import PlanningPage from "../pages/PlanningPage";
 import SessionsPage from "../pages/SessionsPage";
 import MealsPage from "../pages/MealsPage";
@@ -22,6 +24,13 @@ export const appRoutes = [
     shortLabel: "Home",
     icon: Home,
     element: <DashboardPage />
+  },
+  {
+    path: "/calendar",
+    label: "Calendrier",
+    shortLabel: "Cal.",
+    icon: CalendarCheck2,
+    element: <CalendarPage />
   },
   {
     path: "/planning",

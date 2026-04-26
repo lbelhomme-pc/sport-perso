@@ -4,6 +4,8 @@ import type {
   AppData,
   CompletedSession,
   DailyContext,
+  DailyHabitEntry,
+  DailyHabitType,
   ExerciseCalibration,
   Meal,
   PlannedSessionOverride,
@@ -124,6 +126,13 @@ const dailyContextSchema = z.object({
   updatedAt: z.string().optional()
 });
 
+const dailyHabitSchema = z.object({
+  date: z.string(),
+  type: z.enum(["allergies", "duolingo"]),
+  completed: z.boolean().default(false),
+  updatedAt: z.string().optional()
+});
+
 const sessionChecklistSchema = z.object({
   plannedSessionId: z.string(),
   checkedItemIds: z.array(z.string()).default([]),
@@ -184,6 +193,7 @@ const appDataSchema = z.object({
   meals: z.array(mealSchema).default([]),
   weights: z.array(weightEntrySchema).default([]),
   dailyContexts: z.array(dailyContextSchema).default([]),
+  dailyHabits: z.array(dailyHabitSchema).default([]),
   sessionChecklists: z.array(sessionChecklistSchema).default([]),
   plannedSessionOverrides: z.array(plannedSessionOverrideSchema).default([]),
   calibrations: z.array(exerciseCalibrationSchema).default([])
@@ -197,6 +207,7 @@ export function createDefaultData(): AppData {
     meals: [],
     weights: [],
     dailyContexts: [],
+    dailyHabits: [],
     sessionChecklists: [],
     plannedSessionOverrides: [],
     calibrations: []
@@ -241,6 +252,7 @@ export function parseAppData(value: unknown): AppData {
     meals: parsed.data.meals,
     weights: parsed.data.weights,
     dailyContexts: parsed.data.dailyContexts,
+    dailyHabits: parsed.data.dailyHabits,
     sessionChecklists: parsed.data.sessionChecklists,
     plannedSessionOverrides: parsed.data.plannedSessionOverrides,
     calibrations: parsed.data.calibrations
@@ -344,6 +356,23 @@ export function upsertDailyContext(context: DailyContext): AppData {
       : [stampedContext, ...data.dailyContexts];
 
     return { ...data, dailyContexts };
+  });
+}
+
+export function toggleDailyHabit(date: string, type: DailyHabitType, completed: boolean): AppData {
+  return updateData((data) => {
+    const entry: DailyHabitEntry = {
+      date,
+      type,
+      completed,
+      updatedAt: new Date().toISOString()
+    };
+    const exists = data.dailyHabits.some((item) => item.date === date && item.type === type);
+    const dailyHabits = exists
+      ? data.dailyHabits.map((item) => (item.date === date && item.type === type ? entry : item))
+      : [entry, ...data.dailyHabits];
+
+    return { ...data, dailyHabits };
   });
 }
 

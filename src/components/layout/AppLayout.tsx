@@ -52,7 +52,7 @@ export function AppLayout() {
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-petrol-800/10 bg-white/95 px-2 py-2 backdrop-blur-xl lg:hidden" aria-label="Navigation mobile">
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-4 gap-1">
           {appRoutes.map((route) => (
             <NavLink
               key={route.path}
