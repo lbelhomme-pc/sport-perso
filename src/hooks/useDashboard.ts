@@ -27,6 +27,7 @@ export function useDashboard() {
     sessions: todaySessions,
     energyLevel: todayContext?.energyLevel,
     steps: todayContext?.steps,
+    floors: todayContext?.floors,
     bodyWeightKg: calculationWeight
   });
   const remainingCalories = getRemainingCaloriesToTarget(todayMeals, adaptiveCalorieTarget.target);

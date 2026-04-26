@@ -7,7 +7,8 @@ export function useDailyContext(date: string) {
   const dailyContext = data.dailyContexts.find((item) => item.date === date) ?? {
     date,
     energyLevel: "normal" as EnergyLevel,
-    steps: 0
+    steps: 0,
+    floors: 0
   };
 
   return {

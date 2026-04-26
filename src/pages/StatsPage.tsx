@@ -10,7 +10,7 @@ import { SectionCard } from "../components/ui/SectionCard";
 import { getPlannedWeek } from "../data/trainingPlan";
 import { useStoredData } from "../hooks/useStoredData";
 import type { WeightEntry } from "../types";
-import { estimateNeatCaloriesFromSteps } from "../utils/calories";
+import { estimateNeatCalories } from "../utils/calories";
 import { getTotalWeeks, getWeekStart, toISODate, formatShortDate } from "../utils/dates";
 import { getMealTotals } from "../utils/nutrition";
 import { getAverageHeartRate, getAverageRpe, summarizeWeek } from "../utils/training";
@@ -46,13 +46,15 @@ export default function StatsPage() {
     const totals = getMealTotals(data.meals.filter((meal) => meal.date === date));
     const context = data.dailyContexts.find((item) => item.date === date);
     const pas = context?.steps ?? 0;
+    const etages = context?.floors ?? 0;
     const bodyWeight = getBodyWeightForDate(data.weights, date, data.settings.defaultBodyWeight);
-    const neat = estimateNeatCaloriesFromSteps(pas, bodyWeight);
+    const neat = estimateNeatCalories(pas, etages, bodyWeight);
 
     return {
       date: formatShortDate(date),
       calories: Math.round(totals.calories),
       pas,
+      etages,
       neat,
       protéines: Math.round(totals.protein)
     };
@@ -67,6 +69,7 @@ export default function StatsPage() {
   const totalBadminton = data.sessions.filter((session) => session.type === "badminton").length;
   const totalStrength = data.sessions.filter((session) => session.type === "strength").length;
   const totalSteps21Days = dailySeries.reduce((total, day) => total + day.pas, 0);
+  const totalFloors21Days = dailySeries.reduce((total, day) => total + day.etages, 0);
   const totalNeat21Days = dailySeries.reduce((total, day) => total + day.neat, 0);
 
   return (
@@ -77,12 +80,13 @@ export default function StatsPage() {
         description="Une vue large pour repérer ce qui monte, ce qui fatigue et ce qui nourrit vraiment la préparation."
       />
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-8">
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-9">
         <MetricCard label="Total séances" value={data.sessions.length} />
         <MetricCard label="Badminton" value={totalBadminton} />
         <MetricCard label="Salle force" value={totalStrength} />
         <MetricCard label="Calories sport" value={totalSportCalories} />
         <MetricCard label="Pas 21 j" value={totalSteps21Days.toLocaleString("fr-FR")} />
+        <MetricCard label="Étages 21 j" value={totalFloors21Days.toLocaleString("fr-FR")} />
         <MetricCard label="NEAT 21 j" value={`${totalNeat21Days} kcal`} />
         <MetricCard label="Moyenne FC" value={getAverageHeartRate(data.sessions) || "—"} />
         <MetricCard label="RPE moyen" value={getAverageRpe(data.sessions) || "—"} />
@@ -121,8 +125,14 @@ export default function StatsPage() {
 
         <SectionCard className="p-5 sm:p-6">
           <p className="eyebrow">NEAT estimé</p>
-          <h2 className="title-lg mt-2">Calories via les pas</h2>
+          <h2 className="title-lg mt-2">Calories via pas + étages</h2>
           <MetricLineChart data={dailySeries} xKey="date" yKey="neat" color="#DCEFA3" suffix=" kcal" />
+        </SectionCard>
+
+        <SectionCard className="p-5 sm:p-6">
+          <p className="eyebrow">Étages quotidiens</p>
+          <h2 className="title-lg mt-2">21 derniers jours</h2>
+          <MetricBarChart data={dailySeries} xKey="date" yKey="etages" color="#DCEFA3" suffix=" étages" />
         </SectionCard>
 
         <SectionCard className="p-5 sm:p-6">

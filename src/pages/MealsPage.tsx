@@ -60,6 +60,7 @@ export default function MealsPage() {
     sessions: daySessions,
     energyLevel: dailyContext.energyLevel,
     steps: dailyContext.steps,
+    floors: dailyContext.floors,
     bodyWeightKg: latestWeight
   });
   const dailyDeficit = getDailyDeficit(dayMeals, adaptiveCalorieTarget.maintenanceTarget);
@@ -89,7 +90,7 @@ export default function MealsPage() {
           </div>
 
           <div className="grid gap-4 bg-white p-5 sm:p-6">
-            <div className="grid gap-3 lg:grid-cols-3">
+            <div className="grid gap-3 lg:grid-cols-4">
               <label className="field-label">
                 Jour
                 <input className="field" type="date" value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} />
@@ -131,6 +132,23 @@ export default function MealsPage() {
                   placeholder="Ex : 8500"
                 />
               </label>
+              <label className="field-label">
+                Étages montés
+                <input
+                  className="field"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={dailyContext.floors ? String(dailyContext.floors) : ""}
+                  onChange={(event) =>
+                    saveDailyContext({
+                      ...dailyContext,
+                      date: selectedDate,
+                      floors: Number(event.target.value.replace(/\D/g, ""))
+                    })
+                  }
+                  placeholder="Ex : 8"
+                />
+              </label>
             </div>
 
             <div className="grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
@@ -146,7 +164,11 @@ export default function MealsPage() {
                 <NutritionStat label="Mangé" value={Math.round(totals.calories)} hint={`/ ${adaptiveCalorieTarget.target} kcal`} />
                 <NutritionStat label="Déficit réel" value={`${dailyDeficit} kcal`} hint={`cible ${settings.targetDailyDeficit} kcal`} />
                 <NutritionStat label="Protéines" value={`${Math.round(totals.protein)} g`} hint={`/ ${proteinTarget} g`} />
-                <NutritionStat label="NEAT pas" value={`${adaptiveCalorieTarget.neatCalories} kcal`} hint={`${dailyContext.steps ?? 0} pas`} />
+                <NutritionStat
+                  label="NEAT bas"
+                  value={`${adaptiveCalorieTarget.neatCalories} kcal`}
+                  hint={`${dailyContext.steps ?? 0} pas + ${dailyContext.floors ?? 0} étages`}
+                />
               </div>
             </div>
 
@@ -163,7 +185,7 @@ export default function MealsPage() {
             </div>
             <p className="text-xs font-bold text-muted">
               Calcul simple : BMR {adaptiveCalorieTarget.base} + activité {adaptiveCalorieTarget.activityFuel} + pas{" "}
-              {adaptiveCalorieTarget.neatCalories} + ressenti {adaptiveCalorieTarget.feelingFuel} - déficit{" "}
+              {adaptiveCalorieTarget.stepsNeatCalories} + étages {adaptiveCalorieTarget.floorsNeatCalories} + ressenti {adaptiveCalorieTarget.feelingFuel} - déficit{" "}
               {adaptiveCalorieTarget.targetDeficit} = objectif à manger {adaptiveCalorieTarget.target} kcal. Déficit réel : dépense estimée{" "}
               {adaptiveCalorieTarget.maintenanceTarget} - mangé {Math.round(totals.calories)} = {dailyDeficit} kcal.
             </p>

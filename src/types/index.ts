@@ -24,6 +24,7 @@ export type DailyContext = {
   date: string;
   energyLevel: EnergyLevel;
   steps?: number;
+  floors?: number;
   updatedAt?: string;
 };
 

@@ -134,6 +134,7 @@ export default function DashboardPage() {
   const { dailyContext, saveDailyContext } = useDailyContext(dashboard.today);
   const { getHabit, toggleHabit } = useDailyHabits(dashboard.today);
   const steps = dailyContext.steps ?? 0;
+  const floors = dailyContext.floors ?? 0;
   const proteinTarget = getProteinTarget(dashboard.calculationWeight, dashboard.settings.proteinPerKg);
   const weightAgeDays = dashboard.latestWeight
     ? differenceInCalendarDays(parseISO(dashboard.today), parseISO(dashboard.latestWeight.date))
@@ -233,8 +234,8 @@ export default function DashboardPage() {
               <DashboardLink to="/meals" icon={Utensils} label="Repas" hint="Calories, pas, favoris" />
             </div>
             <label className="field-label">
-              Pas du jour
-              <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_8rem]">
+              Mouvement du jour
+              <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_8rem]">
                 <input
                   className="field bg-white text-petrol-800"
                   inputMode="numeric"
@@ -248,6 +249,22 @@ export default function DashboardPage() {
                     })
                   }
                   placeholder="Ex : 8500"
+                  aria-label="Pas du jour"
+                />
+                <input
+                  className="field bg-white text-petrol-800"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={floors ? String(floors) : ""}
+                  onChange={(event) =>
+                    saveDailyContext({
+                      ...dailyContext,
+                      date: dashboard.today,
+                      floors: Number(event.target.value.replace(/\D/g, ""))
+                    })
+                  }
+                  placeholder="Étages"
+                  aria-label="Étages du jour"
                 />
                 <div className="border border-petrol-800/10 bg-mist/60 px-3 py-2">
                   <p className="text-[0.6rem] font-black uppercase tracking-[0.12em] text-muted">NEAT</p>
@@ -313,7 +330,7 @@ export default function DashboardPage() {
               <span>{signedCalories(dashboard.adaptiveCalorieTarget.activityFuel)}</span>
             </div>
             <div className="flex items-center justify-between border-b border-petrol-800/10 py-2 text-sm font-bold">
-              <span className="text-muted">Pas + ressenti</span>
+              <span className="text-muted">Mouvement + ressenti</span>
               <span>{signedCalories(dashboard.adaptiveCalorieTarget.neatCalories + dashboard.adaptiveCalorieTarget.feelingFuel)}</span>
             </div>
             <div className="flex items-center justify-between border-b border-petrol-800/10 py-2 text-sm font-bold">
@@ -326,7 +343,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <p className="mt-4 text-xs font-bold leading-5 text-muted">
-            Poids utilisé : {dashboard.calculationWeight} kg. Pas : {steps}. NEAT bas estimé : {dashboard.adaptiveCalorieTarget.neatCalories} kcal.
+            Poids utilisé : {dashboard.calculationWeight} kg. Pas : {steps}. Étages : {floors}. NEAT bas estimé : {dashboard.adaptiveCalorieTarget.neatCalories} kcal.
           </p>
         </SectionCard>
       </section>

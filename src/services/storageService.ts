@@ -134,6 +134,7 @@ const dailyContextSchema = z.object({
   date: z.string(),
   energyLevel: z.enum(["fatigue", "normal", "strong"]).default("normal"),
   steps: z.coerce.number().nonnegative().default(0),
+  floors: z.coerce.number().nonnegative().default(0),
   updatedAt: z.string().optional()
 });
 

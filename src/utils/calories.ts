@@ -37,6 +37,16 @@ export function estimateNeatCaloriesFromSteps(steps: number, bodyWeightKg: numbe
   return Math.round(safeSteps * safeWeight * 0.0004);
 }
 
+export function estimateNeatCaloriesFromFloors(floors: number, bodyWeightKg: number): number {
+  const safeFloors = Math.max(0, floors);
+  const safeWeight = Math.max(1, bodyWeightKg);
+  return Math.round(safeFloors * safeWeight * 0.02);
+}
+
+export function estimateNeatCalories(steps: number, floors: number, bodyWeightKg: number): number {
+  return estimateNeatCaloriesFromSteps(steps, bodyWeightKg) + estimateNeatCaloriesFromFloors(floors, bodyWeightKg);
+}
+
 export function estimateCaloriesFromSession(type: CompletedSession["type"], durationMin: number): number {
   const caloriesPerMinute = {
     badminton: 8,
@@ -77,6 +87,7 @@ export function getAdaptiveDailyCalorieTarget(args: {
   sessions?: CompletedSession[];
   energyLevel?: EnergyLevel;
   steps?: number;
+  floors?: number;
   bodyWeightKg?: number;
 }) {
   const sportCalories = getSportCalories(args.sessions ?? []);
@@ -86,7 +97,9 @@ export function getAdaptiveDailyCalorieTarget(args: {
   const feelingFuel = energyFuelAdjustment[energyLevel];
   const bodyWeightKg = args.bodyWeightKg ?? args.settings.defaultBodyWeight;
   const basalMetabolicRate = calculateBasalMetabolicRate(args.settings, bodyWeightKg);
-  const neatCalories = estimateNeatCaloriesFromSteps(args.steps ?? 0, bodyWeightKg);
+  const stepsNeatCalories = estimateNeatCaloriesFromSteps(args.steps ?? 0, bodyWeightKg);
+  const floorsNeatCalories = estimateNeatCaloriesFromFloors(args.floors ?? 0, bodyWeightKg);
+  const neatCalories = stepsNeatCalories + floorsNeatCalories;
   const maintenanceTarget = basalMetabolicRate + activityFuel + feelingFuel + neatCalories;
   const targetDeficit = args.settings.targetDailyDeficit;
   const target = maintenanceTarget - targetDeficit;
@@ -104,9 +117,11 @@ export function getAdaptiveDailyCalorieTarget(args: {
     target,
     activityFuel,
     feelingFuel,
+    stepsNeatCalories,
+    floorsNeatCalories,
     neatCalories,
     activityLabel,
     feelingLabel: energyLabels[energyLevel],
-    shortReason: `Métabolisme basal ${basalMetabolicRate} kcal + activité ${activityFuel} + pas ${neatCalories} + ressenti ${feelingFuel} - déficit ${targetDeficit} = objectif ${target} kcal`
+    shortReason: `Métabolisme basal ${basalMetabolicRate} kcal + activité ${activityFuel} + pas ${stepsNeatCalories} + étages ${floorsNeatCalories} + ressenti ${feelingFuel} - déficit ${targetDeficit} = objectif ${target} kcal`
   };
 }
