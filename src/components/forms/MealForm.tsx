@@ -1,7 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Plus, Save, Search, Trash2, X } from "lucide-react";
 import { MEAL_TYPE_LABELS } from "../../data/defaults";
-import { FAVORITE_FOOD_GROUPS } from "../../data/commonFoods";
 import {
   calculateFoodMacros,
   searchOpenFoodFacts,
@@ -235,7 +234,6 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
     savedDraft?.quantityInput ?? (initial?.quantityGrams ? formatDecimal(initial.quantityGrams) : "100")
   );
   const [quantityUnit, setQuantityUnit] = useState<MealQuantityUnit>(savedDraft?.quantityUnit ?? initial?.quantityUnit ?? "g");
-  const [favoriteGroup, setFavoriteGroup] = useState<string>(FAVORITE_FOOD_GROUPS[0].id);
   const [selectedFavoriteCode, setSelectedFavoriteCode] = useState("");
   const [favoriteFoods, setFavoriteFoods] = useState<FavoriteFood[]>(() => loadFavoriteFoods());
   const [favoriteMessage, setFavoriteMessage] = useState("");
@@ -246,10 +244,7 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
   const hasItems = mealItems.length > 0;
   const effectiveQuantity = selectedProduct ? getEffectiveQuantity(selectedProduct, quantityInput, quantityUnit) : 0;
   const previewMacros = selectedProduct ? calculateFoodMacros(selectedProduct, effectiveQuantity) : null;
-  const selectedFavoriteGroup =
-    FAVORITE_FOOD_GROUPS.find((group) => group.id === favoriteGroup) ?? FAVORITE_FOOD_GROUPS[0];
-  const selectedFavoriteFoods = favoriteFoods.filter((food) => food.favoriteCategory === favoriteGroup);
-  const selectedFavoriteProduct = selectedFavoriteFoods.find((food) => food.code === selectedFavoriteCode);
+  const selectedFavoriteProduct = favoriteFoods.find((food) => food.code === selectedFavoriteCode);
 
   useEffect(() => {
     return subscribeFavoriteFoods(() => {
@@ -380,7 +375,7 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
 
   const addSelectedProductToFavorites = () => {
     if (!selectedProduct) return;
-    const next = saveFavoriteFood(selectedProduct, favoriteGroup);
+    const next = saveFavoriteFood(selectedProduct);
     setFavoriteFoods(next);
     setSelectedFavoriteCode(selectedProduct.code);
     setFavoriteMessage(`${selectedProduct.name} ajouté aux favoris.`);
@@ -388,13 +383,13 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
 
   const selectFavoriteProduct = (code: string) => {
     setSelectedFavoriteCode(code);
-    const favorite = selectedFavoriteFoods.find((food) => food.code === code);
+    const favorite = favoriteFoods.find((food) => food.code === code);
     if (favorite) selectProduct(favorite);
   };
 
   const removeSelectedFavorite = () => {
     if (!selectedFavoriteCode) return;
-    const next = deleteFavoriteFood(selectedFavoriteCode, favoriteGroup);
+    const next = deleteFavoriteFood(selectedFavoriteCode);
     setFavoriteFoods(next);
     setSelectedFavoriteCode("");
     setFavoriteMessage("Favori retiré.");
@@ -517,84 +512,66 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
   return (
     <form onSubmit={submit} className="grid w-full max-w-full gap-4 overflow-hidden border border-petrol-800/10 bg-white p-3 shadow-soft sm:p-4">
       <div className="min-w-0 overflow-hidden border border-petrol-800/10 bg-mist/45 p-3 sm:p-4">
-        
-          <div className="mb-4 min-w-0 overflow-hidden border border-petrol-800/10 bg-white p-3">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <label className="field-label sm:w-64">
-                Catégorie de favoris
-                <select
-                  className="field"
-                  value={favoriteGroup}
-                  onChange={(event) => {
-                    setFavoriteGroup(event.target.value);
-                    setSelectedFavoriteCode("");
-                  }}
-                >
-                  {FAVORITE_FOOD_GROUPS.map((group) => (
-                    <option key={group.id} value={group.id}>
-                      {group.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <p className="text-xs font-bold text-muted">
+        <div className="mb-4 min-w-0 overflow-hidden border border-petrol-800/10 bg-white p-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-petrol-800">Favoris</p>
+              <p className="mt-1 text-xs font-bold text-muted">
                 Le brouillon est sauvegardé automatiquement. Tu peux fermer et reprendre sans perdre le repas.
               </p>
             </div>
-
-            <div className="mt-3 grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_8rem_7rem_auto_auto] lg:items-end">
-              <label className="field-label">
-                Aliment favori
-                <select
-                  className="field"
-                  value={selectedFavoriteCode}
-                  disabled={!selectedFavoriteFoods.length}
-                  onChange={(event) => selectFavoriteProduct(event.target.value)}
-                >
-                  <option value="">
-                    {selectedFavoriteFoods.length ? "Choisir un favori..." : `Aucun favori dans ${selectedFavoriteGroup.label}`}
-                  </option>
-                  {selectedFavoriteFoods.map((food) => (
-                    <option key={`${food.code}-${food.favoriteCategory}`} value={food.code}>
-                      {productLabel(food)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="field-label">
-                Quantité
-                <input
-                  className="field"
-                  inputMode="decimal"
-                  value={quantityInput}
-                  onChange={(event) => setQuantityInput(event.target.value)}
-                  placeholder="100"
-                />
-              </label>
-              <label className="field-label">
-                Unité
-                <select
-                  className="field"
-                  value={quantityUnit}
-                  onChange={(event) => updateSelectedQuantityUnit(event.target.value as MealQuantityUnit)}
-                >
-                  <option value="g">g</option>
-                  <option value="ml">ml</option>
-                  <option value="dose">dose</option>
-                </select>
-              </label>
-              <button type="button" className="action-button w-full lg:w-auto" disabled={!selectedFavoriteProduct} onClick={addFavoriteProductToMeal}>
-                <Plus className="h-4 w-4" /> Ajouter au repas
-              </button>
-              <button type="button" className="ghost-button w-full lg:w-auto" disabled={!selectedFavoriteCode} onClick={removeSelectedFavorite}>
-                <Trash2 className="h-4 w-4" /> Retirer
-              </button>
-            </div>
-            <p className="mt-2 text-xs font-bold text-muted">
-              Ce menu affiche uniquement tes favoris ajoutés. Les aliments simples restent accessibles via la recherche.
-            </p>
           </div>
-        
+
+          <div className="mt-3 grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_8rem_7rem_auto_auto] lg:items-end">
+            <label className="field-label">
+              Aliment favori
+              <select
+                className="field"
+                value={selectedFavoriteCode}
+                disabled={!favoriteFoods.length}
+                onChange={(event) => selectFavoriteProduct(event.target.value)}
+              >
+                <option value="">{favoriteFoods.length ? "Choisir un favori..." : "Aucun favori ajouté"}</option>
+                {favoriteFoods.map((food) => (
+                  <option key={food.code} value={food.code}>
+                    {productLabel(food)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="field-label">
+              Quantité
+              <input
+                className="field"
+                inputMode="decimal"
+                value={quantityInput}
+                onChange={(event) => setQuantityInput(event.target.value)}
+                placeholder="100"
+              />
+            </label>
+            <label className="field-label">
+              Unité
+              <select
+                className="field"
+                value={quantityUnit}
+                onChange={(event) => updateSelectedQuantityUnit(event.target.value as MealQuantityUnit)}
+              >
+                <option value="g">g</option>
+                <option value="ml">ml</option>
+                <option value="dose">dose</option>
+              </select>
+            </label>
+            <button type="button" className="action-button w-full lg:w-auto" disabled={!selectedFavoriteProduct} onClick={addFavoriteProductToMeal}>
+              <Plus className="h-4 w-4" /> Ajouter au repas
+            </button>
+            <button type="button" className="ghost-button w-full lg:w-auto" disabled={!selectedFavoriteCode} onClick={removeSelectedFavorite}>
+              <Trash2 className="h-4 w-4" /> Retirer
+            </button>
+          </div>
+          <p className="mt-2 text-xs font-bold text-muted">
+            Une seule liste de favoris, sans catégorie. Les aliments simples restent accessibles via la recherche.
+          </p>
+        </div>
 
         <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end">
           <label className="field-label flex-1">

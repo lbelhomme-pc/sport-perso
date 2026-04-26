@@ -1220,11 +1220,55 @@ export const COMMON_FOODS: FoodProduct[] = [
     code: "common-huile-olive",
     name: "Huile d'olive",
     brand: "Aliment simple fitness",
-    quantity: "100 g",
+    quantity: "100 ml",
     calories100g: 884,
     protein100g: 0,
     carbs100g: 0,
     fat100g: 100,
+    origin: "common"
+  },
+  {
+    code: "common-huile-noix",
+    name: "Huile de noix",
+    brand: "Aliment simple fitness",
+    quantity: "100 ml",
+    calories100g: 884,
+    protein100g: 0,
+    carbs100g: 0,
+    fat100g: 100,
+    origin: "common"
+  },
+  {
+    code: "common-vinaigre-balsamique",
+    name: "Vinaigre balsamique",
+    brand: "Aliment simple",
+    quantity: "100 ml",
+    calories100g: 88,
+    protein100g: 0.5,
+    carbs100g: 17,
+    fat100g: 0,
+    origin: "common"
+  },
+  {
+    code: "common-moutarde-dijon",
+    name: "Moutarde de Dijon",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 66,
+    protein100g: 4.4,
+    carbs100g: 5.3,
+    fat100g: 3.7,
+    origin: "common"
+  },
+  {
+    code: "common-moutarde-ancienne",
+    name: "Moutarde à l'ancienne",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 145,
+    protein100g: 7,
+    carbs100g: 8,
+    fat100g: 9,
     origin: "common"
   },
   {
@@ -1284,48 +1328,22 @@ export const COMMON_FOODS: FoodProduct[] = [
   }
 ];
 
-export const FAVORITE_FOOD_GROUPS = [
-  {
-    id: "fruits",
-    label: "Fruits"
-  },
-  {
-    id: "vegetables",
-    label: "Légumes"
-  },
-  {
-    id: "protein",
-    label: "Viandes / protéines"
-  },
-  {
-    id: "carbs",
-    label: "Féculents"
-  },
-  {
-    id: "dairy",
-    label: "Laitages"
-  },
-  {
-    id: "fats",
-    label: "Bonnes graisses"
-  },
-  {
-    id: "other",
-    label: "Autres"
-  }
-] as const;
+const COMMON_FOOD_STOP_WORDS = new Set(["a", "à", "d", "de", "du", "des", "la", "le", "les", "l", "un", "une", "et"]);
 
 function normalize(text: string): string {
   return text
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[’']/g, " ")
+    .replace(/[^a-zA-Z0-9]+/g, " ")
+    .trim()
     .toLowerCase();
 }
 
 export function searchCommonFoods(query: string): FoodProduct[] {
   const terms = normalize(query)
     .split(/\s+/)
-    .filter(Boolean);
+    .filter((term) => term.length > 1 && !COMMON_FOOD_STOP_WORDS.has(term));
 
   if (!terms.length) return [];
 

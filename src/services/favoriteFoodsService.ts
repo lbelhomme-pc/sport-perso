@@ -1,7 +1,6 @@
 import type { FoodProduct } from "./openFoodFactsService";
 
 export type FavoriteFood = FoodProduct & {
-  favoriteCategory: string;
   addedAt: string;
 };
 
@@ -19,22 +18,30 @@ export function loadFavoriteFoods(): FavoriteFood[] {
 
   try {
     const raw = window.localStorage.getItem(FAVORITE_FOODS_KEY);
-    return raw ? (JSON.parse(raw) as FavoriteFood[]) : [];
+    const parsed = raw ? (JSON.parse(raw) as Array<FavoriteFood & { favoriteCategory?: string }>) : [];
+    const seen = new Set<string>();
+    return parsed
+      .filter((item) => {
+        if (seen.has(item.code)) return false;
+        seen.add(item.code);
+        return true;
+      })
+      .map(({ favoriteCategory: _favoriteCategory, addedAt, ...product }) => ({
+        ...product,
+        addedAt: addedAt ?? new Date().toISOString()
+      }));
   } catch {
     return [];
   }
 }
 
-export function saveFavoriteFood(product: FoodProduct, favoriteCategory: string): FavoriteFood[] {
+export function saveFavoriteFood(product: FoodProduct): FavoriteFood[] {
   const favorite: FavoriteFood = {
     ...product,
-    favoriteCategory,
     addedAt: new Date().toISOString()
   };
   const existing = loadFavoriteFoods();
-  const withoutDuplicate = existing.filter(
-    (item) => !(item.code === favorite.code && item.favoriteCategory === favorite.favoriteCategory)
-  );
+  const withoutDuplicate = existing.filter((item) => item.code !== favorite.code);
   const next = [favorite, ...withoutDuplicate];
 
   if (typeof window !== "undefined") {
@@ -45,10 +52,8 @@ export function saveFavoriteFood(product: FoodProduct, favoriteCategory: string)
   return next;
 }
 
-export function deleteFavoriteFood(code: string, favoriteCategory: string): FavoriteFood[] {
-  const next = loadFavoriteFoods().filter(
-    (item) => !(item.code === code && item.favoriteCategory === favoriteCategory)
-  );
+export function deleteFavoriteFood(code: string): FavoriteFood[] {
+  const next = loadFavoriteFoods().filter((item) => item.code !== code);
 
   if (typeof window !== "undefined") {
     window.localStorage.setItem(FAVORITE_FOODS_KEY, JSON.stringify(next));
