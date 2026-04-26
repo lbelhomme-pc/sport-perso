@@ -119,15 +119,13 @@ export default function MealsPage() {
                 <input
                   className="field"
                   inputMode="numeric"
-                  type="number"
-                  min="0"
-                  step="100"
-                  value={dailyContext.steps ?? 0}
+                  pattern="[0-9]*"
+                  value={dailyContext.steps ? String(dailyContext.steps) : ""}
                   onChange={(event) =>
                     saveDailyContext({
                       ...dailyContext,
                       date: selectedDate,
-                      steps: Number(event.target.value)
+                      steps: Number(event.target.value.replace(/\D/g, ""))
                     })
                   }
                   placeholder="Ex : 8500"

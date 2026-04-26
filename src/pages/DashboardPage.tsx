@@ -5,6 +5,7 @@ import { MetricCard } from "../components/ui/MetricCard";
 import { SectionCard } from "../components/ui/SectionCard";
 import { EVENT_LABEL } from "../data/defaults";
 import { getDisplayedVersion } from "../data/trainingPlan";
+import { useDailyContext } from "../hooks/useDailyContext";
 import { useDashboard } from "../hooks/useDashboard";
 import { DAILY_HABIT_LABELS, useDailyHabits } from "../hooks/useDailyHabits";
 import type { DailyHabitType } from "../types";
@@ -130,8 +131,9 @@ function DailyHabitCheck({
 
 export default function DashboardPage() {
   const dashboard = useDashboard();
+  const { dailyContext, saveDailyContext } = useDailyContext(dashboard.today);
   const { getHabit, toggleHabit } = useDailyHabits(dashboard.today);
-  const steps = dashboard.todayContext?.steps ?? 0;
+  const steps = dailyContext.steps ?? 0;
   const proteinTarget = getProteinTarget(dashboard.calculationWeight, dashboard.settings.proteinPerKg);
   const weightAgeDays = dashboard.latestWeight
     ? differenceInCalendarDays(parseISO(dashboard.today), parseISO(dashboard.latestWeight.date))
@@ -230,6 +232,31 @@ export default function DashboardPage() {
               <DashboardLink to="/planning" icon={CalendarDays} label="Planning" hint="Voir et enregistrer" />
               <DashboardLink to="/meals" icon={Utensils} label="Repas" hint="Calories, pas, favoris" />
             </div>
+            <label className="field-label">
+              Pas du jour
+              <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_8rem]">
+                <input
+                  className="field bg-white text-petrol-800"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={steps ? String(steps) : ""}
+                  onChange={(event) =>
+                    saveDailyContext({
+                      ...dailyContext,
+                      date: dashboard.today,
+                      steps: Number(event.target.value.replace(/\D/g, ""))
+                    })
+                  }
+                  placeholder="Ex : 8500"
+                />
+                <div className="border border-petrol-800/10 bg-mist/60 px-3 py-2">
+                  <p className="text-[0.6rem] font-black uppercase tracking-[0.12em] text-muted">NEAT</p>
+                  <p className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
+                    {dashboard.adaptiveCalorieTarget.neatCalories} kcal
+                  </p>
+                </div>
+              </div>
+            </label>
             <div className="grid gap-2 sm:grid-cols-2">
               <DailyHabitCheck type="allergies" date={dashboard.today} checked={getHabit(dashboard.today, "allergies")} onToggle={toggleHabit} />
               <DailyHabitCheck type="duolingo" date={dashboard.today} checked={getHabit(dashboard.today, "duolingo")} onToggle={toggleHabit} />
