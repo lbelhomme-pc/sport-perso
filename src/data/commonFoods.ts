@@ -1327,6 +1327,58 @@ export const COMMON_FOODS: FoodProduct[] = [
     origin: "common"
   },
   {
+    code: "common-nxt-level-pocket-protein",
+    name: "Barre protéinée NXT Level Pocket Protein",
+    brand: "NXT Level",
+    quantity: "55 g",
+    servingSize: "55 g",
+    servingQuantity: 55,
+    calories100g: 363,
+    protein100g: 36,
+    carbs100g: 28.4,
+    fat100g: 13.4,
+    origin: "common"
+  },
+  {
+    code: "common-nxt-level-pocket-protein-caramel-cookie",
+    name: "Barre protéinée NXT Level Caramel Cookie",
+    brand: "NXT Level",
+    quantity: "55 g",
+    servingSize: "55 g",
+    servingQuantity: 55,
+    calories100g: 363,
+    protein100g: 36,
+    carbs100g: 28.4,
+    fat100g: 13.4,
+    origin: "common"
+  },
+  {
+    code: "common-nxt-level-pocket-protein-framboise",
+    name: "Barre protéinée NXT Level Cheesecake framboise",
+    brand: "NXT Level",
+    quantity: "55 g",
+    servingSize: "55 g",
+    servingQuantity: 55,
+    calories100g: 363,
+    protein100g: 36,
+    carbs100g: 28.4,
+    fat100g: 13.4,
+    origin: "common"
+  },
+  {
+    code: "common-barre-proteinee-generique",
+    name: "Barre protéinée générique type NXT Level",
+    brand: "Aliment simple fitness",
+    quantity: "55 g",
+    servingSize: "55 g",
+    servingQuantity: 55,
+    calories100g: 363,
+    protein100g: 36,
+    carbs100g: 28,
+    fat100g: 13,
+    origin: "common"
+  },
+  {
     code: "common-huile-olive",
     name: "Huile d'olive",
     brand: "Aliment simple fitness",
