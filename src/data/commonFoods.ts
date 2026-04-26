@@ -1217,6 +1217,50 @@ export const COMMON_FOODS: FoodProduct[] = [
     origin: "common"
   },
   {
+    code: "common-betterave-cuite",
+    name: "Betterave cuite",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 44,
+    protein100g: 1.7,
+    carbs100g: 10,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-marrons-boite",
+    name: "Marrons en boîte / châtaignes cuites",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 180,
+    protein100g: 2.5,
+    carbs100g: 37,
+    fat100g: 1.3,
+    origin: "common"
+  },
+  {
+    code: "common-endive",
+    name: "Endive",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 17,
+    protein100g: 1.3,
+    carbs100g: 3.4,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-tomate",
+    name: "Tomate",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 18,
+    protein100g: 0.9,
+    carbs100g: 3.9,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
     code: "common-huile-olive",
     name: "Huile d'olive",
     brand: "Aliment simple fitness",
