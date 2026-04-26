@@ -1261,6 +1261,72 @@ export const COMMON_FOODS: FoodProduct[] = [
     origin: "common"
   },
   {
+    code: "common-olives-vertes",
+    name: "Olives vertes",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 145,
+    protein100g: 1,
+    carbs100g: 3.8,
+    fat100g: 15.3,
+    origin: "common"
+  },
+  {
+    code: "common-olives-noires",
+    name: "Olives noires",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 115,
+    protein100g: 0.8,
+    carbs100g: 6.3,
+    fat100g: 10.7,
+    origin: "common"
+  },
+  {
+    code: "common-coeurs-palmier",
+    name: "Coeurs de palmier",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 28,
+    protein100g: 2.5,
+    carbs100g: 4.6,
+    fat100g: 0.6,
+    origin: "common"
+  },
+  {
+    code: "common-semoule-cuite",
+    name: "Semoule de blé cuite",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 112,
+    protein100g: 3.8,
+    carbs100g: 23.2,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
+    code: "common-semoule-crue",
+    name: "Semoule de blé crue",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 360,
+    protein100g: 12,
+    carbs100g: 73,
+    fat100g: 1.5,
+    origin: "common"
+  },
+  {
+    code: "common-couscous-cuit",
+    name: "Couscous cuit",
+    brand: "Aliment simple",
+    quantity: "100 g",
+    calories100g: 112,
+    protein100g: 3.8,
+    carbs100g: 23.2,
+    fat100g: 0.2,
+    origin: "common"
+  },
+  {
     code: "common-huile-olive",
     name: "Huile d'olive",
     brand: "Aliment simple fitness",
@@ -1372,10 +1438,29 @@ export const COMMON_FOODS: FoodProduct[] = [
   }
 ];
 
-const COMMON_FOOD_STOP_WORDS = new Set(["a", "à", "d", "de", "du", "des", "la", "le", "les", "l", "un", "une", "et"]);
+const COMMON_FOOD_STOP_WORDS = new Set([
+  "a",
+  "à",
+  "d",
+  "de",
+  "du",
+  "des",
+  "la",
+  "le",
+  "les",
+  "l",
+  "un",
+  "une",
+  "et",
+  "tout",
+  "tous",
+  "toute",
+  "toutes"
+]);
 
 function normalize(text: string): string {
   return text
+    .replace(/[œŒ]/g, "oe")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[’']/g, " ")
