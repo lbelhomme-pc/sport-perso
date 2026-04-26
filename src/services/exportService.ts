@@ -9,6 +9,7 @@ export type ImportMergeSummary = {
   weights: number;
   dailyContexts: number;
   dailyHabits: number;
+  sessionExerciseLogs: number;
   planningComments: number;
   calibrations: number;
 };
@@ -63,6 +64,11 @@ export function mergeAppData(currentData: AppData, incomingData: AppData): AppDa
     weights: mergeByKey(current.weights, incoming.weights, (item) => item.date),
     dailyContexts: mergeByKey(current.dailyContexts, incoming.dailyContexts, (item) => item.date),
     dailyHabits: mergeByKey(current.dailyHabits, incoming.dailyHabits, (item) => `${item.date}-${item.type}`),
+    sessionExerciseLogs: mergeByKey(
+      current.sessionExerciseLogs,
+      incoming.sessionExerciseLogs,
+      (item) => `${item.plannedSessionId}-${item.exerciseId}`
+    ),
     sessionChecklists: mergeByKey(current.sessionChecklists, incoming.sessionChecklists, (item) => item.plannedSessionId),
     plannedSessionOverrides: mergeByKey(current.plannedSessionOverrides, incoming.plannedSessionOverrides, (item) => item.plannedSessionId),
     calibrations: mergeByKey(current.calibrations, incoming.calibrations, (item) => item.id)
@@ -109,6 +115,7 @@ export async function mergeJsonFiles(files: FileList | File[]): Promise<ImportMe
     weights: saved.weights.length,
     dailyContexts: saved.dailyContexts.length,
     dailyHabits: saved.dailyHabits.length,
+    sessionExerciseLogs: saved.sessionExerciseLogs.length,
     planningComments: saved.plannedSessionOverrides.filter((item) => item.notes?.trim()).length,
     calibrations: saved.calibrations.length
   };
@@ -124,6 +131,7 @@ export function getExportPreview(): string {
       meals: data.meals.length,
       weights: data.weights.length,
       dailyHabits: data.dailyHabits.length,
+      sessionExerciseLogs: data.sessionExerciseLogs.length,
       planningComments: data.plannedSessionOverrides.filter((item) => item.notes?.trim()).length,
       calibrations: data.calibrations.length
     },

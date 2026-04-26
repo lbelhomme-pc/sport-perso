@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Save, X } from "lucide-react";
 import { SESSION_TYPE_LABELS } from "../../data/defaults";
+import { useSessionExerciseLogs } from "../../hooks/useSessionExerciseLogs";
 import type { CompletedSession, PlannedSession } from "../../types";
 import { estimateCaloriesFromSession } from "../../utils/calories";
 import { toISODate } from "../../utils/dates";
@@ -21,6 +22,7 @@ function mapPlannedType(type: PlannedSession["type"]): CompletedSession["type"] 
 
 export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFormProps) {
   const plannedType = planned ? mapPlannedType(planned.type) : undefined;
+  const { sessionExerciseLogs } = useSessionExerciseLogs(planned?.id);
   const [form, setForm] = useState<{
     id: string;
     plannedSessionId: string;
@@ -73,7 +75,7 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
       rpe: form.rpe ? Number(form.rpe) : undefined,
       notes: mergeSessionNotesWithPlannedExercises(form.notes, planned),
       completed: form.completed,
-      exercises: buildCompletedExercises(planned, form.completed) ?? initial?.exercises
+      exercises: buildCompletedExercises(planned, form.completed, sessionExerciseLogs) ?? initial?.exercises
     });
   };
 

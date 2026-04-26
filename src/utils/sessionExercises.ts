@@ -1,4 +1,4 @@
-import type { CompletedExerciseEntry, ExercisePrescription, PlannedSession } from "../types";
+import type { CompletedExerciseEntry, ExercisePrescription, PlannedSession, SessionExerciseLog } from "../types";
 
 function formatPrescription(exercise: ExercisePrescription): string {
   if (exercise.sets && exercise.distanceM) return `${exercise.sets} x ${exercise.distanceM} m`;
@@ -22,17 +22,34 @@ export function formatPlannedExerciseLine(exercise: ExercisePrescription): strin
     .join(" | ");
 }
 
-export function buildCompletedExercises(planned?: PlannedSession, completed = true): CompletedExerciseEntry[] | undefined {
+export function buildCompletedExercises(
+  planned?: PlannedSession,
+  completed = true,
+  logs: SessionExerciseLog[] = []
+): CompletedExerciseEntry[] | undefined {
   if (!planned?.exercises?.length) return undefined;
 
   return [...planned.exercises]
     .sort((a, b) => a.order - b.order)
-    .map((exercise) => ({
-      prescriptionId: exercise.id,
-      name: exercise.name,
-      notes: formatPlannedExerciseLine(exercise),
-      completed
-    }));
+    .map((exercise) => {
+      const log = logs.find((item) => item.exerciseId === exercise.id);
+      const actualNotes = [
+        formatPlannedExerciseLine(exercise),
+        log?.doneText?.trim() ? `Réalisé : ${log.doneText.trim()}` : undefined,
+        log?.notes?.trim() ? `Note : ${log.notes.trim()}` : undefined
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      return {
+        prescriptionId: exercise.id,
+        name: exercise.name,
+        loadKg: log?.loadKg,
+        doneText: log?.doneText,
+        notes: actualNotes,
+        completed
+      };
+    });
 }
 
 export function buildPlannedExercisesNotes(planned?: PlannedSession): string | undefined {

@@ -9,6 +9,7 @@ import type {
   ExerciseCalibration,
   Meal,
   PlannedSessionOverride,
+  SessionExerciseLog,
   Settings,
   WeightEntry
 } from "../types";
@@ -42,8 +43,18 @@ const completedExerciseEntrySchema = z.object({
   loadKg: z.coerce.number().optional(),
   restSec: z.coerce.number().optional(),
   rpe: z.coerce.number().min(0).max(10).optional(),
+  doneText: z.string().optional(),
   notes: z.string().optional(),
   completed: z.boolean().default(false)
+});
+
+const sessionExerciseLogSchema = z.object({
+  plannedSessionId: z.string(),
+  exerciseId: z.string(),
+  loadKg: z.coerce.number().optional(),
+  doneText: z.string().optional(),
+  notes: z.string().optional(),
+  updatedAt: z.string().optional()
 });
 
 const completedSessionSchema = z.object({
@@ -194,6 +205,7 @@ const appDataSchema = z.object({
   weights: z.array(weightEntrySchema).default([]),
   dailyContexts: z.array(dailyContextSchema).default([]),
   dailyHabits: z.array(dailyHabitSchema).default([]),
+  sessionExerciseLogs: z.array(sessionExerciseLogSchema).default([]),
   sessionChecklists: z.array(sessionChecklistSchema).default([]),
   plannedSessionOverrides: z.array(plannedSessionOverrideSchema).default([]),
   calibrations: z.array(exerciseCalibrationSchema).default([])
@@ -208,6 +220,7 @@ export function createDefaultData(): AppData {
     weights: [],
     dailyContexts: [],
     dailyHabits: [],
+    sessionExerciseLogs: [],
     sessionChecklists: [],
     plannedSessionOverrides: [],
     calibrations: []
@@ -253,6 +266,7 @@ export function parseAppData(value: unknown): AppData {
     weights: parsed.data.weights,
     dailyContexts: parsed.data.dailyContexts,
     dailyHabits: parsed.data.dailyHabits,
+    sessionExerciseLogs: parsed.data.sessionExerciseLogs,
     sessionChecklists: parsed.data.sessionChecklists,
     plannedSessionOverrides: parsed.data.plannedSessionOverrides,
     calibrations: parsed.data.calibrations
@@ -373,6 +387,29 @@ export function toggleDailyHabit(date: string, type: DailyHabitType, completed: 
       : [entry, ...data.dailyHabits];
 
     return { ...data, dailyHabits };
+  });
+}
+
+export function upsertSessionExerciseLog(log: SessionExerciseLog): AppData {
+  return updateData((data) => {
+    const stampedLog = { ...log, updatedAt: new Date().toISOString() };
+    const hasValue = Boolean(stampedLog.loadKg !== undefined || stampedLog.doneText?.trim() || stampedLog.notes?.trim());
+    const exists = data.sessionExerciseLogs.some(
+      (item) => item.plannedSessionId === stampedLog.plannedSessionId && item.exerciseId === stampedLog.exerciseId
+    );
+    const sessionExerciseLogs = hasValue
+      ? exists
+        ? data.sessionExerciseLogs.map((item) =>
+            item.plannedSessionId === stampedLog.plannedSessionId && item.exerciseId === stampedLog.exerciseId
+              ? stampedLog
+              : item
+          )
+        : [stampedLog, ...data.sessionExerciseLogs]
+      : data.sessionExerciseLogs.filter(
+          (item) => !(item.plannedSessionId === stampedLog.plannedSessionId && item.exerciseId === stampedLog.exerciseId)
+        );
+
+    return { ...data, sessionExerciseLogs };
   });
 }
 

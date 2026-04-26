@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { CheckCircle2, Dumbbell, ListChecks, RotateCcw, StickyNote } from "lucide-react";
 import { SessionForm } from "../components/forms/SessionForm";
+import { SessionMode } from "../components/session/SessionMode";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
 import { BADMINTON_VARIANTS, ENERGY_LEVELS, PLANNED_TYPE_LABELS } from "../data/defaults";
@@ -276,6 +277,7 @@ export default function PlanningPage() {
   const [variant, setVariant] = useState<BadmintonVariant>("twoBadWedThu");
   const [energy, setEnergy] = useState<EnergyLevel>("normal");
   const [editingSession, setEditingSession] = useState<PlannedSession | null>(null);
+  const [sessionMode, setSessionMode] = useState<PlannedSession | null>(null);
   const plannedWeek = getPlannedWeek(settings, week, variant).map((session) =>
     applyPlannedSessionOverride(session, getOverride(session.id))
   );
@@ -284,6 +286,22 @@ export default function PlanningPage() {
 
   return (
     <>
+      {sessionMode ? (
+        <SessionMode
+          session={sessionMode}
+          energy={energy}
+          checkedItemIds={getCheckedItemIds(sessionMode.id)}
+          completed={Boolean(getCompletedForPlan(sessions, sessionMode.id))}
+          onToggle={(itemId, checked) => toggleChecklistItem(sessionMode.id, itemId, checked)}
+          onClose={() => setSessionMode(null)}
+          onFinish={() => {
+            markPlannedSessionCompleted(sessionMode);
+            setSessionMode(null);
+          }}
+          onUndo={() => deletePlannedSessionCompletion(sessionMode.id)}
+        />
+      ) : null}
+
       <PageHeader
         eyebrow="Planning HYROX"
         title="Semaine par semaine"
@@ -458,6 +476,9 @@ export default function PlanningPage() {
                     </div>
                     {session.type !== "rest" ? (
                       <div className="flex flex-wrap gap-2">
+                        <button className="action-button" onClick={() => setSessionMode(session)}>
+                          <Dumbbell className="h-4 w-4" /> Mode séance
+                        </button>
                         <button className="ghost-button" onClick={() => setEditingSession(session)}>
                           <Dumbbell className="h-4 w-4" /> Enregistrer la séance
                         </button>

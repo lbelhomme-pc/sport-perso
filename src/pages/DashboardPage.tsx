@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { differenceInCalendarDays, parseISO } from "date-fns";
 import { BarChart3, CalendarCheck2, CalendarDays, Dumbbell, Scale, Settings, Utensils } from "lucide-react";
 import { MetricCard } from "../components/ui/MetricCard";
 import { SectionCard } from "../components/ui/SectionCard";
@@ -8,6 +9,7 @@ import { useDashboard } from "../hooks/useDashboard";
 import { DAILY_HABIT_LABELS, useDailyHabits } from "../hooks/useDailyHabits";
 import type { DailyHabitType } from "../types";
 import { formatLongDate, formatShortDate } from "../utils/dates";
+import { getProteinTarget } from "../utils/nutrition";
 
 function remainingLabel(value: number) {
   if (value >= 0) return `${Math.round(value)} kcal`;
@@ -74,6 +76,31 @@ function DashboardLink({
   );
 }
 
+function VisualReminderCard({
+  tone,
+  title,
+  message,
+  to
+}: {
+  tone: "danger" | "warning";
+  title: string;
+  message: string;
+  to: string;
+}) {
+  const className =
+    tone === "danger"
+      ? "border-red-300 bg-red-50 text-red-950"
+      : "border-amber-300 bg-amber-50 text-amber-950";
+
+  return (
+    <Link to={to} className={`block border p-4 shadow-soft ${className}`}>
+      <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] opacity-70">Rappel visuel</p>
+      <h3 className="mt-2 font-display text-2xl font-black tracking-[-0.05em]">{title}</h3>
+      <p className="mt-2 text-sm font-bold leading-6 opacity-80">{message}</p>
+    </Link>
+  );
+}
+
 function DailyHabitCheck({
   type,
   date,
@@ -105,6 +132,45 @@ export default function DashboardPage() {
   const dashboard = useDashboard();
   const { getHabit, toggleHabit } = useDailyHabits(dashboard.today);
   const steps = dashboard.todayContext?.steps ?? 0;
+  const proteinTarget = getProteinTarget(dashboard.calculationWeight, dashboard.settings.proteinPerKg);
+  const weightAgeDays = dashboard.latestWeight
+    ? differenceInCalendarDays(parseISO(dashboard.today), parseISO(dashboard.latestWeight.date))
+    : null;
+  const visualReminders = [
+    !dashboard.todayMeals.length
+      ? {
+          tone: "danger" as const,
+          title: "Repas non saisi",
+          message: "Ajoute au moins un repas ou une estimation rapide pour que le déficit reste lisible.",
+          to: "/meals"
+        }
+      : null,
+    !dashboard.latestWeight
+      ? {
+          tone: "warning" as const,
+          title: "Poids absent",
+          message: "Ajoute une première pesée pour fiabiliser le calcul BMR, protéines et tendance.",
+          to: "/weight"
+        }
+      : weightAgeDays !== null && weightAgeDays >= 7
+        ? {
+            tone: "warning" as const,
+            title: "Poids à rafraîchir",
+            message: `Dernière pesée il y a ${weightAgeDays} jours. Une pesée récente rend le suivi plus propre.`,
+            to: "/weight"
+          }
+        : null,
+    dashboard.todayMeals.length && dashboard.todayMealTotals.protein < proteinTarget * 0.75
+      ? {
+          tone: "warning" as const,
+          title: "Protéines basses",
+          message: `Tu es à ${Math.round(dashboard.todayMealTotals.protein)} g / ${proteinTarget} g. Vise une prise simple au prochain repas.`,
+          to: "/meals"
+        }
+      : null
+  ].filter((reminder): reminder is { tone: "danger" | "warning"; title: string; message: string; to: string } =>
+    Boolean(reminder)
+  );
   const completion =
     dashboard.weekSummary.planned > 0
       ? Math.round((dashboard.weekSummary.completed / dashboard.weekSummary.planned) * 100)
@@ -173,6 +239,14 @@ export default function DashboardPage() {
           </div>
         </div>
       </section>
+
+      {visualReminders.length ? (
+        <section className="grid gap-3 lg:grid-cols-3">
+          {visualReminders.map((reminder) => (
+            <VisualReminderCard key={reminder.title} {...reminder} />
+          ))}
+        </section>
+      ) : null}
 
       <section className="grid gap-4 xl:grid-cols-[1.08fr_0.92fr]">
         <SectionCard className="p-5 sm:p-6">

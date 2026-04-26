@@ -34,7 +34,11 @@ export function useSessions() {
         rpe: planned.type === "recovery" ? 3 : planned.type === "badminton" ? 7 : 6,
         notes: mergeSessionNotesWithPlannedExercises("", planned),
         completed: true,
-        exercises: buildCompletedExercises(planned, true)
+        exercises: buildCompletedExercises(
+          planned,
+          true,
+          data.sessionExerciseLogs.filter((item) => item.plannedSessionId === planned.id)
+        )
       })
   };
 }

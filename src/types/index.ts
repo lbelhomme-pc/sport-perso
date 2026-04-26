@@ -77,8 +77,18 @@ export type CompletedExerciseEntry = {
   loadKg?: number;
   restSec?: number;
   rpe?: number;
+  doneText?: string;
   notes?: string;
   completed: boolean;
+};
+
+export type SessionExerciseLog = {
+  plannedSessionId: string;
+  exerciseId: string;
+  loadKg?: number;
+  doneText?: string;
+  notes?: string;
+  updatedAt?: string;
 };
 
 export type ExerciseCalibration = {
@@ -220,6 +230,7 @@ export type AppData = {
   weights: WeightEntry[];
   dailyContexts: DailyContext[];
   dailyHabits: DailyHabitEntry[];
+  sessionExerciseLogs: SessionExerciseLog[];
   sessionChecklists: SessionChecklistState[];
   plannedSessionOverrides: PlannedSessionOverride[];
   calibrations: ExerciseCalibration[];
