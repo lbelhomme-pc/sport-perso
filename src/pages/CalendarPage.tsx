@@ -22,7 +22,7 @@ import { useStoredData } from "../hooks/useStoredData";
 import type { DailyHabitType } from "../types";
 import { getTotalWeeks, getWeekIndexForDate, toISODate } from "../utils/dates";
 
-const habitOrder: DailyHabitType[] = ["allergies", "duolingo"];
+const habitOrder: DailyHabitType[] = ["allergies", "duolingo", "omega3", "creatine"];
 
 export default function CalendarPage() {
   const { settings } = useSettings();

@@ -128,7 +128,7 @@ const dailyContextSchema = z.object({
 
 const dailyHabitSchema = z.object({
   date: z.string(),
-  type: z.enum(["allergies", "duolingo"]),
+  type: z.enum(["allergies", "duolingo", "omega3", "creatine"]),
   completed: z.boolean().default(false),
   updatedAt: z.string().optional()
 });

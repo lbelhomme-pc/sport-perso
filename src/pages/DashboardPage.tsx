@@ -167,6 +167,8 @@ export default function DashboardPage() {
             <div className="grid gap-2 sm:grid-cols-2">
               <DailyHabitCheck type="allergies" date={dashboard.today} checked={getHabit(dashboard.today, "allergies")} onToggle={toggleHabit} />
               <DailyHabitCheck type="duolingo" date={dashboard.today} checked={getHabit(dashboard.today, "duolingo")} onToggle={toggleHabit} />
+              <DailyHabitCheck type="omega3" date={dashboard.today} checked={getHabit(dashboard.today, "omega3")} onToggle={toggleHabit} />
+              <DailyHabitCheck type="creatine" date={dashboard.today} checked={getHabit(dashboard.today, "creatine")} onToggle={toggleHabit} />
             </div>
           </div>
         </div>

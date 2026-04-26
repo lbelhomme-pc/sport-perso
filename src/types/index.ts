@@ -18,7 +18,7 @@ export type EnergyLevel = "fatigue" | "normal" | "strong";
 
 export type BmrSex = "male" | "female";
 
-export type DailyHabitType = "allergies" | "duolingo";
+export type DailyHabitType = "allergies" | "duolingo" | "omega3" | "creatine";
 
 export type DailyContext = {
   date: string;

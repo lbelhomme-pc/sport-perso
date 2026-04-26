@@ -4,7 +4,9 @@ import { useStoredData } from "./useStoredData";
 
 export const DAILY_HABIT_LABELS: Record<DailyHabitType, string> = {
   allergies: "Allergies",
-  duolingo: "Duolingo"
+  duolingo: "Duolingo",
+  omega3: "Oméga-3",
+  creatine: "Créatine"
 };
 
 export function useDailyHabits(date?: string) {
