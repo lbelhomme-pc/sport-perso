@@ -26,6 +26,10 @@ function NutritionStat({ label, value, hint }: { label: string; value: string | 
   );
 }
 
+function signedCalories(value: number) {
+  return value > 0 ? `+${Math.round(value)} kcal` : `${Math.round(value)} kcal`;
+}
+
 function balanceLabel(deficit: number) {
   return deficit >= 0 ? `${Math.round(deficit)} kcal` : `+${Math.abs(Math.round(deficit))} kcal`;
 }
@@ -218,8 +222,38 @@ export default function MealsPage() {
             <div className="flex flex-wrap gap-2 text-xs font-black uppercase tracking-[0.08em] text-petrol-800">
               <span className="chip">Glucides {Math.round(totals.carbs)} g</span>
               <span className="chip">Lipides {Math.round(totals.fat)} g</span>
-              <span className="chip">BMR {adaptiveCalorieTarget.base} kcal</span>
-              <span className="chip">Objectif {adaptiveCalorieTarget.target} kcal</span>
+              <span className="chip">Dépense totale {adaptiveCalorieTarget.maintenanceTarget} kcal</span>
+              <span className="chip">Cible à manger {adaptiveCalorieTarget.target} kcal</span>
+            </div>
+
+            <div className="grid gap-2 border border-petrol-800/10 bg-mist/45 p-3 text-sm font-bold sm:grid-cols-3">
+              <div>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">BMR</p>
+                <p className="mt-1 text-petrol-800">{adaptiveCalorieTarget.base} kcal</p>
+              </div>
+              <div>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">EAT / sport</p>
+                <p className="mt-1 text-petrol-800">{signedCalories(adaptiveCalorieTarget.activityFuel)}</p>
+              </div>
+              <div>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">NEAT</p>
+                <p className="mt-1 text-petrol-800">
+                  {adaptiveCalorieTarget.neatCalories} kcal
+                  <span className="text-muted"> ({adaptiveCalorieTarget.stepsNeatCalories} pas + {adaptiveCalorieTarget.floorsNeatCalories} étages)</span>
+                </p>
+              </div>
+              <div>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Ressenti</p>
+                <p className="mt-1 text-petrol-800">{signedCalories(adaptiveCalorieTarget.feelingFuel)}</p>
+              </div>
+              <div>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Total dépensé</p>
+                <p className="mt-1 text-petrol-800">{adaptiveCalorieTarget.maintenanceTarget} kcal</p>
+              </div>
+              <div>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">{balanceTitle(dailyDeficit)}</p>
+                <p className="mt-1 text-petrol-800">{balanceLabel(dailyDeficit)}</p>
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">

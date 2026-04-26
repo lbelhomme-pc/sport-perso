@@ -63,6 +63,18 @@ function CompactStat({ label, value, hint }: { label: string; value: string | nu
   );
 }
 
+function CalorieBreakdownLine({ label, value, hint }: { label: string; value: number; hint?: string }) {
+  return (
+    <div className="flex items-center justify-between border-b border-petrol-800/10 py-2 text-sm font-bold">
+      <span>
+        <span className="block text-muted">{label}</span>
+        {hint ? <span className="block text-[0.68rem] font-black uppercase tracking-[0.1em] text-muted/80">{hint}</span> : null}
+      </span>
+      <span>{signedCalories(value)}</span>
+    </div>
+  );
+}
+
 function alertClass(tone: string) {
   if (tone === "danger") return "border-red-300 bg-red-50 text-red-950";
   if (tone === "warning") return "border-amber-300 bg-amber-50 text-amber-950";
@@ -351,30 +363,35 @@ export default function DashboardPage() {
         </SectionCard>
 
         <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Calcul simple</p>
+          <p className="eyebrow">Synthèse dépense</p>
           <h2 className="mt-2 font-display text-3xl font-black tracking-[-0.06em] text-petrol-800">
-            Dépense estimée : {dashboard.adaptiveCalorieTarget.maintenanceTarget} kcal
+            Total dépensé estimé : {dashboard.adaptiveCalorieTarget.maintenanceTarget} kcal
           </h2>
           <div className="mt-4 grid gap-2">
-            <div className="flex items-center justify-between border-b border-petrol-800/10 py-2 text-sm font-bold">
-              <span className="text-muted">Métabolisme basal</span>
-              <span>{dashboard.adaptiveCalorieTarget.base} kcal</span>
-            </div>
-            <div className="flex items-center justify-between border-b border-petrol-800/10 py-2 text-sm font-bold">
-              <span className="text-muted">Activité</span>
-              <span>{signedCalories(dashboard.adaptiveCalorieTarget.activityFuel)}</span>
-            </div>
-            <div className="flex items-center justify-between border-b border-petrol-800/10 py-2 text-sm font-bold">
-              <span className="text-muted">Mouvement + ressenti</span>
-              <span>{signedCalories(dashboard.adaptiveCalorieTarget.neatCalories + dashboard.adaptiveCalorieTarget.feelingFuel)}</span>
+            <CalorieBreakdownLine label="BMR" value={dashboard.adaptiveCalorieTarget.base} hint="métabolisme basal" />
+            <CalorieBreakdownLine label="EAT / sport" value={dashboard.adaptiveCalorieTarget.activityFuel} hint="séance saisie ou prévue" />
+            <CalorieBreakdownLine label="NEAT pas" value={dashboard.adaptiveCalorieTarget.stepsNeatCalories} hint={`${steps} pas`} />
+            <CalorieBreakdownLine label="NEAT étages" value={dashboard.adaptiveCalorieTarget.floorsNeatCalories} hint={`${floors} étages`} />
+            <CalorieBreakdownLine label="Ressenti" value={dashboard.adaptiveCalorieTarget.feelingFuel} hint={dashboard.adaptiveCalorieTarget.feelingLabel} />
+            <div className="flex items-center justify-between bg-petrol-800 p-3 text-sm font-black text-white">
+              <span>Total dépensé estimé</span>
+              <span>{dashboard.adaptiveCalorieTarget.maintenanceTarget} kcal</span>
             </div>
             <div className="flex items-center justify-between border-b border-petrol-800/10 py-2 text-sm font-bold">
               <span className="text-muted">Déficit cible</span>
               <span>-{dashboard.adaptiveCalorieTarget.targetDeficit} kcal</span>
             </div>
             <div className="flex items-center justify-between bg-mist/60 p-3 text-sm font-black text-petrol-800">
-              <span>Objectif à manger</span>
+              <span>Cible à manger</span>
               <span>{dashboard.adaptiveCalorieTarget.target} kcal</span>
+            </div>
+            <div className="flex items-center justify-between bg-white p-3 text-sm font-black text-petrol-800">
+              <span>Mangé aujourd'hui</span>
+              <span>{Math.round(dashboard.todayMealTotals.calories)} kcal</span>
+            </div>
+            <div className="flex items-center justify-between bg-limeSoft p-3 text-sm font-black text-petrol-900">
+              <span>{balanceTitle(dashboard.dailyDeficit)}</span>
+              <span>{balanceLabel(dashboard.dailyDeficit)}</span>
             </div>
           </div>
           <p className="mt-4 text-xs font-bold leading-5 text-muted">
