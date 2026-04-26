@@ -9,6 +9,7 @@ import type {
   Settings
 } from "../types";
 import { getPhaseForWeek } from "./phases";
+import { getPreciseWeekPlan, type PreciseSessionPlan } from "./preciseTrainingPlan";
 import { getTotalWeeks, getWeekStart, toISODate } from "../utils/dates";
 
 const stationOrder = [
@@ -627,6 +628,147 @@ function getVacationSession(slot: DayTemplate["slot"], week: number, date: strin
   };
 }
 
+function getPlannedTypeForSlot(slot: DayTemplate["slot"]): PlannedSessionType {
+  if (slot === "rest") return "rest";
+  if (slot === "badminton") return "badminton";
+  if (slot === "strength") return "strength";
+  if (slot === "run") return "run";
+  if (slot === "recovery") return "recovery";
+  return "hyrox";
+}
+
+function buildPreciseSession(
+  slot: DayTemplate["slot"],
+  plan: PreciseSessionPlan,
+  week: number,
+  date: string,
+  day: string
+): PlannedSession {
+  const type = getPlannedTypeForSlot(slot);
+
+  return {
+    id: `week-${week}-${date}-${slot}`,
+    week,
+    day,
+    date,
+    type,
+    title: plan.title,
+    objective: plan.objective,
+    durationMin: plan.durationMin,
+    rpeTarget: plan.rpeTarget,
+    fatigueVersion: plan.fatigueVersion,
+    normalVersion: plan.normalVersion,
+    strongVersion: plan.strongVersion,
+    tags: plan.tags,
+    exercises: plan.exercises,
+    isEditable: type !== "rest"
+  };
+}
+
+function buildRaceSession(week: number, date: string, day: string): PlannedSession {
+  return {
+    id: `week-${week}-${date}-race`,
+    week,
+    day,
+    date,
+    type: "hyrox",
+    title: "Course HYROX Paris Porte de Versailles",
+    objective: "Arriver frais, exécuter le plan, gérer l’allure et valider toute la préparation.",
+    durationMin: 100,
+    rpeTarget: "RPE course",
+    fatigueVersion: "Jour J : pas de séance bonus. Échauffement progressif, hydratation, glucides simples, pacing prudent au départ.",
+    normalVersion:
+      "Jour J : sommeil, repas digeste, échauffement progressif puis HYROX complet. Objectif : régularité, transitions propres, aucune folie sur les premiers kilomètres.",
+    strongVersion:
+      "Même si tu te sens très bien : départ contrôlé. Utilise l’énergie pour finir fort, pas pour exploser le premier tiers.",
+    tags: ["Course", "HYROX", "Paris", "Objectif"],
+    exercises: [
+      exercise({
+        id: "race-prep",
+        block: "Avant course",
+        name: "Routine pré-course",
+        order: 1,
+        repsText: "repas digeste + hydratation + échauffement progressif",
+        targetLoadText: "fraîcheur prioritaire",
+        restText: "-",
+        rpeTarget: "RPE 2-4"
+      }),
+      exercise({
+        id: "race-warmup",
+        block: "Échauffement",
+        name: "Footing très facile + accélérations",
+        order: 2,
+        repsText: "20-25 min facile + 3 x 20 s progressif",
+        targetLoadText: "contrôlé",
+        restText: "récupération complète",
+        rpeTarget: "RPE 3-6"
+      }),
+      exercise({
+        id: "race-hyrox",
+        block: "Course",
+        name: "HYROX complet",
+        order: 3,
+        repsText: "8 x 1 km + 8 stations",
+        targetLoadText: "allure régulière",
+        restText: "transitions propres",
+        rpeTarget: "RPE progressif"
+      }),
+      exercise({
+        id: "race-recovery",
+        block: "Après course",
+        name: "Récupération immédiate",
+        order: 4,
+        repsText: "marche, eau/électrolytes, protéines + glucides",
+        targetLoadText: "calme",
+        restText: "-",
+        rpeTarget: "RPE 1-2"
+      })
+    ],
+    isEditable: true
+  };
+}
+
+function buildPostRaceRecoverySession(week: number, date: string, day: string): PlannedSession {
+  return {
+    id: `week-${week}-${date}-post-race-recovery`,
+    week,
+    day,
+    date,
+    type: "recovery",
+    title: "Récupération post-course",
+    objective: "Faire redescendre la fatigue, marcher doucement et noter les sensations de la course.",
+    durationMin: 20,
+    rpeTarget: "RPE 1-2",
+    fatigueVersion: "Repos complet, marche très douce uniquement si ça aide.",
+    normalVersion: "20 min marche facile + mobilité douce. Note les douleurs, la fatigue, le sommeil et la satisfaction de course.",
+    strongVersion: "Garde l’envie pour plus tard : aujourd’hui, récupération uniquement.",
+    tags: ["Post-course", "Récupération"],
+    exercises: [
+      exercise({
+        id: "post-race-walk",
+        block: "Récupération",
+        name: "Marche facile",
+        order: 1,
+        repsText: "10-20 min",
+        targetLoadText: "très facile",
+        restText: "-",
+        rpeTarget: "RPE 1-2"
+      }),
+      exercise({
+        id: "post-race-notes",
+        block: "Bilan",
+        name: "Notes sensations",
+        order: 2,
+        repsText: "douleurs, énergie, sommeil, points forts, points à garder",
+        targetLoadText: "journal",
+        restText: "-",
+        rpeTarget: "calme"
+      })
+    ],
+    isEditable: true
+  };
+}
+
 function buildRestSession(week: number, date: string, day: string, vacation = false): PlannedSession {
   return {
     id: `week-${week}-${date}-rest`,
@@ -756,6 +898,9 @@ function buildHyroxSession(week: number, date: string, day: string): PlannedSess
 }
 
 function buildSession(slot: DayTemplate["slot"], week: number, date: string, day: string): PlannedSession {
+  const precisePlan = getPreciseWeekPlan(week)?.sessions[slot];
+  if (precisePlan) return buildPreciseSession(slot, precisePlan, week, date, day);
+
   if (slot === "rest") return buildRestSession(week, date, day);
   if (slot === "recovery") return buildRecoverySession(week, date, day);
   if (slot === "badminton") return buildBadmintonSession(week, date, day);
@@ -774,6 +919,15 @@ export function getPlannedWeek(
 
   return weekTemplates[variant].map((template, index) => {
     const date = toISODate(addDays(weekStart, index));
+
+    if (date === settings.targetDate) {
+      return buildRaceSession(week, date, template.day);
+    }
+
+    if (date > settings.targetDate) {
+      return buildPostRaceRecoverySession(week, date, template.day);
+    }
+
     return vacation
       ? getVacationSession(template.slot, week, date, template.day)
       : buildSession(template.slot, week, date, template.day);
@@ -788,12 +942,22 @@ export function getDisplayedVersion(session: PlannedSession, energy: EnergyLevel
 
 export function getTrainingContext(settings: Settings, week: number) {
   const totalWeeks = getTotalWeeks(settings.startDate, settings.targetDate);
-  const phase = getPhaseForWeek(week, totalWeeks);
+  const basePhase = getPhaseForWeek(week, totalWeeks);
+  const preciseWeek = getPreciseWeekPlan(week);
+  const statusText = preciseWeek?.status ?? preciseWeek?.note ?? "";
+  const phase = preciseWeek
+    ? {
+        ...basePhase,
+        title: preciseWeek.phaseTitle,
+        summary: statusText || basePhase.summary,
+        focus: preciseWeek.dateRange
+      }
+    : basePhase;
 
   return {
     totalWeeks,
     phase,
-    deload: isDeloadWeek(week),
+    deload: isDeloadWeek(week) || /allégée|affûtage|course/i.test(statusText),
     vacation: isVacationWeek(settings, week)
   };
 }
