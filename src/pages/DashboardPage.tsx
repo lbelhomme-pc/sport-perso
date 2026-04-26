@@ -233,39 +233,43 @@ export default function DashboardPage() {
               <DashboardLink to="/planning" icon={CalendarDays} label="Planning" hint="Voir et enregistrer" />
               <DashboardLink to="/meals" icon={Utensils} label="Repas" hint="Calories, pas, favoris" />
             </div>
-            <label className="field-label">
+            <div className="field-label">
               Mouvement du jour
               <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_8rem]">
-                <input
-                  className="field bg-white text-petrol-800"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={steps ? String(steps) : ""}
-                  onChange={(event) =>
-                    saveDailyContext({
-                      ...dailyContext,
-                      date: dashboard.today,
-                      steps: Number(event.target.value.replace(/\D/g, ""))
-                    })
-                  }
-                  placeholder="Ex : 8500"
-                  aria-label="Pas du jour"
-                />
-                <input
-                  className="field bg-white text-petrol-800"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={floors ? String(floors) : ""}
-                  onChange={(event) =>
-                    saveDailyContext({
-                      ...dailyContext,
-                      date: dashboard.today,
-                      floors: Number(event.target.value.replace(/\D/g, ""))
-                    })
-                  }
-                  placeholder="Étages"
-                  aria-label="Étages du jour"
-                />
+                <label className="grid gap-1">
+                  <span className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Pas</span>
+                  <input
+                    className="field bg-white text-petrol-800"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={steps ? String(steps) : ""}
+                    onChange={(event) =>
+                      saveDailyContext({
+                        ...dailyContext,
+                        date: dashboard.today,
+                        steps: Number(event.target.value.replace(/\D/g, ""))
+                      })
+                    }
+                    placeholder="Ex : 8500"
+                  />
+                </label>
+                <label className="grid gap-1">
+                  <span className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Étages</span>
+                  <input
+                    className="field bg-white text-petrol-800"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={floors ? String(floors) : ""}
+                    onChange={(event) =>
+                      saveDailyContext({
+                        ...dailyContext,
+                        date: dashboard.today,
+                        floors: Number(event.target.value.replace(/\D/g, ""))
+                      })
+                    }
+                    placeholder="Ex : 8"
+                  />
+                </label>
                 <div className="border border-petrol-800/10 bg-mist/60 px-3 py-2">
                   <p className="text-[0.6rem] font-black uppercase tracking-[0.12em] text-muted">NEAT</p>
                   <p className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
@@ -273,7 +277,7 @@ export default function DashboardPage() {
                   </p>
                 </div>
               </div>
-            </label>
+            </div>
             <div className="grid gap-2 sm:grid-cols-2">
               <DailyHabitCheck type="allergies" date={dashboard.today} checked={getHabit(dashboard.today, "allergies")} onToggle={toggleHabit} />
               <DailyHabitCheck type="duolingo" date={dashboard.today} checked={getHabit(dashboard.today, "duolingo")} onToggle={toggleHabit} />

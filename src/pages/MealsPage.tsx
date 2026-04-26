@@ -90,7 +90,7 @@ export default function MealsPage() {
           </div>
 
           <div className="grid gap-4 bg-white p-5 sm:p-6">
-            <div className="grid gap-3 lg:grid-cols-4">
+            <div className="grid gap-3 lg:grid-cols-[0.85fr_0.85fr_1.3fr]">
               <label className="field-label">
                 Jour
                 <input className="field" type="date" value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} />
@@ -115,40 +115,45 @@ export default function MealsPage() {
                   ))}
                 </select>
               </label>
-              <label className="field-label">
-                Pas réalisés
-                <input
-                  className="field"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={dailyContext.steps ? String(dailyContext.steps) : ""}
-                  onChange={(event) =>
-                    saveDailyContext({
-                      ...dailyContext,
-                      date: selectedDate,
-                      steps: Number(event.target.value.replace(/\D/g, ""))
-                    })
-                  }
-                  placeholder="Ex : 8500"
-                />
-              </label>
-              <label className="field-label">
-                Étages montés
-                <input
-                  className="field"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={dailyContext.floors ? String(dailyContext.floors) : ""}
-                  onChange={(event) =>
-                    saveDailyContext({
-                      ...dailyContext,
-                      date: selectedDate,
-                      floors: Number(event.target.value.replace(/\D/g, ""))
-                    })
-                  }
-                  placeholder="Ex : 8"
-                />
-              </label>
+              <div className="field-label">
+                Mouvement
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <label className="grid gap-1">
+                    <span className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Pas</span>
+                    <input
+                      className="field"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={dailyContext.steps ? String(dailyContext.steps) : ""}
+                      onChange={(event) =>
+                        saveDailyContext({
+                          ...dailyContext,
+                          date: selectedDate,
+                          steps: Number(event.target.value.replace(/\D/g, ""))
+                        })
+                      }
+                      placeholder="Ex : 8500"
+                    />
+                  </label>
+                  <label className="grid gap-1">
+                    <span className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Étages</span>
+                    <input
+                      className="field"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={dailyContext.floors ? String(dailyContext.floors) : ""}
+                      onChange={(event) =>
+                        saveDailyContext({
+                          ...dailyContext,
+                          date: selectedDate,
+                          floors: Number(event.target.value.replace(/\D/g, ""))
+                        })
+                      }
+                      placeholder="Ex : 8"
+                    />
+                  </label>
+                </div>
+              </div>
             </div>
 
             <div className="grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
