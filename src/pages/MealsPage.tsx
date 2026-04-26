@@ -26,13 +26,43 @@ function NutritionStat({ label, value, hint }: { label: string; value: string | 
   );
 }
 
-function remainingLabel(value: number) {
-  if (value >= 0) return `${Math.round(value)} kcal`;
-  return `${Math.abs(Math.round(value))} kcal`;
+function balanceLabel(deficit: number) {
+  return deficit >= 0 ? `${Math.round(deficit)} kcal` : `+${Math.abs(Math.round(deficit))} kcal`;
 }
 
-function remainingHint(value: number) {
-  return value >= 0 ? "reste avant l'objectif" : "au-dessus de l'objectif";
+function balanceTitle(deficit: number) {
+  return deficit >= 0 ? "Déficit réel" : "Surplus réel";
+}
+
+function balanceHint(deficit: number, targetDeficit: number) {
+  return deficit >= 0 ? `cible ${targetDeficit} kcal` : "mangé au-dessus de la dépense estimée";
+}
+
+function nutritionCardTitle(remaining: number, deficit: number) {
+  if (remaining >= 0) return "Reste à manger";
+  return deficit >= 0 ? "Déficit réduit" : "Surplus réel";
+}
+
+function nutritionCardValue(remaining: number, deficit: number) {
+  if (remaining >= 0) return `${Math.round(remaining)} kcal`;
+  if (deficit < 0) return `+${Math.abs(Math.round(deficit))} kcal`;
+  return `${Math.abs(Math.round(remaining))} kcal`;
+}
+
+function nutritionCardHint(remaining: number, deficit: number, targetDeficit: number) {
+  if (remaining >= 0) return "avant la cible de déficit";
+  if (deficit < 0) {
+    return `${Math.abs(Math.round(remaining))} kcal au-dessus de la cible à manger`;
+  }
+  return `déficit réel ${Math.round(deficit)} kcal / cible ${targetDeficit} kcal`;
+}
+
+function balanceFormulaSentence(deficit: number, maintenanceTarget: number, eaten: number) {
+  if (deficit >= 0) {
+    return `Déficit réel : dépense estimée ${maintenanceTarget} - mangé ${eaten} = ${Math.round(deficit)} kcal.`;
+  }
+
+  return `Surplus réel : mangé ${eaten} - dépense estimée ${maintenanceTarget} = +${Math.abs(Math.round(deficit))} kcal.`;
 }
 
 export default function MealsPage() {
@@ -159,15 +189,23 @@ export default function MealsPage() {
             <div className="grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
               <div className={remainingCalories >= 0 ? "bg-limeSoft p-4 text-petrol-900" : "bg-red-50 p-4 text-red-950"}>
                 <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] opacity-70">
-                  {remainingCalories >= 0 ? "Reste à manger" : "Objectif dépassé"}
+                  {nutritionCardTitle(remainingCalories, dailyDeficit)}
                 </p>
-                <p className="mt-2 font-display text-4xl font-black tracking-[-0.08em]">{remainingLabel(remainingCalories)}</p>
-                <p className="mt-1 text-sm font-bold opacity-75">{remainingHint(remainingCalories)}</p>
+                <p className="mt-2 font-display text-4xl font-black tracking-[-0.08em]">
+                  {nutritionCardValue(remainingCalories, dailyDeficit)}
+                </p>
+                <p className="mt-1 text-sm font-bold opacity-75">
+                  {nutritionCardHint(remainingCalories, dailyDeficit, settings.targetDailyDeficit)}
+                </p>
               </div>
 
               <div className="grid gap-2 sm:grid-cols-2">
                 <NutritionStat label="Mangé" value={Math.round(totals.calories)} hint={`/ ${adaptiveCalorieTarget.target} kcal`} />
-                <NutritionStat label="Déficit réel" value={`${dailyDeficit} kcal`} hint={`cible ${settings.targetDailyDeficit} kcal`} />
+                <NutritionStat
+                  label={balanceTitle(dailyDeficit)}
+                  value={balanceLabel(dailyDeficit)}
+                  hint={balanceHint(dailyDeficit, settings.targetDailyDeficit)}
+                />
                 <NutritionStat label="Protéines" value={`${Math.round(totals.protein)} g`} hint={`/ ${proteinTarget} g`} />
                 <NutritionStat
                   label="NEAT bas"
@@ -191,8 +229,8 @@ export default function MealsPage() {
             <p className="text-xs font-bold text-muted">
               Calcul simple : BMR {adaptiveCalorieTarget.base} + activité {adaptiveCalorieTarget.activityFuel} + pas{" "}
               {adaptiveCalorieTarget.stepsNeatCalories} + étages {adaptiveCalorieTarget.floorsNeatCalories} + ressenti {adaptiveCalorieTarget.feelingFuel} - déficit{" "}
-              {adaptiveCalorieTarget.targetDeficit} = objectif à manger {adaptiveCalorieTarget.target} kcal. Déficit réel : dépense estimée{" "}
-              {adaptiveCalorieTarget.maintenanceTarget} - mangé {Math.round(totals.calories)} = {dailyDeficit} kcal.
+              {adaptiveCalorieTarget.targetDeficit} = cible à manger {adaptiveCalorieTarget.target} kcal.{" "}
+              {balanceFormulaSentence(dailyDeficit, adaptiveCalorieTarget.maintenanceTarget, Math.round(totals.calories))}
             </p>
           </div>
         </div>

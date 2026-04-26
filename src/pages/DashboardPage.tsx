@@ -12,23 +12,45 @@ import type { DailyHabitType } from "../types";
 import { formatLongDate, formatShortDate } from "../utils/dates";
 import { getProteinTarget } from "../utils/nutrition";
 
-function remainingLabel(value: number) {
-  if (value >= 0) return `${Math.round(value)} kcal`;
-  return `${Math.abs(Math.round(value))} kcal`;
-}
-
-function remainingHint(value: number) {
-  return value >= 0 ? "encore possible aujourd'hui" : "au-dessus de l'objectif";
-}
-
 function remainingSentence(value: number) {
   return value >= 0
-    ? `il reste ${Math.round(value)} kcal avant l'objectif à manger`
-    : `tu es ${Math.abs(Math.round(value))} kcal au-dessus de l'objectif à manger`;
+    ? `il reste ${Math.round(value)} kcal avant la cible à manger`
+    : `tu es ${Math.abs(Math.round(value))} kcal au-dessus de la cible à manger`;
 }
 
 function signedCalories(value: number) {
   return value > 0 ? `+${Math.round(value)} kcal` : `${Math.round(value)} kcal`;
+}
+
+function balanceLabel(deficit: number) {
+  return deficit >= 0 ? `${Math.round(deficit)} kcal` : `+${Math.abs(Math.round(deficit))} kcal`;
+}
+
+function balanceTitle(deficit: number) {
+  return deficit >= 0 ? "Déficit réel" : "Surplus réel";
+}
+
+function balanceHint(deficit: number, targetDeficit: number) {
+  return deficit >= 0 ? `cible ${targetDeficit} kcal` : "mangé au-dessus de la dépense estimée";
+}
+
+function nutritionCardTitle(remaining: number, deficit: number) {
+  if (remaining >= 0) return "Reste à manger";
+  return deficit >= 0 ? "Déficit réduit" : "Surplus réel";
+}
+
+function nutritionCardValue(remaining: number, deficit: number) {
+  if (remaining >= 0) return `${Math.round(remaining)} kcal`;
+  if (deficit < 0) return `+${Math.abs(Math.round(deficit))} kcal`;
+  return `${Math.abs(Math.round(remaining))} kcal`;
+}
+
+function nutritionCardHint(remaining: number, deficit: number, targetDeficit: number) {
+  if (remaining >= 0) return "avant la cible de déficit";
+  if (deficit < 0) {
+    return `${Math.abs(Math.round(remaining))} kcal au-dessus de la cible à manger`;
+  }
+  return `déficit réel ${Math.round(deficit)} kcal / cible ${targetDeficit} kcal`;
 }
 
 function CompactStat({ label, value, hint }: { label: string; value: string | number; hint?: string }) {
@@ -302,20 +324,29 @@ export default function DashboardPage() {
           <div className="mt-3 grid gap-4 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
             <div className={dashboard.remainingCalories >= 0 ? "bg-limeSoft p-5 text-petrol-900" : "bg-red-50 p-5 text-red-950"}>
               <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] opacity-70">
-                {dashboard.remainingCalories >= 0 ? "Reste à manger" : "Objectif dépassé"}
+                {nutritionCardTitle(dashboard.remainingCalories, dashboard.dailyDeficit)}
               </p>
-              <p className="mt-2 font-display text-5xl font-black tracking-[-0.08em]">{remainingLabel(dashboard.remainingCalories)}</p>
-              <p className="mt-2 text-sm font-bold opacity-75">{remainingHint(dashboard.remainingCalories)}</p>
+              <p className="mt-2 font-display text-5xl font-black tracking-[-0.08em]">
+                {nutritionCardValue(dashboard.remainingCalories, dashboard.dailyDeficit)}
+              </p>
+              <p className="mt-2 text-sm font-bold opacity-75">
+                {nutritionCardHint(dashboard.remainingCalories, dashboard.dailyDeficit, dashboard.settings.targetDailyDeficit)}
+              </p>
             </div>
             <div className="grid gap-2 sm:grid-cols-2">
               <CompactStat label="Mangé" value={Math.round(dashboard.todayMealTotals.calories)} hint={`/ ${dashboard.adaptiveCalorieTarget.target} kcal`} />
-              <CompactStat label="Déficit réel" value={`${dashboard.dailyDeficit} kcal`} hint={`cible ${dashboard.settings.targetDailyDeficit} kcal`} />
+              <CompactStat
+                label={balanceTitle(dashboard.dailyDeficit)}
+                value={balanceLabel(dashboard.dailyDeficit)}
+                hint={balanceHint(dashboard.dailyDeficit, dashboard.settings.targetDailyDeficit)}
+              />
               <CompactStat label="Protéines" value={`${Math.round(dashboard.todayMealTotals.protein)} g`} hint="aujourd'hui" />
               <CompactStat label="Sport" value={`${Math.round(dashboard.todaySportCalories)} kcal`} hint="séances saisies" />
             </div>
           </div>
           <p className="mt-4 text-sm font-semibold leading-6 text-muted">
-            Objectif à manger : {dashboard.adaptiveCalorieTarget.target} kcal. {remainingSentence(dashboard.remainingCalories)}.
+            Cible à manger : {dashboard.adaptiveCalorieTarget.target} kcal pour viser {dashboard.settings.targetDailyDeficit} kcal de déficit.{" "}
+            {remainingSentence(dashboard.remainingCalories)}.
           </p>
         </SectionCard>
 
