@@ -1,20 +1,14 @@
 import { CheckCircle2, Dumbbell, RotateCcw, X } from "lucide-react";
 import type { EnergyLevel, ExercisePrescription, PlannedSession, SessionExerciseLog } from "../../types";
 import { useSessionExerciseLogs } from "../../hooks/useSessionExerciseLogs";
-
-function getExerciseCheckId(exercise: ExercisePrescription) {
-  return `exercise:${exercise.id}`;
-}
-
-function formatExercisePrescription(exercise: ExercisePrescription) {
-  if (exercise.sets && exercise.distanceM) return `${exercise.sets} x ${exercise.distanceM} m`;
-  if (exercise.sets && exercise.repsText) return `${exercise.sets} x ${exercise.repsText}`;
-  if (exercise.sets && exercise.reps) return `${exercise.sets} x ${exercise.reps}`;
-  if (exercise.repsText) return exercise.repsText;
-  if (exercise.distanceM) return `${exercise.distanceM} m`;
-  if (exercise.durationSec) return `${exercise.durationSec} s`;
-  return "Prescription à ajuster";
-}
+import {
+  getActionableExercises,
+  getExerciseCheckId,
+  getExerciseDetailChips,
+  getExerciseDisplayTitle,
+  getExerciseInstruction,
+  getGuidanceExercises
+} from "../../utils/exerciseDisplay";
 
 function getExerciseAdjustment(exercise: ExercisePrescription, energy: EnergyLevel) {
   if (energy === "fatigue") return exercise.fatigueAdjustment;
@@ -48,7 +42,8 @@ export function SessionMode({
   onUndo: () => void;
 }) {
   const { getExerciseLog, saveExerciseLog } = useSessionExerciseLogs(session.id);
-  const exercises = [...(session.exercises ?? [])].sort((a, b) => a.order - b.order);
+  const exercises = getActionableExercises(session.exercises);
+  const guidanceExercises = getGuidanceExercises(session.exercises);
   const checkedSet = new Set(checkedItemIds);
   const checkedCount = exercises.filter((exercise) => checkedSet.has(getExerciseCheckId(exercise))).length;
   const progress = exercises.length ? Math.round((checkedCount / exercises.length) * 100) : 0;
@@ -97,21 +92,37 @@ export function SessionMode({
             <div>
               <p className="eyebrow">Progression séance</p>
               <p className="mt-1 font-display text-3xl font-black tracking-[-0.06em] text-petrol-800">
-                {checkedCount}/{exercises.length} exercices cochés
+                {exercises.length ? `${checkedCount}/${exercises.length} blocs utiles cochés` : "Séance guidée"}
               </p>
             </div>
-            <span className="chip">{progress}%</span>
+            <span className="chip">{exercises.length ? `${progress}%` : "Info"}</span>
           </div>
           <div className="mt-4 h-3 bg-mist">
             <div className="h-full bg-limeSoft" style={{ width: `${progress}%` }} />
           </div>
         </section>
 
+        {guidanceExercises.length ? (
+          <section className="panel border-l-4 border-limeSoft bg-mist/60 p-4">
+            <p className="eyebrow">Avant / après</p>
+            <div className="mt-3 grid gap-2">
+              {guidanceExercises.map((exercise) => (
+                <div key={exercise.id} className="bg-white p-3">
+                  <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">{exercise.block}</p>
+                  <p className="mt-1 text-sm font-black text-petrol-800">{getExerciseDisplayTitle(exercise)}</p>
+                  <p className="mt-1 text-sm font-semibold leading-5 text-ink">{getExerciseInstruction(exercise)}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         {exercises.map((exercise) => {
           const checkId = getExerciseCheckId(exercise);
           const checked = checkedSet.has(checkId);
           const log = getExerciseLog(session.id, exercise.id);
           const adjustment = getExerciseAdjustment(exercise, energy);
+          const detailChips = getExerciseDetailChips(exercise);
 
           return (
             <article key={exercise.id} className={`panel p-4 ${checked ? "bg-limeSoft/30" : "bg-white"}`}>
@@ -126,25 +137,22 @@ export function SessionMode({
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-muted">{exercise.block}</p>
-                      <h2 className="font-display text-3xl font-black tracking-[-0.06em] text-petrol-800">{exercise.name}</h2>
+                      <h2 className="font-display text-3xl font-black tracking-[-0.06em] text-petrol-800">{getExerciseDisplayTitle(exercise)}</h2>
                     </div>
-                    <span className="chip">{formatExercisePrescription(exercise)}</span>
+                    <span className="chip">Bloc {exercise.order}</span>
                   </div>
 
-                  <div className="mt-4 grid gap-2 sm:grid-cols-3">
-                    <div className="bg-white p-3">
-                      <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Charge prévue</p>
-                      <p className="mt-1 text-sm font-black text-petrol-800">{exercise.targetLoadText ?? "Au feeling"}</p>
+                  <p className="mt-4 bg-mist/60 p-3 text-base font-black leading-6 text-ink">{getExerciseInstruction(exercise)}</p>
+
+                  {detailChips.length ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {detailChips.map((chip) => (
+                        <span key={`${chip.label}-${chip.value}`} className="chip bg-white">
+                          {chip.label} : {chip.value}
+                        </span>
+                      ))}
                     </div>
-                    <div className="bg-white p-3">
-                      <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Repos</p>
-                      <p className="mt-1 text-sm font-black text-petrol-800">{exercise.restText ?? "Libre"}</p>
-                    </div>
-                    <div className="bg-white p-3">
-                      <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">RPE cible</p>
-                      <p className="mt-1 text-sm font-black text-petrol-800">{exercise.rpeTarget ?? "Contrôlé"}</p>
-                    </div>
-                  </div>
+                  ) : null}
 
                   {adjustment ? <p className="mt-3 border-l-4 border-limeSoft bg-white p-3 text-xs font-bold text-ink">{adjustment}</p> : null}
 
@@ -165,7 +173,7 @@ export function SessionMode({
                         className="field"
                         value={log?.doneText ?? ""}
                         onChange={(event) => updateLog(exercise, { doneText: event.target.value })}
-                        placeholder="Ex : 5 x 12,5 m, 4 x 8, 1000 m en 4:12..."
+                        placeholder="Ex : 5 x 10 m, 4 x 8, 1000 m en 4:12..."
                       />
                     </label>
                   </div>

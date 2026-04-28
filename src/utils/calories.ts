@@ -1,4 +1,4 @@
-import type { CompletedSession, EnergyLevel, Meal, PlannedSession, PlannedSessionType, Settings } from "../types";
+import type { CompletedSession, EnergyLevel, Meal, PlannedSession, Settings } from "../types";
 import { getMealTotals } from "./nutrition";
 
 export function getSportCalories(sessions: CompletedSession[]): number {
@@ -60,15 +60,6 @@ export function estimateCaloriesFromSession(type: CompletedSession["type"], dura
   return Math.round((caloriesPerMinute[type] ?? 6) * durationMin);
 }
 
-const plannedActivityFuel: Record<PlannedSessionType, number> = {
-  rest: 0,
-  badminton: 300,
-  strength: 250,
-  run: 350,
-  hyrox: 500,
-  recovery: 100
-};
-
 const energyFuelAdjustment: Record<EnergyLevel, number> = {
   fatigue: 150,
   normal: 0,
@@ -91,8 +82,7 @@ export function getAdaptiveDailyCalorieTarget(args: {
   bodyWeightKg?: number;
 }) {
   const sportCalories = getSportCalories(args.sessions ?? []);
-  const plannedFuel = args.plannedSession ? plannedActivityFuel[args.plannedSession.type] : 0;
-  const activityFuel = sportCalories > 0 ? Math.round(sportCalories * 0.6) : plannedFuel;
+  const activityFuel = sportCalories > 0 ? Math.round(sportCalories * 0.6) : 0;
   const energyLevel = args.energyLevel ?? "normal";
   const feelingFuel = energyFuelAdjustment[energyLevel];
   const bodyWeightKg = args.bodyWeightKg ?? args.settings.defaultBodyWeight;
@@ -105,10 +95,10 @@ export function getAdaptiveDailyCalorieTarget(args: {
   const target = maintenanceTarget - targetDeficit;
   const activityLabel =
     sportCalories > 0
-      ? `Sport saisi : +${activityFuel} kcal`
+      ? `Sport validé : +${activityFuel} kcal`
       : args.plannedSession
-        ? `${args.plannedSession.title} : +${activityFuel} kcal`
-        : "Pas de séance prévue : +0 kcal";
+        ? "Séance prévue non comptée tant qu'elle n'est pas validée"
+        : "Aucune séance validée : +0 kcal";
 
   return {
     base: basalMetabolicRate,
@@ -122,6 +112,6 @@ export function getAdaptiveDailyCalorieTarget(args: {
     neatCalories,
     activityLabel,
     feelingLabel: energyLabels[energyLevel],
-    shortReason: `Métabolisme basal ${basalMetabolicRate} kcal + activité ${activityFuel} + pas ${stepsNeatCalories} + étages ${floorsNeatCalories} + ressenti ${feelingFuel} - déficit ${targetDeficit} = objectif ${target} kcal`
+    shortReason: `Métabolisme basal ${basalMetabolicRate} kcal + sport validé ${activityFuel} + pas ${stepsNeatCalories} + étages ${floorsNeatCalories} + ressenti ${feelingFuel} - déficit ${targetDeficit} = objectif ${target} kcal`
   };
 }

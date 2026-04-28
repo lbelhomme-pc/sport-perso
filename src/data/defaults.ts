@@ -17,21 +17,64 @@ export const DEFAULT_SETTINGS: Settings = {
   dailyCalorieTarget: 1800,
   targetDailyDeficit: 400,
   defaultBodyWeight: 80,
+  badmintonVariant: "twoBadWedThu",
   vacationWeeks: []
 };
 
 export const BADMINTON_VARIANTS = [
   {
+    id: "twoBadTueWed",
+    label: "2 badmintons : mardi + mercredi",
+    shortLabel: "2 bad mar-mer",
+    description: "Jeudi force, vendredi moteur, samedi récupération."
+  },
+  {
+    id: "twoBadTueThu",
+    label: "2 badmintons : mardi + jeudi",
+    shortLabel: "2 bad mar-jeu",
+    description: "Mercredi force, vendredi moteur, samedi récupération."
+  },
+  {
+    id: "twoBadTueFri",
+    label: "2 badmintons : mardi + vendredi",
+    shortLabel: "2 bad mar-ven",
+    description: "Mercredi force, jeudi moteur, samedi récupération."
+  },
+  {
     id: "twoBadWedThu",
     label: "2 badmintons : mercredi + jeudi",
-    shortLabel: "2 bad",
-    description: "Mardi et vendredi restent disponibles pour la salle."
+    shortLabel: "2 bad mer-jeu",
+    description: "Configuration de référence : mardi force, vendredi moteur, samedi récupération."
+  },
+  {
+    id: "twoBadWedFri",
+    label: "2 badmintons : mercredi + vendredi",
+    shortLabel: "2 bad mer-ven",
+    description: "Mardi force, jeudi moteur, samedi récupération."
+  },
+  {
+    id: "twoBadThuFri",
+    label: "2 badmintons : jeudi + vendredi",
+    shortLabel: "2 bad jeu-ven",
+    description: "Mardi force, mercredi moteur, samedi récupération."
   },
   {
     id: "threeBadTueWedThu",
     label: "3 badmintons : mardi + mercredi + jeudi",
     shortLabel: "3 bad mar-jeu",
     description: "Vendredi devient la séance force, week-end orienté moteur/HYROX."
+  },
+  {
+    id: "threeBadTueWedFri",
+    label: "3 badmintons : mardi + mercredi + vendredi",
+    shortLabel: "3 bad mar-mer-ven",
+    description: "Jeudi force, samedi moteur, dimanche HYROX spécifique."
+  },
+  {
+    id: "threeBadTueThuFri",
+    label: "3 badmintons : mardi + jeudi + vendredi",
+    shortLabel: "3 bad mar-jeu-ven",
+    description: "Mercredi force, samedi moteur, dimanche HYROX spécifique."
   },
   {
     id: "threeBadWedThuFri",

@@ -1,4 +1,5 @@
 import type { EnergyLevel, PlannedSession, SessionChecklistItem } from "../types";
+import { getActionableExercises } from "../utils/exerciseDisplay";
 
 function item(group: string, id: string, label: string): SessionChecklistItem {
   return { group, id, label };
@@ -45,12 +46,12 @@ const strengthWarmup = [
   item("Échauffement force", "strength-warmup-squats", "Squats poids du corps - 2 x 10"),
   item("Échauffement force", "strength-warmup-lunges", "Fentes arrière - 2 x 8/jambe"),
   item("Échauffement force", "strength-warmup-carry", "Farmer carry léger - 2 x 20 m"),
-  item("Échauffement force", "strength-warmup-sled", "Sled à vide ou très léger - 2 x 12,5 m")
+  item("Échauffement force", "strength-warmup-sled", "Sled à vide ou très léger - 2 x 10 m")
 ];
 
 const strengthNormal = [
-  item("Bloc force", "strength-sled-push", "A1 - Sled Push : séries selon progression, 12,5 m, RPE 7-8"),
-  item("Bloc force", "strength-sled-pull", "A2 - Sled Pull : séries selon progression, 12,5 m, RPE 7-8"),
+  item("Bloc force", "strength-sled-push", "A1 - Sled Push : séries selon progression, 10 m, RPE 7-8"),
+  item("Bloc force", "strength-sled-pull", "A2 - Sled Pull : séries selon progression, 10 m, RPE 7-8"),
   item("Bloc force", "strength-main-lift", "B - Trap bar deadlift ou front squat : 4-5 séries de 4-6 reps"),
   item("Bloc force", "strength-split-squat", "C - Bulgarian split squat : 3 x 8/jambe"),
   item("Bloc force", "strength-rdl", "D - Soulevé de terre roumain haltères : 3 x 8-10 reps"),
@@ -61,8 +62,8 @@ const strengthNormal = [
 
 const strengthFatigue = [
   item("Version fatigué", "strength-fatigue-zone2", "Zone 2 vélo ou rameur - 10 min"),
-  item("Version fatigué", "strength-fatigue-sled-push", "Sled Push léger - 4 x 12,5 m"),
-  item("Version fatigué", "strength-fatigue-sled-pull", "Sled Pull léger - 3 x 12,5 m"),
+  item("Version fatigué", "strength-fatigue-sled-push", "Sled Push léger - 4 x 10 m"),
+  item("Version fatigué", "strength-fatigue-sled-pull", "Sled Pull léger - 3 x 10 m"),
   item("Version fatigué", "strength-fatigue-goblet", "Goblet squat - 3 x 8"),
   item("Version fatigué", "strength-fatigue-row", "Rowing poulie - 3 x 10"),
   item("Version fatigué", "strength-fatigue-carry", "Farmer carry modéré - 3 x 40 m"),
@@ -144,6 +145,8 @@ function getHyroxBlockCount(session: PlannedSession): number {
 }
 
 export function getSessionChecklist(session: PlannedSession, energy: EnergyLevel): SessionChecklistItem[] {
+  const hasExerciseBlocks = getActionableExercises(session.exercises).length > 0;
+
   if (session.type === "rest") {
     return [
       item("Repos", "rest-real", "Repos réellement protégé"),
@@ -161,8 +164,8 @@ export function getSessionChecklist(session: PlannedSession, energy: EnergyLevel
     return [
       ...beforeSession,
       ...strengthWarmup,
-      ...(energy === "fatigue" ? strengthFatigue : strengthNormal),
-      ...(energy === "strong" ? strengthStrong : []),
+      ...(hasExerciseBlocks ? [] : energy === "fatigue" ? strengthFatigue : strengthNormal),
+      ...(hasExerciseBlocks ? [] : energy === "strong" ? strengthStrong : []),
       ...afterSession
     ];
   }
@@ -171,8 +174,8 @@ export function getSessionChecklist(session: PlannedSession, energy: EnergyLevel
     return [
       ...beforeSession,
       ...runWarmup,
-      ...(energy === "fatigue" ? runFatigue : runNormal),
-      ...(energy === "strong" ? runStrong : []),
+      ...(hasExerciseBlocks ? [] : energy === "fatigue" ? runFatigue : runNormal),
+      ...(hasExerciseBlocks ? [] : energy === "strong" ? runStrong : []),
       ...afterSession
     ];
   }
@@ -181,8 +184,10 @@ export function getSessionChecklist(session: PlannedSession, energy: EnergyLevel
     return [
       ...beforeSession,
       ...hyroxWarmup,
-      ...(energy === "fatigue" ? hyroxFatigue : hyroxBlocks.slice(0, getHyroxBlockCount(session))),
-      ...(energy === "strong" ? [item("Bonus en forme", "hyrox-strong-transitions", "Transitions raccourcies, sans aller à l'échec")] : []),
+      ...(hasExerciseBlocks ? [] : energy === "fatigue" ? hyroxFatigue : hyroxBlocks.slice(0, getHyroxBlockCount(session))),
+      ...(hasExerciseBlocks || energy !== "strong"
+        ? []
+        : [item("Bonus en forme", "hyrox-strong-transitions", "Transitions raccourcies, sans aller à l'échec")]),
       item("Stations HYROX", "hyrox-transitions-note", "Transitions notées : propres / moyennes / à améliorer"),
       ...afterSession
     ];
@@ -197,4 +202,3 @@ export function getSessionChecklist(session: PlannedSession, energy: EnergyLevel
     ...afterSession
   ];
 }
-

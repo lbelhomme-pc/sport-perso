@@ -65,7 +65,7 @@ function getStrengthExercises(week: number): ExercisePrescription[] {
       name: "Sled Push",
       order: 3,
       sets: sledPushSets,
-      distanceM: 12.5,
+      distanceM: 10,
       targetLoadText: deload ? "60-70 % calibration" : "80-90 % calibration RPE 7",
       loadMode: "percentCalibration",
       percentCalibration: deload ? 65 : 85,
@@ -73,8 +73,8 @@ function getStrengthExercises(week: number): ExercisePrescription[] {
       restText: deload ? "90 s" : "2 min",
       rpeTarget: deload ? "RPE 5-6" : "RPE 7-8",
       techniqueNotes: ["Buste gainé", "Poussée propre", "Stop si douleur genou/mollet"],
-      fatigueAdjustment: "4 x 12,5 m à 60-70 % calibration, repos 90 s.",
-      strongAdjustment: "8 x 12,5 m à 90-105 % calibration, repos 2 min 30."
+      fatigueAdjustment: "4 x 10 m à 60-70 % calibration, repos 90 s.",
+      strongAdjustment: "8 x 10 m à 90-105 % calibration, repos 2 min 30."
     }),
     exercise({
       id: "strength-sled-pull",
@@ -82,7 +82,7 @@ function getStrengthExercises(week: number): ExercisePrescription[] {
       name: "Sled Pull",
       order: 4,
       sets: sledPullSets,
-      distanceM: 12.5,
+      distanceM: 10,
       targetLoadText: deload ? "60-70 % calibration" : "80-90 % calibration RPE 7",
       loadMode: "percentCalibration",
       percentCalibration: deload ? 65 : 85,
@@ -90,8 +90,8 @@ function getStrengthExercises(week: number): ExercisePrescription[] {
       restText: deload ? "90 s" : "2 min",
       rpeTarget: deload ? "RPE 5-6" : "RPE 7-8",
       techniqueNotes: ["Dos neutre", "Bras + dos + jambes", "Corde ramenée régulièrement"],
-      fatigueAdjustment: "3 x 12,5 m à 60-70 % calibration, repos 90 s.",
-      strongAdjustment: "6 x 12,5 m à 90-105 % calibration, repos 2 min 30."
+      fatigueAdjustment: "3 x 10 m à 60-70 % calibration, repos 90 s.",
+      strongAdjustment: "6 x 10 m à 90-105 % calibration, repos 2 min 30."
     }),
     exercise({
       id: "strength-main-lift",
@@ -293,7 +293,7 @@ function getHyroxStationExercise(station: string, order: number, week: number, i
   if (station.includes("Sled Push")) {
     return exercise({
       ...common,
-      repsText: "1 km course + 4 x 12,5 m",
+      repsText: "1 km course + 4 x 10 m",
       targetLoadText: "70-100 % calibration selon phase",
       loadMode: "percentCalibration",
       techniqueNotes: ["Transitions propres", "Poussée continue", "Ne pas exploser sur le premier aller"]
@@ -303,7 +303,7 @@ function getHyroxStationExercise(station: string, order: number, week: number, i
   if (station.includes("Sled Pull")) {
     return exercise({
       ...common,
-      repsText: "1 km course + 4 x 12,5 m",
+      repsText: "1 km course + 4 x 10 m",
       targetLoadText: "70-100 % calibration selon phase",
       loadMode: "percentCalibration",
       techniqueNotes: ["Dos neutre", "Corde fluide", "Relancer avec les jambes"]
@@ -401,6 +401,33 @@ function getBadmintonExercises(): ExercisePrescription[] {
 }
 
 export const weekTemplates: Record<BadmintonVariant, DayTemplate[]> = {
+  twoBadTueWed: [
+    { day: "Lundi", slot: "rest" },
+    { day: "Mardi", slot: "badminton" },
+    { day: "Mercredi", slot: "badminton" },
+    { day: "Jeudi", slot: "strength" },
+    { day: "Vendredi", slot: "run", note: "Salle possible si pas de badminton vendredi soir." },
+    { day: "Samedi", slot: "recovery" },
+    { day: "Dimanche", slot: "hyrox" }
+  ],
+  twoBadTueThu: [
+    { day: "Lundi", slot: "rest" },
+    { day: "Mardi", slot: "badminton" },
+    { day: "Mercredi", slot: "strength" },
+    { day: "Jeudi", slot: "badminton" },
+    { day: "Vendredi", slot: "run", note: "Salle possible si pas de badminton vendredi soir." },
+    { day: "Samedi", slot: "recovery" },
+    { day: "Dimanche", slot: "hyrox" }
+  ],
+  twoBadTueFri: [
+    { day: "Lundi", slot: "rest" },
+    { day: "Mardi", slot: "badminton" },
+    { day: "Mercredi", slot: "strength" },
+    { day: "Jeudi", slot: "run" },
+    { day: "Vendredi", slot: "badminton" },
+    { day: "Samedi", slot: "recovery" },
+    { day: "Dimanche", slot: "hyrox" }
+  ],
   twoBadWedThu: [
     { day: "Lundi", slot: "rest" },
     { day: "Mardi", slot: "strength", note: "Salle possible si pas de badminton mardi soir." },
@@ -410,12 +437,48 @@ export const weekTemplates: Record<BadmintonVariant, DayTemplate[]> = {
     { day: "Samedi", slot: "recovery" },
     { day: "Dimanche", slot: "hyrox" }
   ],
+  twoBadWedFri: [
+    { day: "Lundi", slot: "rest" },
+    { day: "Mardi", slot: "strength", note: "Salle possible si pas de badminton mardi soir." },
+    { day: "Mercredi", slot: "badminton" },
+    { day: "Jeudi", slot: "run" },
+    { day: "Vendredi", slot: "badminton" },
+    { day: "Samedi", slot: "recovery" },
+    { day: "Dimanche", slot: "hyrox" }
+  ],
+  twoBadThuFri: [
+    { day: "Lundi", slot: "rest" },
+    { day: "Mardi", slot: "strength", note: "Salle possible si pas de badminton mardi soir." },
+    { day: "Mercredi", slot: "run" },
+    { day: "Jeudi", slot: "badminton" },
+    { day: "Vendredi", slot: "badminton" },
+    { day: "Samedi", slot: "recovery" },
+    { day: "Dimanche", slot: "hyrox" }
+  ],
   threeBadTueWedThu: [
     { day: "Lundi", slot: "rest" },
     { day: "Mardi", slot: "badminton" },
     { day: "Mercredi", slot: "badminton" },
     { day: "Jeudi", slot: "badminton" },
     { day: "Vendredi", slot: "strength", note: "Séance force plus compacte après trois soirs de badminton." },
+    { day: "Samedi", slot: "run" },
+    { day: "Dimanche", slot: "hyrox" }
+  ],
+  threeBadTueWedFri: [
+    { day: "Lundi", slot: "rest" },
+    { day: "Mardi", slot: "badminton" },
+    { day: "Mercredi", slot: "badminton" },
+    { day: "Jeudi", slot: "strength" },
+    { day: "Vendredi", slot: "badminton" },
+    { day: "Samedi", slot: "run" },
+    { day: "Dimanche", slot: "hyrox" }
+  ],
+  threeBadTueThuFri: [
+    { day: "Lundi", slot: "rest" },
+    { day: "Mardi", slot: "badminton" },
+    { day: "Mercredi", slot: "strength" },
+    { day: "Jeudi", slot: "badminton" },
+    { day: "Vendredi", slot: "badminton" },
     { day: "Samedi", slot: "run" },
     { day: "Dimanche", slot: "hyrox" }
   ],
@@ -443,8 +506,8 @@ function getStrengthProgression(week: number) {
 
   if (week <= 4) {
     return {
-      sledPush: deload ? "4 x 12,5 m léger" : `${4 + week} x 12,5 m`,
-      sledPull: deload ? "3 x 12,5 m léger" : `${3 + week} x 12,5 m`,
+      sledPush: deload ? "4 x 10 m léger" : `${4 + week} x 10 m`,
+      sledPull: deload ? "3 x 10 m léger" : `${3 + week} x 10 m`,
       mainLift: deload ? "presse légère 3 x 8" : "trap bar deadlift ou front squat 4 x 5",
       wallBalls: deload ? "4 x 8" : "5 x 10 à 12",
       rpe: deload ? "RPE 5-6" : "RPE 7"
@@ -453,8 +516,8 @@ function getStrengthProgression(week: number) {
 
   if (week <= 8) {
     return {
-      sledPush: deload ? "5 x 12,5 m léger" : "6 x 12,5 m",
-      sledPull: deload ? "4 x 12,5 m léger" : "5 x 12,5 m",
+      sledPush: deload ? "5 x 10 m léger" : "6 x 10 m",
+      sledPull: deload ? "4 x 10 m léger" : "5 x 10 m",
       mainLift: deload ? "goblet squat 3 x 10" : "front squat ou presse 4 x 6",
       wallBalls: deload ? "4 x 10" : "5 x 15",
       rpe: deload ? "RPE 5-6" : "RPE 7"
@@ -463,8 +526,8 @@ function getStrengthProgression(week: number) {
 
   if (week <= 12) {
     return {
-      sledPush: deload ? "5 x 12,5 m modéré" : "7 x 12,5 m lourd",
-      sledPull: deload ? "4 x 12,5 m modéré" : "6 x 12,5 m lourd",
+      sledPush: deload ? "5 x 10 m modéré" : "7 x 10 m lourd",
+      sledPull: deload ? "4 x 10 m modéré" : "6 x 10 m lourd",
       mainLift: deload ? "soulevé de terre roumain 3 x 8" : "trap bar deadlift 5 x 4",
       wallBalls: deload ? "4 x 12" : "6 x 15",
       rpe: deload ? "RPE 6" : "RPE 7-8"
@@ -473,8 +536,8 @@ function getStrengthProgression(week: number) {
 
   if (week <= 20) {
     return {
-      sledPush: deload ? "5 x 12,5 m technique" : "8 x 12,5 m",
-      sledPull: deload ? "5 x 12,5 m technique" : "7 x 12,5 m",
+      sledPush: deload ? "5 x 10 m technique" : "8 x 10 m",
+      sledPull: deload ? "5 x 10 m technique" : "7 x 10 m",
       mainLift: deload ? "presse 3 x 8" : "front squat 4 x 5 + fentes 3 x 10",
       wallBalls: deload ? "4 x 12" : "6 x 18 à 20",
       rpe: deload ? "RPE 6" : "RPE 8"
@@ -483,8 +546,8 @@ function getStrengthProgression(week: number) {
 
   if (week <= 28) {
     return {
-      sledPush: deload ? "5 x 12,5 m propre" : "8 x 12,5 m charge course ou proche",
-      sledPull: deload ? "5 x 12,5 m propre" : "7 x 12,5 m charge course ou proche",
+      sledPush: deload ? "5 x 10 m propre" : "8 x 10 m charge course ou proche",
+      sledPull: deload ? "5 x 10 m propre" : "7 x 10 m charge course ou proche",
       mainLift: deload ? "goblet squat 3 x 8" : "force entretien : 3 x 5 lourd mais propre",
       wallBalls: deload ? "4 x 15" : "5 x 25",
       rpe: deload ? "RPE 6" : "RPE 8"
@@ -493,8 +556,8 @@ function getStrengthProgression(week: number) {
 
   if (week <= 31) {
     return {
-      sledPush: week === 30 ? "6 x 12,5 m charge course" : "5 x 12,5 m dynamique",
-      sledPull: week === 30 ? "5 x 12,5 m charge course" : "4 x 12,5 m dynamique",
+      sledPush: week === 30 ? "6 x 10 m charge course" : "5 x 10 m dynamique",
+      sledPull: week === 30 ? "5 x 10 m charge course" : "4 x 10 m dynamique",
       mainLift: "force entretien : 3 x 3 à 5, sans échec",
       wallBalls: "4 x 20 propres",
       rpe: "RPE 7"
@@ -502,8 +565,8 @@ function getStrengthProgression(week: number) {
   }
 
   return {
-    sledPush: "3 x 12,5 m facile",
-    sledPull: "3 x 12,5 m facile",
+    sledPush: "3 x 10 m facile",
+    sledPull: "3 x 10 m facile",
     mainLift: "activation légère 2 x 8",
     wallBalls: "3 x 10 faciles",
     rpe: "RPE 5"

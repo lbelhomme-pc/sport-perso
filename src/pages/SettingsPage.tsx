@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Download, RefreshCcw, Save, Upload } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
+import { BADMINTON_VARIANTS } from "../data/defaults";
 import { exportJson, getExportPreview, importJsonFile, mergeJsonFiles } from "../services/exportService";
 import { resetData } from "../services/storageService";
 import { useSettings } from "../hooks/useSettings";
-import type { BmrSex, Settings } from "../types";
+import type { BadmintonVariant, BmrSex, Settings } from "../types";
 import { calculateBasalMetabolicRate } from "../utils/calories";
 
 function parseVacationWeeks(value: string): number[] {
@@ -33,6 +34,8 @@ export default function SettingsPage() {
       [key]:
         key === "targetDate" || key === "startDate"
           ? value
+          : key === "badmintonVariant"
+            ? (value as BadmintonVariant)
           : key === "sex"
             ? (value as BmrSex)
             : key === "useCalculatedBmr"
@@ -66,6 +69,19 @@ export default function SettingsPage() {
             <label className="field-label">
               Début préparation
               <input className="field" type="date" value={form.startDate} onChange={(event) => update("startDate", event.target.value)} />
+            </label>
+            <label className="field-label sm:col-span-2">
+              Configuration badminton par défaut
+              <select className="field" value={form.badmintonVariant} onChange={(event) => update("badmintonVariant", event.target.value)}>
+                {BADMINTON_VARIANTS.map((variant) => (
+                  <option key={variant.id} value={variant.id}>
+                    {variant.label}
+                  </option>
+                ))}
+              </select>
+              <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
+                Les 10 combinaisons sont disponibles. Ce choix pilote le planning, le calendrier, les repas et les statistiques.
+              </span>
             </label>
             <label className="field-label">
               Poids de départ

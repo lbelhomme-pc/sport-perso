@@ -369,7 +369,7 @@ export default function DashboardPage() {
           </h2>
           <div className="mt-4 grid gap-2">
             <CalorieBreakdownLine label="BMR" value={dashboard.adaptiveCalorieTarget.base} hint="métabolisme basal" />
-            <CalorieBreakdownLine label="EAT / sport" value={dashboard.adaptiveCalorieTarget.activityFuel} hint="séance saisie ou prévue" />
+            <CalorieBreakdownLine label="EAT / sport" value={dashboard.adaptiveCalorieTarget.activityFuel} hint="séances validées uniquement" />
             <CalorieBreakdownLine label="NEAT pas" value={dashboard.adaptiveCalorieTarget.stepsNeatCalories} hint={`${steps} pas`} />
             <CalorieBreakdownLine label="NEAT étages" value={dashboard.adaptiveCalorieTarget.floorsNeatCalories} hint={`${floors} étages`} />
             <CalorieBreakdownLine label="Ressenti" value={dashboard.adaptiveCalorieTarget.feelingFuel} hint={dashboard.adaptiveCalorieTarget.feelingLabel} />

@@ -12,7 +12,7 @@ export function useDashboard() {
   const today = toISODate(new Date());
   const currentWeek = getCurrentWeekIndex(data.settings.startDate, data.settings.targetDate);
   const currentWeekStart = getWeekStart(data.settings.startDate, currentWeek);
-  const plannedWeek = getPlannedWeek(data.settings, currentWeek, "twoBadWedThu");
+  const plannedWeek = getPlannedWeek(data.settings, currentWeek, data.settings.badmintonVariant);
   const todayPlanned = plannedWeek.find((session) => session.date === today);
   const todayMeals = data.meals.filter((meal) => meal.date === today);
   const todaySessions = data.sessions.filter((session) => session.date === today);

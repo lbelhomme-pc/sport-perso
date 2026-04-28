@@ -21,6 +21,7 @@ type MealFormProps = {
   initial?: Partial<Meal>;
   onSubmit: (meal: Meal) => void;
   onCancel?: () => void;
+  pinInitialDate?: boolean;
 };
 
 type MealFormState = {
@@ -210,7 +211,7 @@ function readMealDraft(): MealDraft | null {
   }
 }
 
-export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
+export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }: MealFormProps) {
   const initialProduct = productFromMeal(initial);
   const isEditing = Boolean(initial?.id);
   const defaultForm: MealFormState = {
@@ -225,7 +226,11 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
     notes: initial?.notes ?? ""
   };
   const savedDraft = !isEditing ? readMealDraft() : null;
-  const [form, setForm] = useState<MealFormState>(savedDraft?.form ?? defaultForm);
+  const savedDraftForm =
+    savedDraft?.form && pinInitialDate && initial?.date
+      ? { ...savedDraft.form, date: initial.date }
+      : savedDraft?.form;
+  const [form, setForm] = useState<MealFormState>(savedDraftForm ?? defaultForm);
   const [mealItems, setMealItems] = useState<MealFoodItem[]>(() => savedDraft?.mealItems ?? itemsFromMeal(initial));
   const [searchTerm, setSearchTerm] = useState(savedDraft?.searchTerm ?? "");
   const [results, setResults] = useState<FoodProduct[]>(initialProduct ? [initialProduct] : []);

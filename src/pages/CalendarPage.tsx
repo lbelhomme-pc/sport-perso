@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   addMonths,
   eachDayOfInterval,
@@ -12,25 +12,52 @@ import {
   subMonths
 } from "date-fns";
 import { fr } from "date-fns/locale";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { MealForm } from "../components/forms/MealForm";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
 import { MEAL_TYPE_LABELS, PLANNED_TYPE_LABELS, SESSION_TYPE_LABELS } from "../data/defaults";
 import { getPlannedWeek } from "../data/trainingPlan";
 import { DAILY_HABIT_LABELS } from "../hooks/useDailyHabits";
+import { useMeals } from "../hooks/useMeals";
 import { useSettings } from "../hooks/useSettings";
 import { useStoredData } from "../hooks/useStoredData";
-import type { DailyHabitType } from "../types";
+import type { CompletedSessionType, DailyHabitType, PlannedSessionType } from "../types";
 import { getTotalWeeks, getWeekIndexForDate, toISODate } from "../utils/dates";
 
 const habitOrder: DailyHabitType[] = ["allergies", "duolingo", "omega3", "creatine"];
+const HABIT_SHORT_LABELS: Record<DailyHabitType, string> = {
+  allergies: "A",
+  duolingo: "D",
+  omega3: "O3",
+  creatine: "C"
+};
+const PLANNED_SHORT_LABELS: Record<PlannedSessionType, string> = {
+  rest: "Repos",
+  badminton: "Bad",
+  strength: "Salle",
+  run: "Run",
+  hyrox: "HY",
+  recovery: "Rec"
+};
+const SESSION_SHORT_LABELS: Record<CompletedSessionType, string> = {
+  badminton: "Bad",
+  strength: "Salle",
+  run: "Run",
+  hyrox: "HY",
+  recovery: "Rec",
+  other: "Autre"
+};
 
 export default function CalendarPage() {
   const { settings } = useSettings();
+  const { saveMeal } = useMeals();
   const data = useStoredData();
   const today = toISODate(new Date());
   const [month, setMonth] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(today);
+  const [showMealForm, setShowMealForm] = useState(false);
+  const mealFormRef = useRef<HTMLDivElement>(null);
   const totalWeeks = getTotalWeeks(settings.startDate, settings.targetDate);
   const monthStart = startOfMonth(month);
   const monthEnd = endOfMonth(month);
@@ -50,7 +77,7 @@ export default function CalendarPage() {
         .filter((week): week is number => typeof week === "number" && week >= 1 && week <= totalWeeks)
     )
   ];
-  const plannedSessions = weekIndexes.flatMap((week) => getPlannedWeek(settings, week, "twoBadWedThu"));
+  const plannedSessions = weekIndexes.flatMap((week) => getPlannedWeek(settings, week, settings.badmintonVariant));
   const selectedHabits = data.dailyHabits.filter((habit) => habit.date === selectedDate && habit.completed);
   const selectedCompletedSessions = data.sessions.filter((session) => session.date === selectedDate && session.completed);
   const selectedPlannedSessions = plannedSessions.filter((session) => session.date === selectedDate && session.type !== "rest");
@@ -60,6 +87,14 @@ export default function CalendarPage() {
     setMonth(day);
     setSelectedDate(toISODate(day));
   };
+
+  useEffect(() => {
+    if (!showMealForm) return;
+
+    window.setTimeout(() => {
+      mealFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  }, [selectedDate, showMealForm]);
 
   return (
     <>
@@ -105,6 +140,13 @@ export default function CalendarPage() {
             <p className="mt-2 text-sm font-bold text-white/70">
               {selectedPlannedSessions.length} prévu · {selectedCompletedSessions.length} fait · {selectedMeals.length} repas
             </p>
+            <button
+              type="button"
+              className="mt-4 w-full action-button bg-limeSoft text-petrol-900 hover:bg-white"
+              onClick={() => setShowMealForm(true)}
+            >
+              <Plus className="h-4 w-4" /> Ajouter un repas ce jour
+            </button>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
@@ -150,6 +192,32 @@ export default function CalendarPage() {
           </div>
         </div>
 
+        {showMealForm ? (
+          <div ref={mealFormRef} className="mt-5 border border-petrol-800/10 bg-white p-3 sm:p-4">
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="eyebrow">Ajout direct</p>
+                <h2 className="title-lg mt-2">Repas du {format(parseISO(selectedDate), "d MMMM", { locale: fr })}</h2>
+              </div>
+              <button type="button" className="ghost-button" onClick={() => setShowMealForm(false)}>
+                Fermer
+              </button>
+            </div>
+            <MealForm
+              key={`calendar-meal-${selectedDate}`}
+              initial={{ date: selectedDate }}
+              pinInitialDate
+              onCancel={() => setShowMealForm(false)}
+              onSubmit={(meal) => {
+                saveMeal(meal);
+                setSelectedDate(meal.date);
+                setMonth(parseISO(meal.date));
+                setShowMealForm(false);
+              }}
+            />
+          </div>
+        ) : null}
+
         <div className="mt-5 grid grid-cols-7 gap-1 text-center text-[0.62rem] font-black uppercase tracking-[0.08em] text-muted">
           {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
             <span key={day}>{day}</span>
@@ -169,7 +237,7 @@ export default function CalendarPage() {
                 type="button"
                 key={isoDate}
                 onClick={() => selectDay(day)}
-                className={`min-h-20 border p-2 text-left transition sm:min-h-32 sm:p-3 ${
+                className={`min-h-20 min-w-0 overflow-hidden border p-1.5 text-left transition sm:min-h-32 sm:p-3 ${
                   selected
                     ? "border-petrol-800 bg-limeSoft text-petrol-900"
                     : isSameMonth(day, month)
@@ -177,8 +245,8 @@ export default function CalendarPage() {
                       : "border-petrol-800/5 bg-mist/40 opacity-70"
                 }`}
               >
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-display text-xl font-black tracking-[-0.05em] text-petrol-800 sm:text-2xl">{format(day, "d")}</p>
+                <div className="flex min-w-0 items-start justify-between gap-1">
+                  <p className="min-w-0 font-display text-lg font-black tracking-[-0.05em] text-petrol-800 sm:text-2xl">{format(day, "d")}</p>
                   {isoDate === today ? (
                     <span className="hidden rounded-none bg-petrol-800 px-2 py-1 text-[0.55rem] font-black uppercase tracking-[0.08em] text-limeSoft sm:inline-flex">
                       Aujourd'hui
@@ -186,28 +254,35 @@ export default function CalendarPage() {
                   ) : null}
                 </div>
 
-                <div className="mt-2 grid gap-1">
+                <div className="mt-1 flex min-w-0 flex-wrap gap-1 sm:mt-2 sm:grid">
                   {habitOrder.map((habit) =>
                     dayHabits.some((item) => item.type === habit) ? (
-                      <span key={habit} className="truncate rounded-none bg-limeSoft px-1.5 py-1 text-[0.52rem] font-black uppercase tracking-[0.06em] text-petrol-900 sm:px-2 sm:text-[0.62rem]">
-                        {DAILY_HABIT_LABELS[habit]}
+                      <span key={habit} className="inline-flex h-5 min-w-5 max-w-full items-center justify-center overflow-hidden rounded-none bg-limeSoft px-1 text-[0.5rem] font-black uppercase tracking-[0.04em] text-petrol-900 sm:h-auto sm:min-w-0 sm:justify-start sm:px-2 sm:py-1 sm:text-[0.62rem]">
+                        <span className="sm:hidden">{HABIT_SHORT_LABELS[habit]}</span>
+                        <span className="hidden truncate sm:inline">{DAILY_HABIT_LABELS[habit]}</span>
                       </span>
                     ) : null
                   )}
                 </div>
 
-                <div className="mt-2 grid gap-1">
+                <div className="mt-1 flex min-w-0 flex-wrap gap-1 sm:mt-2 sm:grid">
                   {plannedForDay.map((session) => (
-                    <div key={session.id} className="border-l-4 border-petrol-800/20 bg-mist/60 px-2 py-1">
+                    <div key={session.id} className="min-w-0 max-w-full border-l-2 border-petrol-800/20 bg-mist/60 px-1.5 py-1 sm:border-l-4 sm:px-2">
                       <p className="hidden text-[0.62rem] font-black uppercase tracking-[0.08em] text-muted sm:block">Prévu</p>
-                      <p className="truncate text-[0.62rem] font-black text-petrol-800 sm:text-xs">{PLANNED_TYPE_LABELS[session.type]}</p>
+                      <p className="max-w-full truncate text-[0.55rem] font-black text-petrol-800 sm:text-xs">
+                        <span className="sm:hidden">{PLANNED_SHORT_LABELS[session.type]}</span>
+                        <span className="hidden sm:inline">{PLANNED_TYPE_LABELS[session.type]}</span>
+                      </p>
                     </div>
                   ))}
 
                   {completedSessions.map((session) => (
-                    <div key={session.id} className="border-l-4 border-limeSoft bg-petrol-800 px-2 py-1 text-white">
+                    <div key={session.id} className="min-w-0 max-w-full border-l-2 border-limeSoft bg-petrol-800 px-1.5 py-1 text-white sm:border-l-4 sm:px-2">
                       <p className="hidden text-[0.62rem] font-black uppercase tracking-[0.08em] text-limeSoft sm:block">Fait</p>
-                      <p className="truncate text-[0.62rem] font-black sm:text-xs">{SESSION_TYPE_LABELS[session.type]}</p>
+                      <p className="max-w-full truncate text-[0.55rem] font-black sm:text-xs">
+                        <span className="sm:hidden">{SESSION_SHORT_LABELS[session.type]}</span>
+                        <span className="hidden sm:inline">{SESSION_TYPE_LABELS[session.type]}</span>
+                      </p>
                     </div>
                   ))}
                 </div>

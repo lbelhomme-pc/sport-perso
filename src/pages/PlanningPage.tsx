@@ -14,6 +14,14 @@ import { useSessions } from "../hooks/useSessions";
 import { useSettings } from "../hooks/useSettings";
 import type { BadmintonVariant, EnergyLevel, ExercisePrescription, PlannedSession, SessionChecklistItem } from "../types";
 import { formatShortDate, getCurrentWeekIndex, getTotalWeeks, getWeekEnd, getWeekStart, toISODate } from "../utils/dates";
+import {
+  getActionableExercises,
+  getExerciseCheckId,
+  getExerciseDetailChips,
+  getExerciseDisplayTitle,
+  getExerciseInstruction,
+  getGuidanceExercises
+} from "../utils/exerciseDisplay";
 import { getCompletedForPlan } from "../utils/training";
 
 function groupChecklistItems(items: SessionChecklistItem[]) {
@@ -26,20 +34,6 @@ function groupChecklistItems(items: SessionChecklistItem[]) {
     }
     return groups;
   }, []);
-}
-
-function getExerciseCheckId(exercise: ExercisePrescription) {
-  return `exercise:${exercise.id}`;
-}
-
-function formatExercisePrescription(exercise: ExercisePrescription) {
-  if (exercise.sets && exercise.distanceM) return `${exercise.sets} x ${exercise.distanceM} m`;
-  if (exercise.sets && exercise.repsText) return `${exercise.sets} x ${exercise.repsText}`;
-  if (exercise.sets && exercise.reps) return `${exercise.sets} x ${exercise.reps}`;
-  if (exercise.repsText) return exercise.repsText;
-  if (exercise.distanceM) return `${exercise.distanceM} m`;
-  if (exercise.durationSec) return `${exercise.durationSec} s`;
-  return "Prescription à ajuster";
 }
 
 function getExerciseAdjustment(exercise: ExercisePrescription, energy: EnergyLevel) {
@@ -74,7 +68,7 @@ function SessionChecklistPanel({
               <ListChecks className="h-4 w-4" />
             </span>
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-muted">Checklist séance</p>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-muted">Prépa + clôture</p>
               <p className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
                 {checkedCount}/{items.length} validés
               </p>
@@ -109,10 +103,10 @@ function SessionChecklistPanel({
 
       <div className="mt-4 flex flex-wrap gap-2">
         <button type="button" className="action-button" onClick={onCheckAll}>
-          Tout cocher
+          Tout cocher prépa
         </button>
         <button type="button" className="ghost-button" onClick={onReset}>
-          Réinitialiser checklist
+          Réinitialiser prépa
         </button>
       </div>
     </details>
@@ -133,34 +127,52 @@ function ExercisePrescriptionPanel({
   if (!exercises?.length) return null;
 
   const checkedSet = new Set(checkedItemIds);
-  const sortedExercises = [...exercises].sort((a, b) => a.order - b.order);
-  const checkedCount = sortedExercises.filter((exercise) => checkedSet.has(getExerciseCheckId(exercise))).length;
+  const actionableExercises = getActionableExercises(exercises);
+  const guidanceExercises = getGuidanceExercises(exercises);
+  const checkedCount = actionableExercises.filter((exercise) => checkedSet.has(getExerciseCheckId(exercise))).length;
+  const progressLabel = actionableExercises.length ? `${checkedCount}/${actionableExercises.length} blocs utiles validés` : "Consignes de séance";
 
   return (
     <details className="mt-4 border border-petrol-800/10 bg-white p-4" open>
       <summary className="cursor-pointer list-none">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-muted">Exercices précis</p>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-muted">Déroulé intelligent</p>
             <p className="mt-1 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
-              {checkedCount}/{sortedExercises.length} blocs validés
+              {progressLabel}
             </p>
           </div>
-          <span className="chip">Charges / repos / RPE</span>
+          <span className="chip">Moins de clics</span>
         </div>
       </summary>
 
+      {guidanceExercises.length ? (
+        <div className="mt-4 border-l-4 border-limeSoft bg-mist/45 p-4">
+          <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-petrol-800">Prépa / consignes</p>
+          <div className="mt-3 grid gap-2">
+            {guidanceExercises.map((exercise) => (
+              <div key={exercise.id} className="bg-white p-3">
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">{exercise.block}</p>
+                <p className="mt-1 text-sm font-black text-petrol-800">{getExerciseDisplayTitle(exercise)}</p>
+                <p className="mt-1 text-sm font-semibold leading-5 text-ink">{getExerciseInstruction(exercise)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
       <div className="mt-4 grid gap-3">
-        {sortedExercises.map((exercise) => {
+        {actionableExercises.map((exercise) => {
           const checkId = getExerciseCheckId(exercise);
           const checked = checkedSet.has(checkId);
           const adjustment = getExerciseAdjustment(exercise, energy);
+          const detailChips = getExerciseDetailChips(exercise);
 
           return (
-            <article key={exercise.id} className="border border-petrol-800/10 bg-mist/35 p-3">
+            <article key={exercise.id} className={`border border-petrol-800/10 p-3 ${checked ? "bg-limeSoft/25" : "bg-mist/35"}`}>
               <div className="flex items-start gap-3">
                 <input
-                  className="mt-1 h-5 w-5 shrink-0 accent-petrol-800"
+                  className="mt-1 h-6 w-6 shrink-0 accent-petrol-800"
                   type="checkbox"
                   checked={checked}
                   onChange={(event) => onToggle(checkId, event.target.checked)}
@@ -170,26 +182,23 @@ function ExercisePrescriptionPanel({
                     <div>
                       <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-muted">{exercise.block}</p>
                       <h3 className={`font-display text-xl font-black tracking-[-0.04em] ${checked ? "text-muted line-through" : "text-petrol-800"}`}>
-                        {exercise.name}
+                        {getExerciseDisplayTitle(exercise)}
                       </h3>
                     </div>
-                    <span className="chip">{formatExercisePrescription(exercise)}</span>
+                    <span className="chip">Bloc {exercise.order}</span>
                   </div>
 
-                  <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                    <div className="bg-white p-3">
-                      <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Charge</p>
-                      <p className="mt-1 text-sm font-black text-petrol-800">{exercise.targetLoadText ?? "À saisir au feeling"}</p>
+                  <p className="mt-3 bg-white p-3 text-sm font-black leading-5 text-ink">{getExerciseInstruction(exercise)}</p>
+
+                  {detailChips.length ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {detailChips.map((chip) => (
+                        <span key={`${chip.label}-${chip.value}`} className="chip bg-white">
+                          {chip.label} : {chip.value}
+                        </span>
+                      ))}
                     </div>
-                    <div className="bg-white p-3">
-                      <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Repos</p>
-                      <p className="mt-1 text-sm font-black text-petrol-800">{exercise.restText ?? "Libre"}</p>
-                    </div>
-                    <div className="bg-white p-3">
-                      <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">RPE</p>
-                      <p className="mt-1 text-sm font-black text-petrol-800">{exercise.rpeTarget ?? "Contrôlé"}</p>
-                    </div>
-                  </div>
+                  ) : null}
 
                   {adjustment ? <p className="mt-3 border-l-4 border-limeSoft bg-white p-3 text-xs font-bold text-ink">{adjustment}</p> : null}
                   {exercise.techniqueNotes?.length ? (
@@ -201,6 +210,12 @@ function ExercisePrescriptionPanel({
           );
         })}
       </div>
+
+      {!actionableExercises.length ? (
+        <p className="mt-4 border border-petrol-800/10 bg-white p-3 text-sm font-bold text-muted">
+          Rien à cocher ici : cette séance sert surtout à récupérer, préparer ou noter les sensations.
+        </p>
+      ) : null}
     </details>
   );
 }
@@ -268,18 +283,19 @@ function SessionCommentBox({
 }
 
 export default function PlanningPage() {
-  const { settings } = useSettings();
+  const { settings, saveSettings } = useSettings();
   const { sessions, saveSession, deletePlannedSessionCompletion } = useSessions();
-  const { getCheckedItemIds, saveChecklist, toggleChecklistItem, resetChecklist } = useSessionChecklists();
+  const { getCheckedItemIds, saveChecklist, toggleChecklistItem } = useSessionChecklists();
   const { getOverride, saveNotes, resetOverride } = usePlanningOverrides();
   const totalWeeks = getTotalWeeks(settings.startDate, settings.targetDate);
   const [week, setWeek] = useState(() => getCurrentWeekIndex(settings.startDate, settings.targetDate));
-  const [variant, setVariant] = useState<BadmintonVariant>("twoBadWedThu");
   const [energy, setEnergy] = useState<EnergyLevel>("normal");
   const [editingSession, setEditingSession] = useState<PlannedSession | null>(null);
   const [sessionMode, setSessionMode] = useState<PlannedSession | null>(null);
   const [openSessionId, setOpenSessionId] = useState<string | null>(null);
+  const [showProgression, setShowProgression] = useState(false);
   const today = toISODate(new Date());
+  const variant = settings.badmintonVariant;
   const plannedWeek = getPlannedWeek(settings, week, variant).map((session) =>
     applyPlannedSessionOverride(session, getOverride(session.id))
   );
@@ -335,13 +351,20 @@ export default function PlanningPage() {
 
           <label className="field-label">
             Configuration badminton
-            <select className="field" value={variant} onChange={(event) => setVariant(event.target.value as BadmintonVariant)}>
+            <select
+              className="field"
+              value={variant}
+              onChange={(event) => saveSettings({ ...settings, badmintonVariant: event.target.value as BadmintonVariant })}
+            >
               {BADMINTON_VARIANTS.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.label}
                 </option>
               ))}
             </select>
+            <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
+              10 configurations disponibles. Ce choix devient la référence pour le dashboard, le calendrier et les stats.
+            </span>
           </label>
 
           <label className="field-label">
@@ -381,6 +404,14 @@ export default function PlanningPage() {
             </p>
           </div>
         </div>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-petrol-800/10 pt-4">
+          <p className="text-xs font-bold text-muted">
+            La progression par phases est optionnelle : garde-la cachée pour un planning plus lisible.
+          </p>
+          <button type="button" className="ghost-button" onClick={() => setShowProgression((current) => !current)}>
+            <ListChecks className="h-4 w-4" /> {showProgression ? "Masquer progression" : "Afficher progression"}
+          </button>
+        </div>
       </SectionCard>
 
       {editingSession ? (
@@ -396,7 +427,7 @@ export default function PlanningPage() {
                 saveSession(session);
                 if (session.completed) {
                   const checklistItems = getSessionChecklist(editingSession, energy);
-                  const exerciseCheckIds = editingSession.exercises?.map(getExerciseCheckId) ?? [];
+                  const exerciseCheckIds = getActionableExercises(editingSession.exercises).map(getExerciseCheckId);
                   saveChecklist(editingSession.id, [...checklistItems.map((item) => item.id), ...exerciseCheckIds]);
                 }
                 setOpenSessionId(editingSession.id);
@@ -407,25 +438,32 @@ export default function PlanningPage() {
         </SectionCard>
       ) : null}
 
-      <div className="grid gap-5 xl:grid-cols-[17rem_1fr]">
-        <SectionCard className="p-5">
-          <p className="eyebrow">Progression</p>
-          <div className="mt-4 grid gap-2">
-            {phases.map((phase) => (
-              <div
-                key={phase.key}
-                className={`border-l-4 p-3 ${
-                  week >= phase.from && week <= phase.to ? "border-petrol-800 bg-sage" : "border-petrol-800/15 bg-white"
-                }`}
-              >
-                <p className="text-sm font-black text-petrol-800">{phase.title}</p>
-                <p className="text-xs font-bold text-muted">
-                  Semaines {phase.from} à {phase.to}
-                </p>
-              </div>
-            ))}
-          </div>
-        </SectionCard>
+      <div className={`grid gap-5 ${showProgression ? "xl:grid-cols-[17rem_1fr]" : ""}`}>
+        {showProgression ? (
+          <SectionCard className="p-5">
+            <div className="flex items-center justify-between gap-3">
+              <p className="eyebrow">Progression</p>
+              <button type="button" className="text-xs font-black uppercase tracking-[0.08em] text-muted" onClick={() => setShowProgression(false)}>
+                Masquer
+              </button>
+            </div>
+            <div className="mt-4 grid gap-2">
+              {phases.map((phase) => (
+                <div
+                  key={phase.key}
+                  className={`border-l-4 p-3 ${
+                    week >= phase.from && week <= phase.to ? "border-petrol-800 bg-sage" : "border-petrol-800/15 bg-white"
+                  }`}
+                >
+                  <p className="text-sm font-black text-petrol-800">{phase.title}</p>
+                  <p className="text-xs font-bold text-muted">
+                    Semaines {phase.from} à {phase.to}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </SectionCard>
+        ) : null}
 
         <div className="grid gap-3">
           {plannedWeek.map((session) => {
@@ -433,7 +471,7 @@ export default function PlanningPage() {
             const content = getDisplayedVersion(session, energy);
             const checklistItems = getSessionChecklist(session, energy);
             const checkedItemIds = getCheckedItemIds(session.id);
-            const exerciseCheckIds = session.exercises?.map(getExerciseCheckId) ?? [];
+            const exerciseCheckIds = getActionableExercises(session.exercises).map(getExerciseCheckId);
             const override = getOverride(session.id);
             const isOpen = openSessionId === session.id;
 
@@ -464,19 +502,13 @@ export default function PlanningPage() {
                 </button>
 
                 {isOpen ? (
-                  <div className="border-t border-petrol-800/10 p-5">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <h2 className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{session.title}</h2>
-                      <p className="mt-2 text-sm font-semibold leading-6 text-muted">{session.objective}</p>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="chip">{session.durationMin} min</span>
-                      <span className="chip">{session.rpeTarget}</span>
-                    </div>
+                  <div className="border-t border-petrol-800/10 p-4 sm:p-5">
+                  <div className="border-l-4 border-limeSoft bg-mist/45 p-4">
+                    <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-petrol-800">Objectif</p>
+                    <p className="mt-2 text-sm font-semibold leading-6 text-ink">{session.objective}</p>
                   </div>
 
-                  <p className="mt-4 border-l-4 border-limeSoft bg-mist/50 p-4 text-sm font-semibold leading-6 text-ink">{content}</p>
+                  <p className="mt-4 bg-white p-4 text-sm font-semibold leading-6 text-ink">{content}</p>
                   {session.type !== "rest" ? (
                     <p className="mt-3 border border-petrol-800/10 bg-white p-3 text-xs font-bold leading-5 text-muted">
                       Après la séance, utilise “Saisir temps / FC / calories” : durée, FC, calories et RPE alimentent directement les stats.
@@ -494,8 +526,13 @@ export default function PlanningPage() {
                     items={checklistItems}
                     checkedItemIds={checkedItemIds}
                     onToggle={(itemId, checked) => toggleChecklistItem(session.id, itemId, checked)}
-                    onCheckAll={() => saveChecklist(session.id, [...checklistItems.map((item) => item.id), ...exerciseCheckIds])}
-                    onReset={() => resetChecklist(session.id)}
+                    onCheckAll={() =>
+                      saveChecklist(session.id, [
+                        ...checkedItemIds.filter((itemId) => itemId.startsWith("exercise:")),
+                        ...checklistItems.map((item) => item.id)
+                      ])
+                    }
+                    onReset={() => saveChecklist(session.id, checkedItemIds.filter((itemId) => itemId.startsWith("exercise:")))}
                   />
 
                   <SessionCommentBox

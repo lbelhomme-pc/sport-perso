@@ -30,6 +30,20 @@ const settingsSchema = z.object({
   dailyCalorieTarget: z.coerce.number().positive().default(DEFAULT_SETTINGS.dailyCalorieTarget),
   targetDailyDeficit: z.coerce.number().nonnegative().default(DEFAULT_SETTINGS.targetDailyDeficit),
   defaultBodyWeight: z.coerce.number().positive().default(DEFAULT_SETTINGS.defaultBodyWeight),
+  badmintonVariant: z
+    .enum([
+      "twoBadTueWed",
+      "twoBadTueThu",
+      "twoBadTueFri",
+      "twoBadWedThu",
+      "twoBadWedFri",
+      "twoBadThuFri",
+      "threeBadTueWedThu",
+      "threeBadTueWedFri",
+      "threeBadTueThuFri",
+      "threeBadWedThuFri"
+    ])
+    .default(DEFAULT_SETTINGS.badmintonVariant),
   vacationWeeks: z.array(z.coerce.number().int().positive()).default(DEFAULT_SETTINGS.vacationWeeks),
   updatedAt: z.string().optional()
 });

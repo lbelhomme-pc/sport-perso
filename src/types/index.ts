@@ -12,7 +12,17 @@ export type MealType = "breakfast" | "lunch" | "snack" | "dinner" | "other";
 
 export type MealQuantityUnit = "g" | "ml" | "dose";
 
-export type BadmintonVariant = "twoBadWedThu" | "threeBadTueWedThu" | "threeBadWedThuFri";
+export type BadmintonVariant =
+  | "twoBadTueWed"
+  | "twoBadTueThu"
+  | "twoBadTueFri"
+  | "twoBadWedThu"
+  | "twoBadWedFri"
+  | "twoBadThuFri"
+  | "threeBadTueWedThu"
+  | "threeBadTueWedFri"
+  | "threeBadTueThuFri"
+  | "threeBadWedThuFri";
 
 export type EnergyLevel = "fatigue" | "normal" | "strong";
 
@@ -130,6 +140,7 @@ export type Settings = {
   dailyCalorieTarget: number;
   targetDailyDeficit: number;
   defaultBodyWeight: number;
+  badmintonVariant: BadmintonVariant;
   vacationWeeks: number[];
   updatedAt?: string;
 };

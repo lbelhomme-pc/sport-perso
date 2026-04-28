@@ -82,7 +82,7 @@ export default function MealsPage() {
   const dayMeals = meals.filter((meal) => meal.date === selectedDate);
   const daySessions = sessions.filter((session) => session.date === selectedDate);
   const selectedWeek = getWeekIndexForDate(settings.startDate, settings.targetDate, selectedDate);
-  const selectedPlannedSession = getPlannedWeek(settings, selectedWeek, "twoBadWedThu").find(
+  const selectedPlannedSession = getPlannedWeek(settings, selectedWeek, settings.badmintonVariant).find(
     (session) => session.date === selectedDate
   );
   const totals = getMealTotals(dayMeals);
@@ -261,7 +261,7 @@ export default function MealsPage() {
               <ProgressBar label="Protéines quotidiennes" value={totals.protein} max={proteinTarget} tone="lime" />
             </div>
             <p className="text-xs font-bold text-muted">
-              Calcul simple : BMR {adaptiveCalorieTarget.base} + activité {adaptiveCalorieTarget.activityFuel} + pas{" "}
+              Calcul simple : BMR {adaptiveCalorieTarget.base} + sport validé {adaptiveCalorieTarget.activityFuel} + pas{" "}
               {adaptiveCalorieTarget.stepsNeatCalories} + étages {adaptiveCalorieTarget.floorsNeatCalories} + ressenti {adaptiveCalorieTarget.feelingFuel} - déficit{" "}
               {adaptiveCalorieTarget.targetDeficit} = cible à manger {adaptiveCalorieTarget.target} kcal.{" "}
               {balanceFormulaSentence(dailyDeficit, adaptiveCalorieTarget.maintenanceTarget, Math.round(totals.calories))}

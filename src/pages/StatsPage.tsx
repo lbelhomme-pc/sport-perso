@@ -28,7 +28,7 @@ export default function StatsPage() {
   const totalWeeks = getTotalWeeks(data.settings.startDate, data.settings.targetDate);
   const weekSeries = Array.from({ length: totalWeeks }, (_, index) => {
     const week = index + 1;
-    const plannedWeek = getPlannedWeek(data.settings, week, "twoBadWedThu");
+    const plannedWeek = getPlannedWeek(data.settings, week, data.settings.badmintonVariant);
     const summary = summarizeWeek(week, getWeekStart(data.settings.startDate, week), plannedWeek, data.sessions);
 
     return {
