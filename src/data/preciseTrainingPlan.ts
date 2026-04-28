@@ -44,30 +44,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Reprise, calibration, base technique",
           "semaine de test/calibration"
         ],
-        "exercises": [
-          {
-            "id": "rest-w1-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w1-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w1-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -89,7 +66,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w1-02-sled-push",
@@ -169,13 +147,6 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "restText": "75 s",
             "sets": 3,
             "reps": 12
-          },
-          {
-            "id": "strength-w1-09-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 9,
-            "repsText": "75 min."
           }
         ],
         "sourceDay": "Mardi"
@@ -195,49 +166,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w1-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w1-02-echauffement-obligatoire",
+            "id": "badminton-w1-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w1-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w1-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w1-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w1-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -273,6 +209,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Bloc principal",
             "order": 2,
             "repsText": "Course test déjà faite : 1 km en 4'40, FC moy 162, FC max 175, RPE 8. Pour cette semaine, seulement footing facile ou rameur.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "rpeTarget": "RPE 8"
           },
           {
@@ -309,14 +246,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w1-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -341,6 +272,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -348,14 +280,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w1-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -380,50 +306,23 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w1-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "4."
-          },
-          {
-            "id": "hyrox-w1-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "70-75 %."
-          },
-          {
-            "id": "hyrox-w1-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s à 2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w1-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w1-06-bloc-1",
+            "id": "hyrox-w1-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
+            "order": 2,
             "repsText": "1 km course + Substitut SkiErg : 3 tours : poulie bras tendus 15 reps RPE 6 + rameur 500 m RPE 7 ; repos 90 s après le rameur.",
             "restText": "90 s après le rameur",
             "rpeTarget": "RPE 6"
           },
           {
-            "id": "hyrox-w1-07-bloc-2",
+            "id": "hyrox-w1-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 190 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "190 kg",
             "restText": "30-45 s entre longueurs",
@@ -431,10 +330,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w1-08-bloc-3",
+            "id": "hyrox-w1-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 130 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "130 kg",
             "restText": "30-45 s entre longueurs",
@@ -442,61 +341,20 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w1-09-bloc-4",
+            "id": "hyrox-w1-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 40 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w1-10-retour-au-calme",
+            "id": "hyrox-w1-06-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 10,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w1-11-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 11,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w1-12-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 12,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w1-13-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 13,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w1-14-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 14,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w1-15-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 15,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w1-16-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 16,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 6,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -520,30 +378,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Reprise, calibration, base technique"
         ],
-        "exercises": [
-          {
-            "id": "rest-w2-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w2-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w2-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -552,7 +387,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 215 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 155 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 135 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 215 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -564,7 +399,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w2-02-sled-push",
@@ -575,6 +411,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "215 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -650,14 +490,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w2-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -676,49 +510,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w2-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w2-02-echauffement-obligatoire",
+            "id": "badminton-w2-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w2-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w2-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w2-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w2-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -791,14 +590,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w2-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -822,6 +615,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -829,14 +623,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w2-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -860,50 +648,23 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w2-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "4."
-          },
-          {
-            "id": "hyrox-w2-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "70-75 %."
-          },
-          {
-            "id": "hyrox-w2-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s à 2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w2-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w2-06-bloc-1",
+            "id": "hyrox-w2-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
+            "order": 2,
             "repsText": "1 km course + Substitut SkiErg : 3 tours : poulie bras tendus 15 reps RPE 6 + rameur 500 m RPE 7 ; repos 90 s après le rameur.",
             "restText": "90 s après le rameur",
             "rpeTarget": "RPE 6"
           },
           {
-            "id": "hyrox-w2-07-bloc-2",
+            "id": "hyrox-w2-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 195 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "195 kg",
             "restText": "30-45 s entre longueurs",
@@ -911,10 +672,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w2-08-bloc-3",
+            "id": "hyrox-w2-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 135 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "135 kg",
             "restText": "30-45 s entre longueurs",
@@ -922,61 +683,20 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w2-09-bloc-4",
+            "id": "hyrox-w2-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 40 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w2-10-retour-au-calme",
+            "id": "hyrox-w2-06-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 10,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w2-11-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 11,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w2-12-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 12,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w2-13-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 13,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w2-14-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 14,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w2-15-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 15,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w2-16-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 16,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 6,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -1000,30 +720,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Reprise, calibration, base technique"
         ],
-        "exercises": [
-          {
-            "id": "rest-w3-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w3-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w3-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -1032,7 +729,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 220 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 160 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 140 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 220 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -1044,7 +741,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w3-02-sled-push",
@@ -1055,6 +753,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "220 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -1130,14 +832,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w3-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -1156,49 +852,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w3-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w3-02-echauffement-obligatoire",
+            "id": "badminton-w3-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w3-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w3-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w3-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w3-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -1271,14 +932,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w3-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -1302,6 +957,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -1309,14 +965,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w3-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -1340,50 +990,23 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w3-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "5."
-          },
-          {
-            "id": "hyrox-w3-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "70-75 %."
-          },
-          {
-            "id": "hyrox-w3-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s à 2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w3-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w3-06-bloc-1",
+            "id": "hyrox-w3-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
+            "order": 2,
             "repsText": "1 km course + Substitut SkiErg : 3 tours : poulie bras tendus 15 reps RPE 6 + rameur 500 m RPE 7 ; repos 90 s après le rameur.",
             "restText": "90 s après le rameur",
             "rpeTarget": "RPE 6"
           },
           {
-            "id": "hyrox-w3-07-bloc-2",
+            "id": "hyrox-w3-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 200 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "200 kg",
             "restText": "30-45 s entre longueurs",
@@ -1391,10 +1014,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w3-08-bloc-3",
+            "id": "hyrox-w3-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 140 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "140 kg",
             "restText": "30-45 s entre longueurs",
@@ -1402,69 +1025,29 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w3-09-bloc-4",
+            "id": "hyrox-w3-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 40 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w3-10-bloc-5",
+            "id": "hyrox-w3-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "90 s à 2 min entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w3-11-retour-au-calme",
+            "id": "hyrox-w3-07-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 11,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w3-12-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 12,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w3-13-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 13,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w3-14-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 14,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w3-15-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 15,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w3-16-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 16,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w3-17-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 17,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 7,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -1490,30 +1073,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Reprise, calibration, base technique",
           "semaine allégée"
         ],
-        "exercises": [
-          {
-            "id": "rest-w4-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w4-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w4-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -1535,7 +1095,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "10-12 min."
+            "repsText": "10-12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w4-02-sled-push",
@@ -1615,13 +1176,6 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "restText": "75-90 s",
             "sets": 3,
             "reps": 10
-          },
-          {
-            "id": "strength-w4-09-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 9,
-            "repsText": "60-70 min."
           }
         ],
         "sourceDay": "Mardi"
@@ -1641,49 +1195,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w4-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w4-02-echauffement-obligatoire",
+            "id": "badminton-w4-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w4-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w4-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w4-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w4-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -1719,6 +1238,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Bloc principal",
             "order": 2,
             "repsText": "30-40 min zone 2 + 4 × 20 s accélérations.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 4,
             "durationSec": 20
           },
@@ -1756,14 +1276,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w4-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -1788,6 +1302,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -1795,14 +1310,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w4-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -1827,50 +1336,23 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w4-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "3."
-          },
-          {
-            "id": "hyrox-w4-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "60-70 %."
-          },
-          {
-            "id": "hyrox-w4-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w4-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w4-06-bloc-1",
+            "id": "hyrox-w4-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
+            "order": 2,
             "repsText": "1 km course + Substitut SkiErg : 3 tours : poulie bras tendus 15 reps RPE 6 + rameur 500 m RPE 7 ; repos 90 s après le rameur.",
             "restText": "90 s après le rameur",
             "rpeTarget": "RPE 6"
           },
           {
-            "id": "hyrox-w4-07-bloc-2",
+            "id": "hyrox-w4-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 170 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "170 kg",
             "restText": "30-45 s entre longueurs",
@@ -1878,10 +1360,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w4-08-bloc-3",
+            "id": "hyrox-w4-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 120 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "120 kg",
             "restText": "30-45 s entre longueurs",
@@ -1889,53 +1371,12 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w4-09-retour-au-calme",
+            "id": "hyrox-w4-05-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 9,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w4-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "60-70 min."
-          },
-          {
-            "id": "hyrox-w4-11-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 11,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w4-12-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 12,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w4-13-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 13,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w4-14-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 14,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w4-15-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 15,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 5,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -1959,30 +1400,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Base aérobie + force propre"
         ],
-        "exercises": [
-          {
-            "id": "rest-w5-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w5-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w5-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -1991,7 +1409,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 220 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 160 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 140 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 220 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -2003,7 +1421,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w5-02-sled-push",
@@ -2014,6 +1433,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "220 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -2089,14 +1512,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w5-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -2115,49 +1532,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w5-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w5-02-echauffement-obligatoire",
+            "id": "badminton-w5-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w5-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w5-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w5-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w5-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -2201,7 +1583,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w5-04-burpee-broad-jumps",
@@ -2228,14 +1611,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w5-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -2259,6 +1636,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -2266,14 +1644,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w5-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -2297,48 +1669,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w5-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "5."
-          },
-          {
-            "id": "hyrox-w5-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "70-75 %."
-          },
-          {
-            "id": "hyrox-w5-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s à 2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w5-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w5-06-bloc-1",
+            "id": "hyrox-w5-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "90 s à 2 min entre blocs."
           },
           {
-            "id": "hyrox-w5-07-bloc-2",
+            "id": "hyrox-w5-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 200 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "200 kg",
             "restText": "30-45 s entre longueurs",
@@ -2346,10 +1692,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w5-08-bloc-3",
+            "id": "hyrox-w5-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 140 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "140 kg",
             "restText": "30-45 s entre longueurs",
@@ -2357,69 +1703,29 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w5-09-bloc-4",
+            "id": "hyrox-w5-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 40 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w5-10-bloc-5",
+            "id": "hyrox-w5-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "90 s à 2 min entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w5-11-retour-au-calme",
+            "id": "hyrox-w5-07-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 11,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w5-12-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 12,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w5-13-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 13,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w5-14-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 14,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w5-15-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 15,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w5-16-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 16,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w5-17-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 17,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 7,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -2443,30 +1749,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Base aérobie + force propre"
         ],
-        "exercises": [
-          {
-            "id": "rest-w6-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w6-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w6-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -2475,7 +1758,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 225 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 165 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 145 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 225 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -2487,7 +1770,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w6-02-sled-push",
@@ -2498,6 +1782,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "225 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -2573,14 +1861,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w6-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -2599,49 +1881,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w6-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w6-02-echauffement-obligatoire",
+            "id": "badminton-w6-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w6-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w6-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w6-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w6-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -2685,7 +1932,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w6-04-burpee-broad-jumps",
@@ -2712,14 +1960,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w6-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -2743,6 +1985,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -2750,14 +1993,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w6-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -2781,48 +2018,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w6-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "5."
-          },
-          {
-            "id": "hyrox-w6-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "70-75 %."
-          },
-          {
-            "id": "hyrox-w6-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s à 2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w6-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w6-06-bloc-1",
+            "id": "hyrox-w6-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "90 s à 2 min entre blocs."
           },
           {
-            "id": "hyrox-w6-07-bloc-2",
+            "id": "hyrox-w6-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 205 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "205 kg",
             "restText": "30-45 s entre longueurs",
@@ -2830,10 +2041,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w6-08-bloc-3",
+            "id": "hyrox-w6-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 145 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "145 kg",
             "restText": "30-45 s entre longueurs",
@@ -2841,69 +2052,29 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w6-09-bloc-4",
+            "id": "hyrox-w6-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 40 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w6-10-bloc-5",
+            "id": "hyrox-w6-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "90 s à 2 min entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w6-11-retour-au-calme",
+            "id": "hyrox-w6-07-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 11,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w6-12-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 12,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w6-13-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 13,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w6-14-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 14,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w6-15-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 15,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w6-16-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 16,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w6-17-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 17,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 7,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -2927,30 +2098,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Base aérobie + force propre"
         ],
-        "exercises": [
-          {
-            "id": "rest-w7-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w7-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w7-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -2959,7 +2107,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 230 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 170 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 150 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 230 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -2971,7 +2119,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w7-02-sled-push",
@@ -2982,6 +2131,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "230 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -3057,14 +2210,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w7-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -3083,49 +2230,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w7-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w7-02-echauffement-obligatoire",
+            "id": "badminton-w7-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w7-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w7-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w7-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w7-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -3169,7 +2281,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w7-04-burpee-broad-jumps",
@@ -3196,14 +2309,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w7-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -3227,6 +2334,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -3234,14 +2342,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w7-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -3265,48 +2367,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w7-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "6."
-          },
-          {
-            "id": "hyrox-w7-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "70-75 %."
-          },
-          {
-            "id": "hyrox-w7-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s à 2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w7-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w7-06-bloc-1",
+            "id": "hyrox-w7-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "90 s à 2 min entre blocs."
           },
           {
-            "id": "hyrox-w7-07-bloc-2",
+            "id": "hyrox-w7-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 210 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "210 kg",
             "restText": "30-45 s entre longueurs",
@@ -3314,10 +2390,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w7-08-bloc-3",
+            "id": "hyrox-w7-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 150 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "150 kg",
             "restText": "30-45 s entre longueurs",
@@ -3325,79 +2401,40 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w7-09-bloc-4",
+            "id": "hyrox-w7-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 40 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w7-10-bloc-5",
+            "id": "hyrox-w7-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "90 s à 2 min entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w7-11-bloc-6",
+            "id": "hyrox-w7-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 100 m à 2 × 22 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 22 kg",
+            "restText": "90 s à 2 min entre blocs.",
             "sets": 2,
             "reps": 22
           },
           {
-            "id": "hyrox-w7-12-retour-au-calme",
+            "id": "hyrox-w7-08-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 12,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w7-13-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 13,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w7-14-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 14,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w7-15-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 15,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w7-16-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 16,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w7-17-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 17,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w7-18-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 18,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 8,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -3423,30 +2460,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Base aérobie + force propre",
           "semaine allégée"
         ],
-        "exercises": [
-          {
-            "id": "rest-w8-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w8-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w8-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -3468,7 +2482,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "10-12 min."
+            "repsText": "10-12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w8-02-sled-push",
@@ -3548,13 +2563,6 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "restText": "75-90 s",
             "sets": 3,
             "reps": 12
-          },
-          {
-            "id": "strength-w8-09-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 9,
-            "repsText": "60-70 min."
           }
         ],
         "sourceDay": "Mardi"
@@ -3574,49 +2582,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w8-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w8-02-echauffement-obligatoire",
+            "id": "badminton-w8-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w8-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w8-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w8-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w8-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -3652,6 +2625,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Bloc principal",
             "order": 2,
             "repsText": "40 min zone 2 + 3 × 500 m souples.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 3,
             "distanceM": 500
           },
@@ -3660,7 +2634,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w8-04-burpee-broad-jumps",
@@ -3687,14 +2662,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w8-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -3719,6 +2688,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -3726,14 +2696,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w8-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -3758,48 +2722,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w8-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "4."
-          },
-          {
-            "id": "hyrox-w8-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "60-70 %."
-          },
-          {
-            "id": "hyrox-w8-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w8-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w8-06-bloc-1",
+            "id": "hyrox-w8-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "2 min entre blocs."
           },
           {
-            "id": "hyrox-w8-07-bloc-2",
+            "id": "hyrox-w8-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 180 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "180 kg",
             "restText": "30-45 s entre longueurs",
@@ -3807,10 +2745,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w8-08-bloc-3",
+            "id": "hyrox-w8-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 120 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "120 kg",
             "restText": "30-45 s entre longueurs",
@@ -3818,61 +2756,20 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w8-09-bloc-4",
+            "id": "hyrox-w8-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 40 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w8-10-retour-au-calme",
+            "id": "hyrox-w8-06-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 10,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w8-11-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 11,
-            "repsText": "60-70 min."
-          },
-          {
-            "id": "hyrox-w8-12-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 12,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w8-13-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 13,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w8-14-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 14,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w8-15-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 15,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w8-16-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 16,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 6,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -3896,30 +2793,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Force spécifique + perte de poids contrôlée"
         ],
-        "exercises": [
-          {
-            "id": "rest-w9-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w9-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w9-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -3928,7 +2802,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 6 × 10 m à 230 kg, repos 2 min 30, RPE 7. • Sled Pull : 6 × 10 m à 170 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 150 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 6 × 10 m à 230 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -3940,7 +2814,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w9-02-sled-push",
@@ -3951,6 +2826,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "230 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 6,
             "distanceM": 10
           },
@@ -4026,14 +2905,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w9-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -4052,49 +2925,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w9-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w9-02-echauffement-obligatoire",
+            "id": "badminton-w9-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w9-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w9-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w9-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w9-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -4138,7 +2976,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w9-04-burpee-broad-jumps",
@@ -4165,14 +3004,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w9-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -4196,6 +3029,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -4203,14 +3037,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w9-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -4234,48 +3062,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w9-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "5."
-          },
-          {
-            "id": "hyrox-w9-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "70-75 %."
-          },
-          {
-            "id": "hyrox-w9-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s à 2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w9-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w9-06-bloc-1",
+            "id": "hyrox-w9-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "90 s à 2 min entre blocs."
           },
           {
-            "id": "hyrox-w9-07-bloc-2",
+            "id": "hyrox-w9-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 210 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "210 kg",
             "restText": "30-45 s entre longueurs",
@@ -4283,10 +3085,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w9-08-bloc-3",
+            "id": "hyrox-w9-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 150 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "150 kg",
             "restText": "30-45 s entre longueurs",
@@ -4294,69 +3096,29 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w9-09-bloc-4",
+            "id": "hyrox-w9-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 60 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w9-10-bloc-5",
+            "id": "hyrox-w9-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "90 s à 2 min entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w9-11-retour-au-calme",
+            "id": "hyrox-w9-07-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 11,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w9-12-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 12,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w9-13-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 13,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w9-14-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 14,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w9-15-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 15,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w9-16-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 16,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w9-17-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 17,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 7,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -4380,30 +3142,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Force spécifique + perte de poids contrôlée"
         ],
-        "exercises": [
-          {
-            "id": "rest-w10-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w10-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w10-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -4412,7 +3151,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 6 × 10 m à 235 kg, repos 2 min 30, RPE 7. • Sled Pull : 6 × 10 m à 175 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 155 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 6 × 10 m à 235 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -4424,7 +3163,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w10-02-sled-push",
@@ -4435,6 +3175,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "235 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 6,
             "distanceM": 10
           },
@@ -4510,14 +3254,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w10-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -4536,49 +3274,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w10-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w10-02-echauffement-obligatoire",
+            "id": "badminton-w10-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w10-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w10-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w10-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w10-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -4622,7 +3325,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w10-04-burpee-broad-jumps",
@@ -4649,14 +3353,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w10-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -4680,6 +3378,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -4687,14 +3386,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w10-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -4718,48 +3411,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w10-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "6."
-          },
-          {
-            "id": "hyrox-w10-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "70-75 %."
-          },
-          {
-            "id": "hyrox-w10-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s à 2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w10-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w10-06-bloc-1",
+            "id": "hyrox-w10-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "90 s à 2 min entre blocs."
           },
           {
-            "id": "hyrox-w10-07-bloc-2",
+            "id": "hyrox-w10-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 215 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "215 kg",
             "restText": "30-45 s entre longueurs",
@@ -4767,10 +3434,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w10-08-bloc-3",
+            "id": "hyrox-w10-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 155 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "155 kg",
             "restText": "30-45 s entre longueurs",
@@ -4778,79 +3445,40 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w10-09-bloc-4",
+            "id": "hyrox-w10-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 60 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w10-10-bloc-5",
+            "id": "hyrox-w10-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "90 s à 2 min entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w10-11-bloc-6",
+            "id": "hyrox-w10-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 150 m à 2 × 22 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 22 kg",
+            "restText": "90 s à 2 min entre blocs.",
             "sets": 2,
             "reps": 22
           },
           {
-            "id": "hyrox-w10-12-retour-au-calme",
+            "id": "hyrox-w10-08-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 12,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w10-13-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 13,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w10-14-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 14,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w10-15-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 15,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w10-16-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 16,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w10-17-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 17,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w10-18-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 18,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 8,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -4874,30 +3502,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Force spécifique + perte de poids contrôlée"
         ],
-        "exercises": [
-          {
-            "id": "rest-w11-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w11-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w11-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -4906,7 +3511,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 6 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Sled Pull : 6 × 10 m à 180 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 160 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 6 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -4918,7 +3523,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w11-02-sled-push",
@@ -4929,6 +3535,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "240 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 6,
             "distanceM": 10
           },
@@ -5004,14 +3614,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w11-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -5030,49 +3634,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w11-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w11-02-echauffement-obligatoire",
+            "id": "badminton-w11-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w11-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w11-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w11-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w11-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -5116,7 +3685,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w11-04-burpee-broad-jumps",
@@ -5143,14 +3713,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w11-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -5174,6 +3738,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -5181,14 +3746,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w11-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -5212,48 +3771,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w11-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "6."
-          },
-          {
-            "id": "hyrox-w11-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "70-75 %."
-          },
-          {
-            "id": "hyrox-w11-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s à 2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w11-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w11-06-bloc-1",
+            "id": "hyrox-w11-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "90 s à 2 min entre blocs."
           },
           {
-            "id": "hyrox-w11-07-bloc-2",
+            "id": "hyrox-w11-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 220 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "220 kg",
             "restText": "30-45 s entre longueurs",
@@ -5261,10 +3794,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w11-08-bloc-3",
+            "id": "hyrox-w11-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 160 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "160 kg",
             "restText": "30-45 s entre longueurs",
@@ -5272,79 +3805,40 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w11-09-bloc-4",
+            "id": "hyrox-w11-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 60 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w11-10-bloc-5",
+            "id": "hyrox-w11-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "90 s à 2 min entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w11-11-bloc-6",
+            "id": "hyrox-w11-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 150 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "90 s à 2 min entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w11-12-retour-au-calme",
+            "id": "hyrox-w11-08-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 12,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w11-13-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 13,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w11-14-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 14,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w11-15-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 15,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w11-16-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 16,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w11-17-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 17,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w11-18-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 18,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 8,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -5370,30 +3864,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Force spécifique + perte de poids contrôlée",
           "semaine allégée"
         ],
-        "exercises": [
-          {
-            "id": "rest-w12-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w12-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w12-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -5415,7 +3886,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "10-12 min."
+            "repsText": "10-12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w12-02-sled-push",
@@ -5495,13 +3967,6 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "restText": "90 s",
             "sets": 3,
             "reps": 15
-          },
-          {
-            "id": "strength-w12-09-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 9,
-            "repsText": "60-70 min."
           }
         ],
         "sourceDay": "Mardi"
@@ -5521,49 +3986,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w12-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w12-02-echauffement-obligatoire",
+            "id": "badminton-w12-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w12-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w12-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w12-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w12-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -5598,14 +4028,16 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Bloc principal",
             "name": "Bloc principal",
             "order": 2,
-            "repsText": "45 min zone 2, aucune intensité."
+            "repsText": "45 min zone 2, aucune intensité.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w12-03-substitut-skierg",
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "repsText": "4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w12-04-burpee-broad-jumps",
@@ -5632,14 +4064,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w12-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -5664,6 +4090,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -5671,14 +4098,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w12-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -5703,48 +4124,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w12-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "4."
-          },
-          {
-            "id": "hyrox-w12-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "60-70 %."
-          },
-          {
-            "id": "hyrox-w12-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w12-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w12-06-bloc-1",
+            "id": "hyrox-w12-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : 4 tours : poulie bras tendus 12-15 reps + rameur 250 m ; transitions 20-30 s.",
+            "restText": "2 min entre blocs."
           },
           {
-            "id": "hyrox-w12-07-bloc-2",
+            "id": "hyrox-w12-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 185 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "185 kg",
             "restText": "30-45 s entre longueurs",
@@ -5752,10 +4147,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w12-08-bloc-3",
+            "id": "hyrox-w12-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 125 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "125 kg",
             "restText": "30-45 s entre longueurs",
@@ -5763,61 +4158,20 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w12-09-bloc-4",
+            "id": "hyrox-w12-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 60 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w12-10-retour-au-calme",
+            "id": "hyrox-w12-06-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 10,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w12-11-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 11,
-            "repsText": "60-70 min."
-          },
-          {
-            "id": "hyrox-w12-12-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 12,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w12-13-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 13,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w12-14-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 14,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w12-15-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 15,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w12-16-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 16,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 6,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -5841,30 +4195,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Endurance de force"
         ],
-        "exercises": [
-          {
-            "id": "rest-w13-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w13-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w13-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -5873,7 +4204,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 6 × 10 m à 225 kg, repos 2 min 30, RPE 7. • Sled Pull : 6 × 10 m à 170 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 150 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 6 × 10 m à 225 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -5885,7 +4216,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w13-02-sled-push",
@@ -5896,6 +4228,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "225 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 6,
             "distanceM": 10
           },
@@ -5971,14 +4307,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w13-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -5997,49 +4327,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w13-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w13-02-echauffement-obligatoire",
+            "id": "badminton-w13-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w13-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w13-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w13-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w13-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -6081,7 +4376,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w13-04-burpee-broad-jumps",
@@ -6108,14 +4404,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w13-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -6139,6 +4429,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -6146,14 +4437,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w13-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -6177,48 +4462,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w13-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "6."
-          },
-          {
-            "id": "hyrox-w13-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "75-80 %."
-          },
-          {
-            "id": "hyrox-w13-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "75-90 s entre blocs."
-          },
-          {
-            "id": "hyrox-w13-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w13-06-bloc-1",
+            "id": "hyrox-w13-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "75-90 s entre blocs."
           },
           {
-            "id": "hyrox-w13-07-bloc-2",
+            "id": "hyrox-w13-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 205 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "205 kg",
             "restText": "30-45 s entre longueurs",
@@ -6226,10 +4485,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w13-08-bloc-3",
+            "id": "hyrox-w13-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 150 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "150 kg",
             "restText": "30-45 s entre longueurs",
@@ -6237,79 +4496,40 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w13-09-bloc-4",
+            "id": "hyrox-w13-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 60 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w13-10-bloc-5",
+            "id": "hyrox-w13-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "75-90 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w13-11-bloc-6",
+            "id": "hyrox-w13-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 150 m à 2 × 22 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 22 kg",
+            "restText": "75-90 s entre blocs.",
             "sets": 2,
             "reps": 22
           },
           {
-            "id": "hyrox-w13-12-retour-au-calme",
+            "id": "hyrox-w13-08-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 12,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w13-13-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 13,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w13-14-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 14,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w13-15-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 15,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w13-16-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 16,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w13-17-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 17,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w13-18-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 18,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 8,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -6333,30 +4553,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Endurance de force"
         ],
-        "exercises": [
-          {
-            "id": "rest-w14-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w14-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w14-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -6365,7 +4562,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 6 × 10 m à 235 kg, repos 2 min 30, RPE 7. • Sled Pull : 6 × 10 m à 175 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 150 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 6 × 10 m à 235 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -6377,7 +4574,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w14-02-sled-push",
@@ -6388,6 +4586,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "235 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 6,
             "distanceM": 10
           },
@@ -6463,14 +4665,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w14-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -6489,49 +4685,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w14-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w14-02-echauffement-obligatoire",
+            "id": "badminton-w14-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w14-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w14-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w14-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w14-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -6573,7 +4734,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w14-04-burpee-broad-jumps",
@@ -6600,14 +4762,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w14-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -6631,6 +4787,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -6638,14 +4795,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w14-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -6669,48 +4820,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w14-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "6."
-          },
-          {
-            "id": "hyrox-w14-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "75-80 %."
-          },
-          {
-            "id": "hyrox-w14-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "75-90 s entre blocs."
-          },
-          {
-            "id": "hyrox-w14-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w14-06-bloc-1",
+            "id": "hyrox-w14-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "75-90 s entre blocs."
           },
           {
-            "id": "hyrox-w14-07-bloc-2",
+            "id": "hyrox-w14-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 215 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "215 kg",
             "restText": "30-45 s entre longueurs",
@@ -6718,10 +4843,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w14-08-bloc-3",
+            "id": "hyrox-w14-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 155 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "155 kg",
             "restText": "30-45 s entre longueurs",
@@ -6729,79 +4854,40 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w14-09-bloc-4",
+            "id": "hyrox-w14-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 60 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w14-10-bloc-5",
+            "id": "hyrox-w14-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "75-90 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w14-11-bloc-6",
+            "id": "hyrox-w14-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 150 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "75-90 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w14-12-retour-au-calme",
+            "id": "hyrox-w14-08-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 12,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w14-13-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 13,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w14-14-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 14,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w14-15-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 15,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w14-16-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 16,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w14-17-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 17,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w14-18-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 18,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 8,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -6825,30 +4911,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Endurance de force"
         ],
-        "exercises": [
-          {
-            "id": "rest-w15-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w15-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w15-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -6857,7 +4920,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 6 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Sled Pull : 6 × 10 m à 180 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 155 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 6 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -6869,7 +4932,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w15-02-sled-push",
@@ -6880,6 +4944,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "240 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 6,
             "distanceM": 10
           },
@@ -6955,14 +5023,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w15-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -6981,49 +5043,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w15-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w15-02-echauffement-obligatoire",
+            "id": "badminton-w15-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w15-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w15-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w15-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w15-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -7067,7 +5094,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w15-04-burpee-broad-jumps",
@@ -7094,14 +5122,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w15-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -7125,6 +5147,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -7132,14 +5155,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w15-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -7163,48 +5180,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w15-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "7."
-          },
-          {
-            "id": "hyrox-w15-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "75-80 %."
-          },
-          {
-            "id": "hyrox-w15-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "75-90 s entre blocs."
-          },
-          {
-            "id": "hyrox-w15-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w15-06-bloc-1",
+            "id": "hyrox-w15-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "75-90 s entre blocs."
           },
           {
-            "id": "hyrox-w15-07-bloc-2",
+            "id": "hyrox-w15-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 220 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "220 kg",
             "restText": "30-45 s entre longueurs",
@@ -7212,10 +5203,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w15-08-bloc-3",
+            "id": "hyrox-w15-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 160 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "160 kg",
             "restText": "30-45 s entre longueurs",
@@ -7223,87 +5214,49 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w15-09-bloc-4",
+            "id": "hyrox-w15-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 60 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w15-10-bloc-5",
+            "id": "hyrox-w15-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "75-90 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w15-11-bloc-6",
+            "id": "hyrox-w15-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 150 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "75-90 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w15-12-bloc-7",
+            "id": "hyrox-w15-08-bloc-7",
             "block": "Blocs HYROX",
             "name": "Bloc 7",
-            "order": 12,
+            "order": 8,
             "repsText": "1 km course + Sandbag Lunges : 40 m à 15 kg, repos debout si besoin.",
-            "targetLoadText": "15 kg"
+            "targetLoadText": "15 kg",
+            "restText": "75-90 s entre blocs."
           },
           {
-            "id": "hyrox-w15-13-retour-au-calme",
+            "id": "hyrox-w15-09-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 13,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w15-14-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 14,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w15-15-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 15,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w15-16-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 16,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w15-17-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 17,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w15-18-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 18,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w15-19-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 19,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 9,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -7329,30 +5282,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Endurance de force",
           "semaine allégée"
         ],
-        "exercises": [
-          {
-            "id": "rest-w16-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w16-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w16-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -7374,7 +5304,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "10-12 min."
+            "repsText": "10-12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w16-02-sled-push",
@@ -7454,13 +5385,6 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "restText": "90-120 s",
             "sets": 3,
             "reps": 15
-          },
-          {
-            "id": "strength-w16-09-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 9,
-            "repsText": "60-70 min."
           }
         ],
         "sourceDay": "Mardi"
@@ -7480,49 +5404,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w16-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w16-02-echauffement-obligatoire",
+            "id": "badminton-w16-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w16-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w16-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w16-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w16-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -7558,6 +5447,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Bloc principal",
             "order": 2,
             "repsText": "4 × 600 m facile + mobilité longue.",
+            "restText": "Pas de repos imposé",
             "sets": 4,
             "distanceM": 600
           },
@@ -7566,7 +5456,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w16-04-burpee-broad-jumps",
@@ -7593,14 +5484,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w16-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -7625,6 +5510,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -7632,14 +5518,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w16-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -7664,48 +5544,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w16-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "5."
-          },
-          {
-            "id": "hyrox-w16-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "60-70 %."
-          },
-          {
-            "id": "hyrox-w16-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w16-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w16-06-bloc-1",
+            "id": "hyrox-w16-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "2 min entre blocs."
           },
           {
-            "id": "hyrox-w16-07-bloc-2",
+            "id": "hyrox-w16-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 185 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "185 kg",
             "restText": "30-45 s entre longueurs",
@@ -7713,10 +5567,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w16-08-bloc-3",
+            "id": "hyrox-w16-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 125 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "125 kg",
             "restText": "30-45 s entre longueurs",
@@ -7724,69 +5578,29 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w16-09-bloc-4",
+            "id": "hyrox-w16-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 60 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w16-10-bloc-5",
+            "id": "hyrox-w16-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "2 min entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w16-11-retour-au-calme",
+            "id": "hyrox-w16-07-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 11,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w16-12-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 12,
-            "repsText": "60-70 min."
-          },
-          {
-            "id": "hyrox-w16-13-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 13,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w16-14-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 14,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w16-15-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 15,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w16-16-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 16,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w16-17-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 17,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 7,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -7810,30 +5624,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Spécifique HYROX 1"
         ],
-        "exercises": [
-          {
-            "id": "rest-w17-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w17-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w17-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -7842,7 +5633,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 230 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 170 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 145 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 230 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -7854,7 +5645,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w17-02-sled-push",
@@ -7865,6 +5657,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "230 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -7940,14 +5736,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w17-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -7966,49 +5756,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w17-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w17-02-echauffement-obligatoire",
+            "id": "badminton-w17-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w17-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w17-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w17-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w17-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -8050,7 +5805,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w17-04-burpee-broad-jumps",
@@ -8077,14 +5833,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w17-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -8108,6 +5858,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -8115,14 +5866,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w17-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -8146,48 +5891,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w17-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "6."
-          },
-          {
-            "id": "hyrox-w17-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "75-80 %."
-          },
-          {
-            "id": "hyrox-w17-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "75-90 s entre blocs."
-          },
-          {
-            "id": "hyrox-w17-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w17-06-bloc-1",
+            "id": "hyrox-w17-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "75-90 s entre blocs."
           },
           {
-            "id": "hyrox-w17-07-bloc-2",
+            "id": "hyrox-w17-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 210 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "210 kg",
             "restText": "30-45 s entre longueurs",
@@ -8195,10 +5914,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w17-08-bloc-3",
+            "id": "hyrox-w17-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 150 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "150 kg",
             "restText": "30-45 s entre longueurs",
@@ -8206,79 +5925,40 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w17-09-bloc-4",
+            "id": "hyrox-w17-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w17-10-bloc-5",
+            "id": "hyrox-w17-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "75-90 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w17-11-bloc-6",
+            "id": "hyrox-w17-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 200 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "75-90 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w17-12-retour-au-calme",
+            "id": "hyrox-w17-08-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 12,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w17-13-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 13,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w17-14-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 14,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w17-15-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 15,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w17-16-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 16,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w17-17-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 17,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w17-18-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 18,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 8,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -8302,30 +5982,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Spécifique HYROX 1"
         ],
-        "exercises": [
-          {
-            "id": "rest-w18-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w18-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w18-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -8334,7 +5991,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 180 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 150 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -8346,7 +6003,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w18-02-sled-push",
@@ -8357,6 +6015,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "240 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -8432,14 +6094,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w18-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -8458,49 +6114,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w18-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w18-02-echauffement-obligatoire",
+            "id": "badminton-w18-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w18-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w18-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w18-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w18-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -8542,7 +6163,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w18-04-burpee-broad-jumps",
@@ -8569,14 +6191,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w18-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -8600,6 +6216,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -8607,14 +6224,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w18-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -8638,48 +6249,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w18-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "7."
-          },
-          {
-            "id": "hyrox-w18-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "75-80 %."
-          },
-          {
-            "id": "hyrox-w18-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "75-90 s entre blocs."
-          },
-          {
-            "id": "hyrox-w18-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w18-06-bloc-1",
+            "id": "hyrox-w18-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "75-90 s entre blocs."
           },
           {
-            "id": "hyrox-w18-07-bloc-2",
+            "id": "hyrox-w18-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 220 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "220 kg",
             "restText": "30-45 s entre longueurs",
@@ -8687,10 +6272,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w18-08-bloc-3",
+            "id": "hyrox-w18-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 160 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "160 kg",
             "restText": "30-45 s entre longueurs",
@@ -8698,87 +6283,49 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w18-09-bloc-4",
+            "id": "hyrox-w18-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w18-10-bloc-5",
+            "id": "hyrox-w18-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "75-90 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w18-11-bloc-6",
+            "id": "hyrox-w18-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 200 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "75-90 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w18-12-bloc-7",
+            "id": "hyrox-w18-08-bloc-7",
             "block": "Blocs HYROX",
             "name": "Bloc 7",
-            "order": 12,
+            "order": 8,
             "repsText": "1 km course + Sandbag Lunges : 60 m à 15 kg, repos debout si besoin.",
-            "targetLoadText": "15 kg"
+            "targetLoadText": "15 kg",
+            "restText": "75-90 s entre blocs."
           },
           {
-            "id": "hyrox-w18-13-retour-au-calme",
+            "id": "hyrox-w18-09-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 13,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w18-14-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 14,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w18-15-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 15,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w18-16-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 16,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w18-17-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 17,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w18-18-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 18,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w18-19-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 19,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 9,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -8802,30 +6349,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Spécifique HYROX 1"
         ],
-        "exercises": [
-          {
-            "id": "rest-w19-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w19-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w19-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -8834,7 +6358,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 180 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 150 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -8846,7 +6370,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w19-02-sled-push",
@@ -8857,6 +6382,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "240 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -8932,14 +6461,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w19-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -8958,49 +6481,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w19-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w19-02-echauffement-obligatoire",
+            "id": "badminton-w19-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w19-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w19-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w19-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w19-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -9044,7 +6532,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w19-04-burpee-broad-jumps",
@@ -9071,14 +6560,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w19-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -9102,6 +6585,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -9109,14 +6593,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w19-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -9140,48 +6618,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w19-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "7."
-          },
-          {
-            "id": "hyrox-w19-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "75-80 %."
-          },
-          {
-            "id": "hyrox-w19-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "75-90 s entre blocs."
-          },
-          {
-            "id": "hyrox-w19-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w19-06-bloc-1",
+            "id": "hyrox-w19-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "75-90 s entre blocs."
           },
           {
-            "id": "hyrox-w19-07-bloc-2",
+            "id": "hyrox-w19-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 220 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "220 kg",
             "restText": "30-45 s entre longueurs",
@@ -9189,10 +6641,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w19-08-bloc-3",
+            "id": "hyrox-w19-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 160 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "160 kg",
             "restText": "30-45 s entre longueurs",
@@ -9200,87 +6652,49 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w19-09-bloc-4",
+            "id": "hyrox-w19-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w19-10-bloc-5",
+            "id": "hyrox-w19-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "75-90 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w19-11-bloc-6",
+            "id": "hyrox-w19-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 200 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "75-90 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w19-12-bloc-7",
+            "id": "hyrox-w19-08-bloc-7",
             "block": "Blocs HYROX",
             "name": "Bloc 7",
-            "order": 12,
+            "order": 8,
             "repsText": "1 km course + Sandbag Lunges : 60 m à 15 kg, repos debout si besoin.",
-            "targetLoadText": "15 kg"
+            "targetLoadText": "15 kg",
+            "restText": "75-90 s entre blocs."
           },
           {
-            "id": "hyrox-w19-13-retour-au-calme",
+            "id": "hyrox-w19-09-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 13,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w19-14-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 14,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w19-15-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 15,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w19-16-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 16,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w19-17-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 17,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w19-18-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 18,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w19-19-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 19,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 9,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -9306,30 +6720,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Spécifique HYROX 1",
           "semaine allégée"
         ],
-        "exercises": [
-          {
-            "id": "rest-w20-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w20-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w20-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -9351,7 +6742,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "10-12 min."
+            "repsText": "10-12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w20-02-sled-push",
@@ -9431,13 +6823,6 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "restText": "90-120 s",
             "sets": 3,
             "reps": 40
-          },
-          {
-            "id": "strength-w20-09-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 9,
-            "repsText": "60-70 min."
           }
         ],
         "sourceDay": "Mardi"
@@ -9457,49 +6842,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w20-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w20-02-echauffement-obligatoire",
+            "id": "badminton-w20-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w20-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w20-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w20-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w20-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -9534,14 +6884,16 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Bloc principal",
             "name": "Bloc principal",
             "order": 2,
-            "repsText": "45 min zone 2 + 3 lignes droites."
+            "repsText": "45 min zone 2 + 3 lignes droites.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w20-03-substitut-skierg",
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "repsText": "Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w20-04-burpee-broad-jumps",
@@ -9568,14 +6920,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w20-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -9600,6 +6946,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -9607,14 +6954,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w20-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -9639,48 +6980,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w20-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "5."
-          },
-          {
-            "id": "hyrox-w20-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "60-70 %."
-          },
-          {
-            "id": "hyrox-w20-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w20-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w20-06-bloc-1",
+            "id": "hyrox-w20-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : Station simulation : 4 × (250 m rameur + 12 tirages bras tendus), transitions rapides.",
+            "restText": "2 min entre blocs."
           },
           {
-            "id": "hyrox-w20-07-bloc-2",
+            "id": "hyrox-w20-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 190 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "190 kg",
             "restText": "30-45 s entre longueurs",
@@ -9688,10 +7003,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w20-08-bloc-3",
+            "id": "hyrox-w20-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 130 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "130 kg",
             "restText": "30-45 s entre longueurs",
@@ -9699,69 +7014,29 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w20-09-bloc-4",
+            "id": "hyrox-w20-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w20-10-bloc-5",
+            "id": "hyrox-w20-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "2 min entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w20-11-retour-au-calme",
+            "id": "hyrox-w20-07-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 11,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w20-12-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 12,
-            "repsText": "60-70 min."
-          },
-          {
-            "id": "hyrox-w20-13-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 13,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w20-14-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 14,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w20-15-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 15,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w20-16-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 16,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w20-17-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 17,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 7,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -9785,30 +7060,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Spécifique HYROX 2"
         ],
-        "exercises": [
-          {
-            "id": "rest-w21-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w21-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w21-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -9817,7 +7069,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 235 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 175 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 145 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 235 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -9829,7 +7081,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w21-02-sled-push",
@@ -9840,6 +7093,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "235 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -9915,14 +7172,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w21-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -9941,49 +7192,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w21-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w21-02-echauffement-obligatoire",
+            "id": "badminton-w21-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w21-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w21-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w21-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w21-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -10026,6 +7242,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Substitut SkiErg",
             "order": 3,
             "repsText": "Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 4,
             "distanceM": 250
           },
@@ -10054,14 +7271,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w21-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -10085,6 +7296,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -10092,14 +7304,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w21-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -10123,50 +7329,24 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w21-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "7."
-          },
-          {
-            "id": "hyrox-w21-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "80-85 %."
-          },
-          {
-            "id": "hyrox-w21-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "60-75 s entre blocs."
-          },
-          {
-            "id": "hyrox-w21-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w21-06-bloc-1",
+            "id": "hyrox-w21-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
+            "order": 2,
             "repsText": "1 km course + Substitut SkiErg : Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-75 s entre blocs.",
             "sets": 4,
             "distanceM": 250
           },
           {
-            "id": "hyrox-w21-07-bloc-2",
+            "id": "hyrox-w21-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 215 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "215 kg",
             "restText": "30-45 s entre longueurs",
@@ -10174,10 +7354,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w21-08-bloc-3",
+            "id": "hyrox-w21-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 155 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "155 kg",
             "restText": "30-45 s entre longueurs",
@@ -10185,87 +7365,49 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w21-09-bloc-4",
+            "id": "hyrox-w21-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w21-10-bloc-5",
+            "id": "hyrox-w21-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "60-75 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w21-11-bloc-6",
+            "id": "hyrox-w21-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 200 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "60-75 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w21-12-bloc-7",
+            "id": "hyrox-w21-08-bloc-7",
             "block": "Blocs HYROX",
             "name": "Bloc 7",
-            "order": 12,
+            "order": 8,
             "repsText": "1 km course + Sandbag Lunges : 60 m à 20 kg, repos debout si besoin.",
-            "targetLoadText": "20 kg"
+            "targetLoadText": "20 kg",
+            "restText": "60-75 s entre blocs."
           },
           {
-            "id": "hyrox-w21-13-retour-au-calme",
+            "id": "hyrox-w21-09-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 13,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w21-14-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 14,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w21-15-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 15,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w21-16-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 16,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w21-17-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 17,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w21-18-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 18,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w21-19-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 19,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 9,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -10289,30 +7431,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Spécifique HYROX 2"
         ],
-        "exercises": [
-          {
-            "id": "rest-w22-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w22-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w22-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -10321,7 +7440,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 180 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 150 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -10333,7 +7452,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w22-02-sled-push",
@@ -10344,6 +7464,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "240 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -10419,14 +7543,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w22-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -10445,49 +7563,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w22-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w22-02-echauffement-obligatoire",
+            "id": "badminton-w22-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w22-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w22-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w22-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w22-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -10530,6 +7613,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Substitut SkiErg",
             "order": 3,
             "repsText": "Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 4,
             "distanceM": 250
           },
@@ -10558,14 +7642,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w22-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -10589,6 +7667,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -10596,14 +7675,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w22-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -10627,50 +7700,24 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w22-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "7."
-          },
-          {
-            "id": "hyrox-w22-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "80-85 %."
-          },
-          {
-            "id": "hyrox-w22-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "60-75 s entre blocs."
-          },
-          {
-            "id": "hyrox-w22-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w22-06-bloc-1",
+            "id": "hyrox-w22-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
+            "order": 2,
             "repsText": "1 km course + Substitut SkiErg : Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-75 s entre blocs.",
             "sets": 4,
             "distanceM": 250
           },
           {
-            "id": "hyrox-w22-07-bloc-2",
+            "id": "hyrox-w22-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 220 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "220 kg",
             "restText": "30-45 s entre longueurs",
@@ -10678,10 +7725,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w22-08-bloc-3",
+            "id": "hyrox-w22-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 160 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "160 kg",
             "restText": "30-45 s entre longueurs",
@@ -10689,87 +7736,49 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w22-09-bloc-4",
+            "id": "hyrox-w22-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w22-10-bloc-5",
+            "id": "hyrox-w22-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "60-75 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w22-11-bloc-6",
+            "id": "hyrox-w22-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 200 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "60-75 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w22-12-bloc-7",
+            "id": "hyrox-w22-08-bloc-7",
             "block": "Blocs HYROX",
             "name": "Bloc 7",
-            "order": 12,
+            "order": 8,
             "repsText": "1 km course + Sandbag Lunges : 60 m à 20 kg, repos debout si besoin.",
-            "targetLoadText": "20 kg"
+            "targetLoadText": "20 kg",
+            "restText": "60-75 s entre blocs."
           },
           {
-            "id": "hyrox-w22-13-retour-au-calme",
+            "id": "hyrox-w22-09-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 13,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w22-14-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 14,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w22-15-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 15,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w22-16-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 16,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w22-17-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 17,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w22-18-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 18,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w22-19-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 19,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 9,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -10793,30 +7802,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Spécifique HYROX 2"
         ],
-        "exercises": [
-          {
-            "id": "rest-w23-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w23-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w23-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -10825,7 +7811,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 245 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 185 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 150 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 245 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -10837,7 +7823,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w23-02-sled-push",
@@ -10848,6 +7835,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "245 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -10923,14 +7914,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w23-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -10949,49 +7934,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w23-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w23-02-echauffement-obligatoire",
+            "id": "badminton-w23-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w23-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w23-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w23-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w23-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -11036,6 +7986,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Substitut SkiErg",
             "order": 3,
             "repsText": "Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 4,
             "distanceM": 250
           },
@@ -11064,14 +8015,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w23-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -11095,6 +8040,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -11102,14 +8048,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w23-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -11133,50 +8073,24 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w23-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "8."
-          },
-          {
-            "id": "hyrox-w23-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "80-85 %."
-          },
-          {
-            "id": "hyrox-w23-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "60-75 s entre blocs."
-          },
-          {
-            "id": "hyrox-w23-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w23-06-bloc-1",
+            "id": "hyrox-w23-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
+            "order": 2,
             "repsText": "1 km course + Substitut SkiErg : Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-75 s entre blocs.",
             "sets": 4,
             "distanceM": 250
           },
           {
-            "id": "hyrox-w23-07-bloc-2",
+            "id": "hyrox-w23-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 225 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "225 kg",
             "restText": "30-45 s entre longueurs",
@@ -11184,10 +8098,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w23-08-bloc-3",
+            "id": "hyrox-w23-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 165 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "165 kg",
             "restText": "30-45 s entre longueurs",
@@ -11195,95 +8109,58 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w23-09-bloc-4",
+            "id": "hyrox-w23-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w23-10-bloc-5",
+            "id": "hyrox-w23-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "60-75 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w23-11-bloc-6",
+            "id": "hyrox-w23-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 200 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "60-75 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w23-12-bloc-7",
+            "id": "hyrox-w23-08-bloc-7",
             "block": "Blocs HYROX",
             "name": "Bloc 7",
-            "order": 12,
+            "order": 8,
             "repsText": "1 km course + Sandbag Lunges : 60 m à 20 kg, repos debout si besoin.",
-            "targetLoadText": "20 kg"
+            "targetLoadText": "20 kg",
+            "restText": "60-75 s entre blocs."
           },
           {
-            "id": "hyrox-w23-13-bloc-8",
+            "id": "hyrox-w23-09-bloc-8",
             "block": "Blocs HYROX",
             "name": "Bloc 8",
-            "order": 13,
+            "order": 9,
             "repsText": "1 km course + Wall Balls : 60 reps à 6 kg, fractionner proprement.",
-            "targetLoadText": "6 kg"
+            "targetLoadText": "6 kg",
+            "restText": "60-75 s entre blocs."
           },
           {
-            "id": "hyrox-w23-14-retour-au-calme",
+            "id": "hyrox-w23-10-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 14,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w23-15-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 15,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w23-16-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 16,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w23-17-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 17,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w23-18-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 18,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w23-19-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 19,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w23-20-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 20,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 10,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -11309,30 +8186,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Spécifique HYROX 2",
           "semaine allégée"
         ],
-        "exercises": [
-          {
-            "id": "rest-w24-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w24-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w24-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -11354,7 +8208,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "10-12 min."
+            "repsText": "10-12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w24-02-sled-push",
@@ -11434,13 +8289,6 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "restText": "90-120 s",
             "sets": 3,
             "reps": 40
-          },
-          {
-            "id": "strength-w24-09-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 9,
-            "repsText": "60-70 min."
           }
         ],
         "sourceDay": "Mardi"
@@ -11460,49 +8308,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w24-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w24-02-echauffement-obligatoire",
+            "id": "badminton-w24-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w24-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w24-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w24-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w24-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -11538,6 +8351,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Bloc principal",
             "order": 2,
             "repsText": "5 × 500 m facile + 250 m rameur.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 5,
             "distanceM": 500
           },
@@ -11547,6 +8361,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Substitut SkiErg",
             "order": 3,
             "repsText": "Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 4,
             "distanceM": 250
           },
@@ -11575,14 +8390,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w24-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -11607,6 +8416,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -11614,14 +8424,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w24-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -11646,50 +8450,24 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w24-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "5."
-          },
-          {
-            "id": "hyrox-w24-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "60-70 %."
-          },
-          {
-            "id": "hyrox-w24-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w24-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w24-06-bloc-1",
+            "id": "hyrox-w24-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
+            "order": 2,
             "repsText": "1 km course + Substitut SkiErg : Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "2 min entre blocs.",
             "sets": 4,
             "distanceM": 250
           },
           {
-            "id": "hyrox-w24-07-bloc-2",
+            "id": "hyrox-w24-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 190 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "190 kg",
             "restText": "30-45 s entre longueurs",
@@ -11697,10 +8475,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w24-08-bloc-3",
+            "id": "hyrox-w24-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 130 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "130 kg",
             "restText": "30-45 s entre longueurs",
@@ -11708,69 +8486,29 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w24-09-bloc-4",
+            "id": "hyrox-w24-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w24-10-bloc-5",
+            "id": "hyrox-w24-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "2 min entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w24-11-retour-au-calme",
+            "id": "hyrox-w24-07-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 11,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w24-12-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 12,
-            "repsText": "60-70 min."
-          },
-          {
-            "id": "hyrox-w24-13-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 13,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w24-14-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 14,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w24-15-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 15,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w24-16-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 16,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w24-17-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 17,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 7,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -11794,30 +8532,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Simulations progressives"
         ],
-        "exercises": [
-          {
-            "id": "rest-w25-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w25-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w25-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -11826,7 +8541,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 230 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 170 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 140 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 230 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -11838,7 +8553,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w25-02-sled-push",
@@ -11849,6 +8565,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "230 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -11913,21 +8633,16 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Wall balls",
             "name": "Wall balls",
             "order": 8,
-            "repsText": "50 reps fractionnées 25/15/10, repos court selon simulation."
+            "repsText": "50 reps fractionnées 25/15/10, repos court selon simulation.",
+            "restText": "90-120 s si non précisé"
           },
           {
             "id": "strength-w25-09-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w25-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -11946,49 +8661,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w25-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w25-02-echauffement-obligatoire",
+            "id": "badminton-w25-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w25-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w25-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w25-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w25-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -12033,6 +8713,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Substitut SkiErg",
             "order": 3,
             "repsText": "Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 4,
             "distanceM": 250
           },
@@ -12061,14 +8742,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w25-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -12092,6 +8767,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -12099,14 +8775,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w25-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -12130,50 +8800,24 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w25-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "8."
-          },
-          {
-            "id": "hyrox-w25-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "80-85 %."
-          },
-          {
-            "id": "hyrox-w25-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "60-75 s entre blocs."
-          },
-          {
-            "id": "hyrox-w25-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w25-06-bloc-1",
+            "id": "hyrox-w25-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
+            "order": 2,
             "repsText": "1 km course + Substitut SkiErg : Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-75 s entre blocs.",
             "sets": 4,
             "distanceM": 250
           },
           {
-            "id": "hyrox-w25-07-bloc-2",
+            "id": "hyrox-w25-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 210 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "210 kg",
             "restText": "30-45 s entre longueurs",
@@ -12181,10 +8825,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w25-08-bloc-3",
+            "id": "hyrox-w25-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 150 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "150 kg",
             "restText": "30-45 s entre longueurs",
@@ -12192,95 +8836,58 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w25-09-bloc-4",
+            "id": "hyrox-w25-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w25-10-bloc-5",
+            "id": "hyrox-w25-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "60-75 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w25-11-bloc-6",
+            "id": "hyrox-w25-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 200 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "60-75 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w25-12-bloc-7",
+            "id": "hyrox-w25-08-bloc-7",
             "block": "Blocs HYROX",
             "name": "Bloc 7",
-            "order": 12,
+            "order": 8,
             "repsText": "1 km course + Sandbag Lunges : 80 m à 20 kg, repos debout si besoin.",
-            "targetLoadText": "20 kg"
+            "targetLoadText": "20 kg",
+            "restText": "60-75 s entre blocs."
           },
           {
-            "id": "hyrox-w25-13-bloc-8",
+            "id": "hyrox-w25-09-bloc-8",
             "block": "Blocs HYROX",
             "name": "Bloc 8",
-            "order": 13,
+            "order": 9,
             "repsText": "1 km course + Wall Balls : 80 reps à 6 kg, fractionner proprement.",
-            "targetLoadText": "6 kg"
+            "targetLoadText": "6 kg",
+            "restText": "60-75 s entre blocs."
           },
           {
-            "id": "hyrox-w25-14-retour-au-calme",
+            "id": "hyrox-w25-10-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 14,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w25-15-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 15,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w25-16-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 16,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w25-17-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 17,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w25-18-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 18,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w25-19-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 19,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w25-20-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 20,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 10,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -12304,30 +8911,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Simulations progressives"
         ],
-        "exercises": [
-          {
-            "id": "rest-w26-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w26-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w26-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -12336,7 +8920,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 180 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 145 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -12348,7 +8932,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w26-02-sled-push",
@@ -12359,6 +8944,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "240 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -12423,21 +9012,16 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Wall balls",
             "name": "Wall balls",
             "order": 8,
-            "repsText": "60 reps fractionnées, repos court selon simulation."
+            "repsText": "60 reps fractionnées, repos court selon simulation.",
+            "restText": "90-120 s si non précisé"
           },
           {
             "id": "strength-w26-09-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w26-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -12456,49 +9040,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w26-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w26-02-echauffement-obligatoire",
+            "id": "badminton-w26-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w26-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w26-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w26-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w26-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -12532,7 +9081,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Bloc principal",
             "name": "Bloc principal",
             "order": 2,
-            "repsText": "6 × (1 km + station), transitions rapides."
+            "repsText": "6 × (1 km + station), transitions rapides.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w26-03-substitut-skierg",
@@ -12540,6 +9090,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Substitut SkiErg",
             "order": 3,
             "repsText": "Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 4,
             "distanceM": 250
           },
@@ -12568,14 +9119,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w26-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -12599,6 +9144,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -12606,14 +9152,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w26-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -12637,50 +9177,24 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w26-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "8."
-          },
-          {
-            "id": "hyrox-w26-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "80-85 %."
-          },
-          {
-            "id": "hyrox-w26-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "60-75 s entre blocs."
-          },
-          {
-            "id": "hyrox-w26-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w26-06-bloc-1",
+            "id": "hyrox-w26-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
+            "order": 2,
             "repsText": "1 km course + Substitut SkiErg : Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-75 s entre blocs.",
             "sets": 4,
             "distanceM": 250
           },
           {
-            "id": "hyrox-w26-07-bloc-2",
+            "id": "hyrox-w26-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 220 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "220 kg",
             "restText": "30-45 s entre longueurs",
@@ -12688,10 +9202,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w26-08-bloc-3",
+            "id": "hyrox-w26-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 160 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "160 kg",
             "restText": "30-45 s entre longueurs",
@@ -12699,95 +9213,58 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w26-09-bloc-4",
+            "id": "hyrox-w26-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w26-10-bloc-5",
+            "id": "hyrox-w26-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "60-75 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w26-11-bloc-6",
+            "id": "hyrox-w26-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 200 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "60-75 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w26-12-bloc-7",
+            "id": "hyrox-w26-08-bloc-7",
             "block": "Blocs HYROX",
             "name": "Bloc 7",
-            "order": 12,
+            "order": 8,
             "repsText": "1 km course + Sandbag Lunges : 80 m à 20 kg, repos debout si besoin.",
-            "targetLoadText": "20 kg"
+            "targetLoadText": "20 kg",
+            "restText": "60-75 s entre blocs."
           },
           {
-            "id": "hyrox-w26-13-bloc-8",
+            "id": "hyrox-w26-09-bloc-8",
             "block": "Blocs HYROX",
             "name": "Bloc 8",
-            "order": 13,
+            "order": 9,
             "repsText": "1 km course + Wall Balls : 80 reps à 6 kg, fractionner proprement.",
-            "targetLoadText": "6 kg"
+            "targetLoadText": "6 kg",
+            "restText": "60-75 s entre blocs."
           },
           {
-            "id": "hyrox-w26-14-retour-au-calme",
+            "id": "hyrox-w26-10-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 14,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w26-15-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 15,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w26-16-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 16,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w26-17-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 17,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w26-18-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 18,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w26-19-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 19,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w26-20-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 20,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 10,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -12811,30 +9288,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Simulations progressives"
         ],
-        "exercises": [
-          {
-            "id": "rest-w27-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w27-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w27-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -12843,7 +9297,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 245 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 185 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 150 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 245 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -12855,7 +9309,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w27-02-sled-push",
@@ -12866,6 +9321,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "245 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -12930,21 +9389,16 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Wall balls",
             "name": "Wall balls",
             "order": 8,
-            "repsText": "80 reps fractionnées, repos court selon simulation."
+            "repsText": "80 reps fractionnées, repos court selon simulation.",
+            "restText": "90-120 s si non précisé"
           },
           {
             "id": "strength-w27-09-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w27-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -12963,49 +9417,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w27-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w27-02-echauffement-obligatoire",
+            "id": "badminton-w27-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w27-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w27-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w27-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w27-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -13040,6 +9459,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Bloc principal",
             "order": 2,
             "repsText": "Simulation run : 8 × 1 km à allure course contrôlée.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 8,
             "distanceM": 1000
           },
@@ -13049,6 +9469,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Substitut SkiErg",
             "order": 3,
             "repsText": "Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 4,
             "distanceM": 250
           },
@@ -13077,14 +9498,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w27-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -13108,6 +9523,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -13115,14 +9531,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w27-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -13146,50 +9556,24 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w27-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "8."
-          },
-          {
-            "id": "hyrox-w27-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "80-85 %."
-          },
-          {
-            "id": "hyrox-w27-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "60-75 s entre blocs."
-          },
-          {
-            "id": "hyrox-w27-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w27-06-bloc-1",
+            "id": "hyrox-w27-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
+            "order": 2,
             "repsText": "1 km course + Substitut SkiErg : Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-75 s entre blocs.",
             "sets": 4,
             "distanceM": 250
           },
           {
-            "id": "hyrox-w27-07-bloc-2",
+            "id": "hyrox-w27-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 225 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "225 kg",
             "restText": "30-45 s entre longueurs",
@@ -13197,10 +9581,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w27-08-bloc-3",
+            "id": "hyrox-w27-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 165 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "165 kg",
             "restText": "30-45 s entre longueurs",
@@ -13208,95 +9592,58 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w27-09-bloc-4",
+            "id": "hyrox-w27-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w27-10-bloc-5",
+            "id": "hyrox-w27-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "60-75 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w27-11-bloc-6",
+            "id": "hyrox-w27-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 200 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "60-75 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w27-12-bloc-7",
+            "id": "hyrox-w27-08-bloc-7",
             "block": "Blocs HYROX",
             "name": "Bloc 7",
-            "order": 12,
+            "order": 8,
             "repsText": "1 km course + Sandbag Lunges : 80 m à 20 kg, repos debout si besoin.",
-            "targetLoadText": "20 kg"
+            "targetLoadText": "20 kg",
+            "restText": "60-75 s entre blocs."
           },
           {
-            "id": "hyrox-w27-13-bloc-8",
+            "id": "hyrox-w27-09-bloc-8",
             "block": "Blocs HYROX",
             "name": "Bloc 8",
-            "order": 13,
+            "order": 9,
             "repsText": "1 km course + Wall Balls : 80 reps à 6 kg, fractionner proprement.",
-            "targetLoadText": "6 kg"
+            "targetLoadText": "6 kg",
+            "restText": "60-75 s entre blocs."
           },
           {
-            "id": "hyrox-w27-14-retour-au-calme",
+            "id": "hyrox-w27-10-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 14,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w27-15-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 15,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w27-16-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 16,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w27-17-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 17,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w27-18-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 18,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w27-19-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 19,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w27-20-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 20,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 10,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -13322,30 +9669,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Simulations progressives",
           "semaine allégée"
         ],
-        "exercises": [
-          {
-            "id": "rest-w28-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w28-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w28-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -13367,7 +9691,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "10-12 min."
+            "repsText": "10-12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w28-02-sled-push",
@@ -13442,14 +9767,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Wall balls",
             "name": "Wall balls",
             "order": 8,
-            "repsText": "30 reps faciles, repos court selon simulation."
-          },
-          {
-            "id": "strength-w28-09-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 9,
-            "repsText": "60-70 min."
+            "repsText": "30 reps faciles, repos court selon simulation.",
+            "restText": "90-120 s si non précisé"
           }
         ],
         "sourceDay": "Mardi"
@@ -13469,49 +9788,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w28-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w28-02-echauffement-obligatoire",
+            "id": "badminton-w28-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w28-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w28-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w28-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w28-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -13546,7 +9830,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Bloc principal",
             "name": "Bloc principal",
             "order": 2,
-            "repsText": "40 min zone 2 + mobilité."
+            "repsText": "40 min zone 2 + mobilité.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "run-w28-03-substitut-skierg",
@@ -13554,6 +9839,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Substitut SkiErg",
             "order": 3,
             "repsText": "Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 4,
             "distanceM": 250
           },
@@ -13582,14 +9868,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w28-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -13614,6 +9894,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -13621,14 +9902,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w28-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -13653,50 +9928,24 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w28-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "5."
-          },
-          {
-            "id": "hyrox-w28-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "60-70 %."
-          },
-          {
-            "id": "hyrox-w28-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "2 min entre blocs."
-          },
-          {
-            "id": "hyrox-w28-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w28-06-bloc-1",
+            "id": "hyrox-w28-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
+            "order": 2,
             "repsText": "1 km course + Substitut SkiErg : Station simulation complète : 1000 m équivalent = 4 × 250 m rameur + 4 × 12 tirages bras tendus.",
+            "restText": "2 min entre blocs.",
             "sets": 4,
             "distanceM": 250
           },
           {
-            "id": "hyrox-w28-07-bloc-2",
+            "id": "hyrox-w28-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 185 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "185 kg",
             "restText": "30-45 s entre longueurs",
@@ -13704,10 +9953,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w28-08-bloc-3",
+            "id": "hyrox-w28-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 125 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "125 kg",
             "restText": "30-45 s entre longueurs",
@@ -13715,69 +9964,29 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w28-09-bloc-4",
+            "id": "hyrox-w28-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w28-10-bloc-5",
+            "id": "hyrox-w28-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "2 min entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w28-11-retour-au-calme",
+            "id": "hyrox-w28-07-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 11,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w28-12-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 12,
-            "repsText": "60-70 min."
-          },
-          {
-            "id": "hyrox-w28-13-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 13,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w28-14-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 14,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w28-15-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 15,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w28-16-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 16,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w28-17-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 17,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 7,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -13801,30 +10010,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Pic de forme"
         ],
-        "exercises": [
-          {
-            "id": "rest-w29-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w29-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w29-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -13833,7 +10019,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 230 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 170 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 140 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 230 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -13845,7 +10031,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w29-02-sled-push",
@@ -13856,6 +10043,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "230 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -13922,6 +10113,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "order": 8,
             "repsText": "4 × 20 à 6 kg, propre.",
             "targetLoadText": "6 kg",
+            "restText": "90-120 s si non précisé",
             "sets": 4,
             "reps": 20
           },
@@ -13930,14 +10122,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w29-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -13956,49 +10142,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w29-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w29-02-echauffement-obligatoire",
+            "id": "badminton-w29-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w29-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w29-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w29-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w29-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -14042,7 +10193,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "3 × (250 m rameur + 10 tirages bras tendus), facile à modéré."
+            "repsText": "3 × (250 m rameur + 10 tirages bras tendus), facile à modéré.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w29-04-burpee-broad-jumps",
@@ -14069,14 +10221,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w29-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -14100,6 +10246,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -14107,14 +10254,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w29-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -14138,48 +10279,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w29-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "6."
-          },
-          {
-            "id": "hyrox-w29-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "75-80 %."
-          },
-          {
-            "id": "hyrox-w29-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s entre blocs."
-          },
-          {
-            "id": "hyrox-w29-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w29-06-bloc-1",
+            "id": "hyrox-w29-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : 3 × (250 m rameur + 10 tirages bras tendus), facile à modéré."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : 3 × (250 m rameur + 10 tirages bras tendus), facile à modéré.",
+            "restText": "90 s entre blocs."
           },
           {
-            "id": "hyrox-w29-07-bloc-2",
+            "id": "hyrox-w29-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 210 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "210 kg",
             "restText": "30-45 s entre longueurs",
@@ -14187,10 +10302,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w29-08-bloc-3",
+            "id": "hyrox-w29-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 150 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "150 kg",
             "restText": "30-45 s entre longueurs",
@@ -14198,79 +10313,40 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w29-09-bloc-4",
+            "id": "hyrox-w29-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w29-10-bloc-5",
+            "id": "hyrox-w29-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "90 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w29-11-bloc-6",
+            "id": "hyrox-w29-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 200 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "90 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w29-12-retour-au-calme",
+            "id": "hyrox-w29-08-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 12,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w29-13-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 13,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w29-14-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 14,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w29-15-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 15,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w29-16-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 16,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w29-17-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 17,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w29-18-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 18,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 8,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -14294,30 +10370,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Pic de forme"
         ],
-        "exercises": [
-          {
-            "id": "rest-w30-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w30-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w30-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -14326,7 +10379,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 180 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 145 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 240 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -14338,7 +10391,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w30-02-sled-push",
@@ -14349,6 +10403,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "240 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -14415,6 +10473,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "order": 8,
             "repsText": "3 × 25 à 6 kg, propre.",
             "targetLoadText": "6 kg",
+            "restText": "90-120 s si non précisé",
             "sets": 3,
             "reps": 25
           },
@@ -14423,14 +10482,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w30-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -14449,49 +10502,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w30-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w30-02-echauffement-obligatoire",
+            "id": "badminton-w30-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w30-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w30-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w30-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w30-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -14535,7 +10553,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "3 × (250 m rameur + 10 tirages bras tendus), facile à modéré."
+            "repsText": "3 × (250 m rameur + 10 tirages bras tendus), facile à modéré.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w30-04-burpee-broad-jumps",
@@ -14562,14 +10581,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w30-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -14593,6 +10606,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -14600,14 +10614,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w30-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -14631,48 +10639,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w30-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "7."
-          },
-          {
-            "id": "hyrox-w30-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "75-80 %."
-          },
-          {
-            "id": "hyrox-w30-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s entre blocs."
-          },
-          {
-            "id": "hyrox-w30-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w30-06-bloc-1",
+            "id": "hyrox-w30-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : 3 × (250 m rameur + 10 tirages bras tendus), facile à modéré."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : 3 × (250 m rameur + 10 tirages bras tendus), facile à modéré.",
+            "restText": "90 s entre blocs."
           },
           {
-            "id": "hyrox-w30-07-bloc-2",
+            "id": "hyrox-w30-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 220 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "220 kg",
             "restText": "30-45 s entre longueurs",
@@ -14680,10 +10662,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w30-08-bloc-3",
+            "id": "hyrox-w30-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 160 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "160 kg",
             "restText": "30-45 s entre longueurs",
@@ -14691,87 +10673,49 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w30-09-bloc-4",
+            "id": "hyrox-w30-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w30-10-bloc-5",
+            "id": "hyrox-w30-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "90 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w30-11-bloc-6",
+            "id": "hyrox-w30-07-bloc-6",
             "block": "Blocs HYROX",
             "name": "Bloc 6",
-            "order": 11,
+            "order": 7,
             "repsText": "1 km course + Farmer Carry : 200 m à 2 × 24 kg, fractionner si poignet gauche.",
             "targetLoadText": "2 × 24 kg",
+            "restText": "90 s entre blocs.",
             "sets": 2,
             "reps": 24
           },
           {
-            "id": "hyrox-w30-12-bloc-7",
+            "id": "hyrox-w30-08-bloc-7",
             "block": "Blocs HYROX",
             "name": "Bloc 7",
-            "order": 12,
+            "order": 8,
             "repsText": "1 km course + Sandbag Lunges : 80 m à 20 kg, repos debout si besoin.",
-            "targetLoadText": "20 kg"
+            "targetLoadText": "20 kg",
+            "restText": "90 s entre blocs."
           },
           {
-            "id": "hyrox-w30-13-retour-au-calme",
+            "id": "hyrox-w30-09-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 13,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w30-14-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 14,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w30-15-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 15,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w30-16-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 16,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w30-17-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 17,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w30-18-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 18,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w30-19-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 19,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 9,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -14795,30 +10739,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Pic de forme"
         ],
-        "exercises": [
-          {
-            "id": "rest-w31-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w31-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w31-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -14827,7 +10748,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "durationMin": 90,
         "rpeTarget": "RPE 7",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
-        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 220 kg, repos 2 min 30, RPE 7. • Sled Pull : 5 × 10 m à 160 kg, repos 2 min 30, RPE 7. • Presse à cuisses : 4 × 8 à 130 kg, repos 2 min 30.",
+        "normalVersion": "Prescription du fichier : Échauffement : 12 min. • Sled Push : 5 × 10 m à 220 kg, repos 2 min 30, RPE 7. • Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante. • Si RPE ≥ 8 ou technique moche : -10 à -20 kg.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
         "tags": [
           "Salle 1",
@@ -14839,7 +10760,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w31-02-sled-push",
@@ -14850,6 +10772,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "targetLoadText": "220 kg",
             "restText": "2 min 30",
             "rpeTarget": "RPE 7",
+            "techniqueNotes": [
+              "Si RPE ≤ 6 et technique stable : +10 kg la semaine suivante.",
+              "Si RPE ≥ 8 ou technique moche : -10 à -20 kg."
+            ],
             "sets": 5,
             "distanceM": 10
           },
@@ -14916,6 +10842,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "order": 8,
             "repsText": "3 × 15 à 6 kg, propre.",
             "targetLoadText": "6 kg",
+            "restText": "90-120 s si non précisé",
             "sets": 3,
             "reps": 15
           },
@@ -14924,14 +10851,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 9,
-            "repsText": "5-8 min."
-          },
-          {
-            "id": "strength-w31-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-90 min."
+            "repsText": "5-8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Mardi"
@@ -14950,49 +10871,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w31-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w31-02-echauffement-obligatoire",
+            "id": "badminton-w31-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w31-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w31-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w31-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w31-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -15027,6 +10913,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Bloc principal",
             "order": 2,
             "repsText": "3 × 1 km à 5'20-5'40/km, récupération complète.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 3,
             "distanceM": 1000
           },
@@ -15035,7 +10922,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "3 × (250 m rameur + 10 tirages bras tendus), facile à modéré."
+            "repsText": "3 × (250 m rameur + 10 tirages bras tendus), facile à modéré.",
+            "restText": "60-90 s ou marche lente si non précisé"
           },
           {
             "id": "run-w31-04-burpee-broad-jumps",
@@ -15062,14 +10950,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w31-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -15093,6 +10975,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -15100,14 +10983,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w31-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -15131,48 +11008,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w31-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "5."
-          },
-          {
-            "id": "hyrox-w31-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "75-80 %."
-          },
-          {
-            "id": "hyrox-w31-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s entre blocs."
-          },
-          {
-            "id": "hyrox-w31-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w31-06-bloc-1",
+            "id": "hyrox-w31-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : 3 × (250 m rameur + 10 tirages bras tendus), facile à modéré."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : 3 × (250 m rameur + 10 tirages bras tendus), facile à modéré.",
+            "restText": "90 s entre blocs."
           },
           {
-            "id": "hyrox-w31-07-bloc-2",
+            "id": "hyrox-w31-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 200 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "200 kg",
             "restText": "30-45 s entre longueurs",
@@ -15180,10 +11031,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w31-08-bloc-3",
+            "id": "hyrox-w31-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 140 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "140 kg",
             "restText": "30-45 s entre longueurs",
@@ -15191,69 +11042,29 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w31-09-bloc-4",
+            "id": "hyrox-w31-05-bloc-4",
             "block": "Blocs HYROX",
             "name": "Bloc 4",
-            "order": 9,
+            "order": 5,
             "repsText": "1 km course + Burpee Broad Jumps : 80 m, fractionner en 10 m, repos 15-20 s si besoin.",
             "restText": "15-20 s si besoin"
           },
           {
-            "id": "hyrox-w31-10-bloc-5",
+            "id": "hyrox-w31-06-bloc-5",
             "block": "Blocs HYROX",
             "name": "Bloc 5",
-            "order": 10,
+            "order": 6,
             "repsText": "1 km course + Rameur : 1000 m RPE 7, cadence régulière.",
+            "restText": "90 s entre blocs.",
             "rpeTarget": "RPE 7"
           },
           {
-            "id": "hyrox-w31-11-retour-au-calme",
+            "id": "hyrox-w31-07-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 11,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w31-12-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 12,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w31-13-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 13,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w31-14-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 14,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w31-15-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 15,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w31-16-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 16,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w31-17-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 17,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 7,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -15277,30 +11088,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Repos",
           "Affûtage"
         ],
-        "exercises": [
-          {
-            "id": "rest-w32-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w32-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w32-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -15321,7 +11109,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "10-12 min."
+            "repsText": "10-12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w32-02-sled-push",
@@ -15398,15 +11187,9 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "order": 8,
             "repsText": "3 × 12 à 6 kg, facile.",
             "targetLoadText": "6 kg",
+            "restText": "90-120 s si non précisé",
             "sets": 3,
             "reps": 12
-          },
-          {
-            "id": "strength-w32-09-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 9,
-            "repsText": "60-70 min."
           }
         ],
         "sourceDay": "Mardi"
@@ -15425,49 +11208,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w32-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w32-02-echauffement-obligatoire",
+            "id": "badminton-w32-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w32-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w32-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w32-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w32-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -15511,7 +11259,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "2 × (250 m rameur + 8 tirages bras tendus), activation."
+            "repsText": "2 × (250 m rameur + 8 tirages bras tendus), activation.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "run-w32-04-burpee-broad-jumps",
@@ -15538,14 +11287,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w32-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -15569,6 +11312,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -15576,14 +11320,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w32-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -15607,48 +11345,22 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "12 min."
+            "repsText": "12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
-            "id": "hyrox-w32-02-nombre-de-blocs",
-            "block": "Nombre de blocs",
-            "name": "Nombre de blocs",
-            "order": 2,
-            "repsText": "3."
-          },
-          {
-            "id": "hyrox-w32-03-intensite",
-            "block": "Intensité",
-            "name": "Intensité",
-            "order": 3,
-            "repsText": "75-80 %."
-          },
-          {
-            "id": "hyrox-w32-04-repos",
-            "block": "Repos",
-            "name": "Repos",
-            "order": 4,
-            "repsText": "90 s entre blocs."
-          },
-          {
-            "id": "hyrox-w32-05-blocs",
-            "block": "Blocs :",
-            "name": "Blocs :",
-            "order": 5,
-            "repsText": "Blocs :"
-          },
-          {
-            "id": "hyrox-w32-06-bloc-1",
+            "id": "hyrox-w32-02-bloc-1",
             "block": "Blocs HYROX",
             "name": "Bloc 1",
-            "order": 6,
-            "repsText": "1 km course + Substitut SkiErg : 2 × (250 m rameur + 8 tirages bras tendus), activation."
+            "order": 2,
+            "repsText": "1 km course + Substitut SkiErg : 2 × (250 m rameur + 8 tirages bras tendus), activation.",
+            "restText": "90 s entre blocs."
           },
           {
-            "id": "hyrox-w32-07-bloc-2",
+            "id": "hyrox-w32-03-bloc-2",
             "block": "Blocs HYROX",
             "name": "Bloc 2",
-            "order": 7,
+            "order": 3,
             "repsText": "1 km course + Sled Push : 4 × 10 m à 160 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "160 kg",
             "restText": "30-45 s entre longueurs",
@@ -15656,10 +11368,10 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w32-08-bloc-3",
+            "id": "hyrox-w32-04-bloc-3",
             "block": "Blocs HYROX",
             "name": "Bloc 3",
-            "order": 8,
+            "order": 4,
             "repsText": "1 km course + Sled Pull : 4 × 10 m à 120 kg, repos 30-45 s entre longueurs.",
             "targetLoadText": "120 kg",
             "restText": "30-45 s entre longueurs",
@@ -15667,53 +11379,12 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "distanceM": 10
           },
           {
-            "id": "hyrox-w32-09-retour-au-calme",
+            "id": "hyrox-w32-05-retour-au-calme",
             "block": "Retour au calme",
             "name": "Retour au calme",
-            "order": 9,
-            "repsText": "8-10 min."
-          },
-          {
-            "id": "hyrox-w32-10-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 10,
-            "repsText": "80-95 min."
-          },
-          {
-            "id": "hyrox-w32-11-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 11,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w32-12-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 12,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w32-13-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 13,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w32-14-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 14,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w32-15-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 15,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
+            "order": 5,
+            "repsText": "8-10 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Dimanche"
@@ -15739,30 +11410,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
           "Affûtage",
           "semaine course"
         ],
-        "exercises": [
-          {
-            "id": "rest-w33-01-option-1",
-            "block": "Option 1",
-            "name": "Option 1",
-            "order": 1,
-            "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
-            "rpeTarget": "RPE 3-4"
-          },
-          {
-            "id": "rest-w33-02-option-2",
-            "block": "Option 2",
-            "name": "Option 2",
-            "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "rest-w33-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
-          }
-        ],
+        "exercises": [],
         "sourceDay": "Lundi"
       },
       "strength": {
@@ -15784,7 +11432,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Échauffement",
             "name": "Échauffement",
             "order": 1,
-            "repsText": "10-12 min."
+            "repsText": "10-12 min.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "strength-w33-02-sled-push",
@@ -15861,15 +11510,9 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "order": 8,
             "repsText": "2 × 8 à 6 kg, activation seulement.",
             "targetLoadText": "6 kg",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "reps": 8
-          },
-          {
-            "id": "strength-w33-09-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 9,
-            "repsText": "60-70 min."
           }
         ],
         "sourceDay": "Mardi"
@@ -15889,49 +11532,14 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         ],
         "exercises": [
           {
-            "id": "badminton-w33-01-duree-par-defaut",
-            "block": "Durée par défaut",
-            "name": "Durée par défaut",
-            "order": 1,
-            "repsText": "75-90 min."
-          },
-          {
-            "id": "badminton-w33-02-echauffement-obligatoire",
+            "id": "badminton-w33-01-echauffement-obligatoire",
             "block": "Échauffement obligatoire",
             "name": "Échauffement obligatoire",
-            "order": 2,
+            "order": 1,
             "repsText": "8-10 min : squats 15, fentes 8/jambe, mollets 20, pas chassés 2 × 20 s, accélérations 2 × 20 s.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "durationSec": 20
-          },
-          {
-            "id": "badminton-w33-03-intensite-cible",
-            "block": "Intensité cible",
-            "name": "Intensité cible",
-            "order": 3,
-            "repsText": "RPE 6-7.",
-            "rpeTarget": "RPE 6-7"
-          },
-          {
-            "id": "badminton-w33-04-si-match-tres-intense",
-            "block": "Si match très intense",
-            "name": "Si match très intense",
-            "order": 4,
-            "repsText": "noter FC, calories, RPE, douleur mollet/adducteurs/tendon."
-          },
-          {
-            "id": "badminton-w33-05-si-fatigue",
-            "block": "Si fatigue",
-            "name": "Si fatigue",
-            "order": 5,
-            "repsText": "jouer technique, limiter les matchs longs, durée 45-60 min."
-          },
-          {
-            "id": "badminton-w33-06-dans-la-pwa",
-            "block": "Dans la PWA",
-            "name": "Dans la PWA",
-            "order": 6,
-            "repsText": "durée, activité, intensité, calories et notes restent modifiables."
           }
         ],
         "sourceDay": "Jeudi"
@@ -15967,6 +11575,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Bloc principal",
             "order": 2,
             "repsText": "Semaine course : 20-25 min très facile + 3 × 20 s accélérations.",
+            "restText": "60-90 s ou marche lente si non précisé",
             "sets": 3,
             "durationSec": 20
           },
@@ -15975,7 +11584,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Substitut SkiErg",
             "name": "Substitut SkiErg",
             "order": 3,
-            "repsText": "2 × (250 m rameur + 8 tirages bras tendus), activation."
+            "repsText": "2 × (250 m rameur + 8 tirages bras tendus), activation.",
+            "restText": "Pas de repos imposé"
           },
           {
             "id": "run-w33-04-burpee-broad-jumps",
@@ -16002,14 +11612,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Retour au calme",
             "name": "Retour au calme",
             "order": 6,
-            "repsText": "8 min."
-          },
-          {
-            "id": "run-w33-07-duree-max",
-            "block": "Durée max",
-            "name": "Durée max",
-            "order": 7,
-            "repsText": "75-90 min."
+            "repsText": "8 min.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Vendredi"
@@ -16034,6 +11638,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Option 1",
             "order": 1,
             "repsText": "30-45 min marche ou vélo zone 2, RPE 3-4.",
+            "restText": "Libre",
             "rpeTarget": "RPE 3-4"
           },
           {
@@ -16041,14 +11646,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Option 2",
             "name": "Option 2",
             "order": 2,
-            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos."
-          },
-          {
-            "id": "recovery-w33-03-pas-de-fractionne-pas-de-seance-cachee-oui",
-            "block": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "name": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte.",
-            "order": 3,
-            "repsText": "Pas de fractionné. Pas de séance cachée. Oui, le repos compte."
+            "repsText": "mobilité 20 min : hanches, chevilles, mollets, fessiers, dos.",
+            "restText": "Pas de repos imposé"
           }
         ],
         "sourceDay": "Samedi"
@@ -16057,7 +11656,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
         "title": "Course / activation uniquement",
         "objective": "Enchaîner course et stations avec un pacing régulier et des transitions propres.",
         "durationMin": 90,
-        "rpeTarget": "RPE 7",
+        "rpeTarget": "RPE 7-8",
         "fatigueVersion": "Version fatiguée : réduire les charges de 15 à 25 %, enlever 1 à 2 séries, rester entre 45 et 65 min, et remplacer la course intense par vélo, rameur ou marche inclinée zone 2.",
         "normalVersion": "Prescription du fichier : Lundi : repos. • Mardi ou mercredi : 20-25 min footing très facile + 3 × 20 s accélérations. • Jeudi : mobilité + 2 × 8 wall balls + 2 × 250 m rameur facile. • Vendredi : repos. • Samedi : course HYROX.",
         "strongVersion": "Version en forme : ajouter une seule option, pas tout en même temps : +1 série de sled, +10 kg si RPE ≤ 6 la semaine précédente, +10 min zone 2 ou +1 bloc HYROX.",
@@ -16073,7 +11672,8 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Lundi",
             "name": "Lundi",
             "order": 1,
-            "repsText": "repos."
+            "repsText": "repos.",
+            "restText": "90 s entre blocs si non précisé"
           },
           {
             "id": "hyrox-w33-02-mardi-ou-mercredi",
@@ -16081,6 +11681,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Mardi ou mercredi",
             "order": 2,
             "repsText": "20-25 min footing très facile + 3 × 20 s accélérations.",
+            "restText": "90 s entre blocs si non précisé",
             "sets": 3,
             "durationSec": 20
           },
@@ -16090,6 +11691,7 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "name": "Jeudi",
             "order": 3,
             "repsText": "mobilité + 2 × 8 wall balls + 2 × 250 m rameur facile.",
+            "restText": "Pas de repos imposé",
             "sets": 2,
             "reps": 8
           },
@@ -16098,226 +11700,16 @@ export const PRECISE_WEEK_PLANS: Record<number, PreciseWeekPlan> = {
             "block": "Vendredi",
             "name": "Vendredi",
             "order": 4,
-            "repsText": "repos."
+            "repsText": "repos.",
+            "restText": "90 s entre blocs si non précisé"
           },
           {
             "id": "hyrox-w33-05-samedi",
             "block": "Samedi",
             "name": "Samedi",
             "order": 5,
-            "repsText": "course HYROX."
-          },
-          {
-            "id": "hyrox-w33-06-plan-recommande",
-            "block": "Plan recommandé",
-            "name": "Plan recommandé",
-            "order": 6,
-            "repsText": "mardi Salle 1, mercredi badminton, jeudi badminton, vendredi Salle 2, samedi récupération, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w33-07-si-tu-fais-badminton-mardi",
-            "block": "Si tu fais badminton mardi",
-            "name": "Si tu fais badminton mardi",
-            "order": 7,
-            "repsText": "mardi badminton, vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w33-08-si-tu-fais-badminton-vendredi",
-            "block": "Si tu fais badminton vendredi",
-            "name": "Si tu fais badminton vendredi",
-            "order": 8,
-            "repsText": "vendredi badminton, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w33-09-si-tu-fais-3-badmintons-mardi-mercredi-jeu",
-            "block": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "name": "Si tu fais 3 badmintons mardi/mercredi/jeudi",
-            "order": 9,
-            "repsText": "vendredi Salle 1, samedi Salle 2, dimanche Salle 3."
-          },
-          {
-            "id": "hyrox-w33-10-si-douleur-ou-sommeil-6-h",
-            "block": "Si douleur ou sommeil < 6 h",
-            "name": "Si douleur ou sommeil < 6 h",
-            "order": 10,
-            "repsText": "version fatiguée, pas de rattrapage sauvage le lendemain."
-          },
-          {
-            "id": "hyrox-w33-11-reduire-les-charges-de-15-a-25",
-            "block": "Réduire les charges de 15 à 25 %.",
-            "name": "Réduire les charges de 15 à 25 %.",
-            "order": 11,
-            "repsText": "Réduire les charges de 15 à 25 %."
-          },
-          {
-            "id": "hyrox-w33-12-enlever-1-a-2-series-sur-sled-force-et-wal",
-            "block": "Enlever 1 à 2 séries sur sled, force et wall balls.",
-            "name": "Enlever 1 à 2 séries sur sled, force et wall balls.",
-            "order": 12,
-            "repsText": "Enlever 1 à 2 séries sur sled, force et wall balls."
-          },
-          {
-            "id": "hyrox-w33-13-garder-la-seance-a-45-65-min",
-            "block": "Garder la séance à 45-65 min.",
-            "name": "Garder la séance à 45-65 min.",
-            "order": 13,
-            "repsText": "Garder la séance à 45-65 min."
-          },
-          {
-            "id": "hyrox-w33-14-remplacer-course-intense-par-velo-rameur-o",
-            "block": "Remplacer course intense par vélo, rameur ou marche inclinée zone 2.",
-            "name": "Remplacer course intense par vélo, rameur ou marche inclinée zone 2.",
-            "order": 14,
-            "repsText": "Remplacer course intense par vélo, rameur ou marche inclinée zone 2."
-          },
-          {
-            "id": "hyrox-w33-15-suivre-la-prescription",
-            "block": "Suivre la prescription.",
-            "name": "Suivre la prescription.",
-            "order": 15,
-            "repsText": "Suivre la prescription."
-          },
-          {
-            "id": "hyrox-w33-16-rpe-cible",
-            "block": "RPE cible",
-            "name": "RPE cible",
-            "order": 16,
-            "repsText": "6-7 la majorité du temps, 8 maximum sur les blocs spécifiques."
-          },
-          {
-            "id": "hyrox-w33-17-ajouter-seulement-une-option",
-            "block": "Ajouter seulement une option :",
-            "name": "Ajouter seulement une option :",
-            "order": 17,
-            "repsText": "Ajouter seulement une option :"
-          },
-          {
-            "id": "hyrox-w33-18-ne-jamais-tout-ajouter-en-meme-temps-l-ent",
-            "block": "Ne jamais tout ajouter en même temps. L’enthousiasme, c’est bien ; le tendon d’Achille, c’est mieux.",
-            "name": "Ne jamais tout ajouter en même temps. L’enthousiasme, c’est bien ; le tendon d’Achille, c’est mieux.",
-            "order": 18,
-            "repsText": "Ne jamais tout ajouter en même temps. L’enthousiasme, c’est bien ; le tendon d’Achille, c’est mieux."
-          },
-          {
-            "id": "hyrox-w33-19-1-km-course-rpe-7",
-            "block": "1 km course RPE 7",
-            "name": "1 km course RPE 7",
-            "order": 19,
-            "repsText": "temps + FC.",
-            "rpeTarget": "RPE 7"
-          },
-          {
-            "id": "hyrox-w33-20-sled-push",
-            "block": "Sled Push",
-            "name": "Sled Push",
-            "order": 20,
-            "repsText": "4 × 10 m charge de base, temps moyen.",
-            "sets": 4,
-            "distanceM": 10
-          },
-          {
-            "id": "hyrox-w33-21-sled-pull",
-            "block": "Sled Pull",
-            "name": "Sled Pull",
-            "order": 21,
-            "repsText": "4 × 10 m charge de base, temps moyen.",
-            "sets": 4,
-            "distanceM": 10
-          },
-          {
-            "id": "hyrox-w33-22-farmer-carry",
-            "block": "Farmer carry",
-            "name": "Farmer carry",
-            "order": 22,
-            "repsText": "distance sans poser à 2 × 20 ou 2 × 24 kg.",
-            "targetLoadText": "2 × 20 ou 2 × 24 kg",
-            "sets": 2,
-            "reps": 20
-          },
-          {
-            "id": "hyrox-w33-23-wall-balls",
-            "block": "Wall balls",
-            "name": "Wall balls",
-            "order": 23,
-            "repsText": "max reps propres en 90 s."
-          },
-          {
-            "id": "hyrox-w33-24-rameur",
-            "block": "Rameur",
-            "name": "Rameur",
-            "order": 24,
-            "repsText": "500 m RPE 7.",
-            "rpeTarget": "RPE 7"
-          },
-          {
-            "id": "hyrox-w33-25-poids-moyen-hebdomadaire",
-            "block": "Poids moyen hebdomadaire.",
-            "name": "Poids moyen hebdomadaire.",
-            "order": 25,
-            "repsText": "Poids moyen hebdomadaire."
-          },
-          {
-            "id": "hyrox-w33-26-douleur-fatigue",
-            "block": "Douleur / fatigue.",
-            "name": "Douleur / fatigue.",
-            "order": 26,
-            "repsText": "Douleur / fatigue."
-          },
-          {
-            "id": "hyrox-w33-27-poulie-bras-tendus-rameur",
-            "block": "poulie bras tendus + rameur ;",
-            "name": "poulie bras tendus + rameur ;",
-            "order": 27,
-            "repsText": "poulie bras tendus + rameur ;"
-          },
-          {
-            "id": "hyrox-w33-28-battle-rope-rameur",
-            "block": "battle rope + rameur ;",
-            "name": "battle rope + rameur ;",
-            "order": 28,
-            "repsText": "battle rope + rameur ;"
-          },
-          {
-            "id": "hyrox-w33-29-assault-bike",
-            "block": "Assault Bike ;",
-            "name": "Assault Bike ;",
-            "order": 29,
-            "repsText": "Assault Bike ;"
-          },
-          {
-            "id": "hyrox-w33-30-rameur-seul",
-            "block": "rameur seul.",
-            "name": "rameur seul.",
-            "order": 30,
-            "repsText": "rameur seul."
-          },
-          {
-            "id": "hyrox-w33-31-duree-modifiable",
-            "block": "durée modifiable ;",
-            "name": "durée modifiable ;",
-            "order": 31,
-            "repsText": "durée modifiable ;"
-          },
-          {
-            "id": "hyrox-w33-32-activite-modifiable",
-            "block": "activité modifiable ;",
-            "name": "activité modifiable ;",
-            "order": 32,
-            "repsText": "activité modifiable ;"
-          },
-          {
-            "id": "hyrox-w33-33-intensite-modifiable",
-            "block": "intensité modifiable ;",
-            "name": "intensité modifiable ;",
-            "order": 33,
-            "repsText": "intensité modifiable ;"
-          },
-          {
-            "id": "hyrox-w33-34-calories-fc-rpe-notes-modifiables",
-            "block": "calories/FC/RPE/notes modifiables.",
-            "name": "calories/FC/RPE/notes modifiables.",
-            "order": 34,
-            "repsText": "calories/FC/RPE/notes modifiables."
+            "repsText": "course HYROX.",
+            "restText": "90 s entre blocs si non précisé"
           }
         ],
         "sourceDay": "Dimanche"

@@ -45,6 +45,13 @@ function cleanInline(text) {
     .replace(/\.\./g, ".");
 }
 
+function searchable(text) {
+  return cleanInline(text)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 function slugify(text) {
   return cleanInline(text)
     .normalize("NFD")
@@ -67,8 +74,8 @@ function classifySlot(dayTitle, sessionTitle) {
 }
 
 function parseDuration(lines, slot) {
-  const text = lines.join(" ");
-  const match = text.match(/durée(?:\s+par\s+défaut|\s+max)?\s*:\s*(?:environ\s*)?(\d+)(?:\s*[-à]\s*(\d+))?\s*min/i);
+  const text = searchable(lines.join(" "));
+  const match = text.match(/duree(?:\s+par\s+defaut|\s+max)?\s*:\s*(?:environ\s*)?(\d+)(?:\s*[-a]\s*(\d+))?\s*min/i);
   if (match) return Number(match[2] ?? match[1]);
 
   if (slot === "rest") return 0;
@@ -93,7 +100,7 @@ function parseRpe(lines, slot) {
 }
 
 function extractRestText(text) {
-  const match = text.match(/repos\s+((?:\d|libre|complet)[^,.;]*)/i);
+  const match = text.match(/repos\s*:?\s*((?:\d|libre|complet)[^,.;]*)/i);
   return match ? cleanInline(match[1]) : undefined;
 }
 
@@ -123,11 +130,34 @@ function parseSetData(text) {
   return { sets, reps: value };
 }
 
-function parseExercise(text, week, slot, order, numberedBlock) {
+function getDefaultRestText(slot, name, repsText) {
+  const haystack = searchable(`${name} ${repsText}`);
+  if (haystack.includes("echauff") || haystack.includes("activation") || haystack.includes("mobilite") || haystack.includes("retour au calme")) {
+    return "Pas de repos imposé";
+  }
+  if (slot === "badminton") return "Hydratation entre matchs";
+  if (slot === "strength") return "90-120 s si non précisé";
+  if (slot === "run") return "60-90 s ou marche lente si non précisé";
+  if (slot === "hyrox") return "90 s entre blocs si non précisé";
+  if (slot === "recovery") return "Libre";
+  return undefined;
+}
+
+function extractSessionRestText(lines) {
+  const restLine = lines.find((line) => searchable(line.text).startsWith("repos"));
+  if (!restLine) return undefined;
+
+  const restText = cleanInline(restLine.text.replace(/^repos\s*:?\s*/i, ""));
+  return restText || undefined;
+}
+
+function parseExercise(line, week, slot, order, sessionRestText) {
+  const { text, numberedBlock, techniqueNotes } = line;
   const cleanText = cleanInline(text);
   const colonMatch = cleanText.match(/^([^:]{2,72})\s*:\s*(.+)$/);
   const name = numberedBlock ? `Bloc ${numberedBlock}` : colonMatch ? cleanInline(colonMatch[1]) : cleanText.split(" - ")[0];
   const repsText = numberedBlock ? cleanText : colonMatch ? cleanInline(colonMatch[2]) : cleanText;
+  const restText = extractRestText(cleanText) ?? (numberedBlock ? sessionRestText : undefined) ?? getDefaultRestText(slot, name, repsText);
 
   return {
     id: `${slot}-w${week}-${String(order).padStart(2, "0")}-${slugify(name) || "bloc"}`,
@@ -136,15 +166,15 @@ function parseExercise(text, week, slot, order, numberedBlock) {
     order,
     repsText,
     targetLoadText: extractLoadText(repsText),
-    restText: extractRestText(cleanText),
+    restText,
     rpeTarget: extractRpeText(cleanText),
+    techniqueNotes,
     ...parseSetData(repsText)
   };
 }
 
-function extractExerciseLines(content) {
-  const exercises = [];
-  let current = undefined;
+function extractBulletLines(content) {
+  const lines = [];
 
   for (const rawLine of content.split("\n")) {
     if (!rawLine.trim()) continue;
@@ -161,20 +191,51 @@ function extractExerciseLines(content) {
       const text = cleanInline(bulletMatch[1]);
       if (!text) continue;
 
-      if (indent > 0 && current) {
-        current.techniqueNotes = [...(current.techniqueNotes ?? []), text];
-        continue;
-      }
-
-      current = { text, numberedBlock: undefined };
-      exercises.push(current);
+      lines.push({ text, numberedBlock: undefined, indent });
       continue;
     }
 
     if (numberedMatch) {
-      current = { text: cleanInline(numberedMatch[2]), numberedBlock: Number(numberedMatch[1]) };
-      exercises.push(current);
+      lines.push({ text: cleanInline(numberedMatch[2]), numberedBlock: Number(numberedMatch[1]), indent });
     }
+  }
+
+  return lines;
+}
+
+function isSummaryOnlyLine(text, slot) {
+  if (slot === "rest") return true;
+
+  const normalized = searchable(text);
+  return [
+    /^duree max\b/,
+    /^duree par defaut\b/,
+    /^intensite\b/,
+    /^intensite cible\b/,
+    /^nombre de blocs\b/,
+    /^repos\b/,
+    /^blocs\b/,
+    /^dans la pwa\b/,
+    /^si match\b/,
+    /^si fatigue\b/,
+    /^pas de fractionne\b/
+  ].some((pattern) => pattern.test(normalized));
+}
+
+function extractExerciseLines(content, slot) {
+  const exercises = [];
+  let current = undefined;
+
+  for (const line of extractBulletLines(content)) {
+    if (line.indent > 0 && !line.numberedBlock && current) {
+      current.techniqueNotes = [...(current.techniqueNotes ?? []), line.text];
+      continue;
+    }
+
+    if (!line.numberedBlock && isSummaryOnlyLine(line.text, slot)) continue;
+
+    current = { text: line.text, numberedBlock: line.numberedBlock };
+    exercises.push(current);
   }
 
   return exercises;
@@ -183,14 +244,20 @@ function extractExerciseLines(content) {
 function buildNormalVersion(slot, lines) {
   if (!lines.length) return "Prescription issue du programme envoyé, à ajuster selon ton état du jour.";
 
-  const summary = lines.slice(0, slot === "hyrox" ? 5 : 4).map((line) => cleanInline(line.text)).join(" • ");
+  const summary = lines
+    .filter((line) => !searchable(line.text).startsWith("dans la pwa"))
+    .slice(0, slot === "hyrox" ? 5 : 4)
+    .map((line) => cleanInline(line.text))
+    .join(" • ");
   return `Prescription du fichier : ${summary}`;
 }
 
 function buildSessionPlan(week, slot, dayTitle, sessionTitle, content, phaseTitle, statusText) {
-  const rawLines = extractExerciseLines(content);
-  const exercises = rawLines.map((line, index) => parseExercise(line.text, week, slot, index + 1, line.numberedBlock));
-  const durationMin = parseDuration(rawLines.map((line) => line.text), slot);
+  const summaryLines = extractBulletLines(content);
+  const rawLines = extractExerciseLines(content, slot);
+  const sessionRestText = extractSessionRestText(summaryLines);
+  const exercises = rawLines.map((line, index) => parseExercise(line, week, slot, index + 1, sessionRestText));
+  const durationMin = parseDuration(summaryLines.map((line) => line.text), slot);
   const title = slot === "rest" ? "Repos complet / mobilité douce" : cleanInline(sessionTitle) || SLOT_LABELS[slot];
   const statusTags = statusText ? [cleanInline(statusText).split(".")[0]] : [];
   const tags = [
@@ -204,11 +271,11 @@ function buildSessionPlan(week, slot, dayTitle, sessionTitle, content, phaseTitl
     title,
     objective: OBJECTIVES[slot],
     durationMin,
-    rpeTarget: parseRpe(rawLines.map((line) => line.text), slot),
+    rpeTarget: parseRpe(summaryLines.map((line) => line.text), slot),
     fatigueVersion: slot === "badminton"
       ? "Version fatiguée : jouer technique, limiter les matchs longs, durée 45-60 min, stop si douleur mollet/adducteurs/tendon."
       : FATIGUE_VERSION,
-    normalVersion: buildNormalVersion(slot, rawLines),
+    normalVersion: buildNormalVersion(slot, summaryLines),
     strongVersion: slot === "badminton"
       ? "Version en forme : séance normale à intense, sans dépasser 90 min de haute intensité."
       : STRONG_VERSION,
@@ -229,12 +296,15 @@ function parseWeeks(markdown) {
     const phaseTitle = cleanInline(block.match(/\*\*Phase :\*\*\s*([^\n]+)/)?.[1] ?? `Semaine ${week}`);
     const note = cleanInline(block.match(/\*\*Note :\*\*\s*([^\n]+)/)?.[1] ?? "");
     const status = cleanInline(block.match(/\*\*Statut :\*\*\s*([^\n]+)/)?.[1] ?? "");
-    const dayMatches = [...block.matchAll(/^### ([^\n]+)$/gm)].filter((day) => !day[1].includes("Permutations"));
+    const dayMatches = [...block.matchAll(/^### ([^\n]+)$/gm)];
     const sessions = {};
 
     for (let dayIndex = 0; dayIndex < dayMatches.length; dayIndex += 1) {
       const dayStart = dayMatches[dayIndex].index;
-      const dayEnd = dayMatches[dayIndex + 1]?.index ?? block.length;
+      const nextDayStart = dayMatches[dayIndex + 1]?.index ?? block.length;
+      const nextSectionOffset = block.slice(dayStart + 1).search(/\n##\s+/);
+      const nextSectionStart = nextSectionOffset >= 0 ? dayStart + 1 + nextSectionOffset : block.length;
+      const dayEnd = Math.min(nextDayStart, nextSectionStart);
       const heading = cleanInline(dayMatches[dayIndex][1]);
       const dayBlock = block.slice(dayStart, dayEnd);
       if (heading.includes("Permutations")) continue;

@@ -445,7 +445,7 @@ export default function PlanningPage() {
                   onClick={() => setOpenSessionId(isOpen ? null : session.id)}
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <span className={`grid h-12 w-12 shrink-0 place-items-center font-display text-xl font-black ${isOpen ? "bg-petrol-800 text-limeSoft" : "bg-mist text-petrol-800"}`}>
+                    <span className={`flex min-w-[4.75rem] shrink-0 items-center justify-center px-3 py-2 text-center font-display text-lg font-black leading-none ${isOpen ? "bg-petrol-800 text-limeSoft" : "bg-mist text-petrol-800"}`}>
                       {formatShortDate(session.date)}
                     </span>
                     <div className="min-w-0">
@@ -464,16 +464,7 @@ export default function PlanningPage() {
                 </button>
 
                 {isOpen ? (
-                  <div className="grid gap-0 border-t border-petrol-800/10 sm:grid-cols-[8rem_1fr]">
-                <div className="bg-petrol-800 p-4 text-white">
-                  <p className="text-xs font-black uppercase tracking-[0.14em] text-white/70">{session.day}</p>
-                  <p className="mt-2 font-display text-2xl font-black tracking-[-0.05em]">{formatShortDate(session.date)}</p>
-                  <p className="mt-3 text-xs font-black uppercase tracking-[0.12em] text-limeSoft">
-                    {PLANNED_TYPE_LABELS[session.type]}
-                  </p>
-                </div>
-
-                <div className="p-5">
+                  <div className="border-t border-petrol-800/10 p-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <h2 className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{session.title}</h2>
@@ -540,7 +531,6 @@ export default function PlanningPage() {
                       </div>
                     ) : null}
                   </div>
-                </div>
                   </div>
                 ) : null}
               </article>
