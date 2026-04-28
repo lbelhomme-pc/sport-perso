@@ -3,7 +3,7 @@ import { differenceInCalendarDays, parseISO } from "date-fns";
 import { BarChart3, CalendarCheck2, CalendarDays, Dumbbell, Scale, Settings, Utensils } from "lucide-react";
 import { MetricCard } from "../components/ui/MetricCard";
 import { SectionCard } from "../components/ui/SectionCard";
-import { EVENT_LABEL } from "../data/defaults";
+import { BADMINTON_VARIANTS, EVENT_LABEL } from "../data/defaults";
 import { getDisplayedVersion } from "../data/trainingPlan";
 import { useDailyContext } from "../hooks/useDailyContext";
 import { useDashboard } from "../hooks/useDashboard";
@@ -24,6 +24,20 @@ function signedCalories(value: number) {
 
 function balanceLabel(deficit: number) {
   return deficit >= 0 ? `${Math.round(deficit)} kcal` : `+${Math.abs(Math.round(deficit))} kcal`;
+}
+
+function formatBuildStamp(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "heure inconnue";
+
+  return new Intl.DateTimeFormat("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Paris"
+  }).format(date);
 }
 
 function balanceTitle(deficit: number) {
@@ -170,6 +184,8 @@ export default function DashboardPage() {
   const steps = dailyContext.steps ?? 0;
   const floors = dailyContext.floors ?? 0;
   const proteinTarget = getProteinTarget(dashboard.calculationWeight, dashboard.settings.proteinPerKg);
+  const buildStamp = formatBuildStamp(__APP_BUILD_TIME__);
+  const activeBadmintonVariant = BADMINTON_VARIANTS.find((variant) => variant.id === dashboard.settings.badmintonVariant);
   const weightAgeDays = dashboard.latestWeight
     ? differenceInCalendarDays(parseISO(dashboard.today), parseISO(dashboard.latestWeight.date))
     : null;
@@ -219,6 +235,10 @@ export default function DashboardPage() {
         <div className="grid gap-0 xl:grid-cols-[1.1fr_0.9fr]">
           <div className="bg-petrol-800 p-6 text-white sm:p-8">
             <p className="text-[0.68rem] font-black uppercase tracking-[0.2em] text-limeSoft">{EVENT_LABEL}</p>
+            <div className="mt-4 inline-flex flex-wrap items-center gap-2 border border-white/15 bg-white/10 px-3 py-2 text-xs font-black uppercase tracking-[0.1em] text-white/80">
+              <span>MAJ {buildStamp}</span>
+              <span className="text-limeSoft">10 configs badminton</span>
+            </div>
             <h1 className="mt-4 max-w-3xl font-display text-5xl font-black leading-[0.9] tracking-[-0.08em] sm:text-6xl">
               Synthèse HYROX
             </h1>
@@ -244,6 +264,9 @@ export default function DashboardPage() {
               <div className="bg-limeSoft p-3 text-petrol-900">
                 <p className="text-[0.65rem] font-black uppercase tracking-[0.14em] opacity-70">Séances</p>
                 <p className="mt-1 font-display text-3xl font-black">{completion}%</p>
+                <p className="mt-2 text-[0.62rem] font-black uppercase tracking-[0.1em] opacity-70">
+                  {activeBadmintonVariant?.shortLabel ?? "Config"} - {BADMINTON_VARIANTS.length}/10 options
+                </p>
               </div>
             </div>
           </div>

@@ -42,6 +42,52 @@ function getExerciseAdjustment(exercise: ExercisePrescription, energy: EnergyLev
   return undefined;
 }
 
+function BadmintonVariantSelector({
+  value,
+  onChange
+}: {
+  value: BadmintonVariant;
+  onChange: (variant: BadmintonVariant) => void;
+}) {
+  return (
+    <div className="mt-4 border border-petrol-800/10 bg-white p-4">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="eyebrow">Toutes les configurations badminton</p>
+          <p className="mt-1 text-xs font-bold text-muted">
+            {BADMINTON_VARIANTS.length}/10 options disponibles. Appuie sur une option pour l'appliquer partout.
+          </p>
+        </div>
+        <span className="chip bg-limeSoft text-petrol-900">Config active</span>
+      </div>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
+        {BADMINTON_VARIANTS.map((variant) => {
+          const active = variant.id === value;
+
+          return (
+            <button
+              key={variant.id}
+              type="button"
+              className={`min-h-24 border p-3 text-left transition ${
+                active ? "border-petrol-800 bg-petrol-800 text-white" : "border-petrol-800/10 bg-mist/45 text-petrol-800 hover:border-petrol-800/35"
+              }`}
+              onClick={() => onChange(variant.id)}
+            >
+              <span className={active ? "text-[0.65rem] font-black uppercase tracking-[0.14em] text-limeSoft" : "text-[0.65rem] font-black uppercase tracking-[0.14em] text-muted"}>
+                {variant.shortLabel}
+              </span>
+              <span className="mt-2 block text-sm font-black leading-5">{variant.label}</span>
+              <span className={active ? "mt-2 block text-xs font-bold leading-5 text-white/65" : "mt-2 block text-xs font-bold leading-5 text-muted"}>
+                {variant.description}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function SessionChecklistPanel({
   items,
   checkedItemIds,
@@ -378,6 +424,11 @@ export default function PlanningPage() {
             </select>
           </label>
         </div>
+
+        <BadmintonVariantSelector
+          value={variant}
+          onChange={(nextVariant) => saveSettings({ ...settings, badmintonVariant: nextVariant })}
+        />
 
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           <div className="bg-mist/70 p-4">

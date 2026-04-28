@@ -4,9 +4,13 @@ import { VitePWA } from "vite-plugin-pwa";
 
 const env = (globalThis as unknown as { process?: { env?: Record<string, string | undefined> } }).process?.env;
 const basePath = env?.GITHUB_PAGES === "true" ? "/sport-perso/" : "/";
+const buildTime = new Date().toISOString();
 
 export default defineConfig({
   base: basePath,
+  define: {
+    __APP_BUILD_TIME__: JSON.stringify(buildTime)
+  },
   plugins: [
     react(),
     VitePWA({
@@ -32,7 +36,10 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,png,ico}"]
+        globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true
       }
     })
   ]
