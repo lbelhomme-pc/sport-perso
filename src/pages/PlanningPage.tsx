@@ -471,7 +471,7 @@ export default function PlanningPage() {
             const content = getDisplayedVersion(session, energy);
             const checklistItems = getSessionChecklist(session, energy);
             const checkedItemIds = getCheckedItemIds(session.id);
-            const exerciseCheckIds = getActionableExercises(session.exercises).map(getExerciseCheckId);
+            const hasStructuredExercises = getActionableExercises(session.exercises).length > 0;
             const override = getOverride(session.id);
             const isOpen = openSessionId === session.id;
 
@@ -508,7 +508,13 @@ export default function PlanningPage() {
                     <p className="mt-2 text-sm font-semibold leading-6 text-ink">{session.objective}</p>
                   </div>
 
-                  <p className="mt-4 bg-white p-4 text-sm font-semibold leading-6 text-ink">{content}</p>
+                  {!hasStructuredExercises || energy !== "normal" ? (
+                    <p className="mt-4 bg-white p-4 text-sm font-semibold leading-6 text-ink">{content}</p>
+                  ) : (
+                    <p className="mt-4 border border-petrol-800/10 bg-white p-3 text-xs font-bold leading-5 text-muted">
+                      La prescription est structurée ci-dessous pour éviter les doublons : tu coches uniquement les blocs utiles et tu notes charge, ressenti ou adaptation.
+                    </p>
+                  )}
                   {session.type !== "rest" ? (
                     <p className="mt-3 border border-petrol-800/10 bg-white p-3 text-xs font-bold leading-5 text-muted">
                       Après la séance, utilise “Saisir temps / FC / calories” : durée, FC, calories et RPE alimentent directement les stats.
