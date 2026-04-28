@@ -84,7 +84,7 @@ export function SessionMode({
               </button>
             ) : (
               <button type="button" className="action-button bg-limeSoft text-petrol-900 hover:bg-white" onClick={onFinish}>
-                <CheckCircle2 className="h-4 w-4" /> Terminer
+                <CheckCircle2 className="h-4 w-4" /> Saisir les données
               </button>
             )}
           </div>
@@ -186,7 +186,7 @@ export function SessionMode({
         })}
 
         <button type="button" className="action-button min-h-14" onClick={completed ? onClose : onFinish}>
-          <Dumbbell className="h-4 w-4" /> {completed ? "Fermer la séance" : "Terminer et enregistrer"}
+          <Dumbbell className="h-4 w-4" /> {completed ? "Fermer la séance" : "Terminer et saisir temps / FC / calories"}
         </button>
       </main>
     </div>

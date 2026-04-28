@@ -149,7 +149,7 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
             </button>
           ) : null}
           <button type="submit" className="action-button">
-            <Save className="h-4 w-4" /> Enregistrer
+            <Save className="h-4 w-4" /> {planned ? "Valider séance" : "Enregistrer"}
           </button>
         </div>
       </div>

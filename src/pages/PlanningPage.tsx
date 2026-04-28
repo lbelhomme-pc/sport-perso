@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, ChevronDown, Dumbbell, ListChecks, RotateCcw, StickyNote } from "lucide-react";
+import { ChevronDown, Dumbbell, ListChecks, RotateCcw, StickyNote } from "lucide-react";
 import { SessionForm } from "../components/forms/SessionForm";
 import { SessionMode } from "../components/session/SessionMode";
 import { PageHeader } from "../components/ui/PageHeader";
@@ -269,7 +269,7 @@ function SessionCommentBox({
 
 export default function PlanningPage() {
   const { settings } = useSettings();
-  const { sessions, saveSession, markPlannedSessionCompleted, deletePlannedSessionCompletion } = useSessions();
+  const { sessions, saveSession, deletePlannedSessionCompletion } = useSessions();
   const { getCheckedItemIds, saveChecklist, toggleChecklistItem, resetChecklist } = useSessionChecklists();
   const { getOverride, saveNotes, resetOverride } = usePlanningOverrides();
   const totalWeeks = getTotalWeeks(settings.startDate, settings.targetDate);
@@ -305,7 +305,8 @@ export default function PlanningPage() {
           onToggle={(itemId, checked) => toggleChecklistItem(sessionMode.id, itemId, checked)}
           onClose={() => setSessionMode(null)}
           onFinish={() => {
-            markPlannedSessionCompleted(sessionMode);
+            setEditingSession(sessionMode);
+            setOpenSessionId(sessionMode.id);
             setSessionMode(null);
           }}
           onUndo={() => deletePlannedSessionCompletion(sessionMode.id)}
@@ -389,9 +390,16 @@ export default function PlanningPage() {
           <div className="mt-5">
             <SessionForm
               planned={editingSession}
+              initial={getCompletedForPlan(sessions, editingSession.id)}
               onCancel={() => setEditingSession(null)}
               onSubmit={(session) => {
                 saveSession(session);
+                if (session.completed) {
+                  const checklistItems = getSessionChecklist(editingSession, energy);
+                  const exerciseCheckIds = editingSession.exercises?.map(getExerciseCheckId) ?? [];
+                  saveChecklist(editingSession.id, [...checklistItems.map((item) => item.id), ...exerciseCheckIds]);
+                }
+                setOpenSessionId(editingSession.id);
                 setEditingSession(null);
               }}
             />
@@ -521,22 +529,14 @@ export default function PlanningPage() {
                         <button className="action-button" onClick={() => setSessionMode(session)}>
                           <Dumbbell className="h-4 w-4" /> Mode séance
                         </button>
-                        <button className="ghost-button" onClick={() => setEditingSession(session)}>
-                          <Dumbbell className="h-4 w-4" /> Saisir temps / FC / calories
+                        <button className={completed ? "ghost-button" : "action-button"} onClick={() => setEditingSession(session)}>
+                          <Dumbbell className="h-4 w-4" /> {completed ? "Modifier données" : "Valider avec données"}
                         </button>
-                        <button
-                          className={completed ? "ghost-button" : "action-button"}
-                          onClick={() => {
-                            if (completed) {
-                              deletePlannedSessionCompletion(session.id);
-                            } else {
-                              markPlannedSessionCompleted(session);
-                            }
-                          }}
-                        >
-                          {completed ? <RotateCcw className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                          {completed ? "Annuler réalisé" : "Fait"}
-                        </button>
+                        {completed ? (
+                          <button className="ghost-button" onClick={() => deletePlannedSessionCompletion(session.id)}>
+                            <RotateCcw className="h-4 w-4" /> Annuler réalisé
+                          </button>
+                        ) : null}
                       </div>
                     ) : null}
                   </div>
