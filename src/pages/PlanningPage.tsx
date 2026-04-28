@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, Dumbbell, ListChecks, RotateCcw, StickyNote } from "lucide-react";
+import { CheckCircle2, ChevronDown, Dumbbell, ListChecks, RotateCcw, StickyNote } from "lucide-react";
 import { SessionForm } from "../components/forms/SessionForm";
 import { SessionMode } from "../components/session/SessionMode";
 import { PageHeader } from "../components/ui/PageHeader";
@@ -13,7 +13,7 @@ import { useSessionChecklists } from "../hooks/useSessionChecklists";
 import { useSessions } from "../hooks/useSessions";
 import { useSettings } from "../hooks/useSettings";
 import type { BadmintonVariant, EnergyLevel, ExercisePrescription, PlannedSession, SessionChecklistItem } from "../types";
-import { formatShortDate, getCurrentWeekIndex, getTotalWeeks, getWeekEnd, getWeekStart } from "../utils/dates";
+import { formatShortDate, getCurrentWeekIndex, getTotalWeeks, getWeekEnd, getWeekStart, toISODate } from "../utils/dates";
 import { getCompletedForPlan } from "../utils/training";
 
 function groupChecklistItems(items: SessionChecklistItem[]) {
@@ -278,11 +278,21 @@ export default function PlanningPage() {
   const [energy, setEnergy] = useState<EnergyLevel>("normal");
   const [editingSession, setEditingSession] = useState<PlannedSession | null>(null);
   const [sessionMode, setSessionMode] = useState<PlannedSession | null>(null);
+  const [openSessionId, setOpenSessionId] = useState<string | null>(null);
+  const today = toISODate(new Date());
   const plannedWeek = getPlannedWeek(settings, week, variant).map((session) =>
     applyPlannedSessionOverride(session, getOverride(session.id))
   );
+  const plannedWeekIds = plannedWeek.map((session) => session.id).join("|");
   const context = getTrainingContext(settings, week);
   const phases = buildPhases(totalWeeks);
+
+  useEffect(() => {
+    setOpenSessionId((current) => {
+      if (current && plannedWeek.some((session) => session.id === current)) return current;
+      return plannedWeek.find((session) => session.date === today)?.id ?? plannedWeek.find((session) => session.type !== "rest")?.id ?? plannedWeek[0]?.id ?? null;
+    });
+  }, [plannedWeekIds, today]);
 
   return (
     <>
@@ -374,7 +384,7 @@ export default function PlanningPage() {
 
       {editingSession ? (
         <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Enregistrer la séance</p>
+          <p className="eyebrow">Données réelles</p>
           <h2 className="title-lg mt-2">{editingSession.title}</h2>
           <div className="mt-5">
             <SessionForm
@@ -417,9 +427,36 @@ export default function PlanningPage() {
             const checkedItemIds = getCheckedItemIds(session.id);
             const exerciseCheckIds = session.exercises?.map(getExerciseCheckId) ?? [];
             const override = getOverride(session.id);
+            const isOpen = openSessionId === session.id;
 
             return (
-              <article key={session.id} className="panel grid gap-0 overflow-hidden sm:grid-cols-[8rem_1fr]">
+              <article key={session.id} className="panel overflow-hidden">
+                <button
+                  type="button"
+                  className="flex w-full flex-col gap-3 p-4 text-left transition hover:bg-mist/50 sm:flex-row sm:items-center sm:justify-between"
+                  onClick={() => setOpenSessionId(isOpen ? null : session.id)}
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className={`grid h-12 w-12 shrink-0 place-items-center font-display text-xl font-black ${isOpen ? "bg-petrol-800 text-limeSoft" : "bg-mist text-petrol-800"}`}>
+                      {formatShortDate(session.date)}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-muted">
+                        {session.day} · {PLANNED_TYPE_LABELS[session.type]}
+                      </p>
+                      <h2 className="mt-1 truncate font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{session.title}</h2>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {completed ? <span className="chip bg-limeSoft">Réalisée</span> : null}
+                    <span className="chip">{session.durationMin} min</span>
+                    <span className="chip">{session.rpeTarget}</span>
+                    <ChevronDown className={`h-5 w-5 text-petrol-800 transition ${isOpen ? "rotate-180" : ""}`} />
+                  </div>
+                </button>
+
+                {isOpen ? (
+                  <div className="grid gap-0 border-t border-petrol-800/10 sm:grid-cols-[8rem_1fr]">
                 <div className="bg-petrol-800 p-4 text-white">
                   <p className="text-xs font-black uppercase tracking-[0.14em] text-white/70">{session.day}</p>
                   <p className="mt-2 font-display text-2xl font-black tracking-[-0.05em]">{formatShortDate(session.date)}</p>
@@ -441,6 +478,11 @@ export default function PlanningPage() {
                   </div>
 
                   <p className="mt-4 border-l-4 border-limeSoft bg-mist/50 p-4 text-sm font-semibold leading-6 text-ink">{content}</p>
+                  {session.type !== "rest" ? (
+                    <p className="mt-3 border border-petrol-800/10 bg-white p-3 text-xs font-bold leading-5 text-muted">
+                      Après la séance, utilise “Saisir temps / FC / calories” : durée, FC, calories et RPE alimentent directement les stats.
+                    </p>
+                  ) : null}
 
                   <ExercisePrescriptionPanel
                     exercises={session.exercises}
@@ -480,7 +522,7 @@ export default function PlanningPage() {
                           <Dumbbell className="h-4 w-4" /> Mode séance
                         </button>
                         <button className="ghost-button" onClick={() => setEditingSession(session)}>
-                          <Dumbbell className="h-4 w-4" /> Enregistrer la séance
+                          <Dumbbell className="h-4 w-4" /> Saisir temps / FC / calories
                         </button>
                         <button
                           className={completed ? "ghost-button" : "action-button"}
@@ -499,6 +541,8 @@ export default function PlanningPage() {
                     ) : null}
                   </div>
                 </div>
+                  </div>
+                ) : null}
               </article>
             );
           })}

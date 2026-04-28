@@ -44,6 +44,7 @@ function toNumber(value: number | string | undefined): number {
 
 function normalizeText(text: string): string {
   return text
+    .replace(/[œŒ]/g, "oe")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[’']/g, " ")
@@ -125,6 +126,14 @@ function getQueryVariants(query: string): string[] {
 
   if (normalized.includes("poele")) {
     variants.push("poelee", "poelee legumes", "poelee de legumes");
+  }
+
+  if (normalized.includes("oeuf")) {
+    variants.push("oeuf", "oeufs", "oeuf moyen", "oeuf gros", "oeuf calibre");
+  }
+
+  if (normalized.includes("chocolat")) {
+    variants.push("chocolat noir", "chocolat noir 70", "chocolat noir 85", "chocolat noir 90");
   }
 
   if (normalized.includes("hipro") || normalized.includes("hi pro")) {

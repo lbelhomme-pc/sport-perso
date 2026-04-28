@@ -274,7 +274,7 @@ export default function MealsPage() {
         <div ref={formRef}>
           <SectionCard className="p-5 sm:p-6">
             <p className="eyebrow">{editing ? "Modifier" : "Ajout rapide"}</p>
-            <h2 className="title-lg mt-2">{editing ? editing.name : "Nouveau repas"}</h2>
+            <h2 className="title-lg mt-2">{editing ? MEAL_TYPE_LABELS[editing.mealType] : "Nouveau repas"}</h2>
             <div className="mt-5">
               <MealForm
                 initial={editing ?? { date: selectedDate }}
@@ -304,8 +304,7 @@ export default function MealsPage() {
               <article key={meal.id} className="border border-petrol-800/10 bg-white p-4 shadow-soft">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <span className="chip">{MEAL_TYPE_LABELS[meal.mealType]}</span>
-                    <h3 className="mt-3 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{meal.name}</h3>
+                    <h3 className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{MEAL_TYPE_LABELS[meal.mealType]}</h3>
                     {meal.items?.length ? (
                       <div className="mt-2 grid gap-2">
                         {meal.items.map((item) => (

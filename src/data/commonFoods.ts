@@ -1,6 +1,6 @@
 import type { FoodProduct } from "../services/openFoodFactsService";
 
-export const COMMON_FOODS: FoodProduct[] = [
+const BASE_COMMON_FOODS: FoodProduct[] = [
   {
     code: "common-banane-nature",
     name: "Banane nature",
@@ -1489,6 +1489,81 @@ export const COMMON_FOODS: FoodProduct[] = [
     origin: "common"
   }
 ];
+
+const EXTRA_COMMON_FOODS: FoodProduct[] = [
+  { code: "common-oeuf-petit-calibre", name: "Oeuf petit calibre", brand: "Aliment simple", quantity: "45 g", servingSize: "45 g", servingQuantity: 45, calories100g: 143, protein100g: 12.6, carbs100g: 0.7, fat100g: 9.5, origin: "common" },
+  { code: "common-oeuf-moyen-calibre", name: "Oeuf moyen calibre", brand: "Aliment simple", quantity: "53 g", servingSize: "53 g", servingQuantity: 53, calories100g: 143, protein100g: 12.6, carbs100g: 0.7, fat100g: 9.5, origin: "common" },
+  { code: "common-oeuf-gros-calibre", name: "Oeuf gros calibre", brand: "Aliment simple", quantity: "63 g", servingSize: "63 g", servingQuantity: 63, calories100g: 143, protein100g: 12.6, carbs100g: 0.7, fat100g: 9.5, origin: "common" },
+  { code: "common-blanc-oeuf", name: "Blanc d'oeuf", brand: "Aliment simple", quantity: "100 g", calories100g: 52, protein100g: 10.9, carbs100g: 0.7, fat100g: 0.2, origin: "common" },
+  { code: "common-jaune-oeuf", name: "Jaune d'oeuf", brand: "Aliment simple", quantity: "100 g", calories100g: 322, protein100g: 15.9, carbs100g: 3.6, fat100g: 26.5, origin: "common" },
+  { code: "common-chocolat-noir-70", name: "Chocolat noir 70%", brand: "Aliment simple", quantity: "100 g", calories100g: 560, protein100g: 8, carbs100g: 33, fat100g: 42, origin: "common" },
+  { code: "common-chocolat-noir-85", name: "Chocolat noir 85%", brand: "Aliment simple", quantity: "100 g", calories100g: 590, protein100g: 10, carbs100g: 22, fat100g: 49, origin: "common" },
+  { code: "common-chocolat-noir-90", name: "Chocolat noir 90%", brand: "Aliment simple", quantity: "100 g", calories100g: 600, protein100g: 10, carbs100g: 18, fat100g: 52, origin: "common" },
+  { code: "common-compote-pomme-banane", name: "Compote pomme banane", brand: "Aliment simple", quantity: "100 g", calories100g: 72, protein100g: 0.4, carbs100g: 17, fat100g: 0.2, origin: "common" },
+  { code: "common-compote-pomme-poire", name: "Compote pomme poire", brand: "Aliment simple", quantity: "100 g", calories100g: 64, protein100g: 0.3, carbs100g: 15.5, fat100g: 0.2, origin: "common" },
+  { code: "common-patate-douce-crue", name: "Patate douce crue", brand: "Aliment simple", quantity: "100 g", calories100g: 86, protein100g: 1.6, carbs100g: 20.1, fat100g: 0.1, origin: "common" },
+  { code: "common-patate-douce-four", name: "Patate douce au four", brand: "Aliment simple", quantity: "100 g", calories100g: 90, protein100g: 2, carbs100g: 21, fat100g: 0.2, origin: "common" },
+  { code: "common-pomme-de-terre-vapeur", name: "Pomme de terre vapeur", brand: "Aliment simple", quantity: "100 g", calories100g: 80, protein100g: 1.9, carbs100g: 17, fat100g: 0.1, origin: "common" },
+  { code: "common-pommes-de-terre-roties", name: "Pommes de terre rôties", brand: "Aliment simple", quantity: "100 g", calories100g: 150, protein100g: 2.5, carbs100g: 24, fat100g: 5, origin: "common" },
+  { code: "common-poelee-legumes-surgeles", name: "Poêlée de légumes surgelés", brand: "Aliment simple", quantity: "100 g", calories100g: 55, protein100g: 2, carbs100g: 8, fat100g: 1.5, origin: "common" },
+  { code: "common-poelee-legumes-huile-olive", name: "Poêlée de légumes huile d'olive", brand: "Aliment simple", quantity: "100 g", calories100g: 85, protein100g: 2, carbs100g: 8, fat100g: 4.5, origin: "common" },
+  { code: "common-haricots-verts-cuits", name: "Haricots verts cuits", brand: "Aliment simple", quantity: "100 g", calories100g: 31, protein100g: 1.8, carbs100g: 7, fat100g: 0.1, origin: "common" },
+  { code: "common-epinards-cuits", name: "Épinards cuits", brand: "Aliment simple", quantity: "100 g", calories100g: 23, protein100g: 2.9, carbs100g: 3.8, fat100g: 0.3, origin: "common" },
+  { code: "common-chou-fleur-cuit", name: "Chou-fleur cuit", brand: "Aliment simple", quantity: "100 g", calories100g: 25, protein100g: 1.9, carbs100g: 5, fat100g: 0.3, origin: "common" },
+  { code: "common-concombre", name: "Concombre", brand: "Aliment simple", quantity: "100 g", calories100g: 15, protein100g: 0.7, carbs100g: 3.6, fat100g: 0.1, origin: "common" },
+  { code: "common-salade-verte", name: "Salade verte", brand: "Aliment simple", quantity: "100 g", calories100g: 15, protein100g: 1.4, carbs100g: 2.9, fat100g: 0.2, origin: "common" },
+  { code: "common-poivron", name: "Poivron", brand: "Aliment simple", quantity: "100 g", calories100g: 31, protein100g: 1, carbs100g: 6, fat100g: 0.3, origin: "common" },
+  { code: "common-aubergine-cuite", name: "Aubergine cuite", brand: "Aliment simple", quantity: "100 g", calories100g: 35, protein100g: 0.8, carbs100g: 8.7, fat100g: 0.2, origin: "common" },
+  { code: "common-oignon-cuit", name: "Oignon cuit", brand: "Aliment simple", quantity: "100 g", calories100g: 40, protein100g: 1.1, carbs100g: 9.3, fat100g: 0.1, origin: "common" },
+  { code: "common-champignons-cuits", name: "Champignons cuits", brand: "Aliment simple", quantity: "100 g", calories100g: 28, protein100g: 3.6, carbs100g: 4.4, fat100g: 0.5, origin: "common" },
+  { code: "common-mais", name: "Maïs", brand: "Aliment simple", quantity: "100 g", calories100g: 96, protein100g: 3.4, carbs100g: 21, fat100g: 1.5, origin: "common" },
+  { code: "common-petits-pois-cuits", name: "Petits pois cuits", brand: "Aliment simple", quantity: "100 g", calories100g: 81, protein100g: 5.4, carbs100g: 14, fat100g: 0.4, origin: "common" },
+  { code: "common-asperges-cuites", name: "Asperges cuites", brand: "Aliment simple", quantity: "100 g", calories100g: 22, protein100g: 2.4, carbs100g: 4.1, fat100g: 0.2, origin: "common" },
+  { code: "common-radis", name: "Radis", brand: "Aliment simple", quantity: "100 g", calories100g: 16, protein100g: 0.7, carbs100g: 3.4, fat100g: 0.1, origin: "common" },
+  { code: "common-pamplemousse", name: "Pamplemousse", brand: "Aliment simple", quantity: "100 g", calories100g: 42, protein100g: 0.8, carbs100g: 10.7, fat100g: 0.1, origin: "common" },
+  { code: "common-clementine", name: "Clémentine", brand: "Aliment simple", quantity: "100 g", calories100g: 47, protein100g: 0.9, carbs100g: 12, fat100g: 0.2, origin: "common" },
+  { code: "common-raisin", name: "Raisin", brand: "Aliment simple", quantity: "100 g", calories100g: 69, protein100g: 0.7, carbs100g: 18, fat100g: 0.2, origin: "common" },
+  { code: "common-mangue", name: "Mangue", brand: "Aliment simple", quantity: "100 g", calories100g: 60, protein100g: 0.8, carbs100g: 15, fat100g: 0.4, origin: "common" },
+  { code: "common-peche", name: "Pêche", brand: "Aliment simple", quantity: "100 g", calories100g: 39, protein100g: 0.9, carbs100g: 9.5, fat100g: 0.3, origin: "common" },
+  { code: "common-nectarine", name: "Nectarine", brand: "Aliment simple", quantity: "100 g", calories100g: 44, protein100g: 1.1, carbs100g: 10.6, fat100g: 0.3, origin: "common" },
+  { code: "common-abricot", name: "Abricot", brand: "Aliment simple", quantity: "100 g", calories100g: 48, protein100g: 1.4, carbs100g: 11, fat100g: 0.4, origin: "common" },
+  { code: "common-fraise", name: "Fraise", brand: "Aliment simple", quantity: "100 g", calories100g: 32, protein100g: 0.7, carbs100g: 7.7, fat100g: 0.3, origin: "common" },
+  { code: "common-myrtilles", name: "Myrtilles", brand: "Aliment simple", quantity: "100 g", calories100g: 57, protein100g: 0.7, carbs100g: 14.5, fat100g: 0.3, origin: "common" },
+  { code: "common-framboises", name: "Framboises", brand: "Aliment simple", quantity: "100 g", calories100g: 52, protein100g: 1.2, carbs100g: 12, fat100g: 0.7, origin: "common" },
+  { code: "common-poulet-cru", name: "Blanc de poulet cru", brand: "Aliment simple", quantity: "100 g", calories100g: 120, protein100g: 23, carbs100g: 0, fat100g: 2, origin: "common" },
+  { code: "common-cuisse-poulet-cuite", name: "Cuisse de poulet cuite", brand: "Aliment simple", quantity: "100 g", calories100g: 209, protein100g: 26, carbs100g: 0, fat100g: 11, origin: "common" },
+  { code: "common-filet-porc-cuit", name: "Filet de porc cuit", brand: "Aliment simple", quantity: "100 g", calories100g: 155, protein100g: 29, carbs100g: 0, fat100g: 4, origin: "common" },
+  { code: "common-jambon-cru", name: "Jambon cru", brand: "Aliment simple", quantity: "100 g", calories100g: 240, protein100g: 28, carbs100g: 1, fat100g: 14, origin: "common" },
+  { code: "common-bacon", name: "Bacon", brand: "Aliment simple", quantity: "100 g", calories100g: 250, protein100g: 37, carbs100g: 1.4, fat100g: 10, origin: "common" },
+  { code: "common-filet-mignon-porc", name: "Filet mignon de porc", brand: "Aliment simple", quantity: "100 g", calories100g: 143, protein100g: 26, carbs100g: 0, fat100g: 4, origin: "common" },
+  { code: "common-bavette-boeuf", name: "Bavette de boeuf", brand: "Aliment simple", quantity: "100 g", calories100g: 190, protein100g: 28, carbs100g: 0, fat100g: 8, origin: "common" },
+  { code: "common-entrecote", name: "Entrecôte", brand: "Aliment simple", quantity: "100 g", calories100g: 260, protein100g: 24, carbs100g: 0, fat100g: 18, origin: "common" },
+  { code: "common-merlu-cuit", name: "Merlu cuit", brand: "Aliment simple", quantity: "100 g", calories100g: 90, protein100g: 19, carbs100g: 0, fat100g: 1.5, origin: "common" },
+  { code: "common-colin-cuit", name: "Colin cuit", brand: "Aliment simple", quantity: "100 g", calories100g: 90, protein100g: 19, carbs100g: 0, fat100g: 1.3, origin: "common" },
+  { code: "common-dorade-cuite", name: "Dorade cuite", brand: "Aliment simple", quantity: "100 g", calories100g: 135, protein100g: 23, carbs100g: 0, fat100g: 4.5, origin: "common" },
+  { code: "common-maquereau-cuit", name: "Maquereau cuit", brand: "Aliment simple", quantity: "100 g", calories100g: 230, protein100g: 20, carbs100g: 0, fat100g: 16, origin: "common" },
+  { code: "common-sardines", name: "Sardines", brand: "Aliment simple", quantity: "100 g", calories100g: 208, protein100g: 25, carbs100g: 0, fat100g: 11.5, origin: "common" },
+  { code: "common-truite-cuite", name: "Truite cuite", brand: "Aliment simple", quantity: "100 g", calories100g: 168, protein100g: 24, carbs100g: 0, fat100g: 7, origin: "common" },
+  { code: "common-saint-jacques", name: "Noix de Saint-Jacques", brand: "Aliment simple", quantity: "100 g", calories100g: 88, protein100g: 17, carbs100g: 2, fat100g: 1, origin: "common" },
+  { code: "common-lait-demi-ecreme", name: "Lait demi-écrémé", brand: "Aliment simple", quantity: "100 ml", calories100g: 47, protein100g: 3.3, carbs100g: 4.8, fat100g: 1.6, origin: "common" },
+  { code: "common-lait-ecreme", name: "Lait écrémé", brand: "Aliment simple", quantity: "100 ml", calories100g: 34, protein100g: 3.4, carbs100g: 5, fat100g: 0.2, origin: "common" },
+  { code: "common-lait-entier", name: "Lait entier", brand: "Aliment simple", quantity: "100 ml", calories100g: 64, protein100g: 3.3, carbs100g: 4.8, fat100g: 3.6, origin: "common" },
+  { code: "common-yaourt-nature", name: "Yaourt nature", brand: "Aliment simple", quantity: "100 g", calories100g: 63, protein100g: 4.1, carbs100g: 5, fat100g: 3.3, origin: "common" },
+  { code: "common-petit-suisse", name: "Petit-suisse", brand: "Aliment simple", quantity: "100 g", calories100g: 102, protein100g: 7.5, carbs100g: 4, fat100g: 6, origin: "common" },
+  { code: "common-ricotta", name: "Ricotta", brand: "Aliment simple", quantity: "100 g", calories100g: 174, protein100g: 11.3, carbs100g: 3, fat100g: 13, origin: "common" },
+  { code: "common-cottage-cheese", name: "Cottage cheese", brand: "Aliment simple", quantity: "100 g", calories100g: 98, protein100g: 11, carbs100g: 3.4, fat100g: 4.3, origin: "common" },
+  { code: "common-emmental", name: "Emmental", brand: "Aliment simple", quantity: "100 g", calories100g: 380, protein100g: 28, carbs100g: 0, fat100g: 30, origin: "common" },
+  { code: "common-comte", name: "Comté", brand: "Aliment simple", quantity: "100 g", calories100g: 420, protein100g: 27, carbs100g: 0, fat100g: 34, origin: "common" },
+  { code: "common-parmesan", name: "Parmesan", brand: "Aliment simple", quantity: "100 g", calories100g: 431, protein100g: 38, carbs100g: 4, fat100g: 29, origin: "common" },
+  { code: "common-camembert", name: "Camembert", brand: "Aliment simple", quantity: "100 g", calories100g: 300, protein100g: 20, carbs100g: 0.5, fat100g: 24, origin: "common" },
+  { code: "common-brie", name: "Brie", brand: "Aliment simple", quantity: "100 g", calories100g: 334, protein100g: 21, carbs100g: 0.5, fat100g: 28, origin: "common" },
+  { code: "common-roquefort", name: "Roquefort", brand: "Aliment simple", quantity: "100 g", calories100g: 369, protein100g: 21, carbs100g: 2, fat100g: 31, origin: "common" },
+  { code: "common-raclette", name: "Fromage à raclette", brand: "Aliment simple", quantity: "100 g", calories100g: 356, protein100g: 24, carbs100g: 1, fat100g: 28, origin: "common" }
+];
+
+export const COMMON_FOODS: FoodProduct[] = [...BASE_COMMON_FOODS, ...EXTRA_COMMON_FOODS].filter(
+  (food, index, foods) => foods.findIndex((item) => item.code === food.code) === index
+);
 
 const COMMON_FOOD_STOP_WORDS = new Set([
   "a",

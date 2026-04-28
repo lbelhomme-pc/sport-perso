@@ -487,7 +487,7 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
       id: form.id,
       date: form.date,
       mealType: form.mealType,
-      name: form.name || MEAL_TYPE_LABELS[form.mealType],
+      name: MEAL_TYPE_LABELS[form.mealType],
       calories: Math.round(totals.calories),
       protein: Math.round(totals.protein * 10) / 10,
       carbs: Math.round(totals.carbs * 10) / 10,
@@ -730,16 +730,6 @@ export function MealForm({ initial, onSubmit, onCancel }: MealFormProps) {
           </select>
         </label>
       </div>
-
-      <label className="field-label">
-        Nom du repas
-        <input
-          className="field"
-          value={form.name}
-          onChange={(event) => update("name", event.target.value)}
-          placeholder="Ex : Déjeuner, Bowl post-training, Dîner léger..."
-        />
-      </label>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <label className="field-label">

@@ -81,6 +81,12 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
 
   return (
     <form onSubmit={submit} className="grid gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft">
+      {planned ? (
+        <div className="border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
+          Saisis les données réelles de la séance : durée, FC moyenne/max, calories et RPE. Elles alimentent le dashboard et les statistiques.
+        </div>
+      ) : null}
+
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="field-label">
           Date
@@ -105,7 +111,7 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
 
       <div className="grid gap-3 sm:grid-cols-5">
         <label className="field-label sm:col-span-1">
-          Durée
+          Durée réelle
           <input className="field" type="number" min="0" value={form.durationMin} onChange={(event) => update("durationMin", event.target.value)} />
         </label>
         <label className="field-label sm:col-span-1">
@@ -117,11 +123,11 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
           <input className="field" type="number" min="0" value={form.maxHeartRate} onChange={(event) => update("maxHeartRate", event.target.value)} />
         </label>
         <label className="field-label sm:col-span-1">
-          Calories
+          Calories sport
           <input className="field" type="number" min="0" value={form.caloriesBurned} onChange={(event) => update("caloriesBurned", event.target.value)} />
         </label>
         <label className="field-label sm:col-span-1">
-          RPE
+          RPE / ressenti
           <input className="field" type="number" min="0" max="10" value={form.rpe} onChange={(event) => update("rpe", event.target.value)} />
         </label>
       </div>
