@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Plus, Save, Search, Trash2, X } from "lucide-react";
+import { Plus, Save, Search, Star, Trash2, X } from "lucide-react";
 import { MEAL_TYPE_LABELS } from "../../data/defaults";
+import { useFavoriteMeals } from "../../hooks/useFavoriteMeals";
 import {
   calculateFoodMacros,
   searchOpenFoodFacts,
@@ -242,6 +243,10 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
   const [selectedFavoriteCode, setSelectedFavoriteCode] = useState("");
   const [favoriteFoods, setFavoriteFoods] = useState<FavoriteFood[]>(() => loadFavoriteFoods());
   const [favoriteMessage, setFavoriteMessage] = useState("");
+  const { favoriteMeals, saveFavoriteFromMeal, createMealFromFavorite, deleteFavoriteMeal: removeFavoriteMeal } = useFavoriteMeals();
+  const [selectedFavoriteMealId, setSelectedFavoriteMealId] = useState("");
+  const [favoriteMealName, setFavoriteMealName] = useState("");
+  const [favoriteMealMessage, setFavoriteMealMessage] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState("");
 
@@ -250,6 +255,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
   const effectiveQuantity = selectedProduct ? getEffectiveQuantity(selectedProduct, quantityInput, quantityUnit) : 0;
   const previewMacros = selectedProduct ? calculateFoodMacros(selectedProduct, effectiveQuantity) : null;
   const selectedFavoriteProduct = favoriteFoods.find((food) => food.code === selectedFavoriteCode);
+  const selectedFavoriteMeal = favoriteMeals.find((meal) => meal.id === selectedFavoriteMealId);
 
   useEffect(() => {
     return subscribeFavoriteFoods(() => {
@@ -472,8 +478,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
     }
   };
 
-  const submit = (event: FormEvent) => {
-    event.preventDefault();
+  const buildMealPayload = (id = form.id, date = form.date): Meal => {
     const totals = hasItems
       ? itemTotals
       : {
@@ -484,13 +489,9 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
         };
     const firstItem = mealItems.length === 1 ? mealItems[0] : undefined;
 
-    if (!isEditing && typeof window !== "undefined") {
-      window.localStorage.removeItem(MEAL_DRAFT_KEY);
-    }
-
-    onSubmit({
-      id: form.id,
-      date: form.date,
+    return {
+      id,
+      date,
       mealType: form.mealType,
       name: MEAL_TYPE_LABELS[form.mealType],
       calories: Math.round(totals.calories),
@@ -511,7 +512,61 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
       foodCarbs100g: firstItem?.foodCarbs100g,
       foodFat100g: firstItem?.foodFat100g,
       items: mealItems.length ? mealItems : undefined
-    });
+    };
+  };
+
+  const applyFavoriteMeal = (id: string) => {
+    setSelectedFavoriteMealId(id);
+    const favorite = favoriteMeals.find((meal) => meal.id === id);
+    if (!favorite) return;
+
+    const meal = createMealFromFavorite(favorite, form.date);
+    setForm((current) => ({
+      ...current,
+      mealType: meal.mealType,
+      calories: String(meal.calories),
+      protein: formatDecimal(meal.protein),
+      carbs: formatDecimal(meal.carbs),
+      fat: formatDecimal(meal.fat),
+      notes: meal.notes ?? current.notes
+    }));
+    setMealItems(meal.items ?? []);
+    setFavoriteMealMessage(`${favorite.name} charge dans le repas.`);
+  };
+
+  const saveCurrentMealAsFavorite = () => {
+    const name = favoriteMealName.trim();
+    if (!name) {
+      setFavoriteMealMessage("Donne un nom au repas favori.");
+      return;
+    }
+
+    const meal = buildMealPayload(makeId("meal-preview"), form.date);
+    if (!meal.items?.length && meal.calories + meal.protein + meal.carbs + meal.fat <= 0) {
+      setFavoriteMealMessage("Ajoute au moins un aliment ou des macros avant de sauvegarder en favori.");
+      return;
+    }
+
+    saveFavoriteFromMeal(meal, name);
+    setFavoriteMealName("");
+    setFavoriteMealMessage(`${name} enregistre dans les repas favoris.`);
+  };
+
+  const removeSelectedFavoriteMeal = () => {
+    if (!selectedFavoriteMealId) return;
+    removeFavoriteMeal(selectedFavoriteMealId);
+    setSelectedFavoriteMealId("");
+    setFavoriteMealMessage("Repas favori supprime.");
+  };
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+
+    if (!isEditing && typeof window !== "undefined") {
+      window.localStorage.removeItem(MEAL_DRAFT_KEY);
+    }
+
+    onSubmit(buildMealPayload());
   };
 
   return (
@@ -520,7 +575,60 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
         <div className="mb-4 min-w-0 overflow-hidden border border-petrol-800/10 bg-white p-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-petrol-800">Favoris</p>
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-petrol-800">Repas favoris</p>
+              <p className="mt-1 text-xs font-bold text-muted">
+                Sauvegarde un repas complet avec un nom, puis recharge-le plus tard en un tap.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-3 grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-end">
+            <label className="field-label">
+              Favori enregistre
+              <select
+                className="field"
+                value={selectedFavoriteMealId}
+                disabled={!favoriteMeals.length}
+                onChange={(event) => applyFavoriteMeal(event.target.value)}
+              >
+                <option value="">{favoriteMeals.length ? "Choisir un repas favori..." : "Aucun repas favori"}</option>
+                {favoriteMeals.map((meal) => (
+                  <option key={meal.id} value={meal.id}>
+                    {meal.name} - {MEAL_TYPE_LABELS[meal.mealType]} - {meal.calories} kcal
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button type="button" className="action-button w-full lg:w-auto" disabled={!selectedFavoriteMeal} onClick={() => selectedFavoriteMeal && applyFavoriteMeal(selectedFavoriteMeal.id)}>
+              <Star className="h-4 w-4" /> Utiliser
+            </button>
+            <button type="button" className="ghost-button w-full lg:w-auto" disabled={!selectedFavoriteMealId} onClick={removeSelectedFavoriteMeal}>
+              <Trash2 className="h-4 w-4" /> Supprimer
+            </button>
+          </div>
+
+          <div className="mt-3 grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+            <label className="field-label">
+              Nom du repas favori
+              <input
+                className="field"
+                value={favoriteMealName}
+                onChange={(event) => setFavoriteMealName(event.target.value)}
+                placeholder="Ex : Dej rapide poulet riz"
+              />
+            </label>
+            <button type="button" className="ghost-button w-full lg:w-auto" onClick={saveCurrentMealAsFavorite}>
+              <Save className="h-4 w-4" /> Sauver en favori
+            </button>
+          </div>
+
+          {favoriteMealMessage ? <p className="mt-3 text-sm font-black text-petrol-800">{favoriteMealMessage}</p> : null}
+        </div>
+
+        <div className="mb-4 min-w-0 overflow-hidden border border-petrol-800/10 bg-white p-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-petrol-800">Aliments favoris</p>
               <p className="mt-1 text-xs font-bold text-muted">
                 Le brouillon est sauvegardé automatiquement. Tu peux fermer et reprendre sans perdre le repas.
               </p>

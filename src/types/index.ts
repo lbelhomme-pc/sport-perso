@@ -226,6 +226,20 @@ export type MealFoodItem = {
   foodFat100g?: number;
 };
 
+export type FavoriteMeal = {
+  id: string;
+  name: string;
+  mealType: MealType;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  notes?: string;
+  items?: MealFoodItem[];
+  createdAt: string;
+  updatedAt?: string;
+};
+
 export type WeightEntry = {
   id: string;
   date: string;
@@ -239,6 +253,7 @@ export type AppData = {
   settings: Settings;
   sessions: CompletedSession[];
   meals: Meal[];
+  favoriteMeals: FavoriteMeal[];
   weights: WeightEntry[];
   dailyContexts: DailyContext[];
   dailyHabits: DailyHabitEntry[];

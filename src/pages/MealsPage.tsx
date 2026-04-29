@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Edit3, Plus, Trash2, Utensils } from "lucide-react";
+import { Edit3, Plus, Star, Trash2, Utensils } from "lucide-react";
 import { MealForm } from "../components/forms/MealForm";
 import { EmptyState } from "../components/ui/EmptyState";
 import { ProgressBar } from "../components/ui/ProgressBar";
@@ -7,6 +7,7 @@ import { SectionCard } from "../components/ui/SectionCard";
 import { ENERGY_LEVELS, MEAL_TYPE_LABELS } from "../data/defaults";
 import { getPlannedWeek } from "../data/trainingPlan";
 import { useDailyContext } from "../hooks/useDailyContext";
+import { useFavoriteMeals } from "../hooks/useFavoriteMeals";
 import { useMeals } from "../hooks/useMeals";
 import { useSessions } from "../hooks/useSessions";
 import { useSettings } from "../hooks/useSettings";
@@ -72,11 +73,13 @@ function balanceFormulaSentence(deficit: number, maintenanceTarget: number, eate
 export default function MealsPage() {
   const { settings } = useSettings();
   const { meals, saveMeal, deleteMeal } = useMeals();
+  const { favoriteMeals, saveFavoriteFromMeal, createMealFromFavorite, deleteFavoriteMeal } = useFavoriteMeals();
   const { sessions } = useSessions();
   const { weights } = useWeight();
   const [selectedDate, setSelectedDate] = useState(toISODate(new Date()));
   const [editing, setEditing] = useState<Meal | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [activeTab, setActiveTab] = useState<"journal" | "favorites">("journal");
   const { dailyContext, saveDailyContext } = useDailyContext(selectedDate);
   const formRef = useRef<HTMLDivElement>(null);
   const dayMeals = meals.filter((meal) => meal.date === selectedDate);
@@ -100,6 +103,20 @@ export default function MealsPage() {
   const dailyDeficit = getDailyDeficit(dayMeals, adaptiveCalorieTarget.maintenanceTarget);
   const remainingCalories = getRemainingCaloriesToTarget(dayMeals, adaptiveCalorieTarget.target);
 
+  const saveExistingMealAsFavorite = (meal: Meal) => {
+    const name = window.prompt("Nom du repas favori ?", meal.items?.[0]?.foodName ?? MEAL_TYPE_LABELS[meal.mealType]);
+    if (!name?.trim()) return;
+    saveFavoriteFromMeal(meal, name);
+    setActiveTab("favorites");
+  };
+
+  const addFavoriteMealToSelectedDate = (favoriteId: string) => {
+    const favorite = favoriteMeals.find((meal) => meal.id === favoriteId);
+    if (!favorite) return;
+    saveMeal(createMealFromFavorite(favorite, selectedDate));
+    setActiveTab("journal");
+  };
+
   useEffect(() => {
     if (!showForm && !editing) return;
 
@@ -118,7 +135,13 @@ export default function MealsPage() {
             <p className="mt-3 text-sm font-semibold leading-6 text-white/70">
               Saisie et corrections ici. L'accueil reste la synthèse.
             </p>
-            <button className="mt-5 w-full action-button bg-limeSoft text-petrol-900 hover:bg-white" onClick={() => setShowForm(true)}>
+            <button
+              className="mt-5 w-full action-button bg-limeSoft text-petrol-900 hover:bg-white"
+              onClick={() => {
+                setActiveTab("journal");
+                setShowForm(true);
+              }}
+            >
               <Plus className="h-4 w-4" /> Ajouter repas
             </button>
           </div>
@@ -270,7 +293,76 @@ export default function MealsPage() {
         </div>
       </section>
 
-      {showForm || editing ? (
+      <div className="grid gap-2 sm:grid-cols-2">
+        <button
+          type="button"
+          className={activeTab === "journal" ? "action-button justify-center" : "ghost-button justify-center"}
+          onClick={() => setActiveTab("journal")}
+        >
+          <Utensils className="h-4 w-4" /> Journal du jour
+        </button>
+        <button
+          type="button"
+          className={activeTab === "favorites" ? "action-button justify-center" : "ghost-button justify-center"}
+          onClick={() => setActiveTab("favorites")}
+        >
+          <Star className="h-4 w-4" /> Repas favoris ({favoriteMeals.length})
+        </button>
+      </div>
+
+      {activeTab === "favorites" ? (
+        <SectionCard className="p-5 sm:p-6">
+          <p className="eyebrow">Repas favoris</p>
+          <h2 className="title-lg mt-2">Repas réutilisables</h2>
+          <p className="mt-2 text-sm font-semibold leading-6 text-muted">
+            Enregistre un repas depuis le formulaire ou depuis un repas déjà saisi, puis ajoute-le à la date choisie.
+          </p>
+
+          <div className="mt-5 grid gap-3">
+            {favoriteMeals.length ? (
+              favoriteMeals.map((favorite) => (
+                <article key={favorite.id} className="border border-petrol-800/10 bg-white p-4 shadow-soft">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">
+                        {MEAL_TYPE_LABELS[favorite.mealType]} - {favorite.calories} kcal
+                      </p>
+                      <h3 className="mt-1 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{favorite.name}</h3>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <span className="chip">{favorite.protein} g prot.</span>
+                        <span className="chip">{favorite.carbs} g gluc.</span>
+                        <span className="chip">{favorite.fat} g lip.</span>
+                        <span className="chip">{favorite.items?.length ?? 0} aliments</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <button className="action-button" onClick={() => addFavoriteMealToSelectedDate(favorite.id)}>
+                        <Plus className="h-4 w-4" /> Ajouter au {formatLongDate(selectedDate)}
+                      </button>
+                      <button
+                        className="ghost-button"
+                        onClick={() => {
+                          if (window.confirm("Supprimer ce repas favori ?")) deleteFavoriteMeal(favorite.id);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" /> Supprimer
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              ))
+            ) : (
+              <EmptyState
+                icon={Star}
+                title="Aucun repas favori"
+                message="Crée un repas dans le formulaire, donne-lui un nom, puis sauvegarde-le en favori."
+              />
+            )}
+          </div>
+        </SectionCard>
+      ) : null}
+
+      {activeTab === "journal" && (showForm || editing) ? (
         <div ref={formRef}>
           <SectionCard className="p-5 sm:p-6">
             <p className="eyebrow">{editing ? "Modifier" : "Ajout rapide"}</p>
@@ -294,6 +386,7 @@ export default function MealsPage() {
         </div>
       ) : null}
 
+      {activeTab === "journal" ? (
       <SectionCard className="p-5 sm:p-6">
         <p className="eyebrow">{formatLongDate(selectedDate)}</p>
         <h2 className="title-lg mt-2">Repas du jour</h2>
@@ -337,6 +430,9 @@ export default function MealsPage() {
                     </div>
                   </div>
                   <div className="flex gap-2">
+                    <button className="ghost-button" onClick={() => saveExistingMealAsFavorite(meal)} aria-label="Enregistrer en repas favori">
+                      <Star className="h-4 w-4" />
+                    </button>
                     <button className="ghost-button" onClick={() => setEditing(meal)} aria-label="Modifier le repas">
                       <Edit3 className="h-4 w-4" />
                     </button>
@@ -359,6 +455,7 @@ export default function MealsPage() {
           )}
         </div>
       </SectionCard>
+      ) : null}
     </>
   );
 }

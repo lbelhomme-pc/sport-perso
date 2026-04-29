@@ -7,6 +7,7 @@ import type {
   DailyHabitEntry,
   DailyHabitType,
   ExerciseCalibration,
+  FavoriteMeal,
   Meal,
   PlannedSessionOverride,
   SessionExerciseLog,
@@ -88,6 +89,26 @@ const completedSessionSchema = z.object({
   updatedAt: z.string().optional()
 });
 
+const mealFoodItemSchema = z.object({
+  id: z.string(),
+  source: z.enum(["manual", "openfoodfacts", "common"]),
+  foodCode: z.string().optional(),
+  foodName: z.string(),
+  brand: z.string().optional(),
+  quantityInput: z.coerce.number().nonnegative().optional(),
+  quantityUnit: z.enum(["g", "ml", "dose"]).optional(),
+  quantityGrams: z.coerce.number().nonnegative(),
+  servingQuantityGrams: z.coerce.number().nonnegative().optional(),
+  calories: z.coerce.number().nonnegative(),
+  protein: z.coerce.number().nonnegative(),
+  carbs: z.coerce.number().nonnegative(),
+  fat: z.coerce.number().nonnegative(),
+  foodCalories100g: z.coerce.number().nonnegative().optional(),
+  foodProtein100g: z.coerce.number().nonnegative().optional(),
+  foodCarbs100g: z.coerce.number().nonnegative().optional(),
+  foodFat100g: z.coerce.number().nonnegative().optional()
+});
+
 const mealSchema = z.object({
   id: z.string(),
   date: z.string(),
@@ -111,29 +132,21 @@ const mealSchema = z.object({
   foodCarbs100g: z.coerce.number().nonnegative().optional(),
   foodFat100g: z.coerce.number().nonnegative().optional(),
   updatedAt: z.string().optional(),
-  items: z
-    .array(
-      z.object({
-        id: z.string(),
-        source: z.enum(["manual", "openfoodfacts", "common"]),
-        foodCode: z.string().optional(),
-        foodName: z.string(),
-        brand: z.string().optional(),
-        quantityInput: z.coerce.number().nonnegative().optional(),
-        quantityUnit: z.enum(["g", "ml", "dose"]).optional(),
-        quantityGrams: z.coerce.number().nonnegative(),
-        servingQuantityGrams: z.coerce.number().nonnegative().optional(),
-        calories: z.coerce.number().nonnegative(),
-        protein: z.coerce.number().nonnegative(),
-        carbs: z.coerce.number().nonnegative(),
-        fat: z.coerce.number().nonnegative(),
-        foodCalories100g: z.coerce.number().nonnegative().optional(),
-        foodProtein100g: z.coerce.number().nonnegative().optional(),
-        foodCarbs100g: z.coerce.number().nonnegative().optional(),
-        foodFat100g: z.coerce.number().nonnegative().optional()
-      })
-    )
-    .optional()
+  items: z.array(mealFoodItemSchema).optional()
+});
+
+const favoriteMealSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  mealType: z.enum(["breakfast", "lunch", "snack", "dinner", "other"]),
+  calories: z.coerce.number().nonnegative(),
+  protein: z.coerce.number().nonnegative(),
+  carbs: z.coerce.number().nonnegative(),
+  fat: z.coerce.number().nonnegative(),
+  notes: z.string().optional(),
+  items: z.array(mealFoodItemSchema).optional(),
+  createdAt: z.string().default(""),
+  updatedAt: z.string().optional()
 });
 
 const weightEntrySchema = z.object({
@@ -217,6 +230,7 @@ const appDataSchema = z.object({
   settings: settingsSchema.default(DEFAULT_SETTINGS),
   sessions: z.array(completedSessionSchema).default([]),
   meals: z.array(mealSchema).default([]),
+  favoriteMeals: z.array(favoriteMealSchema).default([]),
   weights: z.array(weightEntrySchema).default([]),
   dailyContexts: z.array(dailyContextSchema).default([]),
   dailyHabits: z.array(dailyHabitSchema).default([]),
@@ -232,6 +246,7 @@ export function createDefaultData(): AppData {
     settings: DEFAULT_SETTINGS,
     sessions: [],
     meals: [],
+    favoriteMeals: [],
     weights: [],
     dailyContexts: [],
     dailyHabits: [],
@@ -278,6 +293,7 @@ export function parseAppData(value: unknown): AppData {
     },
     sessions: parsed.data.sessions,
     meals: parsed.data.meals,
+    favoriteMeals: parsed.data.favoriteMeals,
     weights: parsed.data.weights,
     dailyContexts: parsed.data.dailyContexts,
     dailyHabits: parsed.data.dailyHabits,
@@ -357,6 +373,29 @@ export function upsertMeal(meal: Meal): AppData {
 
 export function deleteMeal(id: string): AppData {
   return updateData((data) => ({ ...data, meals: data.meals.filter((item) => item.id !== id) }));
+}
+
+export function upsertFavoriteMeal(favoriteMeal: FavoriteMeal): AppData {
+  return updateData((data) => {
+    const now = new Date().toISOString();
+    const stampedFavorite = {
+      ...favoriteMeal,
+      name: favoriteMeal.name.trim(),
+      createdAt: favoriteMeal.createdAt || now,
+      updatedAt: now
+    };
+    const existingIndex = data.favoriteMeals.findIndex((item) => item.id === favoriteMeal.id);
+    const favoriteMeals =
+      existingIndex >= 0
+        ? data.favoriteMeals.map((item) => (item.id === favoriteMeal.id ? stampedFavorite : item))
+        : [stampedFavorite, ...data.favoriteMeals];
+
+    return { ...data, favoriteMeals };
+  });
+}
+
+export function deleteFavoriteMeal(id: string): AppData {
+  return updateData((data) => ({ ...data, favoriteMeals: data.favoriteMeals.filter((item) => item.id !== id) }));
 }
 
 export function upsertWeight(entry: WeightEntry): AppData {

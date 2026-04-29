@@ -6,6 +6,7 @@ export type ImportMergeSummary = {
   files: number;
   sessions: number;
   meals: number;
+  favoriteMeals: number;
   weights: number;
   dailyContexts: number;
   dailyHabits: number;
@@ -61,6 +62,7 @@ export function mergeAppData(currentData: AppData, incomingData: AppData): AppDa
     settings,
     sessions: mergeByKey(current.sessions, incoming.sessions, (item) => item.id),
     meals: mergeByKey(current.meals, incoming.meals, (item) => item.id),
+    favoriteMeals: mergeByKey(current.favoriteMeals, incoming.favoriteMeals, (item) => item.id),
     weights: mergeByKey(current.weights, incoming.weights, (item) => item.date),
     dailyContexts: mergeByKey(current.dailyContexts, incoming.dailyContexts, (item) => item.date),
     dailyHabits: mergeByKey(current.dailyHabits, incoming.dailyHabits, (item) => `${item.date}-${item.type}`),
@@ -112,6 +114,7 @@ export async function mergeJsonFiles(files: FileList | File[]): Promise<ImportMe
     files: fileArray.length,
     sessions: saved.sessions.length,
     meals: saved.meals.length,
+    favoriteMeals: saved.favoriteMeals.length,
     weights: saved.weights.length,
     dailyContexts: saved.dailyContexts.length,
     dailyHabits: saved.dailyHabits.length,
@@ -129,6 +132,7 @@ export function getExportPreview(): string {
       settings: data.settings,
       sessions: data.sessions.length,
       meals: data.meals.length,
+      favoriteMeals: data.favoriteMeals.length,
       weights: data.weights.length,
       dailyHabits: data.dailyHabits.length,
       sessionExerciseLogs: data.sessionExerciseLogs.length,
