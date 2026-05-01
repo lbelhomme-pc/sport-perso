@@ -11,7 +11,22 @@ import type { CompletedSession, CompletedSessionType } from "../types";
 import { formatLongDate } from "../utils/dates";
 import { getAverageHeartRate, getAverageRpe } from "../utils/training";
 
-const filters: Array<CompletedSessionType | "all"> = ["all", "badminton", "strength", "run", "hyrox", "recovery", "other"];
+const filters: Array<CompletedSessionType | "all"> = [
+  "all",
+  "strength",
+  "run",
+  "bike",
+  "swim",
+  "racket",
+  "badminton",
+  "hybrid",
+  "hyrox",
+  "mobility",
+  "recovery",
+  "test",
+  "free",
+  "other"
+];
 
 function CompletedExercisesList({ session }: { session: CompletedSession }) {
   if (!session.exercises?.length) return null;
@@ -60,8 +75,8 @@ export default function SessionsPage() {
     <>
       <PageHeader
         eyebrow="Historique"
-        title="Séances réalisées"
-        description="Tout ce que tu as vraiment fait : durée, FC, calories, RPE et notes. Le plan compte, mais le réel pilote."
+        title="Séances et sports"
+        description="Tout ce que tu as vraiment fait : musculation, course, vélo, natation, raquette, hybride, mobilité ou séance libre. Le plan compte, mais le réel pilote."
         action={
           <button className="action-button" onClick={() => setShowForm(true)}>
             <Plus className="h-4 w-4" /> Ajouter une séance

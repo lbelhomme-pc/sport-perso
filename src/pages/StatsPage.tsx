@@ -66,7 +66,7 @@ export default function StatsPage() {
   }));
 
   const totalSportCalories = data.sessions.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
-  const totalBadminton = data.sessions.filter((session) => session.type === "badminton").length;
+  const totalRacket = data.sessions.filter((session) => session.type === "badminton" || session.type === "racket").length;
   const totalStrength = data.sessions.filter((session) => session.type === "strength").length;
   const totalSteps21Days = dailySeries.reduce((total, day) => total + day.pas, 0);
   const totalFloors21Days = dailySeries.reduce((total, day) => total + day.etages, 0);
@@ -75,15 +75,15 @@ export default function StatsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Statistiques"
+        eyebrow="Progression"
         title="Tendances"
-        description="Une vue large pour repérer ce qui monte, ce qui fatigue et ce qui nourrit vraiment la préparation."
+        description="Une vue large pour repérer ce qui monte, ce qui fatigue et ce qui nourrit vraiment ta progression, quel que soit le sport."
       />
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-9">
         <MetricCard label="Total séances" value={data.sessions.length} />
-        <MetricCard label="Badminton" value={totalBadminton} />
-        <MetricCard label="Salle force" value={totalStrength} />
+        <MetricCard label="Raquette" value={totalRacket} />
+        <MetricCard label="Force" value={totalStrength} />
         <MetricCard label="Calories sport" value={totalSportCalories} />
         <MetricCard label="Pas 21 j" value={totalSteps21Days.toLocaleString("fr-FR")} />
         <MetricCard label="Étages 21 j" value={totalFloors21Days.toLocaleString("fr-FR")} />

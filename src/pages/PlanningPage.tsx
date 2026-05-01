@@ -53,12 +53,12 @@ function BadmintonVariantSelector({
     <div className="mt-4 border border-petrol-800/10 bg-white p-4">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="eyebrow">Toutes les configurations badminton</p>
+          <p className="eyebrow">Configuration compétition HYROX</p>
           <p className="mt-1 text-xs font-bold text-muted">
-            {BADMINTON_VARIANTS.length}/10 options disponibles. Appuie sur une option pour l'appliquer partout.
+            {BADMINTON_VARIANTS.length}/10 options badminton disponibles pour ce programme spécialisé.
           </p>
         </div>
-        <span className="chip bg-limeSoft text-petrol-900">Config active</span>
+        <span className="chip bg-limeSoft text-petrol-900">Mode compétition</span>
       </div>
       <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
         {BADMINTON_VARIANTS.map((variant) => {
@@ -376,9 +376,9 @@ export default function PlanningPage() {
       ) : null}
 
       <PageHeader
-        eyebrow="Planning HYROX"
-        title="Semaine par semaine"
-        description="Choisis la semaine, la configuration badminton et ton niveau d’énergie. Le contenu s’adapte sans casser le lundi repos."
+        eyebrow="Programmes"
+        title="Programme actif"
+        description="Le socle devient multi-sport. Le programme HYROX reste ici comme mode compétition spécialisé, avec semaine, configuration badminton et niveau d’énergie."
       />
 
       <SectionCard className="p-5 sm:p-6">
@@ -396,7 +396,7 @@ export default function PlanningPage() {
           </label>
 
           <label className="field-label">
-            Configuration badminton
+            Configuration badminton HYROX
             <select
               className="field"
               value={variant}
@@ -409,7 +409,7 @@ export default function PlanningPage() {
               ))}
             </select>
             <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
-              10 configurations disponibles. Ce choix devient la référence pour le dashboard, le calendrier et les stats.
+              10 configurations disponibles pour le programme compétition. Les autres sports seront ajoutés comme programmes génériques.
             </span>
           </label>
 

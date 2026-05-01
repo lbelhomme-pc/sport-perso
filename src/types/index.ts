@@ -1,12 +1,34 @@
-export type PlannedSessionType = "rest" | "badminton" | "strength" | "run" | "hyrox" | "recovery";
+export type PlannedSessionType =
+  | "rest"
+  | "badminton"
+  | "racket"
+  | "strength"
+  | "run"
+  | "bike"
+  | "swim"
+  | "hybrid"
+  | "hyrox"
+  | "mobility"
+  | "recovery"
+  | "test"
+  | "free";
 
 export type CompletedSessionType =
   | "badminton"
+  | "racket"
   | "strength"
   | "run"
+  | "bike"
+  | "swim"
+  | "hybrid"
   | "hyrox"
+  | "mobility"
   | "recovery"
+  | "test"
+  | "free"
   | "other";
+
+export type SportType = Exclude<PlannedSessionType, "rest">;
 
 export type MealType = "breakfast" | "lunch" | "snack" | "dinner" | "other";
 
@@ -27,6 +49,22 @@ export type BadmintonVariant =
 export type EnergyLevel = "fatigue" | "normal" | "strong";
 
 export type BmrSex = "male" | "female";
+
+export type AppExperienceMode =
+  | "fitness"
+  | "weight-loss"
+  | "muscle-gain"
+  | "performance"
+  | "hybrid"
+  | "racket"
+  | "competition"
+  | "health";
+
+export type UserSportProfile = {
+  primaryMode: AppExperienceMode;
+  sports: SportType[];
+  level: "beginner" | "intermediate" | "advanced";
+};
 
 export type DailyHabitType = "allergies" | "duolingo" | "omega3" | "creatine";
 
@@ -130,6 +168,8 @@ export type PlannedSessionOverride = {
 export type Settings = {
   targetDate: string;
   startDate: string;
+  appMode?: AppExperienceMode;
+  enabledSports?: SportType[];
   startWeight: number;
   targetWeightLoss: number;
   proteinPerKg: number;
@@ -274,7 +314,7 @@ export type TrainingPhase = {
 
 export type DayTemplate = {
   day: string;
-  slot: "rest" | "badminton" | "strength" | "run" | "hyrox" | "recovery";
+  slot: PlannedSessionType;
   note?: string;
 };
 

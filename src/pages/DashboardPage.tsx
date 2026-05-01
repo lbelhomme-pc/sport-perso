@@ -3,7 +3,7 @@ import { differenceInCalendarDays, parseISO } from "date-fns";
 import { BarChart3, CalendarCheck2, CalendarDays, Dumbbell, Scale, Settings, Utensils } from "lucide-react";
 import { MetricCard } from "../components/ui/MetricCard";
 import { SectionCard } from "../components/ui/SectionCard";
-import { BADMINTON_VARIANTS, EVENT_LABEL } from "../data/defaults";
+import { APP_TAGLINE, BADMINTON_VARIANTS, EVENT_LABEL } from "../data/defaults";
 import { getDisplayedVersion } from "../data/trainingPlan";
 import { useDailyContext } from "../hooks/useDailyContext";
 import { useDashboard } from "../hooks/useDashboard";
@@ -234,16 +234,16 @@ export default function DashboardPage() {
       <section className="panel overflow-hidden">
         <div className="grid gap-0 xl:grid-cols-[1.1fr_0.9fr]">
           <div className="bg-petrol-800 p-6 text-white sm:p-8">
-            <p className="text-[0.68rem] font-black uppercase tracking-[0.2em] text-limeSoft">{EVENT_LABEL}</p>
+            <p className="text-[0.68rem] font-black uppercase tracking-[0.2em] text-limeSoft">{APP_TAGLINE}</p>
             <div className="mt-4 inline-flex flex-wrap items-center gap-2 border border-white/15 bg-white/10 px-3 py-2 text-xs font-black uppercase tracking-[0.1em] text-white/80">
               <span>MAJ {buildStamp}</span>
-              <span className="text-limeSoft">10 configs badminton</span>
+              <span className="text-limeSoft">{EVENT_LABEL}</span>
             </div>
             <h1 className="mt-4 max-w-3xl font-display text-5xl font-black leading-[0.9] tracking-[-0.08em] sm:text-6xl">
-              Synthèse HYROX
+              Synthèse du jour
             </h1>
             <p className="mt-5 max-w-2xl text-sm font-semibold leading-6 text-white/70">
-              Résumé lisible : ce qu'il reste à manger, le calcul calories, la séance du jour et la semaine. Les modifications se font via le menu.
+              Résumé lisible : ce qu'il reste à manger, la dépense estimée, la séance du jour, les habitudes et la progression. Les modifications se font via les sections dédiées.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-4">
               <div className="bg-white/10 p-3">
@@ -251,7 +251,7 @@ export default function DashboardPage() {
                 <p className="mt-1 font-display text-3xl font-black">{dashboard.currentWeek}</p>
               </div>
               <div className="bg-white/10 p-3">
-                <p className="text-[0.65rem] font-black uppercase tracking-[0.14em] text-white/60">HYROX</p>
+                <p className="text-[0.65rem] font-black uppercase tracking-[0.14em] text-white/60">Échéance</p>
                 <p className="mt-1 font-display text-3xl font-black">{formatShortDate(dashboard.settings.targetDate)}</p>
               </div>
               <div className="bg-white/10 p-3">
@@ -265,7 +265,7 @@ export default function DashboardPage() {
                 <p className="text-[0.65rem] font-black uppercase tracking-[0.14em] opacity-70">Séances</p>
                 <p className="mt-1 font-display text-3xl font-black">{completion}%</p>
                 <p className="mt-2 text-[0.62rem] font-black uppercase tracking-[0.1em] opacity-70">
-                  {activeBadmintonVariant?.shortLabel ?? "Config"} - {BADMINTON_VARIANTS.length}/10 options
+                  Compétition : {activeBadmintonVariant?.shortLabel ?? "config"} - {BADMINTON_VARIANTS.length}/10
                 </p>
               </div>
             </div>
@@ -283,7 +283,7 @@ export default function DashboardPage() {
               <p className="mt-3 text-sm font-semibold leading-6 text-muted">
                 {dashboard.todayPlanned
                   ? getDisplayedVersion(dashboard.todayPlanned, "normal")
-                  : "Aucune séance prévue aujourd'hui. Garde le cap avec nutrition, pas et récupération."}
+                  : "Aucune séance prévue aujourd'hui. Garde le cap avec nutrition, mouvement et récupération."}
               </p>
             </div>
             <div className="grid gap-2 sm:grid-cols-2">
@@ -425,7 +425,7 @@ export default function DashboardPage() {
 
       <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
         <SectionCard dark className="p-5 sm:p-6">
-          <p className="text-[0.68rem] font-black uppercase tracking-[0.18em] text-limeSoft">Alerte intelligente</p>
+          <p className="text-[0.68rem] font-black uppercase tracking-[0.18em] text-limeSoft">Signaux utiles</p>
           <div className="mt-4 grid gap-3">
             {dashboard.alerts.map((alert) => (
               <article key={alert.id} className={`border p-4 ${alertClass(alert.tone)}`}>
@@ -447,8 +447,8 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <MetricCard label="Badminton" value={dashboard.weekSummary.badminton} />
-            <MetricCard label="Salle force" value={dashboard.weekSummary.strength} />
+            <MetricCard label="Raquette / badminton" value={dashboard.weekSummary.badminton} />
+            <MetricCard label="Force" value={dashboard.weekSummary.strength} />
             <MetricCard label="Volume total" value={`${dashboard.weekSummary.volumeMin} min`} />
             <MetricCard label="Calories sport" value={dashboard.weekSummary.sportCalories} />
             <MetricCard label="Calories repas" value={Math.round(dashboard.weekMealTotals.calories)} />

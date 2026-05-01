@@ -1,6 +1,12 @@
-# HYROX Prep Tracker
+# Sport Progress Tracker
 
-PWA mobile-first pour suivre une préparation HYROX personnalisée : planning semaine par semaine, séances, repas, calories, poids, statistiques, export/import JSON et fonctionnement hors ligne.
+PWA mobile-first pour suivre sport, nutrition, progression, poids, habitudes et
+programmes en local-first.
+
+L'application vient d'une preparation HYROX personnalisee. La phase 1 de
+generalisation garde HYROX comme programme competition specialise, mais
+l'identite generale devient multi-sport : musculation, course, velo, natation,
+sport de raquette, sport hybride, mobilite, recuperation, tests et seance libre.
 
 ## Stack
 
@@ -30,15 +36,17 @@ npm run preview
 
 ## Configuration
 
-La configuration par défaut se trouve dans `src/data/defaults.ts`.
+La configuration par defaut se trouve dans `src/data/defaults.ts`.
 
-- `targetDate` : date cible HYROX
-- `startDate` : début de préparation
-- `targetWeightLoss` : objectif de perte de poids
-- `vacationWeeks` : semaines de vacances, avec charge automatiquement réduite
+- `appMode` : mode principal de l'application.
+- `enabledSports` : sports suivis par defaut.
+- `targetDate` : date cible competition si un evenement est active.
+- `startDate` : debut du programme actif.
+- `targetWeightLoss` : objectif de composition corporelle.
+- `vacationWeeks` : semaines de vacances, avec charge automatiquement reduite.
 
-Ces réglages peuvent aussi être modifiés dans l’écran Réglages de l’application.
+## Donnees locales
 
-## Données locales
-
-La V1 n’utilise pas de backend. Les données sont stockées dans `localStorage` avec export/import JSON depuis la page Réglages. L’architecture sépare les services pour faciliter un futur ajout Supabase ou Firebase.
+La V1 n'utilise pas de backend. Les donnees sont stockees dans `localStorage`
+avec export/import JSON depuis la page Profil. Les anciennes donnees HYROX
+restent compatibles pendant la generalisation.

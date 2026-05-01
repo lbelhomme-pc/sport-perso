@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Download, RefreshCcw, Save, Upload } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
-import { BADMINTON_VARIANTS } from "../data/defaults";
+import { BADMINTON_VARIANTS, GENERAL_SPORT_MODES } from "../data/defaults";
 import { exportJson, getExportPreview, importJsonFile, mergeJsonFiles } from "../services/exportService";
 import { resetData } from "../services/storageService";
 import { useSettings } from "../hooks/useSettings";
-import type { BadmintonVariant, BmrSex, Settings } from "../types";
+import type { AppExperienceMode, BadmintonVariant, BmrSex, Settings } from "../types";
 import { calculateBasalMetabolicRate } from "../utils/calories";
 
 function parseVacationWeeks(value: string): number[] {
@@ -34,6 +34,8 @@ export default function SettingsPage() {
       [key]:
         key === "targetDate" || key === "startDate"
           ? value
+          : key === "appMode"
+            ? (value as AppExperienceMode)
           : key === "badmintonVariant"
             ? (value as BadmintonVariant)
           : key === "sex"
@@ -47,8 +49,8 @@ export default function SettingsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Réglages"
-        title="Configuration locale"
+        eyebrow="Profil"
+        title="Objectifs et préférences"
         description="La V1 reste sans backend. Tout est stocké dans ce navigateur, avec export/import JSON pour sauvegarder ou migrer."
       />
 
@@ -63,7 +65,20 @@ export default function SettingsPage() {
         >
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <label className="field-label">
-              Date cible HYROX
+              Mode principal
+              <select className="field" value={form.appMode ?? "competition"} onChange={(event) => update("appMode", event.target.value)}>
+                {GENERAL_SPORT_MODES.map((mode) => (
+                  <option key={mode.id} value={mode.id}>
+                    {mode.label}
+                  </option>
+                ))}
+              </select>
+              <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
+                Phase 1 : ce choix prépare la personnalisation générale sans supprimer le programme HYROX.
+              </span>
+            </label>
+            <label className="field-label">
+              Date cible compétition
               <input className="field" type="date" value={form.targetDate} onChange={(event) => update("targetDate", event.target.value)} />
             </label>
             <label className="field-label">
@@ -71,7 +86,7 @@ export default function SettingsPage() {
               <input className="field" type="date" value={form.startDate} onChange={(event) => update("startDate", event.target.value)} />
             </label>
             <label className="field-label sm:col-span-2">
-              Configuration badminton par défaut
+              Configuration badminton du programme HYROX
               <select className="field" value={form.badmintonVariant} onChange={(event) => update("badmintonVariant", event.target.value)}>
                 {BADMINTON_VARIANTS.map((variant) => (
                   <option key={variant.id} value={variant.id}>
@@ -80,7 +95,7 @@ export default function SettingsPage() {
                 ))}
               </select>
               <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
-                Les 10 combinaisons sont disponibles. Ce choix pilote le planning, le calendrier, les repas et les statistiques.
+                Les 10 combinaisons sont conservées dans le mode compétition HYROX.
               </span>
             </label>
             <label className="field-label">

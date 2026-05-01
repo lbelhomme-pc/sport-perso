@@ -20,57 +20,57 @@ import SettingsPage from "../pages/SettingsPage";
 export const appRoutes = [
   {
     path: "/",
-    label: "Dashboard",
+    label: "Accueil",
     shortLabel: "Home",
     icon: Home,
     element: <DashboardPage />
   },
   {
     path: "/calendar",
-    label: "Calendrier",
+    label: "Agenda",
     shortLabel: "Cal.",
     icon: CalendarCheck2,
     element: <CalendarPage />
   },
   {
     path: "/planning",
-    label: "Planning",
-    shortLabel: "Plan",
+    label: "Programmes",
+    shortLabel: "Prog.",
     icon: CalendarDays,
     element: <PlanningPage />
   },
   {
     path: "/sessions",
     label: "Séances",
-    shortLabel: "Séances",
+    shortLabel: "Sport",
     icon: Dumbbell,
     element: <SessionsPage />
   },
   {
     path: "/meals",
-    label: "Repas",
+    label: "Nutrition",
     shortLabel: "Repas",
     icon: Utensils,
     element: <MealsPage />
   },
   {
     path: "/weight",
-    label: "Poids",
-    shortLabel: "Poids",
+    label: "Corps",
+    shortLabel: "Corps",
     icon: Scale,
     element: <WeightPage />
   },
   {
     path: "/stats",
-    label: "Statistiques",
+    label: "Progression",
     shortLabel: "Stats",
     icon: BarChart3,
     element: <StatsPage />
   },
   {
     path: "/settings",
-    label: "Réglages",
-    shortLabel: "Régl.",
+    label: "Profil",
+    shortLabel: "Profil",
     icon: Settings,
     element: <SettingsPage />
   }

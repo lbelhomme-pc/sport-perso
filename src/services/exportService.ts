@@ -86,7 +86,7 @@ export function exportJson(): void {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `hyrox-prep-tracker-${toISODate(new Date())}-${exportedAt.slice(11, 16).replace(":", "h")}.json`;
+  link.download = `sport-progress-tracker-${toISODate(new Date())}-${exportedAt.slice(11, 16).replace(":", "h")}.json`;
   document.body.appendChild(link);
   link.click();
   link.remove();

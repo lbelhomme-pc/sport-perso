@@ -35,17 +35,31 @@ const HABIT_SHORT_LABELS: Record<DailyHabitType, string> = {
 const PLANNED_SHORT_LABELS: Record<PlannedSessionType, string> = {
   rest: "Repos",
   badminton: "Bad",
+  racket: "Raq",
   strength: "Salle",
   run: "Run",
+  bike: "Vélo",
+  swim: "Nage",
+  hybrid: "Hybr",
   hyrox: "HY",
-  recovery: "Rec"
+  mobility: "Mob",
+  recovery: "Rec",
+  test: "Test",
+  free: "Libre"
 };
 const SESSION_SHORT_LABELS: Record<CompletedSessionType, string> = {
   badminton: "Bad",
+  racket: "Raq",
   strength: "Salle",
   run: "Run",
+  bike: "Vélo",
+  swim: "Nage",
+  hybrid: "Hybr",
   hyrox: "HY",
+  mobility: "Mob",
   recovery: "Rec",
+  test: "Test",
+  free: "Libre",
   other: "Autre"
 };
 
@@ -99,9 +113,9 @@ export default function CalendarPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Calendrier"
-        title="Habitudes et sport"
-        description="Une vue simple pour voir les jours cochés, les séances prévues et ce que tu as réellement fait."
+        eyebrow="Agenda"
+        title="Jours, habitudes et séances"
+        description="Une vue simple pour voir les jours cochés, les séances prévues, les repas et ce que tu as réellement fait."
       />
 
       <SectionCard className="p-5 sm:p-6">

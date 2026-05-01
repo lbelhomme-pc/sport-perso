@@ -21,6 +21,27 @@ const STORAGE_EVENT = "hyrox-prep-tracker:storage";
 const settingsSchema = z.object({
   targetDate: z.string().default(DEFAULT_SETTINGS.targetDate),
   startDate: z.string().default(DEFAULT_SETTINGS.startDate),
+  appMode: z
+    .enum(["fitness", "weight-loss", "muscle-gain", "performance", "hybrid", "racket", "competition", "health"])
+    .default(DEFAULT_SETTINGS.appMode ?? "competition"),
+  enabledSports: z
+    .array(
+      z.enum([
+        "badminton",
+        "racket",
+        "strength",
+        "run",
+        "bike",
+        "swim",
+        "hybrid",
+        "hyrox",
+        "mobility",
+        "recovery",
+        "test",
+        "free"
+      ])
+    )
+    .default(DEFAULT_SETTINGS.enabledSports ?? ["badminton", "strength", "run", "hyrox", "recovery"]),
   startWeight: z.coerce.number().positive().default(DEFAULT_SETTINGS.startWeight),
   targetWeightLoss: z.coerce.number().positive().default(DEFAULT_SETTINGS.targetWeightLoss),
   proteinPerKg: z.coerce.number().positive().default(DEFAULT_SETTINGS.proteinPerKg),
@@ -76,7 +97,21 @@ const completedSessionSchema = z.object({
   id: z.string(),
   plannedSessionId: z.string().optional(),
   date: z.string(),
-  type: z.enum(["badminton", "strength", "run", "hyrox", "recovery", "other"]),
+  type: z.enum([
+    "badminton",
+    "racket",
+    "strength",
+    "run",
+    "bike",
+    "swim",
+    "hybrid",
+    "hyrox",
+    "mobility",
+    "recovery",
+    "test",
+    "free",
+    "other"
+  ]),
   title: z.string(),
   durationMin: z.coerce.number().nonnegative(),
   averageHeartRate: z.coerce.number().positive().optional(),
@@ -217,7 +252,23 @@ const plannedSessionOverrideSchema = z.object({
   plannedSessionId: z.string(),
   date: z.string(),
   title: z.string().optional(),
-  type: z.enum(["rest", "badminton", "strength", "run", "hyrox", "recovery"]).optional(),
+  type: z
+    .enum([
+      "rest",
+      "badminton",
+      "racket",
+      "strength",
+      "run",
+      "bike",
+      "swim",
+      "hybrid",
+      "hyrox",
+      "mobility",
+      "recovery",
+      "test",
+      "free"
+    ])
+    .optional(),
   durationMin: z.coerce.number().nonnegative().optional(),
   objective: z.string().optional(),
   exercises: z.array(exercisePrescriptionSchema).optional(),

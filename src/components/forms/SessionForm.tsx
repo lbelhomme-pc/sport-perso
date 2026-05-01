@@ -83,7 +83,7 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
     <form onSubmit={submit} className="grid gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft">
       {planned ? (
         <div className="border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
-          Saisis les données réelles de la séance : durée, FC moyenne/max, calories et RPE. Elles alimentent le dashboard et les statistiques.
+          Saisis les données réelles de la séance : durée, FC moyenne/max, calories et RPE. Elles alimentent l'accueil et les statistiques.
         </div>
       ) : null}
 
@@ -106,7 +106,7 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
 
       <label className="field-label">
         Titre
-        <input className="field" value={form.title} onChange={(event) => update("title", event.target.value)} placeholder="Ex : Salle 1 - Force + sled" />
+        <input className="field" value={form.title} onChange={(event) => update("title", event.target.value)} placeholder="Ex : Force bas du corps, footing, badminton, mobilité..." />
       </label>
 
       <div className="grid gap-3 sm:grid-cols-5">

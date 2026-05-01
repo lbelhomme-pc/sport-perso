@@ -9,7 +9,7 @@ import type {
   Settings
 } from "../types";
 import { getPhaseForWeek } from "./phases";
-import { getPreciseWeekPlan, type PreciseSessionPlan } from "./preciseTrainingPlan";
+import { getPreciseWeekPlan, type PreciseSessionPlan, type PreciseSessionSlot } from "./preciseTrainingPlan";
 import { getTotalWeeks, getWeekStart, toISODate } from "../utils/dates";
 
 const stationOrder = [
@@ -22,6 +22,12 @@ const stationOrder = [
   "1 km course + Sandbag Lunges",
   "1 km course + Wall Balls"
 ];
+
+const preciseSessionSlots: PreciseSessionSlot[] = ["rest", "badminton", "strength", "run", "recovery", "hyrox"];
+
+function isPreciseSessionSlot(slot: DayTemplate["slot"]): slot is PreciseSessionSlot {
+  return preciseSessionSlots.includes(slot as PreciseSessionSlot);
+}
 
 function exercise(input: Omit<ExercisePrescription, "order"> & { order?: number }): ExercisePrescription {
   return {
@@ -961,7 +967,7 @@ function buildHyroxSession(week: number, date: string, day: string): PlannedSess
 }
 
 function buildSession(slot: DayTemplate["slot"], week: number, date: string, day: string): PlannedSession {
-  const precisePlan = getPreciseWeekPlan(week)?.sessions[slot];
+  const precisePlan = isPreciseSessionSlot(slot) ? getPreciseWeekPlan(week)?.sessions[slot] : undefined;
   if (precisePlan) return buildPreciseSession(slot, precisePlan, week, date, day);
 
   if (slot === "rest") return buildRestSession(week, date, day);

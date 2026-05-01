@@ -45,9 +45,9 @@ export default function WeightPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Poids"
+        eyebrow="Corps"
         title="Tendance, pas panique"
-        description="Le poids sert à piloter la tendance, pas à juger une journée. Moyenne hebdomadaire, objectif -6 kg et signaux sobres."
+        description="Le poids sert à piloter une tendance de composition corporelle, pas à juger une journée. Moyenne hebdomadaire, objectif configuré et signaux sobres."
         action={
           <button className="action-button" onClick={() => setShowForm(true)}>
             <Plus className="h-4 w-4" /> Ajouter poids
@@ -66,7 +66,7 @@ export default function WeightPage() {
       <SectionCard className="p-5 sm:p-6">
         <div className="grid gap-5 lg:grid-cols-[1fr_18rem]">
           <div>
-            <p className="eyebrow">Progression vers -{settings.targetWeightLoss} kg</p>
+            <p className="eyebrow">Progression objectif poids</p>
             <h2 className="title-lg mt-2">{Math.round(progress)} %</h2>
             <div className="mt-5">
               <ProgressBar value={progress} max={100} tone="lime" />

@@ -50,10 +50,17 @@ export function estimateNeatCalories(steps: number, floors: number, bodyWeightKg
 export function estimateCaloriesFromSession(type: CompletedSession["type"], durationMin: number): number {
   const caloriesPerMinute = {
     badminton: 8,
+    racket: 8,
     strength: 7,
     run: 11,
+    bike: 8,
+    swim: 9,
+    hybrid: 11,
     hyrox: 12,
+    mobility: 3,
     recovery: 4,
+    test: 10,
+    free: 6,
     other: 6
   };
 

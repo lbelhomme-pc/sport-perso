@@ -1,12 +1,16 @@
 import type { Settings } from "../types";
 
-export const APP_NAME = "HYROX Prep Tracker";
+export const APP_NAME = "Sport Progress Tracker";
 
-export const EVENT_LABEL = "HYROX Paris Porte de Versailles";
+export const APP_TAGLINE = "Suivi sport, nutrition et progression";
+
+export const EVENT_LABEL = "Mode compétition : HYROX Paris Porte de Versailles";
 
 export const DEFAULT_SETTINGS: Settings = {
   startDate: "2026-04-27",
   targetDate: "2026-12-12",
+  appMode: "competition",
+  enabledSports: ["badminton", "strength", "run", "hyrox", "recovery"],
   startWeight: 80,
   targetWeightLoss: 6,
   proteinPerKg: 1.9,
@@ -104,21 +108,78 @@ export const ENERGY_LEVELS = [
 
 export const SESSION_TYPE_LABELS = {
   badminton: "Badminton",
-  strength: "Salle force",
+  racket: "Sport de raquette",
+  strength: "Musculation / force",
   run: "Course",
+  bike: "Vélo",
+  swim: "Natation",
+  hybrid: "Sport hybride",
   hyrox: "HYROX",
+  mobility: "Mobilité",
   recovery: "Récupération",
+  test: "Test physique",
+  free: "Séance libre",
   other: "Autre"
 } as const;
 
 export const PLANNED_TYPE_LABELS = {
   rest: "Repos",
   badminton: "Badminton",
-  strength: "Salle force",
+  racket: "Sport de raquette",
+  strength: "Musculation / force",
   run: "Course",
+  bike: "Vélo",
+  swim: "Natation",
+  hybrid: "Sport hybride",
   hyrox: "HYROX",
-  recovery: "Récupération"
+  mobility: "Mobilité",
+  recovery: "Récupération",
+  test: "Test physique",
+  free: "Séance libre"
 } as const;
+
+export const GENERAL_SPORT_MODES = [
+  {
+    id: "fitness",
+    label: "Remise en forme",
+    description: "Reprendre progressivement, bouger plus et construire une routine durable."
+  },
+  {
+    id: "weight-loss",
+    label: "Perte de poids",
+    description: "Piloter activité, alimentation et récupération sans pression excessive."
+  },
+  {
+    id: "muscle-gain",
+    label: "Prise de muscle",
+    description: "Suivre charges, volume, protéines et récupération."
+  },
+  {
+    id: "performance",
+    label: "Performance",
+    description: "Progresser sur une discipline, un chrono, une charge ou un test."
+  },
+  {
+    id: "hybrid",
+    label: "Sport hybride",
+    description: "Combiner force, cardio, endurance, puissance et stations."
+  },
+  {
+    id: "racket",
+    label: "Sport de raquette",
+    description: "Badminton, tennis, padel : appuis, explosivité, cardio intermittent."
+  },
+  {
+    id: "competition",
+    label: "Préparation compétition",
+    description: "Préparer une date cible avec phases, charge et deload."
+  },
+  {
+    id: "health",
+    label: "Santé & régularité",
+    description: "Suivre sommeil, hydratation, marche, énergie et séances courtes."
+  }
+] as const;
 
 export const MEAL_TYPE_LABELS = {
   breakfast: "Petit-déjeuner",

@@ -17,9 +17,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["icon.svg"],
       manifest: {
-        name: "HYROX Prep Tracker",
-        short_name: "HYROX Prep",
-        description: "Planning HYROX, nutrition, poids et statistiques en local-first.",
+        name: "Sport Progress Tracker",
+        short_name: "Sport Track",
+        description: "Suivi sport, nutrition, progression et programmes en local-first.",
         theme_color: "#00354A",
         background_color: "#F4F4EE",
         display: "standalone",
