@@ -25,6 +25,15 @@ import { useStoredData } from "../hooks/useStoredData";
 import type { CompletedSessionType, DailyHabitType, PlannedSessionType } from "../types";
 import { getTotalWeeks, getWeekIndexForDate, toISODate } from "../utils/dates";
 
+type CalendarViewMode = "agenda" | "compact" | "grid";
+
+const CALENDAR_VIEW_KEY = "sport-progress-tracker:calendar-view:v1";
+const CALENDAR_VIEWS: Array<{ id: CalendarViewMode; label: string; hint: string }> = [
+  { id: "agenda", label: "Agenda", hint: "liste lisible" },
+  { id: "compact", label: "Compact", hint: "mois mobile" },
+  { id: "grid", label: "Détaillé", hint: "grille large" }
+];
+
 const habitOrder: DailyHabitType[] = ["allergies", "duolingo", "omega3", "creatine"];
 const HABIT_SHORT_LABELS: Record<DailyHabitType, string> = {
   allergies: "A",
@@ -63,6 +72,12 @@ const SESSION_SHORT_LABELS: Record<CompletedSessionType, string> = {
   other: "Autre"
 };
 
+function readInitialCalendarView(): CalendarViewMode {
+  if (typeof window === "undefined") return "agenda";
+  const saved = window.localStorage.getItem(CALENDAR_VIEW_KEY);
+  return saved === "agenda" || saved === "compact" || saved === "grid" ? saved : "agenda";
+}
+
 export default function CalendarPage() {
   const { settings } = useSettings();
   const { saveMeal } = useMeals();
@@ -71,6 +86,7 @@ export default function CalendarPage() {
   const [month, setMonth] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(today);
   const [showMealForm, setShowMealForm] = useState(false);
+  const [viewMode, setViewMode] = useState<CalendarViewMode>(readInitialCalendarView);
   const mealFormRef = useRef<HTMLDivElement>(null);
   const totalWeeks = getTotalWeeks(settings.startDate, settings.targetDate);
   const monthStart = startOfMonth(month);
@@ -102,6 +118,26 @@ export default function CalendarPage() {
     setSelectedDate(toISODate(day));
   };
 
+  const getDayInfo = (day: Date) => {
+    const isoDate = toISODate(day);
+    const dayHabits = data.dailyHabits.filter((habit) => habit.date === isoDate && habit.completed);
+    const completedSessions = data.sessions.filter((session) => session.date === isoDate && session.completed);
+    const plannedForDay = plannedSessions.filter((session) => session.date === isoDate && session.type !== "rest");
+    const mealsForDay = data.meals.filter((meal) => meal.date === isoDate);
+    const selected = isoDate === selectedDate;
+    const hasContent = dayHabits.length || plannedForDay.length || completedSessions.length || mealsForDay.length;
+
+    return {
+      isoDate,
+      dayHabits,
+      completedSessions,
+      plannedForDay,
+      mealsForDay,
+      selected,
+      hasContent
+    };
+  };
+
   useEffect(() => {
     if (!showMealForm) return;
 
@@ -109,6 +145,10 @@ export default function CalendarPage() {
       mealFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 0);
   }, [selectedDate, showMealForm]);
+
+  useEffect(() => {
+    window.localStorage.setItem(CALENDAR_VIEW_KEY, viewMode);
+  }, [viewMode]);
 
   return (
     <>
@@ -232,17 +272,40 @@ export default function CalendarPage() {
           </div>
         ) : null}
 
-        <div className="mt-5 grid gap-2 sm:hidden">
+        <div className="mt-5 border border-petrol-800/10 bg-white p-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="eyebrow">Affichage calendrier</p>
+              <p className="mt-1 text-xs font-bold text-muted">Choisis la forme la plus pratique sur téléphone.</p>
+            </div>
+            <div className="grid grid-cols-3 gap-1">
+              {CALENDAR_VIEWS.map((view) => (
+                <button
+                  key={view.id}
+                  type="button"
+                  className={`min-h-12 border px-2 py-2 text-center text-[0.62rem] font-black uppercase tracking-[0.06em] transition ${
+                    viewMode === view.id
+                      ? "border-petrol-800 bg-petrol-800 text-white"
+                      : "border-petrol-800/10 bg-mist/50 text-petrol-800"
+                  }`}
+                  onClick={() => setViewMode(view.id)}
+                >
+                  <span className="block">{view.label}</span>
+                  <span className={viewMode === view.id ? "mt-1 block text-[0.55rem] text-limeSoft" : "mt-1 block text-[0.55rem] text-muted"}>
+                    {view.hint}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {viewMode === "agenda" ? (
+        <div className="mt-5 grid gap-2">
           {calendarDays
             .filter((day) => isSameMonth(day, month))
             .map((day) => {
-              const isoDate = toISODate(day);
-              const dayHabits = data.dailyHabits.filter((habit) => habit.date === isoDate && habit.completed);
-              const completedSessions = data.sessions.filter((session) => session.date === isoDate && session.completed);
-              const plannedForDay = plannedSessions.filter((session) => session.date === isoDate && session.type !== "rest");
-              const mealsForDay = data.meals.filter((meal) => meal.date === isoDate);
-              const selected = isoDate === selectedDate;
-              const hasContent = dayHabits.length || plannedForDay.length || completedSessions.length || mealsForDay.length;
+              const { isoDate, dayHabits, completedSessions, plannedForDay, mealsForDay, selected, hasContent } = getDayInfo(day);
 
               return (
                 <button
@@ -294,20 +357,65 @@ export default function CalendarPage() {
               );
             })}
         </div>
+        ) : null}
 
-        <div className="mt-5 hidden grid-cols-7 gap-1 text-center text-[0.62rem] font-black uppercase tracking-[0.08em] text-muted sm:grid">
+        {viewMode === "compact" ? (
+          <>
+            <div className="mt-5 grid grid-cols-7 gap-1 text-center text-[0.58rem] font-black uppercase tracking-[0.04em] text-muted sm:text-[0.62rem]">
+              {["L", "M", "M", "J", "V", "S", "D"].map((day, index) => (
+                <span key={`${day}-${index}`}>{day}</span>
+              ))}
+            </div>
+            <div className="mt-2 grid grid-cols-7 gap-1">
+              {calendarDays.map((day) => {
+                const { isoDate, dayHabits, completedSessions, plannedForDay, mealsForDay, selected, hasContent } = getDayInfo(day);
+                const muted = !isSameMonth(day, month);
+
+                return (
+                  <button
+                    type="button"
+                    key={`compact-${isoDate}`}
+                    onClick={() => selectDay(day)}
+                    className={`min-h-20 min-w-0 border p-1 text-left transition ${
+                      selected
+                        ? "border-petrol-800 bg-limeSoft text-petrol-900"
+                        : muted
+                          ? "border-petrol-800/5 bg-mist/30 opacity-60"
+                          : "border-petrol-800/10 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-1">
+                      <span className="font-display text-lg font-black leading-none tracking-[-0.05em] text-petrol-800">
+                        {format(day, "d")}
+                      </span>
+                      {isoDate === today ? <span className="h-2 w-2 shrink-0 bg-petrol-800" /> : null}
+                    </div>
+                    <div className="mt-2 grid gap-1 text-[0.54rem] font-black uppercase leading-none tracking-[0.02em]">
+                      {plannedForDay.length ? <span className="truncate bg-mist px-1 py-1 text-petrol-800">P {plannedForDay.length}</span> : null}
+                      {completedSessions.length ? <span className="truncate bg-petrol-800 px-1 py-1 text-white">F {completedSessions.length}</span> : null}
+                      {mealsForDay.length ? <span className="truncate bg-white px-1 py-1 text-petrol-800">R {mealsForDay.length}</span> : null}
+                      {dayHabits.length ? <span className="truncate bg-limeSoft px-1 py-1 text-petrol-900">H {dayHabits.length}</span> : null}
+                      {!hasContent ? <span className="text-muted/70">-</span> : null}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        ) : null}
+
+        {viewMode === "grid" ? (
+          <div className="mt-5 overflow-x-auto pb-2">
+            <div className="min-w-[46rem]">
+        <div className="grid grid-cols-7 gap-1 text-center text-[0.62rem] font-black uppercase tracking-[0.08em] text-muted">
           {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
             <span key={day}>{day}</span>
           ))}
         </div>
 
-        <div className="mt-2 hidden grid-cols-7 gap-1 sm:grid sm:gap-2">
+        <div className="mt-2 grid grid-cols-7 gap-1 sm:gap-2">
           {calendarDays.map((day) => {
-            const isoDate = toISODate(day);
-            const dayHabits = data.dailyHabits.filter((habit) => habit.date === isoDate && habit.completed);
-            const completedSessions = data.sessions.filter((session) => session.date === isoDate && session.completed);
-            const plannedForDay = plannedSessions.filter((session) => session.date === isoDate && session.type !== "rest");
-            const selected = isoDate === selectedDate;
+            const { isoDate, dayHabits, completedSessions, plannedForDay, selected } = getDayInfo(day);
 
             return (
               <button
@@ -367,6 +475,9 @@ export default function CalendarPage() {
             );
           })}
         </div>
+            </div>
+          </div>
+        ) : null}
       </SectionCard>
     </>
   );
