@@ -13,7 +13,7 @@ import { useSessionChecklists } from "../hooks/useSessionChecklists";
 import { useSessions } from "../hooks/useSessions";
 import { useSettings } from "../hooks/useSettings";
 import type { BadmintonVariant, EnergyLevel, ExercisePrescription, PlannedSession, SessionChecklistItem } from "../types";
-import { formatShortDate, getCurrentWeekIndex, getTotalWeeks, getWeekEnd, getWeekStart, toISODate } from "../utils/dates";
+import { formatShortDate, getCurrentWeekIndex, getTotalWeeks, getWeekEnd, getWeekStart } from "../utils/dates";
 import {
   getActionableExercises,
   getExerciseCheckId,
@@ -49,17 +49,25 @@ function BadmintonVariantSelector({
   value: BadmintonVariant;
   onChange: (variant: BadmintonVariant) => void;
 }) {
+  const [expanded, setExpanded] = useState(false);
+  const activeVariant = BADMINTON_VARIANTS.find((variant) => variant.id === value);
+
   return (
     <div className="mt-4 border border-petrol-800/10 bg-white p-4">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="eyebrow">Configuration compétition HYROX</p>
           <p className="mt-1 text-xs font-bold text-muted">
-            {BADMINTON_VARIANTS.length}/10 options badminton disponibles pour ce programme spécialisé.
+            Active : <span className="text-petrol-800">{activeVariant?.label ?? "Configuration inconnue"}</span>
           </p>
         </div>
-        <span className="chip bg-limeSoft text-petrol-900">Mode compétition</span>
+        <button type="button" className="ghost-button" onClick={() => setExpanded((current) => !current)}>
+          {expanded ? "Masquer les options" : "Choisir une config"}
+          <ChevronDown className={`h-4 w-4 transition ${expanded ? "rotate-180" : ""}`} />
+        </button>
       </div>
+
+      {expanded ? (
       <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
         {BADMINTON_VARIANTS.map((variant) => {
           const active = variant.id === value;
@@ -84,6 +92,7 @@ function BadmintonVariantSelector({
           );
         })}
       </div>
+      ) : null}
     </div>
   );
 }
@@ -179,7 +188,7 @@ function ExercisePrescriptionPanel({
   const progressLabel = actionableExercises.length ? `${checkedCount}/${actionableExercises.length} blocs utiles validés` : "Consignes de séance";
 
   return (
-    <details className="mt-4 border border-petrol-800/10 bg-white p-4" open>
+    <details className="mt-4 border border-petrol-800/10 bg-white p-4">
       <summary className="cursor-pointer list-none">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -340,7 +349,6 @@ export default function PlanningPage() {
   const [sessionMode, setSessionMode] = useState<PlannedSession | null>(null);
   const [openSessionId, setOpenSessionId] = useState<string | null>(null);
   const [showProgression, setShowProgression] = useState(false);
-  const today = toISODate(new Date());
   const variant = settings.badmintonVariant;
   const plannedWeek = getPlannedWeek(settings, week, variant).map((session) =>
     applyPlannedSessionOverride(session, getOverride(session.id))
@@ -352,9 +360,9 @@ export default function PlanningPage() {
   useEffect(() => {
     setOpenSessionId((current) => {
       if (current && plannedWeek.some((session) => session.id === current)) return current;
-      return plannedWeek.find((session) => session.date === today)?.id ?? plannedWeek.find((session) => session.type !== "rest")?.id ?? plannedWeek[0]?.id ?? null;
+      return null;
     });
-  }, [plannedWeekIds, today]);
+  }, [plannedWeekIds]);
 
   return (
     <>

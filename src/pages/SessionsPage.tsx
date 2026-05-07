@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Edit3, Plus, Trash2, Dumbbell } from "lucide-react";
+import { ChevronDown, Edit3, Plus, Trash2, Dumbbell } from "lucide-react";
 import { SessionForm } from "../components/forms/SessionForm";
 import { EmptyState } from "../components/ui/EmptyState";
 import { MetricCard } from "../components/ui/MetricCard";
@@ -67,6 +67,7 @@ export default function SessionsPage() {
   const [filter, setFilter] = useState<CompletedSessionType | "all">("all");
   const [editing, setEditing] = useState<CompletedSession | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [openSessionId, setOpenSessionId] = useState<string | null>(null);
   const filtered = filter === "all" ? sessions : sessions.filter((session) => session.type === filter);
   const totalCalories = filtered.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
   const totalVolume = filtered.reduce((total, session) => total + session.durationMin, 0);
@@ -127,10 +128,17 @@ export default function SessionsPage() {
 
         <div className="mt-5 grid gap-3">
           {filtered.length ? (
-            filtered.map((session) => (
+            filtered.map((session) => {
+              const isOpen = openSessionId === session.id;
+
+              return (
               <article key={session.id} className="border border-petrol-800/10 bg-white p-4 shadow-soft">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
+                  <button
+                    type="button"
+                    className="min-w-0 flex-1 text-left"
+                    onClick={() => setOpenSessionId(isOpen ? null : session.id)}
+                  >
                     <p className="eyebrow">{formatLongDate(session.date)}</p>
                     <h2 className="mt-1 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{session.title}</h2>
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -138,9 +146,13 @@ export default function SessionsPage() {
                       <span className="chip">{session.durationMin} min</span>
                       {session.caloriesBurned ? <span className="chip">{session.caloriesBurned} kcal</span> : null}
                       {session.rpe ? <span className="chip">RPE {session.rpe}</span> : null}
+                      <span className="chip bg-white">{isOpen ? "Détails ouverts" : "Voir détails"}</span>
                     </div>
-                  </div>
-                  <div className="flex gap-2">
+                  </button>
+                  <div className="flex flex-wrap gap-2">
+                    <button className="ghost-button" onClick={() => setOpenSessionId(isOpen ? null : session.id)} aria-label={isOpen ? "Replier la séance" : "Développer la séance"}>
+                      <ChevronDown className={`h-4 w-4 transition ${isOpen ? "rotate-180" : ""}`} />
+                    </button>
                     <button className="ghost-button" onClick={() => setEditing(session)} aria-label="Modifier la séance">
                       <Edit3 className="h-4 w-4" />
                     </button>
@@ -156,6 +168,8 @@ export default function SessionsPage() {
                   </div>
                 </div>
 
+                {isOpen ? (
+                <div className="mt-4 border-t border-petrol-800/10 pt-4">
                 <div className="mt-4 grid gap-3 sm:grid-cols-3">
                   <MetricCard label="FC moyenne" value={session.averageHeartRate ?? "—"} />
                   <MetricCard label="FC max" value={session.maxHeartRate ?? "—"} />
@@ -168,8 +182,11 @@ export default function SessionsPage() {
                   </p>
                 ) : null}
                 <CompletedExercisesList session={session} />
+                </div>
+                ) : null}
               </article>
-            ))
+              );
+            })
           ) : (
             <EmptyState icon={Dumbbell} title="Aucune séance" message="Ajoute ta première séance ou change le filtre." />
           )}

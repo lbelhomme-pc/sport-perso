@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Download, RefreshCcw, Save, Upload } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
-import { SectionCard } from "../components/ui/SectionCard";
+import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
 import { BADMINTON_VARIANTS, GENERAL_SPORT_MODES } from "../data/defaults";
 import { exportJson, getExportPreview, importJsonFile, mergeJsonFiles } from "../services/exportService";
 import { resetData } from "../services/storageService";
@@ -54,7 +54,12 @@ export default function SettingsPage() {
         description="La V1 reste sans backend. Tout est stocké dans ce navigateur, avec export/import JSON pour sauvegarder ou migrer."
       />
 
-      <SectionCard className="p-5 sm:p-6">
+      <CollapsibleSectionCard
+        eyebrow="Objectifs"
+        title="Profil et préférences"
+        summary="Mode principal, dates, poids, BMR, déficit et configuration compétition."
+        defaultOpen
+      >
         <form
           className="grid gap-5"
           onSubmit={(event) => {
@@ -189,12 +194,14 @@ export default function SettingsPage() {
             {status ? <span className="text-sm font-black text-petrol-800">{status}</span> : null}
           </div>
         </form>
-      </SectionCard>
+      </CollapsibleSectionCard>
 
       <div className="grid gap-5 xl:grid-cols-2">
-        <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Export / Import JSON</p>
-          <h2 className="title-lg mt-2">Sauvegarde locale</h2>
+        <CollapsibleSectionCard
+          eyebrow="Export / Import JSON"
+          title="Sauvegarde locale"
+          summary="Exporter, fusionner ou remplacer tes données locales."
+        >
           <p className="mt-3 text-sm font-semibold leading-6 text-muted">
             Pour passer du téléphone au PC : exporte le JSON sur un appareil, puis utilise "Fusionner JSON" sur l'autre.
             L'app garde les entrées les plus récentes quand deux sauvegardes se croisent.
@@ -238,11 +245,14 @@ export default function SettingsPage() {
               />
             </label>
           </div>
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard dark className="p-5 sm:p-6">
-          <p className="text-[0.68rem] font-black uppercase tracking-[0.18em] text-limeSoft">Zone sensible</p>
-          <h2 className="mt-2 font-display text-4xl font-black tracking-[-0.07em]">Reset données</h2>
+        <CollapsibleSectionCard
+          dark
+          eyebrow="Zone sensible"
+          title="Reset données"
+          summary="Action destructive avec confirmation."
+        >
           <p className="mt-4 text-sm font-semibold leading-6 text-white/70">
             Efface séances, repas, poids et réglages pour revenir aux valeurs par défaut. À utiliser seulement si tu veux repartir propre.
           </p>
@@ -259,7 +269,7 @@ export default function SettingsPage() {
           >
             <RefreshCcw className="h-4 w-4" /> Reset avec confirmation
           </button>
-        </SectionCard>
+        </CollapsibleSectionCard>
       </div>
     </>
   );

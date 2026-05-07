@@ -3,10 +3,10 @@ import { BarChart3 } from "lucide-react";
 import { ComparisonBarChart } from "../components/charts/ComparisonBarChart";
 import { MetricBarChart } from "../components/charts/MetricBarChart";
 import { MetricLineChart } from "../components/charts/MetricLineChart";
+import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
 import { EmptyState } from "../components/ui/EmptyState";
 import { MetricCard } from "../components/ui/MetricCard";
 import { PageHeader } from "../components/ui/PageHeader";
-import { SectionCard } from "../components/ui/SectionCard";
 import { getPlannedWeek } from "../data/trainingPlan";
 import { useStoredData } from "../hooks/useStoredData";
 import type { WeightEntry } from "../types";
@@ -93,61 +93,43 @@ export default function StatsPage() {
       </section>
 
       <div className="grid gap-5 xl:grid-cols-2">
-        <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Volume hebdomadaire</p>
-          <h2 className="title-lg mt-2">Minutes par semaine</h2>
+        <CollapsibleSectionCard eyebrow="Volume hebdomadaire" title="Minutes par semaine">
           <MetricBarChart data={weekSeries} xKey="week" yKey="volume" suffix=" min" />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Calories sport</p>
-          <h2 className="title-lg mt-2">Dépense par semaine</h2>
+        <CollapsibleSectionCard eyebrow="Calories sport" title="Dépense par semaine">
           <MetricBarChart data={weekSeries} xKey="week" yKey="calories" color="#DCEFA3" suffix=" kcal" />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Calories alimentaires</p>
-          <h2 className="title-lg mt-2">21 derniers jours</h2>
+        <CollapsibleSectionCard eyebrow="Calories alimentaires" title="21 derniers jours">
           <MetricLineChart data={dailySeries} xKey="date" yKey="calories" suffix=" kcal" />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Protéines</p>
-          <h2 className="title-lg mt-2">21 derniers jours</h2>
+        <CollapsibleSectionCard eyebrow="Protéines" title="21 derniers jours">
           <MetricLineChart data={dailySeries} xKey="date" yKey="protéines" color="#0A4B61" suffix=" g" />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Pas quotidiens</p>
-          <h2 className="title-lg mt-2">21 derniers jours</h2>
+        <CollapsibleSectionCard eyebrow="Pas quotidiens" title="21 derniers jours">
           <MetricBarChart data={dailySeries} xKey="date" yKey="pas" color="#0A4B61" suffix=" pas" />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">NEAT estimé</p>
-          <h2 className="title-lg mt-2">Calories via pas + étages</h2>
+        <CollapsibleSectionCard eyebrow="NEAT estimé" title="Calories via pas + étages">
           <MetricLineChart data={dailySeries} xKey="date" yKey="neat" color="#DCEFA3" suffix=" kcal" />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Étages quotidiens</p>
-          <h2 className="title-lg mt-2">21 derniers jours</h2>
+        <CollapsibleSectionCard eyebrow="Étages quotidiens" title="21 derniers jours">
           <MetricBarChart data={dailySeries} xKey="date" yKey="etages" color="#DCEFA3" suffix=" étages" />
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Poids</p>
-          <h2 className="title-lg mt-2">Courbe</h2>
+        <CollapsibleSectionCard eyebrow="Poids" title="Courbe">
           {weightSeries.length ? (
             <MetricLineChart data={weightSeries} xKey="date" yKey="poids" suffix=" kg" />
           ) : (
             <EmptyState icon={BarChart3} title="Pas encore de poids" message="Ajoute quelques entrées pour voir la tendance." />
           )}
-        </SectionCard>
+        </CollapsibleSectionCard>
 
-        <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Réalisées vs prévues</p>
-          <h2 className="title-lg mt-2">Exécution semaine</h2>
+        <CollapsibleSectionCard eyebrow="Réalisées vs prévues" title="Exécution semaine">
           <ComparisonBarChart
             data={weekSeries}
             xKey="week"
@@ -156,7 +138,7 @@ export default function StatsPage() {
             firstName="Prévues"
             secondName="Réalisées"
           />
-        </SectionCard>
+        </CollapsibleSectionCard>
       </div>
     </>
   );

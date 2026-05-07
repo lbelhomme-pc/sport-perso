@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Edit3, Plus, Star, Trash2, Utensils } from "lucide-react";
+import { ChevronDown, Edit3, Plus, Star, Trash2, Utensils } from "lucide-react";
 import { MealForm } from "../components/forms/MealForm";
 import { EmptyState } from "../components/ui/EmptyState";
 import { ProgressBar } from "../components/ui/ProgressBar";
@@ -80,6 +80,8 @@ export default function MealsPage() {
   const [editing, setEditing] = useState<Meal | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"journal" | "favorites">("journal");
+  const [openMealId, setOpenMealId] = useState<string | null>(null);
+  const [openFavoriteMealId, setOpenFavoriteMealId] = useState<string | null>(null);
   const { dailyContext, saveDailyContext } = useDailyContext(selectedDate);
   const formRef = useRef<HTMLDivElement>(null);
   const dayMeals = meals.filter((meal) => meal.date === selectedDate);
@@ -320,10 +322,17 @@ export default function MealsPage() {
 
           <div className="mt-5 grid gap-3">
             {favoriteMeals.length ? (
-              favoriteMeals.map((favorite) => (
+              favoriteMeals.map((favorite) => {
+                const isOpen = openFavoriteMealId === favorite.id;
+
+                return (
                 <article key={favorite.id} className="border border-petrol-800/10 bg-white p-4 shadow-soft">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
+                    <button
+                      type="button"
+                      className="min-w-0 flex-1 text-left"
+                      onClick={() => setOpenFavoriteMealId(isOpen ? null : favorite.id)}
+                    >
                       <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">
                         {MEAL_TYPE_LABELS[favorite.mealType]} - {favorite.calories} kcal
                       </p>
@@ -333,9 +342,13 @@ export default function MealsPage() {
                         <span className="chip">{favorite.carbs} g gluc.</span>
                         <span className="chip">{favorite.fat} g lip.</span>
                         <span className="chip">{favorite.items?.length ?? 0} aliments</span>
+                        <span className="chip bg-white">{isOpen ? "Détails ouverts" : "Voir détails"}</span>
                       </div>
-                    </div>
+                    </button>
                     <div className="flex flex-wrap gap-2">
+                      <button className="ghost-button" onClick={() => setOpenFavoriteMealId(isOpen ? null : favorite.id)} aria-label={isOpen ? "Replier le favori" : "Développer le favori"}>
+                        <ChevronDown className={`h-4 w-4 transition ${isOpen ? "rotate-180" : ""}`} />
+                      </button>
                       <button className="action-button" onClick={() => addFavoriteMealToSelectedDate(favorite.id)}>
                         <Plus className="h-4 w-4" /> Ajouter au {formatLongDate(selectedDate)}
                       </button>
@@ -349,8 +362,24 @@ export default function MealsPage() {
                       </button>
                     </div>
                   </div>
+                  {isOpen && favorite.items?.length ? (
+                    <div className="mt-4 grid gap-2 border-t border-petrol-800/10 pt-4">
+                      {favorite.items.map((item) => (
+                        <div key={item.id} className="border-l-4 border-limeSoft bg-mist/45 px-3 py-2">
+                          <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">
+                            {item.quantityGrams} g
+                          </p>
+                          <p className="text-sm font-black text-petrol-800">{item.foodName}</p>
+                          <p className="text-xs font-bold text-muted">
+                            {item.calories} kcal - P {item.protein} g | G {item.carbs} g | L {item.fat} g
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                 </article>
-              ))
+                );
+              })
             ) : (
               <EmptyState
                 icon={Star}
@@ -393,11 +422,47 @@ export default function MealsPage() {
 
         <div className="mt-5 grid gap-3">
           {dayMeals.length ? (
-            dayMeals.map((meal) => (
+            dayMeals.map((meal) => {
+              const isOpen = openMealId === meal.id;
+
+              return (
               <article key={meal.id} className="border border-petrol-800/10 bg-white p-4 shadow-soft">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
+                  <button type="button" className="min-w-0 flex-1 text-left" onClick={() => setOpenMealId(isOpen ? null : meal.id)}>
                     <h3 className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{MEAL_TYPE_LABELS[meal.mealType]}</h3>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <span className="chip">{meal.calories} kcal</span>
+                      <span className="chip">{meal.protein} g prot.</span>
+                      <span className="chip">{meal.carbs} g gluc.</span>
+                      <span className="chip">{meal.fat} g lip.</span>
+                      {meal.items?.length ? <span className="chip">{meal.items.length} aliment(s)</span> : null}
+                      <span className="chip bg-white">{isOpen ? "Détails ouverts" : "Voir détails"}</span>
+                    </div>
+                  </button>
+                  <div className="flex flex-wrap gap-2">
+                    <button className="ghost-button" onClick={() => setOpenMealId(isOpen ? null : meal.id)} aria-label={isOpen ? "Replier le repas" : "Développer le repas"}>
+                      <ChevronDown className={`h-4 w-4 transition ${isOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    <button className="ghost-button" onClick={() => saveExistingMealAsFavorite(meal)} aria-label="Enregistrer en repas favori">
+                      <Star className="h-4 w-4" />
+                    </button>
+                    <button className="ghost-button" onClick={() => setEditing(meal)} aria-label="Modifier le repas">
+                      <Edit3 className="h-4 w-4" />
+                    </button>
+                    <button
+                      className="ghost-button"
+                      onClick={() => {
+                        if (window.confirm("Supprimer ce repas ?")) deleteMeal(meal.id);
+                      }}
+                      aria-label="Supprimer le repas"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {isOpen ? (
+                  <div className="mt-4 border-t border-petrol-800/10 pt-4">
                     {meal.items?.length ? (
                       <div className="mt-2 grid gap-2">
                         {meal.items.map((item) => (
@@ -420,36 +485,16 @@ export default function MealsPage() {
                       </div>
                     ) : null}
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <span className="chip">{meal.calories} kcal</span>
-                      <span className="chip">{meal.protein} g prot.</span>
-                      <span className="chip">{meal.carbs} g gluc.</span>
-                      <span className="chip">{meal.fat} g lip.</span>
                       {meal.quantityGrams ? <span className="chip">{meal.quantityGrams} g</span> : null}
                       {meal.source === "openfoodfacts" ? <span className="chip bg-limeSoft">Open Food Facts</span> : null}
                       {meal.source === "common" ? <span className="chip bg-limeSoft">Aliment simple</span> : null}
                     </div>
+                    {meal.notes ? <p className="mt-4 border-l-4 border-limeSoft bg-mist/50 p-4 text-sm font-semibold text-ink">{meal.notes}</p> : null}
                   </div>
-                  <div className="flex gap-2">
-                    <button className="ghost-button" onClick={() => saveExistingMealAsFavorite(meal)} aria-label="Enregistrer en repas favori">
-                      <Star className="h-4 w-4" />
-                    </button>
-                    <button className="ghost-button" onClick={() => setEditing(meal)} aria-label="Modifier le repas">
-                      <Edit3 className="h-4 w-4" />
-                    </button>
-                    <button
-                      className="ghost-button"
-                      onClick={() => {
-                        if (window.confirm("Supprimer ce repas ?")) deleteMeal(meal.id);
-                      }}
-                      aria-label="Supprimer le repas"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-                {meal.notes ? <p className="mt-4 border-l-4 border-limeSoft bg-mist/50 p-4 text-sm font-semibold text-ink">{meal.notes}</p> : null}
+                ) : null}
               </article>
-            ))
+              );
+            })
           ) : (
             <EmptyState icon={Utensils} title="Aucun repas ce jour" message="Ajoute un repas en un tap, même approximatif. L'approximation suivie bat le parfait oublié." />
           )}

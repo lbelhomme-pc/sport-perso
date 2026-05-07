@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Edit3, Plus, Scale, Trash2 } from "lucide-react";
+import { ChevronDown, Edit3, Plus, Scale, Trash2 } from "lucide-react";
 import { MetricLineChart } from "../components/charts/MetricLineChart";
 import { WeightForm } from "../components/forms/WeightForm";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -30,6 +30,7 @@ export default function WeightPage() {
   const { weights, saveWeight, deleteWeight } = useWeight();
   const [editing, setEditing] = useState<WeightEntry | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [openWeightId, setOpenWeightId] = useState<string | null>(null);
   const latest = weights[weights.length - 1];
   const targetWeight = settings.startWeight - settings.targetWeightLoss;
   const lost = latest ? Math.max(0, settings.startWeight - latest.weight) : 0;
@@ -117,14 +118,21 @@ export default function WeightPage() {
         <p className="eyebrow">Historique</p>
         <div className="mt-4 grid gap-3">
           {weights.length ? (
-            [...weights].reverse().map((entry) => (
-              <article key={entry.id} className="flex flex-col gap-3 border border-petrol-800/10 bg-white p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between">
-                <div>
+            [...weights].reverse().map((entry) => {
+              const isOpen = openWeightId === entry.id;
+
+              return (
+              <article key={entry.id} className="border border-petrol-800/10 bg-white p-4 shadow-soft">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <button type="button" className="min-w-0 flex-1 text-left" onClick={() => setOpenWeightId(isOpen ? null : entry.id)}>
                   <p className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{entry.weight} kg</p>
                   <p className="text-sm font-bold text-muted">{formatShortDate(entry.date)}</p>
-                  {entry.notes ? <p className="mt-2 text-sm font-semibold text-ink">{entry.notes}</p> : null}
-                </div>
-                <div className="flex gap-2">
+                  <p className="mt-2 text-xs font-black uppercase tracking-[0.08em] text-muted">{isOpen ? "Détails ouverts" : "Voir détails"}</p>
+                </button>
+                <div className="flex flex-wrap gap-2">
+                  <button className="ghost-button" onClick={() => setOpenWeightId(isOpen ? null : entry.id)} aria-label={isOpen ? "Replier le poids" : "Développer le poids"}>
+                    <ChevronDown className={`h-4 w-4 transition ${isOpen ? "rotate-180" : ""}`} />
+                  </button>
                   <button className="ghost-button" onClick={() => setEditing(entry)} aria-label="Modifier le poids">
                     <Edit3 className="h-4 w-4" />
                   </button>
@@ -138,8 +146,19 @@ export default function WeightPage() {
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
+                </div>
+                {isOpen ? (
+                  <div className="mt-4 border-t border-petrol-800/10 pt-4">
+                    {entry.notes ? (
+                      <p className="border-l-4 border-limeSoft bg-mist/50 p-4 text-sm font-semibold text-ink">{entry.notes}</p>
+                    ) : (
+                      <p className="text-sm font-bold text-muted">Aucune note pour cette entrée.</p>
+                    )}
+                  </div>
+                ) : null}
               </article>
-            ))
+              );
+            })
           ) : (
             <EmptyState icon={Scale} title="Aucune entrée" message="La première mesure crée la ligne de départ." />
           )}

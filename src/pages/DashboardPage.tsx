@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { BarChart3, CalendarCheck2, CalendarDays, Dumbbell, Scale, Settings, Utensils } from "lucide-react";
+import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
 import { MetricCard } from "../components/ui/MetricCard";
 import { SectionCard } from "../components/ui/SectionCard";
 import { APP_TAGLINE, BADMINTON_VARIANTS, EVENT_LABEL } from "../data/defaults";
@@ -385,11 +386,11 @@ export default function DashboardPage() {
           </p>
         </SectionCard>
 
-        <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Synthèse dépense</p>
-          <h2 className="mt-2 font-display text-3xl font-black tracking-[-0.06em] text-petrol-800">
-            Total dépensé estimé : {dashboard.adaptiveCalorieTarget.maintenanceTarget} kcal
-          </h2>
+        <CollapsibleSectionCard
+          eyebrow="Synthèse dépense"
+          title={`Total dépensé estimé : ${dashboard.adaptiveCalorieTarget.maintenanceTarget} kcal`}
+          summary="Détail BMR, sport validé, pas, étages et ressenti."
+        >
           <div className="mt-4 grid gap-2">
             <CalorieBreakdownLine label="BMR" value={dashboard.adaptiveCalorieTarget.base} hint="métabolisme basal" />
             <CalorieBreakdownLine label="EAT / sport" value={dashboard.adaptiveCalorieTarget.activityFuel} hint="séances validées uniquement" />
@@ -420,12 +421,16 @@ export default function DashboardPage() {
           <p className="mt-4 text-xs font-bold leading-5 text-muted">
             Poids utilisé : {dashboard.calculationWeight} kg. Pas : {steps}. Étages : {floors}. NEAT bas estimé : {dashboard.adaptiveCalorieTarget.neatCalories} kcal.
           </p>
-        </SectionCard>
+        </CollapsibleSectionCard>
       </section>
 
       <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-        <SectionCard dark className="p-5 sm:p-6">
-          <p className="text-[0.68rem] font-black uppercase tracking-[0.18em] text-limeSoft">Signaux utiles</p>
+        <CollapsibleSectionCard
+          dark
+          eyebrow="Signaux utiles"
+          title="Alertes et récupération"
+          summary={`${dashboard.alerts.length} signal${dashboard.alerts.length > 1 ? "aux" : ""} à consulter si besoin.`}
+        >
           <div className="mt-4 grid gap-3">
             {dashboard.alerts.map((alert) => (
               <article key={alert.id} className={`border p-4 ${alertClass(alert.tone)}`}>
@@ -434,7 +439,7 @@ export default function DashboardPage() {
               </article>
             ))}
           </div>
-        </SectionCard>
+        </CollapsibleSectionCard>
 
         <SectionCard className="p-5 sm:p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
