@@ -1,4 +1,5 @@
-import { CheckCircle2, Dumbbell, RotateCcw, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CheckCircle2, Dumbbell, PauseCircle, PlayCircle, RotateCcw, X } from "lucide-react";
 import type { EnergyLevel, ExercisePrescription, PlannedSession, SessionExerciseLog } from "../../types";
 import { useSessionExerciseLogs } from "../../hooks/useSessionExerciseLogs";
 import {
@@ -20,6 +21,18 @@ function parseOptionalNumber(value: string): number | undefined {
   if (!value.trim()) return undefined;
   const parsed = Number(value.replace(",", "."));
   return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function formatElapsedTime(totalSeconds: number) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
 export function SessionMode({
@@ -47,6 +60,15 @@ export function SessionMode({
   const checkedSet = new Set(checkedItemIds);
   const checkedCount = exercises.filter((exercise) => checkedSet.has(getExerciseCheckId(exercise))).length;
   const progress = exercises.length ? Math.round((checkedCount / exercises.length) * 100) : 0;
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [timerRunning, setTimerRunning] = useState(false);
+
+  useEffect(() => {
+    if (!timerRunning) return undefined;
+
+    const interval = window.setInterval(() => setElapsedSeconds((current) => current + 1), 1000);
+    return () => window.clearInterval(interval);
+  }, [timerRunning]);
 
   const updateLog = (exercise: ExercisePrescription, patch: Partial<SessionExerciseLog>) => {
     const current = getExerciseLog(session.id, exercise.id);
@@ -63,9 +85,9 @@ export function SessionMode({
       <div className="sticky top-0 z-10 border-b border-petrol-800/10 bg-petrol-800 p-4 text-white shadow-panel">
         <div className="mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-[0.68rem] font-black uppercase tracking-[0.18em] text-limeSoft">Mode séance</p>
+            <p className="text-[0.82rem] font-black uppercase tracking-[0.1em] text-limeSoft">Mode séance</p>
             <h1 className="mt-1 font-display text-3xl font-black tracking-[-0.06em]">{session.title}</h1>
-            <p className="mt-1 text-xs font-bold uppercase tracking-[0.1em] text-white/60">
+            <p className="mt-1 text-sm font-bold uppercase tracking-[0.06em] text-white/70">
               {session.day} - {session.durationMin} min - {session.rpeTarget}
             </p>
           </div>
@@ -88,14 +110,28 @@ export function SessionMode({
 
       <main className="mx-auto grid max-w-5xl gap-4 p-4 pb-10">
         <section className="panel p-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="eyebrow">Progression séance</p>
               <p className="mt-1 font-display text-3xl font-black tracking-[-0.06em] text-petrol-800">
                 {exercises.length ? `${checkedCount}/${exercises.length} blocs utiles cochés` : "Séance guidée"}
               </p>
             </div>
-            <span className="chip">{exercises.length ? `${progress}%` : "Info"}</span>
+            <div className="grid gap-2 sm:min-w-56">
+              <div className="border border-petrol-800/10 bg-white p-3">
+                <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Chrono séance</p>
+                <p className="mt-1 font-display text-4xl font-black tracking-[-0.06em] text-petrol-800">{formatElapsedTime(elapsedSeconds)}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" className="action-button min-h-11 px-3 py-2" onClick={() => setTimerRunning((current) => !current)}>
+                  {timerRunning ? <PauseCircle className="h-4 w-4" /> : <PlayCircle className="h-4 w-4" />}
+                  {timerRunning ? "Pause" : "Start"}
+                </button>
+                <button type="button" className="ghost-button min-h-11 px-3 py-2" onClick={() => setElapsedSeconds(0)}>
+                  Reset
+                </button>
+              </div>
+            </div>
           </div>
           <div className="mt-4 h-3 bg-mist">
             <div className="h-full bg-limeSoft" style={{ width: `${progress}%` }} />
@@ -108,7 +144,7 @@ export function SessionMode({
             <div className="mt-3 grid gap-2">
               {guidanceExercises.map((exercise) => (
                 <div key={exercise.id} className="bg-white p-3">
-                  <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">{exercise.block}</p>
+                  <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">{exercise.block}</p>
                   <p className="mt-1 text-sm font-black text-petrol-800">{getExerciseDisplayTitle(exercise)}</p>
                   <p className="mt-1 text-sm font-semibold leading-5 text-ink">{getExerciseInstruction(exercise)}</p>
                 </div>
@@ -136,7 +172,7 @@ export function SessionMode({
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-muted">{exercise.block}</p>
+                      <p className="text-[0.82rem] font-black uppercase tracking-[0.08em] text-muted">{exercise.block}</p>
                       <h2 className="font-display text-3xl font-black tracking-[-0.06em] text-petrol-800">{getExerciseDisplayTitle(exercise)}</h2>
                     </div>
                     <span className="chip">Bloc {exercise.order}</span>

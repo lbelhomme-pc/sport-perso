@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Save, X } from "lucide-react";
 import { SESSION_TYPE_LABELS } from "../../data/defaults";
 import { useSessionExerciseLogs } from "../../hooks/useSessionExerciseLogs";
-import type { CompletedSession, PlannedSession } from "../../types";
+import type { CompletedSession, EnergyLevel, PlannedSession, SessionDifficulty } from "../../types";
 import { estimateCaloriesFromSession } from "../../utils/calories";
 import { toISODate } from "../../utils/dates";
 import { buildCompletedExercises, mergeSessionNotesWithPlannedExercises } from "../../utils/sessionExercises";
@@ -34,6 +34,9 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
     maxHeartRate: string;
     caloriesBurned: string;
     rpe: string;
+    difficulty: SessionDifficulty;
+    pain: boolean;
+    energyAfter: EnergyLevel;
     notes: string;
     completed: boolean;
   }>({
@@ -47,6 +50,9 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
     maxHeartRate: String(initial?.maxHeartRate ?? ""),
     caloriesBurned: String(initial?.caloriesBurned ?? ""),
     rpe: String(initial?.rpe ?? ""),
+    difficulty: initial?.difficulty ?? "ok",
+    pain: initial?.pain ?? false,
+    energyAfter: initial?.energyAfter ?? "normal",
     notes: initial?.notes ?? "",
     completed: initial?.completed ?? true
   });
@@ -73,6 +79,9 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
       maxHeartRate: form.maxHeartRate ? Number(form.maxHeartRate) : undefined,
       caloriesBurned: calories,
       rpe: form.rpe ? Number(form.rpe) : undefined,
+      difficulty: form.difficulty,
+      pain: form.pain,
+      energyAfter: form.energyAfter,
       notes: mergeSessionNotesWithPlannedExercises(form.notes, planned),
       completed: form.completed,
       exercises: buildCompletedExercises(planned, form.completed, sessionExerciseLogs) ?? initial?.exercises
@@ -132,9 +141,35 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
         </label>
       </div>
 
+      <div className="grid gap-3 sm:grid-cols-3">
+        <label className="field-label">
+          Difficulté
+          <select className="field" value={form.difficulty} onChange={(event) => update("difficulty", event.target.value as SessionDifficulty)}>
+            <option value="easy">Facile</option>
+            <option value="ok">Soutenue mais OK</option>
+            <option value="hard">Très dure</option>
+          </select>
+        </label>
+        <label className="field-label">
+          Douleur
+          <select className="field" value={form.pain ? "yes" : "no"} onChange={(event) => update("pain", event.target.value === "yes")}>
+            <option value="no">Non</option>
+            <option value="yes">Oui</option>
+          </select>
+        </label>
+        <label className="field-label">
+          Énergie après
+          <select className="field" value={form.energyAfter} onChange={(event) => update("energyAfter", event.target.value as EnergyLevel)}>
+            <option value="strong">Bonne</option>
+            <option value="normal">Normale</option>
+            <option value="fatigue">Basse</option>
+          </select>
+        </label>
+      </div>
+
       <label className="field-label">
-        Notes
-        <textarea className="textarea-field" value={form.notes} onChange={(event) => update("notes", event.target.value)} placeholder="Ressenti, douleur, sommeil, ajustement..." />
+        Commentaire rapide
+        <textarea className="textarea-field" value={form.notes} onChange={(event) => update("notes", event.target.value)} placeholder="Ce qui a marché, douleur, charge trop lourde, jambes lourdes, adaptation..." />
       </label>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

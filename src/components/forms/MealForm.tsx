@@ -575,8 +575,8 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
         <div className="mb-4 min-w-0 overflow-hidden border border-petrol-800/10 bg-white p-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-petrol-800">Repas favoris</p>
-              <p className="mt-1 text-xs font-bold text-muted">
+              <p className="text-sm font-black uppercase tracking-[0.06em] text-petrol-800">Repas favoris</p>
+              <p className="mt-1 text-sm font-bold text-muted">
                 Sauvegarde un repas complet avec un nom, puis recharge-le plus tard en un tap.
               </p>
             </div>
@@ -628,8 +628,8 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
         <div className="mb-4 min-w-0 overflow-hidden border border-petrol-800/10 bg-white p-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-petrol-800">Aliments favoris</p>
-              <p className="mt-1 text-xs font-bold text-muted">
+              <p className="text-sm font-black uppercase tracking-[0.06em] text-petrol-800">Aliments favoris</p>
+              <p className="mt-1 text-sm font-bold text-muted">
                 Le brouillon est sauvegardé automatiquement. Tu peux fermer et reprendre sans perdre le repas.
               </p>
             </div>
@@ -681,7 +681,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
               <Trash2 className="h-4 w-4" /> Retirer
             </button>
           </div>
-          <p className="mt-2 text-xs font-bold text-muted">
+          <p className="mt-2 text-sm font-bold text-muted">
             Une seule liste de favoris, sans catégorie. Les aliments simples restent accessibles via la recherche.
           </p>
         </div>
@@ -727,7 +727,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
         {selectedProduct ? (
           <div className="mt-4 grid min-w-0 gap-3 overflow-hidden border-l-4 border-limeSoft bg-white p-3 sm:grid-cols-[minmax(0,1fr)_8rem_7rem_auto_auto] sm:items-end sm:p-4">
             <div className="min-w-0">
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">Aliment sélectionné</p>
+              <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Aliment sélectionné</p>
               <p className="mt-1 break-words font-display text-xl font-black tracking-[-0.05em] text-petrol-800 sm:text-2xl">
                 {selectedProduct.name}
               </p>
@@ -735,11 +735,11 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
                 {[selectedProduct.brand, selectedProduct.quantity].filter(Boolean).join(" - ") ||
                   (selectedProduct.origin === "common" ? "Aliment simple" : "Open Food Facts")}
               </p>
-              <p className="mt-3 text-xs font-black uppercase tracking-[0.08em] text-petrol-700">
+              <p className="mt-3 text-sm font-black uppercase tracking-[0.06em] text-petrol-700">
                 {previewMacros?.calories ?? 0} kcal | P {formatDecimal(previewMacros?.protein ?? 0)} g | G{" "}
                 {formatDecimal(previewMacros?.carbs ?? 0)} g | L {formatDecimal(previewMacros?.fat ?? 0)} g
               </p>
-              <p className="mt-1 text-xs font-bold text-muted">{unitHint(selectedProduct, quantityUnit, effectiveQuantity)}</p>
+              <p className="mt-1 text-sm font-bold text-muted">{unitHint(selectedProduct, quantityUnit, effectiveQuantity)}</p>
             </div>
             <label className="field-label">
               Quantité
@@ -776,12 +776,12 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
 
         {mealItems.length ? (
           <div className="mt-4 grid gap-2">
-            <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">Aliments du repas</p>
+            <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Aliments du repas</p>
             {mealItems.map((item) => (
               <div key={item.id} className="grid min-w-0 gap-3 overflow-hidden border border-petrol-800/10 bg-white p-3 sm:grid-cols-[minmax(0,1fr)_8rem_7rem_auto] sm:items-center">
                 <div className="min-w-0">
                   <p className="break-words font-black text-petrol-800">{item.foodName}</p>
-                  <p className="text-xs font-bold text-muted">
+                  <p className="text-sm font-bold text-muted">
                     {getQuantityLabel(item.quantityInput ?? item.quantityGrams, item.quantityUnit ?? "g", item.quantityGrams)} -{" "}
                     {item.calories} kcal - P {formatDecimal(item.protein)} g | G{" "}
                     {formatDecimal(item.carbs)} g | L {formatDecimal(item.fat)} g

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Dumbbell, ListChecks, RotateCcw, StickyNote } from "lucide-react";
+import { ChevronDown, ListChecks, Pencil, PlayCircle, RotateCcw, StickyNote } from "lucide-react";
 import { SessionForm } from "../components/forms/SessionForm";
 import { SessionMode } from "../components/session/SessionMode";
 import { PageHeader } from "../components/ui/PageHeader";
@@ -13,7 +13,7 @@ import { useSessionChecklists } from "../hooks/useSessionChecklists";
 import { useSessions } from "../hooks/useSessions";
 import { useSettings } from "../hooks/useSettings";
 import type { BadmintonVariant, EnergyLevel, ExercisePrescription, PlannedSession, SessionChecklistItem } from "../types";
-import { formatShortDate, getCurrentWeekIndex, getTotalWeeks, getWeekEnd, getWeekStart } from "../utils/dates";
+import { formatShortDate, getCurrentWeekIndex, getTotalWeeks, getWeekEnd, getWeekStart, toISODate } from "../utils/dates";
 import {
   getActionableExercises,
   getExerciseCheckId,
@@ -40,6 +40,34 @@ function getExerciseAdjustment(exercise: ExercisePrescription, energy: EnergyLev
   if (energy === "fatigue") return exercise.fatigueAdjustment;
   if (energy === "strong") return exercise.strongAdjustment;
   return undefined;
+}
+
+type PlanningSessionStatus = "prévue" | "faite" | "adaptée" | "sautée";
+
+const planningStatusClasses: Record<PlanningSessionStatus, string> = {
+  prévue: "bg-white text-petrol-800",
+  faite: "bg-limeSoft text-petrol-900",
+  adaptée: "bg-amber-100 text-amber-950",
+  sautée: "bg-red-50 text-red-950"
+};
+
+function getPlanningSessionStatus({
+  session,
+  completed,
+  energy,
+  note,
+  today
+}: {
+  session: PlannedSession;
+  completed: boolean;
+  energy: EnergyLevel;
+  note?: string;
+  today: string;
+}): PlanningSessionStatus {
+  if (completed) return "faite";
+  if (session.type !== "rest" && session.date < today) return "sautée";
+  if (session.type !== "rest" && (energy !== "normal" || Boolean(note?.trim()))) return "adaptée";
+  return "prévue";
 }
 
 function BadmintonVariantSelector({
@@ -350,6 +378,7 @@ export default function PlanningPage() {
   const [openSessionId, setOpenSessionId] = useState<string | null>(null);
   const [showProgression, setShowProgression] = useState(false);
   const variant = settings.badmintonVariant;
+  const today = toISODate(new Date());
   const plannedWeek = getPlannedWeek(settings, week, variant).map((session) =>
     applyPlannedSessionOverride(session, getOverride(session.id))
   );
@@ -533,32 +562,64 @@ export default function PlanningPage() {
             const hasStructuredExercises = getActionableExercises(session.exercises).length > 0;
             const override = getOverride(session.id);
             const isOpen = openSessionId === session.id;
+            const status = getPlanningSessionStatus({
+              session,
+              completed: Boolean(completed),
+              energy,
+              note: override?.notes,
+              today
+            });
 
             return (
               <article key={session.id} className="panel overflow-hidden">
-                <button
-                  type="button"
-                  className="flex w-full flex-col gap-3 p-4 text-left transition hover:bg-mist/50 sm:flex-row sm:items-center sm:justify-between"
-                  onClick={() => setOpenSessionId(isOpen ? null : session.id)}
-                >
-                  <div className="flex min-w-0 items-center gap-3">
+                <div className="flex flex-col gap-3 p-4 transition hover:bg-mist/50 lg:flex-row lg:items-center lg:justify-between">
+                  <button
+                    type="button"
+                    className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                    onClick={() => setOpenSessionId(isOpen ? null : session.id)}
+                  >
                     <span className={`flex min-w-[4.75rem] shrink-0 items-center justify-center px-3 py-2 text-center font-display text-lg font-black leading-none ${isOpen ? "bg-petrol-800 text-limeSoft" : "bg-mist text-petrol-800"}`}>
                       {formatShortDate(session.date)}
                     </span>
-                    <div className="min-w-0">
-                      <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-muted">
+                    <span className="min-w-0">
+                      <span className="block text-[0.68rem] font-black uppercase tracking-[0.14em] text-muted">
                         {session.day} · {PLANNED_TYPE_LABELS[session.type]}
-                      </p>
-                      <h2 className="mt-1 truncate font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{session.title}</h2>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    {completed ? <span className="chip bg-limeSoft">Réalisée</span> : null}
+                      </span>
+                      <span className="mt-1 block truncate font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
+                        {session.title}
+                      </span>
+                      {session.type !== "rest" ? (
+                        <span className="mt-2 block text-xs font-black text-muted">
+                          {energy === "fatigue" ? "Version courte active" : "Si fatigue : version courte disponible"}
+                        </span>
+                      ) : null}
+                    </span>
+                  </button>
+
+                  <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+                    <span className={`chip ${planningStatusClasses[status]}`}>Statut : {status}</span>
                     <span className="chip">{session.durationMin} min</span>
                     <span className="chip">{session.rpeTarget}</span>
-                    <ChevronDown className={`h-5 w-5 text-petrol-800 transition ${isOpen ? "rotate-180" : ""}`} />
+                    {session.type !== "rest" ? (
+                      <>
+                        <button className="action-button" onClick={() => setSessionMode(session)}>
+                          <PlayCircle className="h-4 w-4" /> Démarrer
+                        </button>
+                        <button className="ghost-button" onClick={() => setEditingSession(session)}>
+                          <Pencil className="h-4 w-4" /> Modifier
+                        </button>
+                      </>
+                    ) : null}
+                    <button
+                      type="button"
+                      className="ghost-button px-3"
+                      onClick={() => setOpenSessionId(isOpen ? null : session.id)}
+                      aria-label={isOpen ? "Replier la séance" : "Développer la séance"}
+                    >
+                      <ChevronDown className={`h-5 w-5 transition ${isOpen ? "rotate-180" : ""}`} />
+                    </button>
                   </div>
-                </button>
+                </div>
 
                 {isOpen ? (
                   <div className="border-t border-petrol-800/10 p-4 sm:p-5">
@@ -620,10 +681,10 @@ export default function PlanningPage() {
                     {session.type !== "rest" ? (
                       <div className="flex flex-wrap gap-2">
                         <button className="action-button" onClick={() => setSessionMode(session)}>
-                          <Dumbbell className="h-4 w-4" /> Mode séance
+                          <PlayCircle className="h-4 w-4" /> Démarrer
                         </button>
-                        <button className={completed ? "ghost-button" : "action-button"} onClick={() => setEditingSession(session)}>
-                          <Dumbbell className="h-4 w-4" /> {completed ? "Modifier données" : "Valider avec données"}
+                        <button className="ghost-button" onClick={() => setEditingSession(session)}>
+                          <Pencil className="h-4 w-4" /> Modifier
                         </button>
                         {completed ? (
                           <button className="ghost-button" onClick={() => deletePlannedSessionCompletion(session.id)}>

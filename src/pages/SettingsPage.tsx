@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Download, RefreshCcw, Save, Upload } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
+import { PwaInstallButton } from "../components/ui/PwaInstallButton";
 import { BADMINTON_VARIANTS, GENERAL_SPORT_MODES } from "../data/defaults";
 import { exportJson, getExportPreview, importJsonFile, mergeJsonFiles } from "../services/exportService";
 import { resetData } from "../services/storageService";
@@ -194,6 +195,19 @@ export default function SettingsPage() {
             {status ? <span className="text-sm font-black text-petrol-800">{status}</span> : null}
           </div>
         </form>
+      </CollapsibleSectionCard>
+
+      <CollapsibleSectionCard
+        eyebrow="Application"
+        title="Installer la PWA"
+        summary="Optionnel : utile sur téléphone, mais rangé ici pour garder l'accueil concentré sur l'action."
+      >
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm font-semibold leading-6 text-muted">
+            Installe l'app sur ton écran d'accueil si tu veux l'ouvrir comme une application classique.
+          </p>
+          <PwaInstallButton />
+        </div>
       </CollapsibleSectionCard>
 
       <div className="grid gap-5 xl:grid-cols-2">

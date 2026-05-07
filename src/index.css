@@ -55,6 +55,11 @@ a {
   text-decoration: none;
 }
 
+:focus-visible {
+  outline: 3px solid #0a4b61;
+  outline-offset: 3px;
+}
+
 ::selection {
   background: #dcefa3;
   color: #00283a;
@@ -74,38 +79,38 @@ a {
   }
 
   .eyebrow {
-    @apply text-[0.68rem] font-black uppercase tracking-[0.18em] text-petrol-700;
+    @apply text-[0.82rem] font-black uppercase tracking-[0.12em] text-petrol-700;
   }
 
   .title-xl {
-    @apply font-display text-4xl font-black leading-[0.92] tracking-[-0.08em] text-petrol-800 sm:text-5xl lg:text-6xl;
+    @apply font-display text-4xl font-black leading-[0.96] tracking-[-0.07em] text-petrol-800 sm:text-5xl lg:text-6xl;
   }
 
   .title-lg {
-    @apply font-display text-3xl font-black leading-[0.95] tracking-[-0.06em] text-petrol-800 sm:text-4xl;
+    @apply font-display text-3xl font-black leading-tight tracking-[-0.05em] text-petrol-800 sm:text-4xl;
   }
 
   .action-button {
-    @apply inline-flex min-h-12 max-w-full items-center justify-center gap-2 whitespace-normal bg-petrol-800 px-5 py-3 text-center text-sm font-black uppercase leading-tight tracking-[0.08em] text-white transition hover:bg-petrol-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-12 w-full max-w-full items-center justify-center gap-2 whitespace-normal bg-petrol-800 px-5 py-3 text-center text-sm font-black uppercase leading-tight tracking-[0.06em] text-white transition hover:bg-petrol-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto;
   }
 
   .ghost-button {
-    @apply inline-flex min-h-12 max-w-full items-center justify-center gap-2 whitespace-normal border border-petrol-800/15 bg-white px-5 py-3 text-center text-sm font-black uppercase leading-tight tracking-[0.08em] text-petrol-800 transition hover:border-petrol-800/35 hover:bg-mist/60 active:scale-[0.99];
+    @apply inline-flex min-h-12 max-w-full items-center justify-center gap-2 whitespace-normal border border-petrol-800/15 bg-white px-5 py-3 text-center text-sm font-black uppercase leading-tight tracking-[0.06em] text-petrol-800 transition hover:border-petrol-800/35 hover:bg-mist/60 active:scale-[0.99];
   }
 
   .chip {
-    @apply inline-flex max-w-full items-center gap-1 break-words bg-sage px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.08em] text-petrol-800;
+    @apply inline-flex max-w-full items-center gap-1 break-words bg-sage px-3 py-1.5 text-[0.82rem] font-black uppercase tracking-[0.04em] text-petrol-800;
   }
 
   .field-label {
-    @apply grid min-w-0 gap-2 text-[0.68rem] font-black uppercase tracking-[0.12em] text-petrol-800;
+    @apply grid min-w-0 gap-2 text-[0.82rem] font-black uppercase tracking-[0.08em] text-petrol-800;
   }
 
   .field {
-    @apply min-h-12 w-full min-w-0 max-w-full border border-petrol-800/15 bg-white px-3 text-sm font-bold text-ink outline-none transition focus:border-petrol-800;
+    @apply min-h-12 w-full min-w-0 max-w-full border border-petrol-800/15 bg-white px-3 text-base font-bold text-ink outline-none transition focus:border-petrol-800;
   }
 
   .textarea-field {
-    @apply min-h-24 w-full min-w-0 max-w-full border border-petrol-800/15 bg-white px-3 py-3 text-sm font-bold text-ink outline-none transition focus:border-petrol-800;
+    @apply min-h-24 w-full min-w-0 max-w-full border border-petrol-800/15 bg-white px-3 py-3 text-base font-bold text-ink outline-none transition focus:border-petrol-800;
   }
 }

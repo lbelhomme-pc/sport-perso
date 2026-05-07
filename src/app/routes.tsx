@@ -4,6 +4,7 @@ import {
   CalendarCheck2,
   Dumbbell,
   Home,
+  MoreHorizontal,
   Scale,
   Settings,
   Utensils
@@ -16,34 +17,31 @@ import MealsPage from "../pages/MealsPage";
 import WeightPage from "../pages/WeightPage";
 import StatsPage from "../pages/StatsPage";
 import SettingsPage from "../pages/SettingsPage";
+import MorePage from "../pages/MorePage";
 
 export const appRoutes = [
   {
     path: "/",
-    label: "Accueil",
-    shortLabel: "Home",
+    label: "Aujourd'hui",
+    shortLabel: "Auj.",
     icon: Home,
+    primaryNav: true,
     element: <DashboardPage />
   },
   {
-    path: "/calendar",
-    label: "Agenda",
-    shortLabel: "Cal.",
-    icon: CalendarCheck2,
-    element: <CalendarPage />
-  },
-  {
     path: "/planning",
-    label: "Programmes",
+    label: "Programme",
     shortLabel: "Prog.",
     icon: CalendarDays,
+    primaryNav: true,
     element: <PlanningPage />
   },
   {
     path: "/sessions",
-    label: "Séances",
-    shortLabel: "Sport",
+    label: "Séance",
+    shortLabel: "Séance",
     icon: Dumbbell,
+    primaryNav: true,
     element: <SessionsPage />
   },
   {
@@ -51,13 +49,31 @@ export const appRoutes = [
     label: "Nutrition",
     shortLabel: "Repas",
     icon: Utensils,
+    primaryNav: true,
     element: <MealsPage />
   },
   {
+    path: "/more",
+    label: "Plus",
+    shortLabel: "Plus",
+    icon: MoreHorizontal,
+    primaryNav: true,
+    element: <MorePage />
+  },
+  {
+    path: "/calendar",
+    label: "Calendrier",
+    shortLabel: "Cal.",
+    icon: CalendarCheck2,
+    primaryNav: false,
+    element: <CalendarPage />
+  },
+  {
     path: "/weight",
-    label: "Corps",
-    shortLabel: "Corps",
+    label: "Poids",
+    shortLabel: "Poids",
     icon: Scale,
+    primaryNav: false,
     element: <WeightPage />
   },
   {
@@ -65,6 +81,7 @@ export const appRoutes = [
     label: "Progression",
     shortLabel: "Stats",
     icon: BarChart3,
+    primaryNav: false,
     element: <StatsPage />
   },
   {
@@ -72,6 +89,7 @@ export const appRoutes = [
     label: "Profil",
     shortLabel: "Profil",
     icon: Settings,
+    primaryNav: false,
     element: <SettingsPage />
   }
 ];

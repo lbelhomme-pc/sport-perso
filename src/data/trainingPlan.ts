@@ -666,7 +666,7 @@ function getVacationSession(slot: DayTemplate["slot"], week: number, date: strin
     return {
       ...base,
       type: "badminton",
-      title: "Badminton loisir contrôlé",
+      title: "Badminton — séance libre, suivi RPE",
       objective: "Garder le plaisir et le rythme sans transformer la semaine en dette de fatigue.",
       fatigueVersion: "45 min technique, mobilité avant/après, aucun match à haute intensité.",
       normalVersion: "60 à 75 min, priorité au jeu propre et à la qualité des appuis.",
@@ -881,7 +881,7 @@ function buildBadmintonSession(week: number, date: string, day: string): Planned
     day,
     date,
     type: "badminton",
-    title: "Badminton",
+    title: "Badminton — intensité contrôlée + appuis",
     objective: "Travailler les appuis, le cardio intermittent et le plaisir sans saboter la récupération.",
     durationMin: 75,
     rpeTarget: "RPE 6-8",

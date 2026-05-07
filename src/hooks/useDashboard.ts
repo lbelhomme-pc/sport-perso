@@ -10,12 +10,15 @@ import { useStoredData } from "./useStoredData";
 export function useDashboard() {
   const data = useStoredData();
   const today = toISODate(new Date());
+  const yesterday = toISODate(subDays(new Date(), 1));
   const currentWeek = getCurrentWeekIndex(data.settings.startDate, data.settings.targetDate);
   const currentWeekStart = getWeekStart(data.settings.startDate, currentWeek);
   const plannedWeek = getPlannedWeek(data.settings, currentWeek, data.settings.badmintonVariant);
   const todayPlanned = plannedWeek.find((session) => session.date === today);
+  const yesterdayPlanned = plannedWeek.find((session) => session.date === yesterday);
   const todayMeals = data.meals.filter((meal) => meal.date === today);
   const todaySessions = data.sessions.filter((session) => session.date === today);
+  const yesterdaySessions = data.sessions.filter((session) => session.date === yesterday && session.completed);
   const todayContext = data.dailyContexts.find((context) => context.date === today);
   const latestWeight = [...data.weights].sort((a, b) => b.date.localeCompare(a.date))[0];
   const todayMealTotals = getMealTotals(todayMeals);
@@ -51,11 +54,14 @@ export function useDashboard() {
   return {
     settings: data.settings,
     today,
+    yesterday,
     currentWeek,
     plannedWeek,
     todayPlanned,
+    yesterdayPlanned,
     todayMeals,
     todaySessions,
+    yesterdaySessions,
     todayContext,
     todayMealTotals,
     todaySportCalories,

@@ -31,7 +31,7 @@ export function CollapsibleSectionCard({
       <summary className="cursor-pointer list-none p-5 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className={dark ? "text-[0.68rem] font-black uppercase tracking-[0.18em] text-limeSoft" : "eyebrow"}>{eyebrow}</p>
+            <p className={dark ? "text-[0.82rem] font-black uppercase tracking-[0.12em] text-limeSoft" : "eyebrow"}>{eyebrow}</p>
             <h2 className={dark ? "mt-2 font-display text-3xl font-black tracking-[-0.06em] text-white" : "title-lg mt-2"}>{title}</h2>
             {summary ? <p className={dark ? "mt-2 text-sm font-semibold leading-6 text-white/70" : "mt-2 text-sm font-semibold leading-6 text-muted"}>{summary}</p> : null}
           </div>

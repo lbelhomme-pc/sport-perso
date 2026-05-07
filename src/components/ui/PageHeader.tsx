@@ -15,7 +15,7 @@ export function PageHeader({ eyebrow, title, description, action }: PageHeaderPr
         <h1 className="title-xl mt-2">{title}</h1>
         {description ? <p className="mt-4 max-w-2xl text-base font-semibold leading-7 text-muted">{description}</p> : null}
       </div>
-      {action ? <div className="shrink-0">{action}</div> : null}
+      {action ? <div className="w-full shrink-0 sm:w-auto">{action}</div> : null}
     </div>
   );
 }

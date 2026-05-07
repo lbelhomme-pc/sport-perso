@@ -14,7 +14,7 @@ export default {
         limeSoft: "#DCEFA3",
         sage: "#D9DDD0",
         ink: "#0C3447",
-        muted: "#8A9AA0"
+        muted: "#6F8188"
       },
       boxShadow: {
         panel: "0 24px 70px rgba(0, 40, 58, 0.12)",

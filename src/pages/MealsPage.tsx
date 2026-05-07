@@ -4,7 +4,7 @@ import { MealForm } from "../components/forms/MealForm";
 import { EmptyState } from "../components/ui/EmptyState";
 import { ProgressBar } from "../components/ui/ProgressBar";
 import { SectionCard } from "../components/ui/SectionCard";
-import { ENERGY_LEVELS, MEAL_TYPE_LABELS } from "../data/defaults";
+import { ENERGY_LEVELS, MEAL_TYPE_LABELS, PLANNED_TYPE_LABELS } from "../data/defaults";
 import { getPlannedWeek } from "../data/trainingPlan";
 import { useDailyContext } from "../hooks/useDailyContext";
 import { useFavoriteMeals } from "../hooks/useFavoriteMeals";
@@ -12,7 +12,7 @@ import { useMeals } from "../hooks/useMeals";
 import { useSessions } from "../hooks/useSessions";
 import { useSettings } from "../hooks/useSettings";
 import { useWeight } from "../hooks/useWeight";
-import type { Meal } from "../types";
+import type { CompletedSession, Meal, PlannedSession } from "../types";
 import { getAdaptiveDailyCalorieTarget, getDailyDeficit, getRemainingCaloriesToTarget } from "../utils/calories";
 import { formatLongDate, getWeekIndexForDate, toISODate } from "../utils/dates";
 import { getMealTotals, getProteinTarget } from "../utils/nutrition";
@@ -20,7 +20,7 @@ import { getMealTotals, getProteinTarget } from "../utils/nutrition";
 function NutritionStat({ label, value, hint }: { label: string; value: string | number; hint?: string }) {
   return (
     <div className="border border-petrol-800/10 bg-white p-3">
-      <p className="text-[0.6rem] font-black uppercase tracking-[0.12em] text-muted">{label}</p>
+      <p className="text-[0.82rem] font-black uppercase tracking-[0.08em] text-muted">{label}</p>
       <p className="mt-1 font-display text-xl font-black tracking-[-0.05em] text-petrol-800">{value}</p>
       {hint ? <p className="mt-1 text-xs font-bold text-muted">{hint}</p> : null}
     </div>
@@ -70,6 +70,109 @@ function balanceFormulaSentence(deficit: number, maintenanceTarget: number, eate
   return `Surplus réel : mangé ${eaten} - dépense estimée ${maintenanceTarget} = +${Math.abs(Math.round(deficit))} kcal.`;
 }
 
+type NextNutritionAction = {
+  tone: "preworkout" | "recovery" | "warning" | "protein" | "steady";
+  eyebrow: string;
+  title: string;
+  message: string;
+  chips: string[];
+};
+
+const nutritionActionToneClasses: Record<NextNutritionAction["tone"], string> = {
+  preworkout: "border-limeSoft bg-limeSoft/70 text-petrol-900",
+  recovery: "border-petrol-800 bg-petrol-800 text-white",
+  warning: "border-red-300 bg-red-50 text-red-950",
+  protein: "border-amber-200 bg-amber-50 text-amber-950",
+  steady: "border-petrol-800/10 bg-mist/70 text-petrol-900"
+};
+
+function getNextNutritionAction({
+  plannedSession,
+  completedSessions,
+  deficit,
+  targetDeficit,
+  protein,
+  proteinTarget,
+  remainingCalories
+}: {
+  plannedSession?: PlannedSession;
+  completedSessions: CompletedSession[];
+  deficit: number;
+  targetDeficit: number;
+  protein: number;
+  proteinTarget: number;
+  remainingCalories: number;
+}): NextNutritionAction {
+  const proteinGap = Math.max(0, Math.round(proteinTarget - protein));
+  const deficitAboveTarget = Math.round(deficit - targetDeficit);
+  const completedSession = completedSessions.find((session) => session.completed);
+  const hasTrainingToday = plannedSession && plannedSession.type !== "rest";
+  const remainingChip =
+    remainingCalories >= 0
+      ? `Reste ${Math.round(remainingCalories)} kcal`
+      : `Objectif dépassé de ${Math.abs(Math.round(remainingCalories))} kcal`;
+  const balanceChip =
+    deficit >= 0 ? `Déficit ${Math.round(deficit)} kcal` : `Surplus ${Math.abs(Math.round(deficit))} kcal`;
+  const chips = [
+    remainingChip,
+    `Protéines ${Math.round(protein)} / ${proteinTarget} g`,
+    balanceChip
+  ];
+
+  if (completedSession) {
+    return {
+      tone: "recovery",
+      eyebrow: "Après séance",
+      title: "Repas de récupération",
+      message:
+        "Mets protéines + glucides dans les 2 h si possible. Simple et efficace : source protéinée, féculent, légumes, puis eau.",
+      chips: [`${completedSession.title}`, ...chips]
+    };
+  }
+
+  if (deficitAboveTarget > 350) {
+    return {
+      tone: "warning",
+      eyebrow: "Énergie",
+      title: "Déficit trop agressif",
+      message:
+        "Ajoute 300 à 500 kcal simples aujourd'hui : féculent, fruit, laitage, huile d'olive/noix ou collation protéinée selon ta faim.",
+      chips: [`+${deficitAboveTarget} kcal vs cible`, ...chips]
+    };
+  }
+
+  if (hasTrainingToday) {
+    return {
+      tone: "preworkout",
+      eyebrow: "Avant séance",
+      title: "Collation légère si séance dans les 3 h",
+      message:
+        "Vise glucides + protéines digestes : banane + skyr, compote + whey, tartines + jambon, ou yaourt + céréales simples.",
+      chips: [`${PLANNED_TYPE_LABELS[plannedSession.type]} prévu`, `${plannedSession.durationMin} min`, ...chips]
+    };
+  }
+
+  if (proteinGap >= 25) {
+    return {
+      tone: "protein",
+      eyebrow: "Protéines",
+      title: "Ajoute 25 à 35 g de protéines",
+      message:
+        "Options rapides : skyr, oeufs, thon, dinde, poulet, tofu, fromage blanc ou whey. Pas besoin de tout compenser d'un coup.",
+      chips: [`${proteinGap} g restants`, ...chips]
+    };
+  }
+
+  return {
+    tone: "steady",
+    eyebrow: "Maintenant",
+    title: "Garde un repas simple",
+    message:
+      "Tu es dans une zone correcte. Continue avec une assiette lisible : protéines, légumes, féculent ajusté à la faim et à l'activité.",
+    chips
+  };
+}
+
 export default function MealsPage() {
   const { settings } = useSettings();
   const { meals, saveMeal, deleteMeal } = useMeals();
@@ -104,6 +207,15 @@ export default function MealsPage() {
   });
   const dailyDeficit = getDailyDeficit(dayMeals, adaptiveCalorieTarget.maintenanceTarget);
   const remainingCalories = getRemainingCaloriesToTarget(dayMeals, adaptiveCalorieTarget.target);
+  const nutritionAction = getNextNutritionAction({
+    plannedSession: selectedPlannedSession,
+    completedSessions: daySessions,
+    deficit: dailyDeficit,
+    targetDeficit: adaptiveCalorieTarget.targetDeficit,
+    protein: totals.protein,
+    proteinTarget,
+    remainingCalories
+  });
 
   const saveExistingMealAsFavorite = (meal: Meal) => {
     const name = window.prompt("Nom du repas favori ?", meal.items?.[0]?.foodName ?? MEAL_TYPE_LABELS[meal.mealType]);
@@ -212,6 +324,40 @@ export default function MealsPage() {
                     />
                   </label>
                 </div>
+              </div>
+            </div>
+
+            <div className={`border-l-4 p-4 sm:p-5 ${nutritionActionToneClasses[nutritionAction.tone]}`}>
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                  <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] opacity-70">{nutritionAction.eyebrow}</p>
+                  <h2 className="mt-2 font-display text-3xl font-black tracking-[-0.06em]">{nutritionAction.title}</h2>
+                  <p className="mt-2 max-w-3xl text-sm font-bold leading-6 opacity-80">{nutritionAction.message}</p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {nutritionAction.chips.map((chip) => (
+                      <span
+                        key={chip}
+                        className={`chip ${nutritionAction.tone === "recovery" ? "bg-white/15 text-white" : "bg-white/70"}`}
+                      >
+                        {chip}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className={
+                    nutritionAction.tone === "recovery"
+                      ? "inline-flex items-center justify-center gap-2 bg-limeSoft px-4 py-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-900"
+                      : "action-button justify-center"
+                  }
+                  onClick={() => {
+                    setActiveTab("journal");
+                    setShowForm(true);
+                  }}
+                >
+                  <Plus className="h-4 w-4" /> Ajouter repas
+                </button>
               </div>
             </div>
 

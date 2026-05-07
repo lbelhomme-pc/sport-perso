@@ -28,6 +28,8 @@ export type CompletedSessionType =
   | "free"
   | "other";
 
+export type SessionDifficulty = "easy" | "ok" | "hard";
+
 export type SportType = Exclude<PlannedSessionType, "rest">;
 
 export type MealType = "breakfast" | "lunch" | "snack" | "dinner" | "other";
@@ -48,6 +50,8 @@ export type BadmintonVariant =
 
 export type EnergyLevel = "fatigue" | "normal" | "strong";
 
+export type SleepQuality = "good" | "medium" | "bad";
+
 export type BmrSex = "male" | "female";
 
 export type AppExperienceMode =
@@ -60,10 +64,16 @@ export type AppExperienceMode =
   | "competition"
   | "health";
 
+export type UserSportLevel = "beginner" | "intermediate" | "advanced";
+
+export type WeekdayKey = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
+
+export type TargetEventType = "hyrox" | "other" | "none";
+
 export type UserSportProfile = {
   primaryMode: AppExperienceMode;
   sports: SportType[];
-  level: "beginner" | "intermediate" | "advanced";
+  level: UserSportLevel;
 };
 
 export type DailyHabitType = "allergies" | "duolingo" | "omega3" | "creatine";
@@ -71,6 +81,8 @@ export type DailyHabitType = "allergies" | "duolingo" | "omega3" | "creatine";
 export type DailyContext = {
   date: string;
   energyLevel: EnergyLevel;
+  sleepQuality?: SleepQuality;
+  pain?: boolean;
   steps?: number;
   floors?: number;
   updatedAt?: string;
@@ -170,6 +182,13 @@ export type Settings = {
   startDate: string;
   appMode?: AppExperienceMode;
   enabledSports?: SportType[];
+  onboardingCompleted?: boolean;
+  sportLevel?: UserSportLevel;
+  availableDays?: WeekdayKey[];
+  maxSessionDurationMin?: number;
+  injuryNotes?: string;
+  targetEventType?: TargetEventType;
+  programLengthWeeks?: 4 | 8 | 12;
   startWeight: number;
   targetWeightLoss: number;
   proteinPerKg: number;
@@ -214,6 +233,9 @@ export type CompletedSession = {
   maxHeartRate?: number;
   caloriesBurned?: number;
   rpe?: number;
+  difficulty?: SessionDifficulty;
+  pain?: boolean;
+  energyAfter?: EnergyLevel;
   notes?: string;
   completed: boolean;
   exercises?: CompletedExerciseEntry[];

@@ -42,6 +42,15 @@ const settingsSchema = z.object({
       ])
     )
     .default(DEFAULT_SETTINGS.enabledSports ?? ["badminton", "strength", "run", "hyrox", "recovery"]),
+  onboardingCompleted: z.boolean().default(DEFAULT_SETTINGS.onboardingCompleted ?? false),
+  sportLevel: z.enum(["beginner", "intermediate", "advanced"]).default(DEFAULT_SETTINGS.sportLevel ?? "intermediate"),
+  availableDays: z
+    .array(z.enum(["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]))
+    .default(DEFAULT_SETTINGS.availableDays ?? ["tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]),
+  maxSessionDurationMin: z.coerce.number().positive().default(DEFAULT_SETTINGS.maxSessionDurationMin ?? 75),
+  injuryNotes: z.string().default(DEFAULT_SETTINGS.injuryNotes ?? ""),
+  targetEventType: z.enum(["hyrox", "other", "none"]).default(DEFAULT_SETTINGS.targetEventType ?? "hyrox"),
+  programLengthWeeks: z.union([z.literal(4), z.literal(8), z.literal(12)]).default(DEFAULT_SETTINGS.programLengthWeeks ?? 12),
   startWeight: z.coerce.number().positive().default(DEFAULT_SETTINGS.startWeight),
   targetWeightLoss: z.coerce.number().positive().default(DEFAULT_SETTINGS.targetWeightLoss),
   proteinPerKg: z.coerce.number().positive().default(DEFAULT_SETTINGS.proteinPerKg),
@@ -118,6 +127,9 @@ const completedSessionSchema = z.object({
   maxHeartRate: z.coerce.number().positive().optional(),
   caloriesBurned: z.coerce.number().nonnegative().optional(),
   rpe: z.coerce.number().min(0).max(10).optional(),
+  difficulty: z.enum(["easy", "ok", "hard"]).optional(),
+  pain: z.boolean().optional(),
+  energyAfter: z.enum(["fatigue", "normal", "strong"]).optional(),
   notes: z.string().optional(),
   completed: z.boolean().default(true),
   exercises: z.array(completedExerciseEntrySchema).optional(),
@@ -195,6 +207,8 @@ const weightEntrySchema = z.object({
 const dailyContextSchema = z.object({
   date: z.string(),
   energyLevel: z.enum(["fatigue", "normal", "strong"]).default("normal"),
+  sleepQuality: z.enum(["good", "medium", "bad"]).default("medium"),
+  pain: z.boolean().default(false),
   steps: z.coerce.number().nonnegative().default(0),
   floors: z.coerce.number().nonnegative().default(0),
   updatedAt: z.string().optional()
