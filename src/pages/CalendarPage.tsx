@@ -232,13 +232,76 @@ export default function CalendarPage() {
           </div>
         ) : null}
 
-        <div className="mt-5 grid grid-cols-7 gap-1 text-center text-[0.62rem] font-black uppercase tracking-[0.08em] text-muted">
+        <div className="mt-5 grid gap-2 sm:hidden">
+          {calendarDays
+            .filter((day) => isSameMonth(day, month))
+            .map((day) => {
+              const isoDate = toISODate(day);
+              const dayHabits = data.dailyHabits.filter((habit) => habit.date === isoDate && habit.completed);
+              const completedSessions = data.sessions.filter((session) => session.date === isoDate && session.completed);
+              const plannedForDay = plannedSessions.filter((session) => session.date === isoDate && session.type !== "rest");
+              const mealsForDay = data.meals.filter((meal) => meal.date === isoDate);
+              const selected = isoDate === selectedDate;
+              const hasContent = dayHabits.length || plannedForDay.length || completedSessions.length || mealsForDay.length;
+
+              return (
+                <button
+                  type="button"
+                  key={`mobile-${isoDate}`}
+                  onClick={() => selectDay(day)}
+                  className={`w-full border p-3 text-left transition ${
+                    selected
+                      ? "border-petrol-800 bg-limeSoft text-petrol-900 shadow-soft"
+                      : isoDate === today
+                        ? "border-petrol-800/30 bg-white"
+                        : "border-petrol-800/10 bg-white"
+                  }`}
+                >
+                  <div className="flex min-w-0 items-start gap-3">
+                    <div className={selected ? "grid w-14 shrink-0 place-items-center bg-petrol-800 px-2 py-2 text-limeSoft" : "grid w-14 shrink-0 place-items-center bg-mist px-2 py-2 text-petrol-800"}>
+                      <span className="font-display text-2xl font-black leading-none tracking-[-0.05em]">{format(day, "d")}</span>
+                      <span className="mt-1 text-[0.58rem] font-black uppercase tracking-[0.08em]">{format(day, "EEE", { locale: fr })}</span>
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+                        {isoDate === today ? <span className="chip bg-petrol-800 text-limeSoft">Aujourd'hui</span> : null}
+                        {dayHabits.map((habit) => (
+                          <span key={`${isoDate}-${habit.type}`} className="chip bg-limeSoft">
+                            {HABIT_SHORT_LABELS[habit.type]}
+                          </span>
+                        ))}
+                        {plannedForDay.map((session) => (
+                          <span key={session.id} className="chip bg-mist">
+                            Prévu {PLANNED_SHORT_LABELS[session.type]} · {session.durationMin} min
+                          </span>
+                        ))}
+                        {completedSessions.map((session) => (
+                          <span key={session.id} className="chip bg-petrol-800 text-white">
+                            Fait {SESSION_SHORT_LABELS[session.type]} · {session.durationMin} min
+                          </span>
+                        ))}
+                        {mealsForDay.map((meal) => (
+                          <span key={meal.id} className="chip bg-white">
+                            {MEAL_TYPE_LABELS[meal.mealType]} · {meal.calories} kcal
+                          </span>
+                        ))}
+                        {!hasContent ? <span className="chip bg-white text-muted">Libre</span> : null}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+        </div>
+
+        <div className="mt-5 hidden grid-cols-7 gap-1 text-center text-[0.62rem] font-black uppercase tracking-[0.08em] text-muted sm:grid">
           {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
             <span key={day}>{day}</span>
           ))}
         </div>
 
-        <div className="mt-2 grid grid-cols-7 gap-1 sm:gap-2">
+        <div className="mt-2 hidden grid-cols-7 gap-1 sm:grid sm:gap-2">
           {calendarDays.map((day) => {
             const isoDate = toISODate(day);
             const dayHabits = data.dailyHabits.filter((habit) => habit.date === isoDate && habit.completed);
