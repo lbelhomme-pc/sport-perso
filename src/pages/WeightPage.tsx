@@ -43,6 +43,50 @@ export default function WeightPage() {
     poids: entry.weight
   }));
 
+  if (!weights.length) {
+    return (
+      <>
+        <PageHeader
+          eyebrow="Corps"
+          title="Tendance, pas panique"
+          description="Le poids sert à piloter une tendance de composition corporelle, pas à juger une journée. Moyenne hebdomadaire, objectif configuré et signaux sobres."
+          action={
+            <button className="action-button" onClick={() => setShowForm(true)}>
+              <Plus className="h-4 w-4" /> Ajouter poids
+            </button>
+          }
+        />
+
+        {showForm ? (
+          <SectionCard className="p-5 sm:p-6">
+            <p className="eyebrow">Ajout rapide</p>
+            <h2 className="title-lg mt-2">Première pesée</h2>
+            <div className="mt-5">
+              <WeightForm
+                onCancel={() => setShowForm(false)}
+                onSubmit={(entry) => {
+                  saveWeight(entry);
+                  setShowForm(false);
+                }}
+              />
+            </div>
+          </SectionCard>
+        ) : (
+          <SectionCard className="p-5 sm:p-6">
+            <EmptyState
+              icon={Scale}
+              title="Aucune pesée pour l'instant"
+              message="Saisis une première valeur pour poser un repère. La tendance ne sera jugée qu'avec plusieurs mesures espacées."
+            />
+            <button className="mt-5 action-button" onClick={() => setShowForm(true)}>
+              <Plus className="h-4 w-4" /> Saisir ma première pesée
+            </button>
+          </SectionCard>
+        )}
+      </>
+    );
+  }
+
   return (
     <>
       <PageHeader

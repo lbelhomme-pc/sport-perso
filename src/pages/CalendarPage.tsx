@@ -164,13 +164,13 @@ export default function CalendarPage() {
             <p className="eyebrow">Mois affiché</p>
             <h2 className="title-lg mt-2 capitalize">{format(month, "MMMM yyyy", { locale: fr })}</h2>
           </div>
-          <div className="flex gap-2">
-            <button type="button" className="ghost-button" onClick={() => setMonth((current) => subMonths(current, 1))}>
+          <div className="grid w-full min-w-0 grid-cols-3 gap-2 sm:w-auto">
+            <button type="button" className="ghost-button min-w-0 px-3" onClick={() => setMonth((current) => subMonths(current, 1))}>
               <ChevronLeft className="h-4 w-4" /> Préc.
             </button>
             <button
               type="button"
-              className="action-button"
+              className="action-button min-w-0 px-3"
               onClick={() => {
                 const now = new Date();
                 setMonth(now);
@@ -179,7 +179,7 @@ export default function CalendarPage() {
             >
               Aujourd'hui
             </button>
-            <button type="button" className="ghost-button" onClick={() => setMonth((current) => addMonths(current, 1))}>
+            <button type="button" className="ghost-button min-w-0 px-3" onClick={() => setMonth((current) => addMonths(current, 1))}>
               Suiv. <ChevronRight className="h-4 w-4" />
             </button>
           </div>

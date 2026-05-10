@@ -12,6 +12,7 @@ import { useMeals } from "../hooks/useMeals";
 import { useSessions } from "../hooks/useSessions";
 import { useSettings } from "../hooks/useSettings";
 import { useWeight } from "../hooks/useWeight";
+import { makeId } from "../services/storageService";
 import type { CompletedSession, Meal, PlannedSession } from "../types";
 import { getAdaptiveDailyCalorieTarget, getDailyDeficit, getRemainingCaloriesToTarget } from "../utils/calories";
 import { formatLongDate, getWeekIndexForDate, toISODate } from "../utils/dates";
@@ -23,6 +24,107 @@ function NutritionStat({ label, value, hint }: { label: string; value: string | 
       <p className="text-[0.82rem] font-black uppercase tracking-[0.08em] text-muted">{label}</p>
       <p className="mt-1 font-display text-xl font-black tracking-[-0.05em] text-petrol-800">{value}</p>
       {hint ? <p className="mt-1 text-xs font-bold text-muted">{hint}</p> : null}
+    </div>
+  );
+}
+
+function parseMacro(value: string) {
+  const parsed = Number(value.replace(",", "."));
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+}
+
+function QuickMealForm({
+  date,
+  onSubmit,
+  onDetailed,
+  onCancel
+}: {
+  date: string;
+  onSubmit: (meal: Meal) => void;
+  onDetailed: () => void;
+  onCancel: () => void;
+}) {
+  const [form, setForm] = useState({
+    date,
+    mealType: "lunch" as Meal["mealType"],
+    calories: "",
+    protein: "",
+    carbs: "",
+    fat: "",
+    notes: ""
+  });
+  const update = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }));
+
+  const save = () => {
+    const mealType = form.mealType;
+    onSubmit({
+      id: makeId("meal"),
+      date: form.date,
+      mealType,
+      name: MEAL_TYPE_LABELS[mealType],
+      calories: Math.round(parseMacro(form.calories)),
+      protein: Math.round(parseMacro(form.protein) * 10) / 10,
+      carbs: Math.round(parseMacro(form.carbs) * 10) / 10,
+      fat: Math.round(parseMacro(form.fat) * 10) / 10,
+      notes: form.notes || undefined,
+      source: "manual"
+    });
+  };
+
+  return (
+    <div className="grid gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft">
+      <div className="border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
+        Saisie rapide : une estimation suivie bat un repas oublié. Calories + protéines suffisent pour commencer.
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="field-label">
+          Date
+          <input className="field" type="date" value={form.date} onChange={(event) => update("date", event.target.value)} />
+        </label>
+        <label className="field-label">
+          Type de repas
+          <select className="field" value={form.mealType} onChange={(event) => update("mealType", event.target.value as Meal["mealType"])}>
+            {Object.entries(MEAL_TYPE_LABELS).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <label className="field-label">
+          Calories
+          <input className="field" inputMode="decimal" value={form.calories} onChange={(event) => update("calories", event.target.value)} placeholder="650" />
+        </label>
+        <label className="field-label">
+          Protéines
+          <input className="field" inputMode="decimal" value={form.protein} onChange={(event) => update("protein", event.target.value)} placeholder="35" />
+        </label>
+        <label className="field-label">
+          Glucides
+          <input className="field" inputMode="decimal" value={form.carbs} onChange={(event) => update("carbs", event.target.value)} placeholder="optionnel" />
+        </label>
+        <label className="field-label">
+          Lipides
+          <input className="field" inputMode="decimal" value={form.fat} onChange={(event) => update("fat", event.target.value)} placeholder="optionnel" />
+        </label>
+      </div>
+      <label className="field-label">
+        Note facultative
+        <input className="field" value={form.notes} onChange={(event) => update("notes", event.target.value)} placeholder="Ex : post-séance, resto, faim OK..." />
+      </label>
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+        <button type="button" className="ghost-button" onClick={onCancel}>
+          Annuler
+        </button>
+        <button type="button" className="ghost-button" onClick={onDetailed}>
+          Recherche / favoris
+        </button>
+        <button type="button" className="action-button" onClick={save}>
+          <Plus className="h-4 w-4" /> Enregistrer rapide
+        </button>
+      </div>
     </div>
   );
 }
@@ -182,6 +284,7 @@ export default function MealsPage() {
   const [selectedDate, setSelectedDate] = useState(toISODate(new Date()));
   const [editing, setEditing] = useState<Meal | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [detailedForm, setDetailedForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"journal" | "favorites">("journal");
   const [openMealId, setOpenMealId] = useState<string | null>(null);
   const [openFavoriteMealId, setOpenFavoriteMealId] = useState<string | null>(null);
@@ -254,6 +357,7 @@ export default function MealsPage() {
               onClick={() => {
                 setActiveTab("journal");
                 setShowForm(true);
+                setDetailedForm(false);
               }}
             >
               <Plus className="h-4 w-4" /> Ajouter repas
@@ -354,6 +458,7 @@ export default function MealsPage() {
                   onClick={() => {
                     setActiveTab("journal");
                     setShowForm(true);
+                    setDetailedForm(false);
                   }}
                 >
                   <Plus className="h-4 w-4" /> Ajouter repas
@@ -431,12 +536,17 @@ export default function MealsPage() {
               <ProgressBar label="Calories consommées" value={totals.calories} max={adaptiveCalorieTarget.target} />
               <ProgressBar label="Protéines quotidiennes" value={totals.protein} max={proteinTarget} tone="lime" />
             </div>
-            <p className="text-xs font-bold text-muted">
-              Calcul simple : BMR {adaptiveCalorieTarget.base} + sport validé {adaptiveCalorieTarget.activityFuel} + pas{" "}
-              {adaptiveCalorieTarget.stepsNeatCalories} + étages {adaptiveCalorieTarget.floorsNeatCalories} + ressenti {adaptiveCalorieTarget.feelingFuel} - déficit{" "}
-              {adaptiveCalorieTarget.targetDeficit} = cible à manger {adaptiveCalorieTarget.target} kcal.{" "}
-              {balanceFormulaSentence(dailyDeficit, adaptiveCalorieTarget.maintenanceTarget, Math.round(totals.calories))}
-            </p>
+            <details className="text-xs font-bold text-muted">
+              <summary className="cursor-pointer text-[0.68rem] font-black uppercase tracking-[0.12em] text-petrol-800">
+                Voir le calcul
+              </summary>
+              <p className="mt-2">
+                Calcul simple : BMR {adaptiveCalorieTarget.base} + sport validé {adaptiveCalorieTarget.activityFuel} + pas{" "}
+                {adaptiveCalorieTarget.stepsNeatCalories} + étages {adaptiveCalorieTarget.floorsNeatCalories} + ressenti {adaptiveCalorieTarget.feelingFuel} - déficit{" "}
+                {adaptiveCalorieTarget.targetDeficit} = cible à manger {adaptiveCalorieTarget.target} kcal.{" "}
+                {balanceFormulaSentence(dailyDeficit, adaptiveCalorieTarget.maintenanceTarget, Math.round(totals.calories))}
+              </p>
+            </details>
           </div>
         </div>
       </section>
@@ -543,19 +653,34 @@ export default function MealsPage() {
             <p className="eyebrow">{editing ? "Modifier" : "Ajout rapide"}</p>
             <h2 className="title-lg mt-2">{editing ? MEAL_TYPE_LABELS[editing.mealType] : "Nouveau repas"}</h2>
             <div className="mt-5">
-              <MealForm
-                initial={editing ?? { date: selectedDate }}
-                onCancel={() => {
-                  setEditing(null);
-                  setShowForm(false);
-                }}
-                onSubmit={(meal) => {
-                  saveMeal(meal);
-                  setSelectedDate(meal.date);
-                  setEditing(null);
-                  setShowForm(false);
-                }}
-              />
+              {editing || detailedForm ? (
+                <MealForm
+                  initial={editing ?? { date: selectedDate }}
+                  onCancel={() => {
+                    setEditing(null);
+                    setShowForm(false);
+                    setDetailedForm(false);
+                  }}
+                  onSubmit={(meal) => {
+                    saveMeal(meal);
+                    setSelectedDate(meal.date);
+                    setEditing(null);
+                    setShowForm(false);
+                    setDetailedForm(false);
+                  }}
+                />
+              ) : (
+                <QuickMealForm
+                  date={selectedDate}
+                  onCancel={() => setShowForm(false)}
+                  onDetailed={() => setDetailedForm(true)}
+                  onSubmit={(meal) => {
+                    saveMeal(meal);
+                    setSelectedDate(meal.date);
+                    setShowForm(false);
+                  }}
+                />
+              )}
             </div>
           </SectionCard>
         </div>

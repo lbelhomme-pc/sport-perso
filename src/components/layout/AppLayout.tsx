@@ -54,7 +54,7 @@ export function AppLayout() {
         <Outlet />
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-petrol-800/10 bg-white/95 px-2 py-2 backdrop-blur-xl lg:hidden" aria-label="Navigation mobile">
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-petrol-800/10 bg-white/95 px-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl lg:hidden" aria-label="Navigation mobile">
         <div className="grid grid-cols-5 gap-1">
           {primaryRoutes.map((route) => (
             <NavLink
@@ -62,7 +62,7 @@ export function AppLayout() {
               to={route.path}
               end={route.path === "/"}
               className={({ isActive }) =>
-                `grid min-h-16 place-items-center gap-1 px-1 py-2 text-[0.8rem] font-black uppercase tracking-[0.02em] ${
+                `grid min-h-[3.75rem] place-items-center gap-1 px-1 py-2 text-[0.68rem] font-black uppercase leading-none tracking-[0.02em] ${
                   isActive || (route.path === "/more" && !isOnPrimaryRoute) ? "bg-petrol-800 text-white" : "text-muted"
                 }`
               }

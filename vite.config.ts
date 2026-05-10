@@ -20,12 +20,30 @@ export default defineConfig({
         name: "Sport Progress Tracker",
         short_name: "Sport Track",
         description: "Suivi sport, nutrition, progression et programmes en local-first.",
+        lang: "fr",
+        categories: ["health", "fitness", "sports"],
         theme_color: "#00354A",
         background_color: "#F4F4EE",
         display: "standalone",
         orientation: "portrait",
         scope: basePath,
         start_url: basePath,
+        shortcuts: [
+          {
+            name: "Ajouter une seance",
+            short_name: "Seance",
+            description: "Enregistrer rapidement une seance terminee.",
+            url: `${basePath}sessions`,
+            icons: [{ src: `${basePath}icon.svg`, sizes: "any", type: "image/svg+xml" }]
+          },
+          {
+            name: "Ajouter un repas",
+            short_name: "Repas",
+            description: "Saisir rapidement calories et macros.",
+            url: `${basePath}meals`,
+            icons: [{ src: `${basePath}icon.svg`, sizes: "any", type: "image/svg+xml" }]
+          }
+        ],
         icons: [
           {
             src: `${basePath}icon.svg`,

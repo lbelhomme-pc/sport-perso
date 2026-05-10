@@ -7,8 +7,10 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
 import { SESSION_TYPE_LABELS } from "../data/defaults";
 import { useSessions } from "../hooks/useSessions";
+import { makeId } from "../services/storageService";
 import type { CompletedSession, CompletedSessionType } from "../types";
-import { formatLongDate } from "../utils/dates";
+import { estimateCaloriesFromSession } from "../utils/calories";
+import { formatLongDate, toISODate } from "../utils/dates";
 import { getAverageHeartRate, getAverageRpe } from "../utils/training";
 
 const filters: Array<CompletedSessionType | "all"> = [
@@ -27,6 +29,96 @@ const filters: Array<CompletedSessionType | "all"> = [
   "free",
   "other"
 ];
+
+function QuickSessionForm({
+  onSubmit,
+  onDetailed
+}: {
+  onSubmit: (session: CompletedSession) => void;
+  onDetailed: () => void;
+}) {
+  const [form, setForm] = useState({
+    date: toISODate(new Date()),
+    type: "strength" as CompletedSessionType,
+    durationMin: "45",
+    rpe: "",
+    pain: "no",
+    notes: ""
+  });
+  const update = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }));
+
+  const save = () => {
+    const durationMin = Math.max(0, Number(form.durationMin || 0));
+    const rpe = form.rpe ? Number(form.rpe) : undefined;
+    onSubmit({
+      id: makeId("session"),
+      date: form.date,
+      type: form.type,
+      title: SESSION_TYPE_LABELS[form.type],
+      durationMin,
+      caloriesBurned: estimateCaloriesFromSession(form.type, durationMin),
+      rpe,
+      difficulty: rpe !== undefined && rpe >= 8 ? "hard" : rpe !== undefined && rpe <= 4 ? "easy" : "ok",
+      pain: form.pain === "yes",
+      energyAfter: "normal",
+      notes: form.notes || undefined,
+      completed: true
+    });
+  };
+
+  return (
+    <div className="grid gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft">
+      <div className="border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
+        Saisie rapide : type, durée, RPE et douleur suffisent. Tu pourras corriger plus tard si besoin.
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <label className="field-label">
+          Date
+          <input className="field" type="date" value={form.date} onChange={(event) => update("date", event.target.value)} />
+        </label>
+        <label className="field-label">
+          Type
+          <select className="field" value={form.type} onChange={(event) => update("type", event.target.value as CompletedSessionType)}>
+            {Object.entries(SESSION_TYPE_LABELS).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field-label">
+          Durée
+          <input className="field" type="number" min="0" inputMode="numeric" value={form.durationMin} onChange={(event) => update("durationMin", event.target.value)} />
+        </label>
+        <label className="field-label">
+          RPE / 10
+          <input className="field" type="number" min="0" max="10" inputMode="numeric" value={form.rpe} onChange={(event) => update("rpe", event.target.value)} />
+        </label>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-[12rem_1fr]">
+        <label className="field-label">
+          Douleur
+          <select className="field" value={form.pain} onChange={(event) => update("pain", event.target.value)}>
+            <option value="no">Non</option>
+            <option value="yes">Oui</option>
+          </select>
+        </label>
+        <label className="field-label">
+          Note facultative
+          <input className="field" value={form.notes} onChange={(event) => update("notes", event.target.value)} placeholder="Ex : jambes lourdes, bon cardio..." />
+        </label>
+      </div>
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+        <button type="button" className="ghost-button" onClick={onDetailed}>
+          Saisie détaillée
+        </button>
+        <button type="button" className="action-button" onClick={save}>
+          <Plus className="h-4 w-4" /> Enregistrer rapide
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function CompletedExercisesList({ session }: { session: CompletedSession }) {
   if (!session.exercises?.length) return null;
@@ -67,6 +159,7 @@ export default function SessionsPage() {
   const [filter, setFilter] = useState<CompletedSessionType | "all">("all");
   const [editing, setEditing] = useState<CompletedSession | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [detailedForm, setDetailedForm] = useState(false);
   const [openSessionId, setOpenSessionId] = useState<string | null>(null);
   const filtered = filter === "all" ? sessions : sessions.filter((session) => session.type === filter);
   const totalCalories = filtered.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
@@ -79,7 +172,13 @@ export default function SessionsPage() {
         title="Séances et sports"
         description="Tout ce que tu as vraiment fait : musculation, course, vélo, natation, raquette, hybride, mobilité ou séance libre. Le plan compte, mais le réel pilote."
         action={
-          <button className="action-button" onClick={() => setShowForm(true)}>
+          <button
+            className="action-button"
+            onClick={() => {
+              setShowForm(true);
+              setDetailedForm(false);
+            }}
+          >
             <Plus className="h-4 w-4" /> Ajouter une séance
           </button>
         }
@@ -97,18 +196,30 @@ export default function SessionsPage() {
           <p className="eyebrow">{editing ? "Modifier" : "Ajouter"}</p>
           <h2 className="title-lg mt-2">{editing ? editing.title : "Nouvelle séance"}</h2>
           <div className="mt-5">
-            <SessionForm
-              initial={editing ?? undefined}
-              onCancel={() => {
-                setEditing(null);
-                setShowForm(false);
-              }}
-              onSubmit={(session) => {
-                saveSession(session);
-                setEditing(null);
-                setShowForm(false);
-              }}
-            />
+            {editing || detailedForm ? (
+              <SessionForm
+                initial={editing ?? undefined}
+                onCancel={() => {
+                  setEditing(null);
+                  setShowForm(false);
+                  setDetailedForm(false);
+                }}
+                onSubmit={(session) => {
+                  saveSession(session);
+                  setEditing(null);
+                  setShowForm(false);
+                  setDetailedForm(false);
+                }}
+              />
+            ) : (
+              <QuickSessionForm
+                onDetailed={() => setDetailedForm(true)}
+                onSubmit={(session) => {
+                  saveSession(session);
+                  setShowForm(false);
+                }}
+              />
+            )}
           </div>
         </SectionCard>
       ) : null}

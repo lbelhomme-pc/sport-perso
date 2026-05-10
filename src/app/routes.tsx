@@ -1,3 +1,4 @@
+import { lazy } from "react";
 import {
   BarChart3,
   CalendarDays,
@@ -9,15 +10,16 @@ import {
   Settings,
   Utensils
 } from "lucide-react";
-import DashboardPage from "../pages/DashboardPage";
-import CalendarPage from "../pages/CalendarPage";
-import PlanningPage from "../pages/PlanningPage";
-import SessionsPage from "../pages/SessionsPage";
-import MealsPage from "../pages/MealsPage";
-import WeightPage from "../pages/WeightPage";
-import StatsPage from "../pages/StatsPage";
-import SettingsPage from "../pages/SettingsPage";
-import MorePage from "../pages/MorePage";
+
+const DashboardPage = lazy(() => import("../pages/DashboardPage"));
+const CalendarPage = lazy(() => import("../pages/CalendarPage"));
+const PlanningPage = lazy(() => import("../pages/PlanningPage"));
+const SessionsPage = lazy(() => import("../pages/SessionsPage"));
+const MealsPage = lazy(() => import("../pages/MealsPage"));
+const WeightPage = lazy(() => import("../pages/WeightPage"));
+const StatsPage = lazy(() => import("../pages/StatsPage"));
+const SettingsPage = lazy(() => import("../pages/SettingsPage"));
+const MorePage = lazy(() => import("../pages/MorePage"));
 
 export const appRoutes = [
   {
@@ -38,8 +40,8 @@ export const appRoutes = [
   },
   {
     path: "/sessions",
-    label: "Séance",
-    shortLabel: "Séance",
+    label: "Sport",
+    shortLabel: "Sport",
     icon: Dumbbell,
     primaryNav: true,
     element: <SessionsPage />

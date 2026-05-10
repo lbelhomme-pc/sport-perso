@@ -1,13 +1,19 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { PlayCircle, Utensils } from "lucide-react";
+import { ChevronDown, PlayCircle, Utensils } from "lucide-react";
+import { SessionForm } from "../components/forms/SessionForm";
+import { SessionMode } from "../components/session/SessionMode";
 import { SectionCard } from "../components/ui/SectionCard";
 import { PLANNED_TYPE_LABELS, SESSION_TYPE_LABELS } from "../data/defaults";
 import { getDisplayedVersion } from "../data/trainingPlan";
 import { useDailyContext } from "../hooks/useDailyContext";
 import { useDashboard } from "../hooks/useDashboard";
+import { useSessionChecklists } from "../hooks/useSessionChecklists";
+import { useSessions } from "../hooks/useSessions";
 import type { CompletedSession, EnergyLevel, PlannedSession, SleepQuality } from "../types";
 import { formatLongDate } from "../utils/dates";
 import { getProteinTarget } from "../utils/nutrition";
+import { getCompletedForPlan } from "../utils/training";
 
 const energyOptions: Array<{ id: EnergyLevel; label: string }> = [
   { id: "strong", label: "Faible" },
@@ -86,6 +92,10 @@ function updateNumberInput(value: string) {
 export default function DashboardPage() {
   const dashboard = useDashboard();
   const { dailyContext, saveDailyContext } = useDailyContext(dashboard.today);
+  const { sessions, saveSession, deletePlannedSessionCompletion } = useSessions();
+  const { getCheckedItemIds, toggleChecklistItem } = useSessionChecklists();
+  const [sessionMode, setSessionMode] = useState<PlannedSession | null>(null);
+  const [loggingSession, setLoggingSession] = useState<PlannedSession | null>(null);
   const proteinTarget = getProteinTarget(dashboard.calculationWeight, dashboard.settings.proteinPerKg);
   const proteinRatio = proteinTarget > 0 ? dashboard.todayMealTotals.protein / proteinTarget : 1;
   const completedTodaySession = dashboard.todaySessions.find((session) => session.completed);
@@ -95,7 +105,6 @@ export default function DashboardPage() {
       ? "Voir / corriger la séance"
       : "Démarrer / enregistrer la séance"
     : "Ajouter une séance libre";
-  const todayActionPath = dashboard.todayPlanned ? "/planning" : "/sessions";
   const mealAdvice = nutritionAdvice(
     completedTodaySession?.type ?? dashboard.todayPlanned?.type,
     completedTodaySession?.durationMin ?? dashboard.todayPlanned?.durationMin,
@@ -116,12 +125,28 @@ export default function DashboardPage() {
 
   return (
     <>
+      {sessionMode ? (
+        <SessionMode
+          session={sessionMode}
+          energy={dailyContext.energyLevel}
+          checkedItemIds={getCheckedItemIds(sessionMode.id)}
+          completed={Boolean(getCompletedForPlan(sessions, sessionMode.id))}
+          onToggle={(itemId, checked) => toggleChecklistItem(sessionMode.id, itemId, checked)}
+          onClose={() => setSessionMode(null)}
+          onFinish={() => {
+            setLoggingSession(sessionMode);
+            setSessionMode(null);
+          }}
+          onUndo={() => deletePlannedSessionCompletion(sessionMode.id)}
+        />
+      ) : null}
+
       <SectionCard className="border-l-4 border-limeSoft p-4 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="eyebrow">Aujourd'hui</p>
             <p className="mt-1 text-sm font-bold text-muted">{formatLongDate(dashboard.today)}</p>
-            <h1 className="mt-3 font-display text-4xl font-black leading-tight tracking-[-0.06em] text-petrol-800 sm:text-5xl">
+            <h1 className="mt-3 font-display text-3xl font-black leading-tight tracking-[-0.06em] text-petrol-800 sm:text-5xl">
               {todayTypeLabel} · {dashboard.todayPlanned?.durationMin ? `${dashboard.todayPlanned.durationMin} min` : "souple"}
             </h1>
             <p className="mt-2 text-xl font-black leading-tight text-petrol-800">
@@ -135,15 +160,36 @@ export default function DashboardPage() {
           {coachMessage}
         </p>
 
-        <p className="mt-4 text-base font-semibold leading-7 text-muted">
+        <details className="mt-4 border border-petrol-800/10 bg-white p-3">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-800">
+            Version du jour
+            <ChevronDown className="h-4 w-4" aria-hidden="true" />
+          </summary>
+          <p className="mt-3 text-sm font-semibold leading-6 text-muted">
           {dashboard.todayPlanned
             ? getDisplayedVersion(dashboard.todayPlanned, dailyContext.energyLevel)
             : "Pas de séance prévue. Si tu bouges quand même, saisis une séance libre, sinon récupère vraiment."}
-        </p>
+          </p>
+        </details>
 
-        <div className="mt-5 grid gap-2 sm:grid-cols-[1fr_auto]">
-          <Link to={todayActionPath} className="action-button">
-            <PlayCircle className="h-5 w-5" /> {todayAction}
+        <div className="mt-5 grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+          {dashboard.todayPlanned ? (
+            <button
+              type="button"
+              className="action-button"
+              onClick={() => {
+                if (dashboard.todayPlanned) setSessionMode(dashboard.todayPlanned);
+              }}
+            >
+              <PlayCircle className="h-5 w-5" /> {todayAction}
+            </button>
+          ) : (
+            <Link to="/sessions" className="action-button">
+              <PlayCircle className="h-5 w-5" /> {todayAction}
+            </Link>
+          )}
+          <Link to="/meals" className="ghost-button">
+            <Utensils className="h-5 w-5" /> Ajouter repas
           </Link>
           {dashboard.todayPlanned ? (
             <Link to="/planning" className="ghost-button">
@@ -152,6 +198,26 @@ export default function DashboardPage() {
           ) : null}
         </div>
       </SectionCard>
+
+      {loggingSession ? (
+        <SectionCard className="p-4 sm:p-6">
+          <p className="eyebrow">Fin de séance</p>
+          <h2 className="title-lg mt-2">Saisir le réel</h2>
+          <p className="mt-2 text-sm font-semibold leading-6 text-muted">
+            Garde juste l'essentiel si tu es cuit : durée, RPE, douleur, puis enregistrer.
+          </p>
+          <div className="mt-5">
+            <SessionForm
+              planned={loggingSession}
+              onCancel={() => setLoggingSession(null)}
+              onSubmit={(session) => {
+                saveSession(session);
+                setLoggingSession(null);
+              }}
+            />
+          </div>
+        </SectionCard>
+      ) : null}
 
       <SectionCard className="p-4 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
