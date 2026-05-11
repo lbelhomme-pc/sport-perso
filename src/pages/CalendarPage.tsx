@@ -12,12 +12,14 @@ import {
   subMonths
 } from "date-fns";
 import { fr } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ChevronLeft, ChevronRight, Dumbbell, Footprints, Plus } from "lucide-react";
 import { MealForm } from "../components/forms/MealForm";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
 import { MEAL_TYPE_LABELS, PLANNED_TYPE_LABELS, SESSION_TYPE_LABELS } from "../data/defaults";
 import { getPlannedWeek } from "../data/trainingPlan";
+import { useDailyContext } from "../hooks/useDailyContext";
 import { DAILY_HABIT_LABELS } from "../hooks/useDailyHabits";
 import { useMeals } from "../hooks/useMeals";
 import { useSettings } from "../hooks/useSettings";
@@ -85,6 +87,7 @@ export default function CalendarPage() {
   const today = toISODate(new Date());
   const [month, setMonth] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(today);
+  const { dailyContext, saveDailyContext } = useDailyContext(selectedDate);
   const [showMealForm, setShowMealForm] = useState(false);
   const [viewMode, setViewMode] = useState<CalendarViewMode>(readInitialCalendarView);
   const mealFormRef = useRef<HTMLDivElement>(null);
@@ -124,8 +127,10 @@ export default function CalendarPage() {
     const completedSessions = data.sessions.filter((session) => session.date === isoDate && session.completed);
     const plannedForDay = plannedSessions.filter((session) => session.date === isoDate && session.type !== "rest");
     const mealsForDay = data.meals.filter((meal) => meal.date === isoDate);
+    const movementForDay = data.dailyContexts.find((context) => context.date === isoDate);
+    const hasMovement = Boolean((movementForDay?.steps ?? 0) > 0 || (movementForDay?.floors ?? 0) > 0);
     const selected = isoDate === selectedDate;
-    const hasContent = dayHabits.length || plannedForDay.length || completedSessions.length || mealsForDay.length;
+    const hasContent = dayHabits.length || plannedForDay.length || completedSessions.length || mealsForDay.length || hasMovement;
 
     return {
       isoDate,
@@ -133,6 +138,7 @@ export default function CalendarPage() {
       completedSessions,
       plannedForDay,
       mealsForDay,
+      movementForDay,
       selected,
       hasContent
     };
@@ -203,7 +209,7 @@ export default function CalendarPage() {
             </button>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             <div className="border border-petrol-800/10 bg-white p-3">
               <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Sport</p>
               <div className="mt-2 grid gap-2">
@@ -221,6 +227,9 @@ export default function CalendarPage() {
                     Fait : {SESSION_TYPE_LABELS[session.type]} · {session.durationMin} min
                   </p>
                 ))}
+                <Link to={`/sessions?date=${selectedDate}&add=1`} className="action-button mt-2 justify-center">
+                  <Dumbbell className="h-4 w-4" /> Ajouter une séance ce jour
+                </Link>
               </div>
             </div>
 
@@ -242,6 +251,51 @@ export default function CalendarPage() {
                   </span>
                 ))}
               </div>
+            </div>
+
+            <div className="border border-petrol-800/10 bg-white p-3 sm:col-span-2 xl:col-span-1">
+              <p className="flex items-center gap-2 text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">
+                <Footprints className="h-4 w-4" /> Pas du jour
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <label className="grid gap-1">
+                  <span className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Pas</span>
+                  <input
+                    className="field"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={dailyContext.steps ? String(dailyContext.steps) : ""}
+                    onChange={(event) =>
+                      saveDailyContext({
+                        ...dailyContext,
+                        date: selectedDate,
+                        steps: Number(event.target.value.replace(/\D/g, ""))
+                      })
+                    }
+                    placeholder="Ex : 8500"
+                  />
+                </label>
+                <label className="grid gap-1">
+                  <span className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Étages</span>
+                  <input
+                    className="field"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={dailyContext.floors ? String(dailyContext.floors) : ""}
+                    onChange={(event) =>
+                      saveDailyContext({
+                        ...dailyContext,
+                        date: selectedDate,
+                        floors: Number(event.target.value.replace(/\D/g, ""))
+                      })
+                    }
+                    placeholder="Ex : 8"
+                  />
+                </label>
+              </div>
+              <p className="mt-2 text-xs font-bold leading-5 text-muted">
+                Sélectionne un ancien jour dans le calendrier, puis saisis les pas réels de cette date.
+              </p>
             </div>
           </div>
         </div>
@@ -305,7 +359,7 @@ export default function CalendarPage() {
           {calendarDays
             .filter((day) => isSameMonth(day, month))
             .map((day) => {
-              const { isoDate, dayHabits, completedSessions, plannedForDay, mealsForDay, selected, hasContent } = getDayInfo(day);
+              const { isoDate, dayHabits, completedSessions, plannedForDay, mealsForDay, movementForDay, selected, hasContent } = getDayInfo(day);
 
               return (
                 <button
@@ -349,6 +403,9 @@ export default function CalendarPage() {
                             {MEAL_TYPE_LABELS[meal.mealType]} · {meal.calories} kcal
                           </span>
                         ))}
+                        {(movementForDay?.steps ?? 0) > 0 ? (
+                          <span className="chip bg-white">{movementForDay?.steps?.toLocaleString("fr-FR")} pas</span>
+                        ) : null}
                         {!hasContent ? <span className="chip bg-white text-muted">Libre</span> : null}
                       </div>
                     </div>
@@ -368,7 +425,7 @@ export default function CalendarPage() {
             </div>
             <div className="mt-2 grid grid-cols-7 gap-1">
               {calendarDays.map((day) => {
-                const { isoDate, dayHabits, completedSessions, plannedForDay, mealsForDay, selected, hasContent } = getDayInfo(day);
+                const { isoDate, dayHabits, completedSessions, plannedForDay, mealsForDay, movementForDay, selected, hasContent } = getDayInfo(day);
                 const muted = !isSameMonth(day, month);
 
                 return (
@@ -395,6 +452,7 @@ export default function CalendarPage() {
                       {completedSessions.length ? <span className="truncate bg-petrol-800 px-1 py-1 text-white">F {completedSessions.length}</span> : null}
                       {mealsForDay.length ? <span className="truncate bg-white px-1 py-1 text-petrol-800">R {mealsForDay.length}</span> : null}
                       {dayHabits.length ? <span className="truncate bg-limeSoft px-1 py-1 text-petrol-900">H {dayHabits.length}</span> : null}
+                      {(movementForDay?.steps ?? 0) > 0 ? <span className="truncate bg-white px-1 py-1 text-petrol-800">P {movementForDay?.steps}</span> : null}
                       {!hasContent ? <span className="text-muted/70">-</span> : null}
                     </div>
                   </button>

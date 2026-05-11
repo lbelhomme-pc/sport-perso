@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ChevronDown, Edit3, Plus, Trash2, Dumbbell } from "lucide-react";
 import { SessionForm } from "../components/forms/SessionForm";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -31,14 +32,16 @@ const filters: Array<CompletedSessionType | "all"> = [
 ];
 
 function QuickSessionForm({
+  date,
   onSubmit,
   onDetailed
 }: {
+  date: string;
   onSubmit: (session: CompletedSession) => void;
   onDetailed: () => void;
 }) {
   const [form, setForm] = useState({
-    date: toISODate(new Date()),
+    date,
     type: "strength" as CompletedSessionType,
     durationMin: "45",
     rpe: "",
@@ -156,6 +159,10 @@ function CompletedExercisesList({ session }: { session: CompletedSession }) {
 
 export default function SessionsPage() {
   const { sessions, saveSession, deleteSession } = useSessions();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryDate = searchParams.get("date");
+  const initialSessionDate = queryDate && /^\d{4}-\d{2}-\d{2}$/.test(queryDate) ? queryDate : toISODate(new Date());
+  const shouldOpenFromQuery = searchParams.get("add") === "1";
   const [filter, setFilter] = useState<CompletedSessionType | "all">("all");
   const [editing, setEditing] = useState<CompletedSession | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -164,6 +171,24 @@ export default function SessionsPage() {
   const filtered = filter === "all" ? sessions : sessions.filter((session) => session.type === filter);
   const totalCalories = filtered.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
   const totalVolume = filtered.reduce((total, session) => total + session.durationMin, 0);
+
+  useEffect(() => {
+    if (shouldOpenFromQuery) {
+      setShowForm(true);
+      setDetailedForm(false);
+    }
+  }, [shouldOpenFromQuery]);
+
+  const closeForm = () => {
+    setEditing(null);
+    setShowForm(false);
+    setDetailedForm(false);
+    if (searchParams.has("add")) {
+      const next = new URLSearchParams(searchParams);
+      next.delete("add");
+      setSearchParams(next, { replace: true });
+    }
+  };
 
   return (
     <>
@@ -198,25 +223,21 @@ export default function SessionsPage() {
           <div className="mt-5">
             {editing || detailedForm ? (
               <SessionForm
-                initial={editing ?? undefined}
-                onCancel={() => {
-                  setEditing(null);
-                  setShowForm(false);
-                  setDetailedForm(false);
-                }}
+                initial={editing ?? { date: initialSessionDate }}
+                onCancel={closeForm}
                 onSubmit={(session) => {
                   saveSession(session);
-                  setEditing(null);
-                  setShowForm(false);
-                  setDetailedForm(false);
+                  closeForm();
                 }}
               />
             ) : (
               <QuickSessionForm
+                key={initialSessionDate}
+                date={initialSessionDate}
                 onDetailed={() => setDetailedForm(true)}
                 onSubmit={(session) => {
                   saveSession(session);
-                  setShowForm(false);
+                  closeForm();
                 }}
               />
             )}
