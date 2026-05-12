@@ -7,7 +7,7 @@ import { BADMINTON_VARIANTS, GENERAL_SPORT_MODES } from "../data/defaults";
 import { exportJson, getExportPreview, importJsonFile, mergeJsonFiles } from "../services/exportService";
 import { resetData } from "../services/storageService";
 import { useSettings } from "../hooks/useSettings";
-import type { AppExperienceMode, BadmintonVariant, BmrSex, Settings } from "../types";
+import type { AppExperienceMode, BadmintonVariant, BmrSex, NavigationFocus, Settings } from "../types";
 import { calculateBasalMetabolicRate } from "../utils/calories";
 
 function parseVacationWeeks(value: string): number[] {
@@ -20,6 +20,12 @@ function parseVacationWeeks(value: string): number[] {
     )
   ].sort((a, b) => a - b);
 }
+
+const navigationFocusOptions: Array<{ id: NavigationFocus; label: string; hint: string }> = [
+  { id: "sport", label: "Sport surtout", hint: "Programme, Sport et Calendrier restent devant." },
+  { id: "nutrition", label: "Nutrition surtout", hint: "Repas, Poids et Progression restent devant." },
+  { id: "both", label: "Sport + nutrition", hint: "Programme, Sport et Repas restent devant." }
+];
 
 export default function SettingsPage() {
   const { settings, saveSettings } = useSettings();
@@ -37,6 +43,8 @@ export default function SettingsPage() {
           ? value
           : key === "appMode"
             ? (value as AppExperienceMode)
+          : key === "navigationFocus"
+            ? (value as NavigationFocus)
           : key === "badmintonVariant"
             ? (value as BadmintonVariant)
           : key === "sex"
@@ -81,6 +89,23 @@ export default function SettingsPage() {
               </select>
               <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
                 Phase 1 : ce choix prépare la personnalisation générale sans supprimer le programme HYROX.
+              </span>
+            </label>
+            <label className="field-label">
+              Onglets principaux
+              <select
+                className="field"
+                value={form.navigationFocus ?? "both"}
+                onChange={(event) => update("navigationFocus", event.target.value as NavigationFocus)}
+              >
+                {navigationFocusOptions.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
+                {navigationFocusOptions.find((option) => option.id === (form.navigationFocus ?? "both"))?.hint}
               </span>
             </label>
             <label className="field-label">

@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { APP_NAME } from "../../data/defaults";
-import { appRoutes } from "../../app/routes";
+import { getPrimaryRoutes } from "../../app/routes";
 import { OnboardingPrompt } from "../onboarding/OnboardingPrompt";
 import { useSettings } from "../../hooks/useSettings";
 
@@ -14,7 +14,7 @@ export function AppLayout() {
   const { settings, saveSettings } = useSettings();
   const appIconUrl = `${import.meta.env.BASE_URL}icon.svg`;
   const location = useLocation();
-  const primaryRoutes = appRoutes.filter((route) => route.primaryNav);
+  const primaryRoutes = getPrimaryRoutes(settings.navigationFocus ?? "both");
   const isOnPrimaryRoute = primaryRoutes.some((route) =>
     route.path === "/" ? location.pathname === "/" : location.pathname.startsWith(route.path)
   );

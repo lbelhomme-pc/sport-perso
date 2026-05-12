@@ -1,50 +1,37 @@
 import { Link } from "react-router-dom";
-import { CalendarCheck2, Scale, Settings, BarChart3 } from "lucide-react";
+import { getMoreRoutes } from "../app/routes";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
+import { useSettings } from "../hooks/useSettings";
 
-const moreLinks = [
-  {
-    to: "/calendar",
-    icon: CalendarCheck2,
-    label: "Calendrier",
-    hint: "Voir les habitudes, repas et séances jour par jour."
-  },
-  {
-    to: "/weight",
-    icon: Scale,
-    label: "Poids",
-    hint: "Saisir une pesée et suivre la tendance."
-  },
-  {
-    to: "/stats",
-    icon: BarChart3,
-    label: "Progression",
-    hint: "Graphiques et tendances quand tu veux prendre du recul."
-  },
-  {
-    to: "/settings",
-    icon: Settings,
-    label: "Profil et réglages",
-    hint: "Objectifs, export/import, compétition et paramètres."
-  }
-];
+const moreHints: Record<string, string> = {
+  "/planning": "Programme et séances prévues quand tu veux préparer ton entraînement.",
+  "/sessions": "Historique sport, séance libre et saisie rapide d'un entraînement.",
+  "/meals": "Journal repas, calories, macros et estimation nutrition.",
+  "/calendar": "Voir les habitudes, repas, pas et séances jour par jour.",
+  "/weight": "Saisir une pesée et suivre la tendance.",
+  "/stats": "Graphiques et tendances quand tu veux prendre du recul.",
+  "/settings": "Objectifs, onglets favoris, export/import et paramètres."
+};
 
 export default function MorePage() {
+  const { settings } = useSettings();
+  const moreLinks = getMoreRoutes(settings.navigationFocus ?? "both");
+
   return (
     <>
       <PageHeader
         eyebrow="Plus"
-        title="Outils secondaires"
-        description="Les actions fréquentes restent dans les 4 premiers onglets. Ici, tu retrouves le calendrier, le poids, les stats et les réglages."
+        title="Le reste, sans encombrer"
+        description="Les onglets principaux suivent ton choix de départ. Ici, tu retrouves les outils utiles mais moins prioritaires."
       />
 
       <SectionCard className="p-4 sm:p-6">
         <div className="grid gap-3 sm:grid-cols-2">
           {moreLinks.map((item) => (
             <Link
-              key={item.to}
-              to={item.to}
+              key={item.path}
+              to={item.path}
               className="group flex min-h-24 items-center gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft transition hover:-translate-y-0.5 hover:border-petrol-800/25"
             >
               <span className="grid h-12 w-12 shrink-0 place-items-center bg-petrol-800 text-limeSoft">
@@ -52,7 +39,7 @@ export default function MorePage() {
               </span>
               <span>
                 <span className="block text-base font-black text-petrol-800">{item.label}</span>
-                <span className="mt-1 block text-sm font-semibold leading-5 text-muted">{item.hint}</span>
+                <span className="mt-1 block text-sm font-semibold leading-5 text-muted">{moreHints[item.path]}</span>
               </span>
             </Link>
           ))}

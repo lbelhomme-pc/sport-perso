@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { CalendarDays, CheckCircle2, HeartPulse, Target } from "lucide-react";
-import type { AppExperienceMode, Settings, SportType, TargetEventType, UserSportLevel, WeekdayKey } from "../../types";
+import { CalendarDays, CheckCircle2, Dumbbell, HeartPulse, LayoutGrid, Target, Utensils } from "lucide-react";
+import type { AppExperienceMode, NavigationFocus, Settings, SportType, TargetEventType, UserSportLevel, WeekdayKey } from "../../types";
 import { toISODate } from "../../utils/dates";
 
 type OnboardingPromptProps = {
@@ -52,6 +52,32 @@ const levelOptions: Array<{ id: UserSportLevel; label: string }> = [
   { id: "advanced", label: "Confirmé" }
 ];
 
+const navigationFocusOptions: Array<{
+  id: NavigationFocus;
+  label: string;
+  description: string;
+  icon: typeof Dumbbell;
+}> = [
+  {
+    id: "sport",
+    label: "Sport surtout",
+    description: "Menu principal : Aujourd'hui, Programme, Sport, Calendrier. Nutrition reste dans Plus.",
+    icon: Dumbbell
+  },
+  {
+    id: "nutrition",
+    label: "Nutrition surtout",
+    description: "Menu principal : Aujourd'hui, Repas, Poids, Progression. Le sport reste dans Plus.",
+    icon: Utensils
+  },
+  {
+    id: "both",
+    label: "Sport + nutrition",
+    description: "Menu principal équilibré : Programme, Sport et Repas restent devant.",
+    icon: LayoutGrid
+  }
+];
+
 const dayOptions: Array<{ id: WeekdayKey; label: string }> = [
   { id: "monday", label: "Lun" },
   { id: "tuesday", label: "Mar" },
@@ -71,6 +97,7 @@ function buildProgramTargetDate(programLengthWeeks: number) {
 export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps) {
   const initialGoal = settings.appMode ?? "competition";
   const [goal, setGoal] = useState<AppExperienceMode>(initialGoal);
+  const [navigationFocus, setNavigationFocus] = useState<NavigationFocus>(settings.navigationFocus ?? "both");
   const [level, setLevel] = useState<UserSportLevel>(settings.sportLevel ?? "intermediate");
   const [availableDays, setAvailableDays] = useState<WeekdayKey[]>(
     settings.availableDays?.length ? settings.availableDays : ["tuesday", "wednesday", "thursday", "friday", "saturday"]
@@ -100,6 +127,7 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
       ...settings,
       appMode: skip ? settings.appMode : goal,
       enabledSports: skip ? settings.enabledSports : selectedGoal.sports,
+      navigationFocus: skip ? settings.navigationFocus ?? "both" : navigationFocus,
       onboardingCompleted: true,
       sportLevel: skip ? settings.sportLevel : level,
       availableDays: skip ? settings.availableDays : availableDays,
@@ -162,6 +190,37 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
                     >
                       <span className="flex items-start justify-between gap-3">
                         <span className="text-base font-black">{option.label}</span>
+                        {active ? <CheckCircle2 className="h-5 w-5 text-limeSoft" /> : null}
+                      </span>
+                      <span className={active ? "mt-2 block text-xs font-bold leading-5 text-white/70" : "mt-2 block text-xs font-bold leading-5 text-muted"}>
+                        {option.description}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section>
+              <p className="eyebrow">Onglets utiles au quotidien</p>
+              <div className="mt-3 grid gap-2 lg:grid-cols-3">
+                {navigationFocusOptions.map((option) => {
+                  const active = option.id === navigationFocus;
+
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={`border p-4 text-left transition ${
+                        active ? "border-petrol-800 bg-petrol-800 text-white" : "border-petrol-800/10 bg-white text-petrol-800 hover:border-petrol-800/35"
+                      }`}
+                      onClick={() => setNavigationFocus(option.id)}
+                    >
+                      <span className="flex items-start justify-between gap-3">
+                        <span className="flex items-center gap-2 text-base font-black">
+                          <option.icon className="h-5 w-5" aria-hidden="true" />
+                          {option.label}
+                        </span>
                         {active ? <CheckCircle2 className="h-5 w-5 text-limeSoft" /> : null}
                       </span>
                       <span className={active ? "mt-2 block text-xs font-bold leading-5 text-white/70" : "mt-2 block text-xs font-bold leading-5 text-muted"}>

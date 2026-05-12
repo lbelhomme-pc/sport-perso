@@ -70,6 +70,8 @@ export type WeekdayKey = "monday" | "tuesday" | "wednesday" | "thursday" | "frid
 
 export type TargetEventType = "hyrox" | "other" | "none";
 
+export type NavigationFocus = "both" | "sport" | "nutrition";
+
 export type UserSportProfile = {
   primaryMode: AppExperienceMode;
   sports: SportType[];
@@ -182,6 +184,7 @@ export type Settings = {
   startDate: string;
   appMode?: AppExperienceMode;
   enabledSports?: SportType[];
+  navigationFocus?: NavigationFocus;
   onboardingCompleted?: boolean;
   sportLevel?: UserSportLevel;
   availableDays?: WeekdayKey[];

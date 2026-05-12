@@ -42,6 +42,7 @@ const settingsSchema = z.object({
       ])
     )
     .default(DEFAULT_SETTINGS.enabledSports ?? ["badminton", "strength", "run", "hyrox", "recovery"]),
+  navigationFocus: z.enum(["both", "sport", "nutrition"]).default(DEFAULT_SETTINGS.navigationFocus ?? "both"),
   onboardingCompleted: z.boolean().default(DEFAULT_SETTINGS.onboardingCompleted ?? false),
   sportLevel: z.enum(["beginner", "intermediate", "advanced"]).default(DEFAULT_SETTINGS.sportLevel ?? "intermediate"),
   availableDays: z

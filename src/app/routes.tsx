@@ -10,6 +10,7 @@ import {
   Settings,
   Utensils
 } from "lucide-react";
+import type { NavigationFocus } from "../types";
 
 const DashboardPage = lazy(() => import("../pages/DashboardPage"));
 const CalendarPage = lazy(() => import("../pages/CalendarPage"));
@@ -95,3 +96,22 @@ export const appRoutes = [
     element: <SettingsPage />
   }
 ];
+
+const primaryPathsByFocus: Record<NavigationFocus, string[]> = {
+  both: ["/", "/planning", "/sessions", "/meals", "/more"],
+  sport: ["/", "/planning", "/sessions", "/calendar", "/more"],
+  nutrition: ["/", "/meals", "/weight", "/stats", "/more"]
+};
+
+function routeByPath(path: string) {
+  return appRoutes.find((route) => route.path === path);
+}
+
+export function getPrimaryRoutes(focus: NavigationFocus = "both") {
+  return primaryPathsByFocus[focus].map(routeByPath).filter((route): route is NonNullable<ReturnType<typeof routeByPath>> => Boolean(route));
+}
+
+export function getMoreRoutes(focus: NavigationFocus = "both") {
+  const primaryPaths = new Set(primaryPathsByFocus[focus]);
+  return appRoutes.filter((route) => route.path !== "/" && route.path !== "/more" && !primaryPaths.has(route.path));
+}

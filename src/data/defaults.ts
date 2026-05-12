@@ -11,6 +11,7 @@ export const DEFAULT_SETTINGS: Settings = {
   targetDate: "2026-12-12",
   appMode: "competition",
   enabledSports: ["badminton", "strength", "run", "hyrox", "recovery"],
+  navigationFocus: "both",
   onboardingCompleted: false,
   sportLevel: "intermediate",
   availableDays: ["tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
