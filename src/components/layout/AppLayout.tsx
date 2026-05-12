@@ -55,7 +55,7 @@ export function AppLayout() {
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-petrol-800/10 bg-white/95 px-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl lg:hidden" aria-label="Navigation mobile">
-        <div className="grid grid-cols-5 gap-1">
+        <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${primaryRoutes.length}, minmax(0, 1fr))` }}>
           {primaryRoutes.map((route) => (
             <NavLink
               key={route.path}

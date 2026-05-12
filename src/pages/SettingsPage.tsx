@@ -9,6 +9,7 @@ import { resetData } from "../services/storageService";
 import { useSettings } from "../hooks/useSettings";
 import type { AppExperienceMode, BadmintonVariant, BmrSex, NavigationFocus, Settings } from "../types";
 import { calculateBasalMetabolicRate } from "../utils/calories";
+import { wantsNutrition, wantsSport } from "../utils/navigationFocus";
 
 function parseVacationWeeks(value: string): number[] {
   return [
@@ -23,8 +24,8 @@ function parseVacationWeeks(value: string): number[] {
 
 const navigationFocusOptions: Array<{ id: NavigationFocus; label: string; hint: string }> = [
   { id: "sport", label: "Sport surtout", hint: "Programme, Sport et Calendrier restent devant." },
-  { id: "nutrition", label: "Nutrition surtout", hint: "Repas, Poids et Progression restent devant." },
-  { id: "both", label: "Sport + nutrition", hint: "Programme, Sport et Repas restent devant." }
+  { id: "nutrition", label: "Nutrition surtout", hint: "Repas, Poids et Calendrier restent devant." },
+  { id: "both", label: "Sport + nutrition", hint: "Programme, Sport, Repas et Calendrier restent devant." }
 ];
 
 export default function SettingsPage() {
@@ -32,6 +33,9 @@ export default function SettingsPage() {
   const [form, setForm] = useState<Settings>(settings);
   const [vacationWeeks, setVacationWeeks] = useState(settings.vacationWeeks.join(", "));
   const [status, setStatus] = useState("");
+  const settingsFocus = form.navigationFocus ?? "both";
+  const showSportSettings = wantsSport(settingsFocus);
+  const showNutritionSettings = wantsNutrition(settingsFocus);
   const calculatedBmr = calculateBasalMetabolicRate({ ...form, useCalculatedBmr: true }, form.defaultBodyWeight);
   const displayedBmr = form.useCalculatedBmr ? calculatedBmr : form.dailyCalorieTarget;
 
@@ -66,7 +70,13 @@ export default function SettingsPage() {
       <CollapsibleSectionCard
         eyebrow="Objectifs"
         title="Profil et préférences"
-        summary="Mode principal, dates, poids, BMR, déficit et configuration compétition."
+        summary={
+          showSportSettings && showNutritionSettings
+            ? "Mode principal, dates, poids, BMR, déficit et configuration compétition."
+            : showSportSettings
+              ? "Mode principal, calendrier, programme et configuration compétition."
+              : "Mode principal, nutrition, poids, BMR et déficit."
+        }
         defaultOpen
       >
         <form
@@ -108,6 +118,8 @@ export default function SettingsPage() {
                 {navigationFocusOptions.find((option) => option.id === (form.navigationFocus ?? "both"))?.hint}
               </span>
             </label>
+            {showSportSettings ? (
+            <>
             <label className="field-label">
               Date cible compétition
               <input className="field" type="date" value={form.targetDate} onChange={(event) => update("targetDate", event.target.value)} />
@@ -129,6 +141,10 @@ export default function SettingsPage() {
                 Les 10 combinaisons sont conservées dans le mode compétition HYROX.
               </span>
             </label>
+            </>
+            ) : null}
+            {showNutritionSettings ? (
+            <>
             <label className="field-label">
               Poids de départ
               <input className="field" type="number" step="0.1" value={form.startWeight} onChange={(event) => update("startWeight", event.target.value)} />
@@ -202,6 +218,9 @@ export default function SettingsPage() {
                 400 kcal = perte progressive, moins agressive pour l'entraînement.
               </span>
             </label>
+            </>
+            ) : null}
+            {showSportSettings ? (
             <label className="field-label">
               Semaines vacances
               <input
@@ -211,6 +230,7 @@ export default function SettingsPage() {
                 placeholder="Ex : 9, 18, 27"
               />
             </label>
+            ) : null}
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

@@ -15,6 +15,7 @@ import { useStoredData } from "../hooks/useStoredData";
 import type { WeightEntry } from "../types";
 import { estimateNeatCalories } from "../utils/calories";
 import { formatShortDate, getTotalWeeks, getWeekStart, toISODate } from "../utils/dates";
+import { wantsNutrition, wantsSport } from "../utils/navigationFocus";
 import { getMealTotals } from "../utils/nutrition";
 import { getAverageHeartRate, getAverageRpe, summarizeWeek } from "../utils/training";
 
@@ -66,6 +67,9 @@ function ChartEmptyState({
 
 export default function StatsPage() {
   const data = useStoredData();
+  const focus = data.settings.navigationFocus ?? "both";
+  const showSport = wantsSport(focus);
+  const showNutrition = wantsNutrition(focus);
   const totalWeeks = getTotalWeeks(data.settings.startDate, data.settings.targetDate);
   const weekSeries = Array.from({ length: totalWeeks }, (_, index) => {
     const week = index + 1;
@@ -133,22 +137,22 @@ export default function StatsPage() {
   const averageHeartRate = getAverageHeartRate(data.sessions);
   const averageRpe = getAverageRpe(data.sessions);
   const hasAnyMetricCard =
-    data.sessions.length > 0 ||
-    totalSportCalories > 0 ||
-    totalFood21Days > 0 ||
-    totalProtein21Days > 0 ||
+    (showSport && data.sessions.length > 0) ||
+    (showSport && totalSportCalories > 0) ||
+    (showNutrition && totalFood21Days > 0) ||
+    (showNutrition && totalProtein21Days > 0) ||
     totalSteps21Days > 0 ||
     totalFloors21Days > 0 ||
     totalNeat21Days > 0 ||
-    Boolean(averageHeartRate) ||
-    Boolean(averageRpe);
+    (showSport && Boolean(averageHeartRate)) ||
+    (showSport && Boolean(averageRpe));
   const hasUsefulStats =
-    sessionTrendReady ||
-    foodTrendReady ||
-    weightTrendReady ||
+    (showSport && sessionTrendReady) ||
+    (showNutrition && foodTrendReady) ||
+    (showNutrition && weightTrendReady) ||
     movementTrendReady ||
-    sportCaloriesReady ||
-    executionTrendReady;
+    (showSport && sportCaloriesReady) ||
+    (showSport && executionTrendReady);
 
   if (!hasUsefulStats) {
     return (
@@ -166,32 +170,38 @@ export default function StatsPage() {
             message="Commence par une ou deux actions simples. L'app affichera les tendances dès que les données deviennent utiles."
           />
           <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <ChartEmptyState
-              icon={Dumbbell}
-              title="Aucune séance enregistrée cette semaine"
-              message="Ajoute 2 séances pour voir ton volume, ta régularité et les séances prévues vs réalisées."
-              to="/sessions"
-              actionLabel="Ajouter une séance"
-            />
-            <ChartEmptyState
-              icon={Utensils}
-              title="Pas encore de tendance nutrition"
-              message="Ajoute 3 jours de repas pour voir les calories et les protéines évoluer sans graphique fantôme."
-              to="/meals"
-              actionLabel="Ajouter un repas"
-            />
-            <ChartEmptyState
-              icon={Scale}
-              title="Tendance poids en attente"
-              message="Ajoute 2 pesées espacées de 7 jours pour afficher une tendance fiable plutôt qu'un bruit quotidien."
-              to="/weight"
-              actionLabel="Saisir le poids"
-            />
+            {showSport ? (
+              <ChartEmptyState
+                icon={Dumbbell}
+                title="Aucune séance enregistrée cette semaine"
+                message="Ajoute 2 séances pour voir ton volume, ta régularité et les séances prévues vs réalisées."
+                to="/sessions"
+                actionLabel="Ajouter une séance"
+              />
+            ) : null}
+            {showNutrition ? (
+              <>
+                <ChartEmptyState
+                  icon={Utensils}
+                  title="Pas encore de tendance nutrition"
+                  message="Ajoute 3 jours de repas pour voir les calories et les protéines évoluer sans graphique fantôme."
+                  to="/meals"
+                  actionLabel="Ajouter un repas"
+                />
+                <ChartEmptyState
+                  icon={Scale}
+                  title="Tendance poids en attente"
+                  message="Ajoute 2 pesées espacées de 7 jours pour afficher une tendance fiable plutôt qu'un bruit quotidien."
+                  to="/weight"
+                  actionLabel="Saisir le poids"
+                />
+              </>
+            ) : null}
             <ChartEmptyState
               icon={Footprints}
               title="Mouvement quotidien absent"
               message="Ajoute tes pas sur 3 jours pour voir la dépense NEAT estimée et les habitudes de mouvement."
-              to="/meals"
+              to="/calendar"
               actionLabel="Saisir les pas"
             />
           </div>
@@ -205,26 +215,34 @@ export default function StatsPage() {
       <PageHeader
         eyebrow="Progression"
         title="Tendances"
-        description="Une vue large pour repérer ce qui monte, ce qui fatigue et ce qui nourrit vraiment ta progression, quel que soit le sport."
+        description={
+          showSport && showNutrition
+            ? "Une vue large pour repérer ce qui monte, ce qui fatigue et ce qui nourrit vraiment ta progression."
+            : showSport
+              ? "Une vue centrée sur l'entraînement, la charge et le mouvement quotidien."
+              : "Une vue centrée sur la nutrition, le poids et le mouvement quotidien."
+        }
       />
 
       {hasAnyMetricCard ? (
         <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {data.sessions.length ? <MetricCard label="Total séances" value={data.sessions.length} /> : null}
-          {totalRacket ? <MetricCard label="Raquette" value={totalRacket} /> : null}
-          {totalStrength ? <MetricCard label="Force" value={totalStrength} /> : null}
-          {totalSportCalories ? <MetricCard label="Calories sport" value={totalSportCalories} /> : null}
-          {totalFood21Days ? <MetricCard label="Calories repas 21 j" value={`${totalFood21Days} kcal`} /> : null}
-          {totalProtein21Days ? <MetricCard label="Protéines 21 j" value={`${totalProtein21Days} g`} /> : null}
+          {showSport && data.sessions.length ? <MetricCard label="Total séances" value={data.sessions.length} /> : null}
+          {showSport && totalRacket ? <MetricCard label="Raquette" value={totalRacket} /> : null}
+          {showSport && totalStrength ? <MetricCard label="Force" value={totalStrength} /> : null}
+          {showSport && totalSportCalories ? <MetricCard label="Calories sport" value={totalSportCalories} /> : null}
+          {showNutrition && totalFood21Days ? <MetricCard label="Calories repas 21 j" value={`${totalFood21Days} kcal`} /> : null}
+          {showNutrition && totalProtein21Days ? <MetricCard label="Protéines 21 j" value={`${totalProtein21Days} g`} /> : null}
           {totalSteps21Days ? <MetricCard label="Pas 21 j" value={totalSteps21Days.toLocaleString("fr-FR")} /> : null}
           {totalFloors21Days ? <MetricCard label="Étages 21 j" value={totalFloors21Days.toLocaleString("fr-FR")} /> : null}
           {totalNeat21Days ? <MetricCard label="Mouvement 21 j" value={`${totalNeat21Days} kcal`} /> : null}
-          {averageHeartRate ? <MetricCard label="Moyenne FC" value={averageHeartRate} /> : null}
-          {averageRpe ? <MetricCard label="RPE moyen" value={averageRpe} /> : null}
+          {showSport && averageHeartRate ? <MetricCard label="Moyenne FC" value={averageHeartRate} /> : null}
+          {showSport && averageRpe ? <MetricCard label="RPE moyen" value={averageRpe} /> : null}
         </section>
       ) : null}
 
       <div className="grid gap-5 xl:grid-cols-2">
+        {showSport ? (
+        <>
         <CollapsibleSectionCard eyebrow="Volume hebdomadaire" title="Minutes par semaine">
           {sessionTrendReady && hasValue(weekSeries, "volume") ? (
             <MetricBarChart
@@ -265,7 +283,11 @@ export default function StatsPage() {
             />
           )}
         </CollapsibleSectionCard>
+        </>
+        ) : null}
 
+        {showNutrition ? (
+        <>
         <CollapsibleSectionCard eyebrow="Calories alimentaires" title="21 derniers jours">
           {foodTrendReady && hasValue(dailySeries, "calories") ? (
             <MetricLineChart
@@ -306,6 +328,8 @@ export default function StatsPage() {
             />
           )}
         </CollapsibleSectionCard>
+        </>
+        ) : null}
 
         <CollapsibleSectionCard eyebrow="Pas quotidiens" title="21 derniers jours">
           {movementTrendReady && hasValue(dailySeries, "steps") ? (
@@ -322,7 +346,7 @@ export default function StatsPage() {
               icon={Footprints}
               title="Ajoute tes pas sur 3 jours"
               message="Trois journées suffisent pour commencer à voir une habitude de mouvement fiable."
-              to="/meals"
+              to="/calendar"
               actionLabel="Saisir les pas"
             />
           )}
@@ -343,7 +367,7 @@ export default function StatsPage() {
               icon={Footprints}
               title="NEAT pas encore calculable"
               message="Ajoute tes pas, et si possible les étages, sur 3 jours pour afficher la dépense de mouvement."
-              to="/meals"
+              to="/calendar"
               actionLabel="Saisir mouvement"
             />
           )}
@@ -364,12 +388,13 @@ export default function StatsPage() {
               icon={Footprints}
               title="Étages non renseignés"
               message="Ajoute les étages sur 2 jours si tu veux isoler leur contribution au mouvement."
-              to="/meals"
+              to="/calendar"
               actionLabel="Saisir les étages"
             />
           )}
         </CollapsibleSectionCard>
 
+        {showNutrition ? (
         <CollapsibleSectionCard eyebrow="Poids" title="Courbe">
           {weightTrendReady ? (
             <MetricLineChart
@@ -389,7 +414,9 @@ export default function StatsPage() {
             />
           )}
         </CollapsibleSectionCard>
+        ) : null}
 
+        {showSport ? (
         <CollapsibleSectionCard eyebrow="Réalisées vs prévues" title="Exécution semaine">
           {executionTrendReady ? (
             <ComparisonBarChart
@@ -411,6 +438,7 @@ export default function StatsPage() {
             />
           )}
         </CollapsibleSectionCard>
+        ) : null}
       </div>
     </>
   );

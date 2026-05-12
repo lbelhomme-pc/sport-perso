@@ -23,7 +23,7 @@ export default function MorePage() {
       <PageHeader
         eyebrow="Plus"
         title="Le reste, sans encombrer"
-        description="Les onglets principaux suivent ton choix de départ. Ici, tu retrouves les outils utiles mais moins prioritaires."
+        description="Les onglets principaux suivent ton choix de départ. Les outils qui ne t'intéressent pas sont retirés au lieu d'être cachés ici."
       />
 
       <SectionCard className="p-4 sm:p-6">

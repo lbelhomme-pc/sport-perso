@@ -26,6 +26,7 @@ import { useSettings } from "../hooks/useSettings";
 import { useStoredData } from "../hooks/useStoredData";
 import type { CompletedSessionType, DailyHabitType, PlannedSessionType } from "../types";
 import { getTotalWeeks, getWeekIndexForDate, toISODate } from "../utils/dates";
+import { wantsNutrition, wantsSport } from "../utils/navigationFocus";
 
 type CalendarViewMode = "agenda" | "compact" | "grid";
 
@@ -82,6 +83,9 @@ function readInitialCalendarView(): CalendarViewMode {
 
 export default function CalendarPage() {
   const { settings } = useSettings();
+  const focus = settings.navigationFocus ?? "both";
+  const showSport = wantsSport(focus);
+  const showNutrition = wantsNutrition(focus);
   const { saveMeal } = useMeals();
   const data = useStoredData();
   const today = toISODate(new Date());
@@ -112,9 +116,16 @@ export default function CalendarPage() {
   ];
   const plannedSessions = weekIndexes.flatMap((week) => getPlannedWeek(settings, week, settings.badmintonVariant));
   const selectedHabits = data.dailyHabits.filter((habit) => habit.date === selectedDate && habit.completed);
-  const selectedCompletedSessions = data.sessions.filter((session) => session.date === selectedDate && session.completed);
-  const selectedPlannedSessions = plannedSessions.filter((session) => session.date === selectedDate && session.type !== "rest");
-  const selectedMeals = data.meals.filter((meal) => meal.date === selectedDate);
+  const selectedCompletedSessions = showSport ? data.sessions.filter((session) => session.date === selectedDate && session.completed) : [];
+  const selectedPlannedSessions = showSport ? plannedSessions.filter((session) => session.date === selectedDate && session.type !== "rest") : [];
+  const selectedMeals = showNutrition ? data.meals.filter((meal) => meal.date === selectedDate) : [];
+  const selectedSummary = [
+    showSport ? `${selectedPlannedSessions.length} prévu` : null,
+    showSport ? `${selectedCompletedSessions.length} fait` : null,
+    showNutrition ? `${selectedMeals.length} repas` : null
+  ]
+    .filter((item): item is string => Boolean(item))
+    .join(" · ");
 
   const selectDay = (day: Date) => {
     setMonth(day);
@@ -124,9 +135,9 @@ export default function CalendarPage() {
   const getDayInfo = (day: Date) => {
     const isoDate = toISODate(day);
     const dayHabits = data.dailyHabits.filter((habit) => habit.date === isoDate && habit.completed);
-    const completedSessions = data.sessions.filter((session) => session.date === isoDate && session.completed);
-    const plannedForDay = plannedSessions.filter((session) => session.date === isoDate && session.type !== "rest");
-    const mealsForDay = data.meals.filter((meal) => meal.date === isoDate);
+    const completedSessions = showSport ? data.sessions.filter((session) => session.date === isoDate && session.completed) : [];
+    const plannedForDay = showSport ? plannedSessions.filter((session) => session.date === isoDate && session.type !== "rest") : [];
+    const mealsForDay = showNutrition ? data.meals.filter((meal) => meal.date === isoDate) : [];
     const movementForDay = data.dailyContexts.find((context) => context.date === isoDate);
     const hasMovement = Boolean((movementForDay?.steps ?? 0) > 0 || (movementForDay?.floors ?? 0) > 0);
     const selected = isoDate === selectedDate;
@@ -160,8 +171,14 @@ export default function CalendarPage() {
     <>
       <PageHeader
         eyebrow="Agenda"
-        title="Jours, habitudes et séances"
-        description="Une vue simple pour voir les jours cochés, les séances prévues, les repas et ce que tu as réellement fait."
+        title={showSport ? "Jours, habitudes et séances" : "Jours, repas et mouvement"}
+        description={
+          showSport && showNutrition
+            ? "Une vue simple pour voir les jours cochés, les séances prévues, les repas et ce que tu as réellement fait."
+            : showSport
+              ? "Une vue simple pour voir les jours cochés, les séances prévues et ce que tu as réellement fait."
+              : "Une vue simple pour voir les jours cochés, les repas et ton mouvement quotidien."
+        }
       />
 
       <SectionCard className="p-5 sm:p-6">
@@ -197,19 +214,20 @@ export default function CalendarPage() {
             <h2 className="mt-2 font-display text-3xl font-black capitalize tracking-[-0.06em]">
               {format(parseISO(selectedDate), "EEEE d MMMM", { locale: fr })}
             </h2>
-            <p className="mt-2 text-sm font-bold text-white/70">
-              {selectedPlannedSessions.length} prévu · {selectedCompletedSessions.length} fait · {selectedMeals.length} repas
-            </p>
-            <button
-              type="button"
-              className="mt-4 w-full action-button bg-limeSoft text-petrol-900 hover:bg-white"
-              onClick={() => setShowMealForm(true)}
-            >
-              <Plus className="h-4 w-4" /> Ajouter un repas ce jour
-            </button>
+            <p className="mt-2 text-sm font-bold text-white/70">{selectedSummary || "Rien à afficher pour ce choix"}</p>
+            {showNutrition ? (
+              <button
+                type="button"
+                className="mt-4 w-full action-button bg-limeSoft text-petrol-900 hover:bg-white"
+                onClick={() => setShowMealForm(true)}
+              >
+                <Plus className="h-4 w-4" /> Ajouter un repas ce jour
+              </button>
+            ) : null}
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {showSport ? (
             <div className="border border-petrol-800/10 bg-white p-3">
               <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Sport</p>
               <div className="mt-2 grid gap-2">
@@ -232,9 +250,12 @@ export default function CalendarPage() {
                 </Link>
               </div>
             </div>
+            ) : null}
 
             <div className="border border-petrol-800/10 bg-white p-3">
-              <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Repas & habitudes</p>
+              <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">
+                {showNutrition ? "Repas & habitudes" : "Habitudes"}
+              </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {selectedHabits.length ? (
                   selectedHabits.map((habit) => (
@@ -245,11 +266,13 @@ export default function CalendarPage() {
                 ) : (
                   <span className="chip">Aucune habitude cochée</span>
                 )}
-                {selectedMeals.map((meal) => (
-                  <span key={meal.id} className="chip">
-                    {MEAL_TYPE_LABELS[meal.mealType]} · {meal.calories} kcal
-                  </span>
-                ))}
+                {showNutrition
+                  ? selectedMeals.map((meal) => (
+                      <span key={meal.id} className="chip">
+                        {MEAL_TYPE_LABELS[meal.mealType]} · {meal.calories} kcal
+                      </span>
+                    ))
+                  : null}
               </div>
             </div>
 
@@ -300,7 +323,7 @@ export default function CalendarPage() {
           </div>
         </div>
 
-        {showMealForm ? (
+        {showNutrition && showMealForm ? (
           <div ref={mealFormRef} className="mt-5 border border-petrol-800/10 bg-white p-3 sm:p-4">
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>

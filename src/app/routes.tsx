@@ -11,6 +11,9 @@ import {
   Utensils
 } from "lucide-react";
 import type { NavigationFocus } from "../types";
+import { wantsNutrition, wantsSport } from "../utils/navigationFocus";
+
+type RouteInterest = "always" | "sport" | "nutrition" | "shared";
 
 const DashboardPage = lazy(() => import("../pages/DashboardPage"));
 const CalendarPage = lazy(() => import("../pages/CalendarPage"));
@@ -28,6 +31,7 @@ export const appRoutes = [
     label: "Aujourd'hui",
     shortLabel: "Auj.",
     icon: Home,
+    interest: "always" as RouteInterest,
     primaryNav: true,
     element: <DashboardPage />
   },
@@ -36,6 +40,7 @@ export const appRoutes = [
     label: "Programme",
     shortLabel: "Prog.",
     icon: CalendarDays,
+    interest: "sport" as RouteInterest,
     primaryNav: true,
     element: <PlanningPage />
   },
@@ -44,6 +49,7 @@ export const appRoutes = [
     label: "Sport",
     shortLabel: "Sport",
     icon: Dumbbell,
+    interest: "sport" as RouteInterest,
     primaryNav: true,
     element: <SessionsPage />
   },
@@ -52,6 +58,7 @@ export const appRoutes = [
     label: "Nutrition",
     shortLabel: "Repas",
     icon: Utensils,
+    interest: "nutrition" as RouteInterest,
     primaryNav: true,
     element: <MealsPage />
   },
@@ -60,6 +67,7 @@ export const appRoutes = [
     label: "Plus",
     shortLabel: "Plus",
     icon: MoreHorizontal,
+    interest: "always" as RouteInterest,
     primaryNav: true,
     element: <MorePage />
   },
@@ -68,6 +76,7 @@ export const appRoutes = [
     label: "Calendrier",
     shortLabel: "Cal.",
     icon: CalendarCheck2,
+    interest: "shared" as RouteInterest,
     primaryNav: false,
     element: <CalendarPage />
   },
@@ -76,6 +85,7 @@ export const appRoutes = [
     label: "Poids",
     shortLabel: "Poids",
     icon: Scale,
+    interest: "nutrition" as RouteInterest,
     primaryNav: false,
     element: <WeightPage />
   },
@@ -84,6 +94,7 @@ export const appRoutes = [
     label: "Progression",
     shortLabel: "Stats",
     icon: BarChart3,
+    interest: "shared" as RouteInterest,
     primaryNav: false,
     element: <StatsPage />
   },
@@ -92,15 +103,16 @@ export const appRoutes = [
     label: "Profil",
     shortLabel: "Profil",
     icon: Settings,
+    interest: "shared" as RouteInterest,
     primaryNav: false,
     element: <SettingsPage />
   }
 ];
 
 const primaryPathsByFocus: Record<NavigationFocus, string[]> = {
-  both: ["/", "/planning", "/sessions", "/meals", "/more"],
+  both: ["/", "/planning", "/sessions", "/meals", "/calendar", "/more"],
   sport: ["/", "/planning", "/sessions", "/calendar", "/more"],
-  nutrition: ["/", "/meals", "/weight", "/stats", "/more"]
+  nutrition: ["/", "/meals", "/weight", "/calendar", "/more"]
 };
 
 function routeByPath(path: string) {
@@ -113,5 +125,10 @@ export function getPrimaryRoutes(focus: NavigationFocus = "both") {
 
 export function getMoreRoutes(focus: NavigationFocus = "both") {
   const primaryPaths = new Set(primaryPathsByFocus[focus]);
-  return appRoutes.filter((route) => route.path !== "/" && route.path !== "/more" && !primaryPaths.has(route.path));
+  return appRoutes.filter((route) => {
+    if (route.path === "/" || route.path === "/more" || primaryPaths.has(route.path)) return false;
+    if (route.interest === "sport" && !wantsSport(focus)) return false;
+    if (route.interest === "nutrition" && !wantsNutrition(focus)) return false;
+    return true;
+  });
 }

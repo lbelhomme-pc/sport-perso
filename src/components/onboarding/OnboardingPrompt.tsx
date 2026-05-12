@@ -61,19 +61,19 @@ const navigationFocusOptions: Array<{
   {
     id: "sport",
     label: "Sport surtout",
-    description: "Menu principal : Aujourd'hui, Programme, Sport, Calendrier. Nutrition reste dans Plus.",
+    description: "Menu principal : Aujourd'hui, Programme, Sport, Calendrier. Nutrition et repas sont masqués.",
     icon: Dumbbell
   },
   {
     id: "nutrition",
     label: "Nutrition surtout",
-    description: "Menu principal : Aujourd'hui, Repas, Poids, Progression. Le sport reste dans Plus.",
+    description: "Menu principal : Aujourd'hui, Repas, Poids, Calendrier. Le sport est masqué.",
     icon: Utensils
   },
   {
     id: "both",
     label: "Sport + nutrition",
-    description: "Menu principal équilibré : Programme, Sport et Repas restent devant.",
+    description: "Menu principal complet : Programme, Sport, Repas et Calendrier restent devant.",
     icon: LayoutGrid
   }
 ];

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, PlayCircle, Utensils } from "lucide-react";
+import { CalendarCheck2, ChevronDown, PlayCircle, Scale, Utensils } from "lucide-react";
 import { SessionForm } from "../components/forms/SessionForm";
 import { SessionMode } from "../components/session/SessionMode";
 import { SectionCard } from "../components/ui/SectionCard";
@@ -12,6 +12,7 @@ import { useSessionChecklists } from "../hooks/useSessionChecklists";
 import { useSessions } from "../hooks/useSessions";
 import type { CompletedSession, EnergyLevel, PlannedSession, SleepQuality } from "../types";
 import { formatLongDate } from "../utils/dates";
+import { wantsNutrition, wantsSport } from "../utils/navigationFocus";
 import { getProteinTarget } from "../utils/nutrition";
 import { getCompletedForPlan } from "../utils/training";
 
@@ -91,6 +92,9 @@ function updateNumberInput(value: string) {
 
 export default function DashboardPage() {
   const dashboard = useDashboard();
+  const focus = dashboard.settings.navigationFocus ?? "both";
+  const showSport = wantsSport(focus);
+  const showNutrition = wantsNutrition(focus);
   const { dailyContext, saveDailyContext } = useDailyContext(dashboard.today);
   const { sessions, saveSession, deletePlannedSessionCompletion } = useSessions();
   const { getCheckedItemIds, toggleChecklistItem } = useSessionChecklists();
@@ -117,7 +121,7 @@ export default function DashboardPage() {
     energy: dailyContext.energyLevel,
     pain: dailyContext.pain
   });
-  const reminders = [
+  const nutritionReminders = [
     dashboard.todayMeals.length ? null : "Repas non saisi",
     dashboard.latestWeight ? null : "Poids absent",
     proteinRatio < 0.75 ? "Protéines basses" : null
@@ -125,7 +129,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      {sessionMode ? (
+      {showSport && sessionMode ? (
         <SessionMode
           session={sessionMode}
           energy={dailyContext.energyLevel}
@@ -141,6 +145,7 @@ export default function DashboardPage() {
         />
       ) : null}
 
+      {showSport ? (
       <SectionCard className="border-l-4 border-limeSoft p-4 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
@@ -172,7 +177,7 @@ export default function DashboardPage() {
           </p>
         </details>
 
-        <div className="mt-5 grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+        <div className={`mt-5 grid gap-2 ${showNutrition ? "sm:grid-cols-[1fr_1fr_auto]" : "sm:grid-cols-[1fr_auto]"}`}>
           {dashboard.todayPlanned ? (
             <button
               type="button"
@@ -188,9 +193,11 @@ export default function DashboardPage() {
               <PlayCircle className="h-5 w-5" /> {todayAction}
             </Link>
           )}
-          <Link to="/meals" className="ghost-button">
-            <Utensils className="h-5 w-5" /> Ajouter repas
-          </Link>
+          {showNutrition ? (
+            <Link to="/meals" className="ghost-button">
+              <Utensils className="h-5 w-5" /> Ajouter repas
+            </Link>
+          ) : null}
           {dashboard.todayPlanned ? (
             <Link to="/planning" className="ghost-button">
               Voir détails
@@ -198,8 +205,41 @@ export default function DashboardPage() {
           ) : null}
         </div>
       </SectionCard>
+      ) : (
+      <SectionCard className="border-l-4 border-limeSoft p-4 sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="eyebrow">Aujourd'hui</p>
+            <p className="mt-1 text-sm font-bold text-muted">{formatLongDate(dashboard.today)}</p>
+            <h1 className="mt-3 font-display text-3xl font-black leading-tight tracking-[-0.06em] text-petrol-800 sm:text-5xl">
+              Nutrition et mouvement
+            </h1>
+            <p className="mt-2 text-xl font-black leading-tight text-petrol-800">
+              Reste environ {remainingLabel(dashboard.remainingCalories)} sur ta journée.
+            </p>
+          </div>
+          <span className="chip bg-limeSoft text-petrol-900">Sans sport dans le menu</span>
+        </div>
 
-      {loggingSession ? (
+        <p className="mt-4 border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
+          Priorité : noter un repas simple, le poids si utile, et tes pas. Les séances et le programme ne sont pas affichés tant que le sport n'est pas choisi dans les réglages.
+        </p>
+
+        <div className="mt-5 grid gap-2 sm:grid-cols-3">
+          <Link to="/meals" className="action-button">
+            <Utensils className="h-5 w-5" /> Saisir un repas
+          </Link>
+          <Link to="/weight" className="ghost-button">
+            <Scale className="h-5 w-5" /> Saisir le poids
+          </Link>
+          <Link to="/calendar" className="ghost-button">
+            <CalendarCheck2 className="h-5 w-5" /> Calendrier
+          </Link>
+        </div>
+      </SectionCard>
+      )}
+
+      {showSport && loggingSession ? (
         <SectionCard className="p-4 sm:p-6">
           <p className="eyebrow">Fin de séance</p>
           <h2 className="title-lg mt-2">Saisir le réel</h2>
@@ -219,6 +259,7 @@ export default function DashboardPage() {
         </SectionCard>
       ) : null}
 
+      {showNutrition ? (
       <SectionCard className="p-4 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
@@ -243,9 +284,9 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {reminders.length ? (
+        {nutritionReminders.length ? (
           <div className="mt-4 flex flex-wrap gap-2">
-            {reminders.map((reminder) => (
+            {nutritionReminders.map((reminder) => (
               <span key={reminder} className="chip bg-red-50 text-red-950">
                 {reminder}
               </span>
@@ -253,19 +294,24 @@ export default function DashboardPage() {
           </div>
         ) : null}
       </SectionCard>
+      ) : null}
 
       <SectionCard className="p-4 sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="eyebrow">Check rapide</p>
-            <h2 className="title-lg mt-2">Comment tu arrives aujourd'hui ?</h2>
+            <h2 className="title-lg mt-2">{showSport ? "Comment tu arrives aujourd'hui ?" : "Mouvement du jour"}</h2>
           </div>
           <p className="max-w-md text-sm font-semibold leading-6 text-muted">
-            {recoveryHint(dailyContext.energyLevel, dailyContext.sleepQuality, dailyContext.pain)}
+            {showSport
+              ? recoveryHint(dailyContext.energyLevel, dailyContext.sleepQuality, dailyContext.pain)
+              : "Saisis juste les pas et les étages. Le reste du suivi sport reste caché."}
           </p>
         </div>
 
-        <div className="mt-5 grid gap-3 lg:grid-cols-4">
+        <div className={`mt-5 grid gap-3 ${showSport ? "lg:grid-cols-4" : "sm:grid-cols-2"}`}>
+          {showSport ? (
+          <>
           <label className="field-label">
             Fatigue
             <select
@@ -325,6 +371,8 @@ export default function DashboardPage() {
               <option value="yes">Oui</option>
             </select>
           </label>
+          </>
+          ) : null}
 
           <label className="field-label">
             Pas
@@ -343,6 +391,26 @@ export default function DashboardPage() {
               placeholder="Ex : 8500"
             />
           </label>
+
+          {!showSport ? (
+            <label className="field-label">
+              Étages
+              <input
+                className="field"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={dailyContext.floors ? String(dailyContext.floors) : ""}
+                onChange={(event) =>
+                  saveDailyContext({
+                    ...dailyContext,
+                    date: dashboard.today,
+                    floors: updateNumberInput(event.target.value)
+                  })
+                }
+                placeholder="Ex : 8"
+              />
+            </label>
+          ) : null}
         </div>
       </SectionCard>
     </>
