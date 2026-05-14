@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ChevronDown, Edit3, Plus, Scale, Trash2 } from "lucide-react";
 import { MetricLineChart } from "../components/charts/MetricLineChart";
 import { WeightForm } from "../components/forms/WeightForm";
@@ -26,11 +27,14 @@ function trendMessage(trend7: number) {
 }
 
 export default function WeightPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { settings } = useSettings();
   const { weights, saveWeight, deleteWeight } = useWeight();
   const [editing, setEditing] = useState<WeightEntry | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [openWeightId, setOpenWeightId] = useState<string | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
+  const shouldOpenFromQuery = searchParams.get("add") === "1";
   const latest = weights[weights.length - 1];
   const targetWeight = settings.startWeight - settings.targetWeightLoss;
   const lost = latest ? Math.max(0, settings.startWeight - latest.weight) : 0;
@@ -42,6 +46,30 @@ export default function WeightPage() {
     date: formatShortDate(entry.date),
     poids: entry.weight
   }));
+
+  const closeForm = () => {
+    setEditing(null);
+    setShowForm(false);
+    if (searchParams.has("add")) {
+      const next = new URLSearchParams(searchParams);
+      next.delete("add");
+      setSearchParams(next, { replace: true });
+    }
+  };
+
+  useEffect(() => {
+    if (shouldOpenFromQuery) {
+      setShowForm(true);
+    }
+  }, [shouldOpenFromQuery]);
+
+  useEffect(() => {
+    if (!showForm && !editing) return;
+
+    window.setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  }, [editing, showForm]);
 
   if (!weights.length) {
     return (
@@ -58,19 +86,21 @@ export default function WeightPage() {
         />
 
         {showForm ? (
+          <div ref={formRef}>
           <SectionCard className="p-5 sm:p-6">
             <p className="eyebrow">Ajout rapide</p>
             <h2 className="title-lg mt-2">Première pesée</h2>
             <div className="mt-5">
               <WeightForm
-                onCancel={() => setShowForm(false)}
+                onCancel={closeForm}
                 onSubmit={(entry) => {
                   saveWeight(entry);
-                  setShowForm(false);
+                  closeForm();
                 }}
               />
             </div>
           </SectionCard>
+          </div>
         ) : (
           <SectionCard className="p-5 sm:p-6">
             <EmptyState
@@ -132,24 +162,22 @@ export default function WeightPage() {
       </SectionCard>
 
       {showForm || editing ? (
+        <div ref={formRef}>
         <SectionCard className="p-5 sm:p-6">
           <p className="eyebrow">{editing ? "Modifier" : "Ajout rapide"}</p>
           <h2 className="title-lg mt-2">{editing ? `${editing.weight} kg` : "Poids du jour"}</h2>
           <div className="mt-5">
             <WeightForm
               initial={editing ?? undefined}
-              onCancel={() => {
-                setEditing(null);
-                setShowForm(false);
-              }}
+              onCancel={closeForm}
               onSubmit={(entry) => {
                 saveWeight(entry);
-                setEditing(null);
-                setShowForm(false);
+                closeForm();
               }}
             />
           </div>
         </SectionCard>
+        </div>
       ) : null}
 
       <SectionCard className="p-5 sm:p-6">

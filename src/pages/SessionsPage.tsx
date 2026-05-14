@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ChevronDown, Edit3, Plus, Trash2, Dumbbell } from "lucide-react";
 import { SessionForm } from "../components/forms/SessionForm";
@@ -8,41 +8,50 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
 import { SESSION_TYPE_LABELS } from "../data/defaults";
 import { useSessions } from "../hooks/useSessions";
+import { useSettings } from "../hooks/useSettings";
 import { makeId } from "../services/storageService";
-import type { CompletedSession, CompletedSessionType } from "../types";
+import type { CompletedSession, CompletedSessionType, SportType } from "../types";
 import { estimateCaloriesFromSession } from "../utils/calories";
 import { formatLongDate, toISODate } from "../utils/dates";
 import { getAverageHeartRate, getAverageRpe } from "../utils/training";
 
-const filters: Array<CompletedSessionType | "all"> = [
-  "all",
+const fallbackSessionTypes: CompletedSessionType[] = [
   "strength",
   "run",
-  "bike",
-  "swim",
-  "racket",
   "badminton",
-  "hybrid",
   "hyrox",
-  "mobility",
   "recovery",
-  "test",
   "free",
   "other"
 ];
 
+function toCompletedSessionType(sport: SportType): CompletedSessionType {
+  return sport;
+}
+
+function buildVisibleSessionTypes(enabledSports: SportType[] | undefined, sessions: CompletedSession[]) {
+  const selectedSports = enabledSports?.length
+    ? enabledSports.map(toCompletedSessionType)
+    : fallbackSessionTypes.filter((type) => type !== "free" && type !== "other");
+  const alreadyUsed = sessions.map((session) => session.type);
+  return Array.from(new Set<CompletedSessionType>([...selectedSports, ...alreadyUsed, "free", "other"]));
+}
+
 function QuickSessionForm({
   date,
+  typeOptions,
   onSubmit,
   onDetailed
 }: {
   date: string;
+  typeOptions: CompletedSessionType[];
   onSubmit: (session: CompletedSession) => void;
   onDetailed: () => void;
 }) {
+  const defaultType = typeOptions.includes("strength") ? "strength" : typeOptions[0] ?? "free";
   const [form, setForm] = useState({
     date,
-    type: "strength" as CompletedSessionType,
+    type: defaultType as CompletedSessionType,
     durationMin: "45",
     rpe: "",
     pain: "no",
@@ -82,9 +91,9 @@ function QuickSessionForm({
         <label className="field-label">
           Type
           <select className="field" value={form.type} onChange={(event) => update("type", event.target.value as CompletedSessionType)}>
-            {Object.entries(SESSION_TYPE_LABELS).map(([value, label]) => (
+            {typeOptions.map((value) => (
               <option key={value} value={value}>
-                {label}
+                {SESSION_TYPE_LABELS[value]}
               </option>
             ))}
           </select>
@@ -159,6 +168,7 @@ function CompletedExercisesList({ session }: { session: CompletedSession }) {
 
 export default function SessionsPage() {
   const { sessions, saveSession, deleteSession } = useSessions();
+  const { settings } = useSettings();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryDate = searchParams.get("date");
   const initialSessionDate = queryDate && /^\d{4}-\d{2}-\d{2}$/.test(queryDate) ? queryDate : toISODate(new Date());
@@ -168,6 +178,12 @@ export default function SessionsPage() {
   const [showForm, setShowForm] = useState(false);
   const [detailedForm, setDetailedForm] = useState(false);
   const [openSessionId, setOpenSessionId] = useState<string | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
+  const sessionTypeOptions = useMemo(
+    () => buildVisibleSessionTypes(settings.enabledSports, sessions),
+    [settings.enabledSports, sessions]
+  );
+  const filters: Array<CompletedSessionType | "all"> = useMemo(() => ["all", ...sessionTypeOptions], [sessionTypeOptions]);
   const filtered = filter === "all" ? sessions : sessions.filter((session) => session.type === filter);
   const totalCalories = filtered.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
   const totalVolume = filtered.reduce((total, session) => total + session.durationMin, 0);
@@ -178,6 +194,20 @@ export default function SessionsPage() {
       setDetailedForm(false);
     }
   }, [shouldOpenFromQuery]);
+
+  useEffect(() => {
+    if (!filters.includes(filter)) {
+      setFilter("all");
+    }
+  }, [filter, filters]);
+
+  useEffect(() => {
+    if (!showForm && !editing) return;
+
+    window.setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  }, [editing, detailedForm, showForm]);
 
   const closeForm = () => {
     setEditing(null);
@@ -195,7 +225,7 @@ export default function SessionsPage() {
       <PageHeader
         eyebrow="Historique"
         title="Séances et sports"
-        description="Tout ce que tu as vraiment fait : musculation, course, vélo, natation, raquette, hybride, mobilité ou séance libre. Le plan compte, mais le réel pilote."
+        description="Tout ce que tu as vraiment fait. Les filtres suivent tes sports activés, avec séance libre et autre en secours."
         action={
           <button
             className="action-button"
@@ -217,6 +247,7 @@ export default function SessionsPage() {
       </section>
 
       {showForm || editing ? (
+        <div ref={formRef}>
         <SectionCard className="p-5 sm:p-6">
           <p className="eyebrow">{editing ? "Modifier" : "Ajouter"}</p>
           <h2 className="title-lg mt-2">{editing ? editing.title : "Nouvelle séance"}</h2>
@@ -224,6 +255,7 @@ export default function SessionsPage() {
             {editing || detailedForm ? (
               <SessionForm
                 initial={editing ?? { date: initialSessionDate }}
+                typeOptions={sessionTypeOptions}
                 onCancel={closeForm}
                 onSubmit={(session) => {
                   saveSession(session);
@@ -234,6 +266,7 @@ export default function SessionsPage() {
               <QuickSessionForm
                 key={initialSessionDate}
                 date={initialSessionDate}
+                typeOptions={sessionTypeOptions}
                 onDetailed={() => setDetailedForm(true)}
                 onSubmit={(session) => {
                   saveSession(session);
@@ -243,6 +276,7 @@ export default function SessionsPage() {
             )}
           </div>
         </SectionCard>
+        </div>
       ) : null}
 
       <SectionCard className="p-5 sm:p-6">

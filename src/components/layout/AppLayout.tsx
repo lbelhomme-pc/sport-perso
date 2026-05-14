@@ -3,6 +3,7 @@ import { APP_NAME } from "../../data/defaults";
 import { getPrimaryRoutes, getRouteMeta } from "../../app/routes";
 import { OnboardingPrompt } from "../onboarding/OnboardingPrompt";
 import { useSettings } from "../../hooks/useSettings";
+import { ScrollToTarget } from "./ScrollToTarget";
 
 function navClass(isActive: boolean) {
   return `inline-flex items-center gap-2 px-3 py-2 text-sm font-black uppercase tracking-[0.06em] transition ${
@@ -21,6 +22,7 @@ export function AppLayout() {
 
   return (
     <div className="min-h-screen">
+      <ScrollToTarget />
       {!settings.onboardingCompleted ? <OnboardingPrompt settings={settings} onComplete={saveSettings} /> : null}
 
       <header className="sticky top-0 z-40 border-b border-white/70 bg-cream/90 backdrop-blur-xl">

@@ -70,6 +70,10 @@ const settingsSchema = z.object({
   defaultBodyWeight: z.coerce.number().positive().default(DEFAULT_SETTINGS.defaultBodyWeight),
   badmintonVariant: z
     .enum([
+      "oneBadTue",
+      "oneBadWed",
+      "oneBadThu",
+      "oneBadFri",
       "twoBadTueWed",
       "twoBadTueThu",
       "twoBadTueFri",

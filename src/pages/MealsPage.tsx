@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ChevronDown, Edit3, Plus, Star, Trash2, Utensils } from "lucide-react";
 import { MealForm } from "../components/forms/MealForm";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -276,6 +277,8 @@ function getNextNutritionAction({
 }
 
 export default function MealsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryDate = searchParams.get("date");
   const { settings } = useSettings();
   const { meals, saveMeal, deleteMeal } = useMeals();
   const { favoriteMeals, saveFavoriteFromMeal, createMealFromFavorite, deleteFavoriteMeal } = useFavoriteMeals();
@@ -290,6 +293,7 @@ export default function MealsPage() {
   const [openFavoriteMealId, setOpenFavoriteMealId] = useState<string | null>(null);
   const { dailyContext, saveDailyContext } = useDailyContext(selectedDate);
   const formRef = useRef<HTMLDivElement>(null);
+  const shouldOpenFromQuery = searchParams.get("add") === "1";
   const dayMeals = meals.filter((meal) => meal.date === selectedDate);
   const daySessions = sessions.filter((session) => session.date === selectedDate);
   const selectedWeek = getWeekIndexForDate(settings.startDate, settings.targetDate, selectedDate);
@@ -333,6 +337,31 @@ export default function MealsPage() {
     saveMeal(createMealFromFavorite(favorite, selectedDate));
     setActiveTab("journal");
   };
+
+  const closeForm = () => {
+    setEditing(null);
+    setShowForm(false);
+    setDetailedForm(false);
+    if (searchParams.has("add")) {
+      const next = new URLSearchParams(searchParams);
+      next.delete("add");
+      setSearchParams(next, { replace: true });
+    }
+  };
+
+  useEffect(() => {
+    if (queryDate && /^\d{4}-\d{2}-\d{2}$/.test(queryDate)) {
+      setSelectedDate(queryDate);
+    }
+  }, [queryDate]);
+
+  useEffect(() => {
+    if (shouldOpenFromQuery) {
+      setActiveTab("journal");
+      setShowForm(true);
+      setDetailedForm(false);
+    }
+  }, [shouldOpenFromQuery]);
 
   useEffect(() => {
     if (!showForm && !editing) return;
@@ -656,28 +685,22 @@ export default function MealsPage() {
               {editing || detailedForm ? (
                 <MealForm
                   initial={editing ?? { date: selectedDate }}
-                  onCancel={() => {
-                    setEditing(null);
-                    setShowForm(false);
-                    setDetailedForm(false);
-                  }}
+                  onCancel={closeForm}
                   onSubmit={(meal) => {
                     saveMeal(meal);
                     setSelectedDate(meal.date);
-                    setEditing(null);
-                    setShowForm(false);
-                    setDetailedForm(false);
+                    closeForm();
                   }}
                 />
               ) : (
                 <QuickMealForm
                   date={selectedDate}
-                  onCancel={() => setShowForm(false)}
+                  onCancel={closeForm}
                   onDetailed={() => setDetailedForm(true)}
                   onSubmit={(meal) => {
                     saveMeal(meal);
                     setSelectedDate(meal.date);
-                    setShowForm(false);
+                    closeForm();
                   }}
                 />
               )}

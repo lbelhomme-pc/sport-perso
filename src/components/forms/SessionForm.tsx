@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Save, X } from "lucide-react";
 import { SESSION_TYPE_LABELS } from "../../data/defaults";
 import { useSessionExerciseLogs } from "../../hooks/useSessionExerciseLogs";
-import type { CompletedSession, EnergyLevel, PlannedSession, SessionDifficulty } from "../../types";
+import type { CompletedSession, CompletedSessionType, EnergyLevel, PlannedSession, SessionDifficulty } from "../../types";
 import { estimateCaloriesFromSession } from "../../utils/calories";
 import { toISODate } from "../../utils/dates";
 import { buildCompletedExercises, mergeSessionNotesWithPlannedExercises } from "../../utils/sessionExercises";
@@ -11,6 +11,7 @@ import { makeId } from "../../services/storageService";
 type SessionFormProps = {
   initial?: Partial<CompletedSession>;
   planned?: PlannedSession;
+  typeOptions?: CompletedSessionType[];
   onSubmit: (session: CompletedSession) => void;
   onCancel?: () => void;
 };
@@ -20,8 +21,9 @@ function mapPlannedType(type: PlannedSession["type"]): CompletedSession["type"] 
   return type;
 }
 
-export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFormProps) {
+export function SessionForm({ initial, planned, typeOptions, onSubmit, onCancel }: SessionFormProps) {
   const plannedType = planned ? mapPlannedType(planned.type) : undefined;
+  const availableTypeOptions = typeOptions?.length ? typeOptions : (Object.keys(SESSION_TYPE_LABELS) as CompletedSessionType[]);
   const { sessionExerciseLogs } = useSessionExerciseLogs(planned?.id);
   const [form, setForm] = useState<{
     id: string;
@@ -43,7 +45,7 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
     id: initial?.id ?? makeId("session"),
     plannedSessionId: initial?.plannedSessionId ?? planned?.id ?? "",
     date: initial?.date ?? planned?.date ?? toISODate(new Date()),
-    type: initial?.type ?? plannedType ?? "strength",
+    type: initial?.type ?? plannedType ?? availableTypeOptions[0] ?? "strength",
     title: initial?.title ?? planned?.title ?? "",
     durationMin: String(initial?.durationMin ?? planned?.durationMin ?? 60),
     averageHeartRate: String(initial?.averageHeartRate ?? ""),
@@ -104,9 +106,9 @@ export function SessionForm({ initial, planned, onSubmit, onCancel }: SessionFor
         <label className="field-label">
           Type
           <select className="field" value={form.type} onChange={(event) => update("type", event.target.value as CompletedSession["type"])}>
-            {Object.entries(SESSION_TYPE_LABELS).map(([value, label]) => (
+            {availableTypeOptions.map((value) => (
               <option key={value} value={value}>
-                {label}
+                {SESSION_TYPE_LABELS[value]}
               </option>
             ))}
           </select>

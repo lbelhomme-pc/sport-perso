@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { ChevronDown, ListChecks, Pencil, PlayCircle, RotateCcw, StickyNote } from "lucide-react";
 import { SessionForm } from "../components/forms/SessionForm";
 import { SessionMode } from "../components/session/SessionMode";
@@ -366,6 +367,8 @@ function SessionCommentBox({
 }
 
 export default function PlanningPage() {
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { settings, saveSettings } = useSettings();
   const { sessions, saveSession, deletePlannedSessionCompletion } = useSessions();
   const { getCheckedItemIds, saveChecklist, toggleChecklistItem } = useSessionChecklists();
@@ -378,6 +381,7 @@ export default function PlanningPage() {
   const [openSessionId, setOpenSessionId] = useState<string | null>(null);
   const [showProgression, setShowProgression] = useState(false);
   const variant = settings.badmintonVariant;
+  const requestedWeek = Number(searchParams.get("week") ?? 0);
   const today = toISODate(new Date());
   const plannedWeek = getPlannedWeek(settings, week, variant).map((session) =>
     applyPlannedSessionOverride(session, getOverride(session.id))
@@ -392,6 +396,23 @@ export default function PlanningPage() {
       return null;
     });
   }, [plannedWeekIds]);
+
+  useEffect(() => {
+    if (requestedWeek >= 1 && requestedWeek <= totalWeeks && requestedWeek !== week) {
+      setWeek(requestedWeek);
+    }
+  }, [requestedWeek, totalWeeks, week]);
+
+  useEffect(() => {
+    if (!location.hash) return;
+    const targetId = decodeURIComponent(location.hash.slice(1));
+    if (!targetId) return;
+
+    setOpenSessionId(targetId);
+    window.setTimeout(() => {
+      document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  }, [location.hash, plannedWeekIds]);
 
   return (
     <>
@@ -446,7 +467,7 @@ export default function PlanningPage() {
               ))}
             </select>
             <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
-              10 configurations disponibles pour le programme compétition. Les autres sports seront ajoutés comme programmes génériques.
+              14 configurations disponibles : 1, 2 ou 3 soirs de badminton selon la semaine.
             </span>
           </label>
 
@@ -571,7 +592,7 @@ export default function PlanningPage() {
             });
 
             return (
-              <article key={session.id} className="panel overflow-hidden">
+              <article key={session.id} id={session.id} className="scroll-mt-24 panel overflow-hidden">
                 <div className="flex flex-col gap-3 p-4 transition hover:bg-mist/50 lg:flex-row lg:items-center lg:justify-between">
                   <button
                     type="button"

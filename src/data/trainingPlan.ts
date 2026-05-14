@@ -407,6 +407,42 @@ function getBadmintonExercises(): ExercisePrescription[] {
 }
 
 export const weekTemplates: Record<BadmintonVariant, DayTemplate[]> = {
+  oneBadTue: [
+    { day: "Lundi", slot: "rest" },
+    { day: "Mardi", slot: "badminton" },
+    { day: "Mercredi", slot: "strength" },
+    { day: "Jeudi", slot: "run" },
+    { day: "Vendredi", slot: "strength", note: "Salle possible si la semaine manque de force." },
+    { day: "Samedi", slot: "recovery" },
+    { day: "Dimanche", slot: "hyrox" }
+  ],
+  oneBadWed: [
+    { day: "Lundi", slot: "rest" },
+    { day: "Mardi", slot: "strength", note: "Salle possible car pas de badminton mardi soir." },
+    { day: "Mercredi", slot: "badminton" },
+    { day: "Jeudi", slot: "run" },
+    { day: "Vendredi", slot: "strength", note: "Salle possible si pas de badminton vendredi soir." },
+    { day: "Samedi", slot: "recovery" },
+    { day: "Dimanche", slot: "hyrox" }
+  ],
+  oneBadThu: [
+    { day: "Lundi", slot: "rest" },
+    { day: "Mardi", slot: "strength", note: "Salle possible car pas de badminton mardi soir." },
+    { day: "Mercredi", slot: "run" },
+    { day: "Jeudi", slot: "badminton" },
+    { day: "Vendredi", slot: "strength", note: "Salle possible si pas de badminton vendredi soir." },
+    { day: "Samedi", slot: "recovery" },
+    { day: "Dimanche", slot: "hyrox" }
+  ],
+  oneBadFri: [
+    { day: "Lundi", slot: "rest" },
+    { day: "Mardi", slot: "strength", note: "Salle possible car pas de badminton mardi soir." },
+    { day: "Mercredi", slot: "run" },
+    { day: "Jeudi", slot: "recovery" },
+    { day: "Vendredi", slot: "badminton" },
+    { day: "Samedi", slot: "strength", note: "Salle courte : technique, gainage, pas d'echec." },
+    { day: "Dimanche", slot: "hyrox" }
+  ],
   twoBadTueWed: [
     { day: "Lundi", slot: "rest" },
     { day: "Mardi", slot: "badminton" },

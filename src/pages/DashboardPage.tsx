@@ -194,17 +194,17 @@ export default function DashboardPage() {
                 <PlayCircle className="h-5 w-5" /> {todayAction}
               </button>
             ) : (
-              <Link to={showSessions ? "/sessions" : "/settings"} className="action-button">
+              <Link to={showSessions ? `/sessions?date=${dashboard.today}&add=1` : "/settings"} className="action-button">
                 <PlayCircle className="h-5 w-5" /> {todayAction}
               </Link>
             )}
             {showNutrition ? (
-              <Link to="/meals" className="ghost-button">
+              <Link to={`/meals?date=${dashboard.today}&add=1`} className="ghost-button">
                 <Utensils className="h-5 w-5" /> Ajouter repas
               </Link>
             ) : null}
             {todayPlanned ? (
-              <Link to="/planning" className="ghost-button">
+              <Link to={`/planning?week=${dashboard.currentWeek}#${todayPlanned.id}`} className="ghost-button">
                 Voir détails
               </Link>
             ) : null}
@@ -238,12 +238,12 @@ export default function DashboardPage() {
 
           <div className="mt-5 grid gap-2 sm:grid-cols-3">
             {showNutrition ? (
-              <Link to="/meals" className="action-button">
+              <Link to={`/meals?date=${dashboard.today}&add=1`} className="action-button">
                 <Utensils className="h-5 w-5" /> Saisir un repas
               </Link>
             ) : null}
             {showWeight ? (
-              <Link to="/weight" className={showNutrition ? "ghost-button" : "action-button"}>
+              <Link to="/weight?add=1" className={showNutrition ? "ghost-button" : "action-button"}>
                 <Scale className="h-5 w-5" /> Saisir le poids
               </Link>
             ) : null}
@@ -288,7 +288,7 @@ export default function DashboardPage() {
               <p className="eyebrow">Nutrition utile</p>
               <h2 className="title-lg mt-2">Reste environ : {remainingLabel(dashboard.remainingCalories)}</h2>
             </div>
-            <Link to="/meals" className="action-button">
+            <Link to={`/meals?date=${dashboard.today}&add=1`} className="action-button">
               <Utensils className="h-5 w-5" /> Saisir mon repas
             </Link>
           </div>

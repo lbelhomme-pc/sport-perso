@@ -37,6 +37,10 @@ export type MealType = "breakfast" | "lunch" | "snack" | "dinner" | "other";
 export type MealQuantityUnit = "g" | "ml" | "dose";
 
 export type BadmintonVariant =
+  | "oneBadTue"
+  | "oneBadWed"
+  | "oneBadThu"
+  | "oneBadFri"
   | "twoBadTueWed"
   | "twoBadTueThu"
   | "twoBadTueFri"

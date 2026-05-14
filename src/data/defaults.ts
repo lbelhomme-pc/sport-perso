@@ -37,6 +37,30 @@ export const DEFAULT_SETTINGS: Settings = {
 
 export const BADMINTON_VARIANTS = [
   {
+    id: "oneBadTue",
+    label: "1 badminton : mardi",
+    shortLabel: "1 bad mar",
+    description: "Mercredi force, jeudi cardio, vendredi salle, dimanche HYROX."
+  },
+  {
+    id: "oneBadWed",
+    label: "1 badminton : mercredi",
+    shortLabel: "1 bad mer",
+    description: "Mardi force, jeudi cardio, vendredi salle, dimanche HYROX."
+  },
+  {
+    id: "oneBadThu",
+    label: "1 badminton : jeudi",
+    shortLabel: "1 bad jeu",
+    description: "Mardi force, mercredi cardio, vendredi salle, dimanche HYROX."
+  },
+  {
+    id: "oneBadFri",
+    label: "1 badminton : vendredi",
+    shortLabel: "1 bad ven",
+    description: "Mardi force, mercredi cardio, samedi salle courte, dimanche HYROX."
+  },
+  {
     id: "twoBadTueWed",
     label: "2 badmintons : mardi + mercredi",
     shortLabel: "2 bad mar-mer",
