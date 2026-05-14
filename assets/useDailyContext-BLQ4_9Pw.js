@@ -1,0 +1,1 @@
+import{u as a,ac as o}from"./index-CgBoHPNt.js";function l(e){return{dailyContext:a().dailyContexts.find(t=>t.date===e)??{date:e,energyLevel:"normal",sleepQuality:"medium",pain:!1,steps:0,floors:0},saveDailyContext:t=>o(t)}}export{l as u};
