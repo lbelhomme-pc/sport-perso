@@ -9,8 +9,10 @@ import { deriveNavigationFocusFromModules, recommendedModulesByGoal, resolveModu
 import { exportJson, getExportPreview, importJsonFile, mergeJsonFiles } from "../services/exportService";
 import { resetData } from "../services/storageService";
 import { useSettings } from "../hooks/useSettings";
-import type { AppExperienceMode, BadmintonVariant, BmrSex, Settings } from "../types";
+import type { AppExperienceMode, BadmintonVariant, BmrSex, NutritionTrackingMode, Settings, UserSportLevel, WeekdayKey } from "../types";
 import { calculateBasalMetabolicRate } from "../utils/calories";
+import { applyNutritionModeToModules, getNutritionModeGuidance, getNutritionModeLabel } from "../utils/nutritionMode";
+import { isHyroxCompetitionMode } from "../utils/sportLabels";
 
 function parseVacationWeeks(value: string): number[] {
   return [
@@ -23,15 +25,37 @@ function parseVacationWeeks(value: string): number[] {
   ].sort((a, b) => a - b);
 }
 
+const dayOptions: Array<{ id: WeekdayKey; label: string }> = [
+  { id: "monday", label: "Lun" },
+  { id: "tuesday", label: "Mar" },
+  { id: "wednesday", label: "Mer" },
+  { id: "thursday", label: "Jeu" },
+  { id: "friday", label: "Ven" },
+  { id: "saturday", label: "Sam" },
+  { id: "sunday", label: "Dim" }
+];
+
+const nutritionModeOptions: NutritionTrackingMode[] = [
+  "disabled",
+  "simple",
+  "no-calories",
+  "calories-macros",
+  "advanced",
+  "performance",
+  "fat-loss-prudent",
+  "muscle-gain"
+];
+
 export default function SettingsPage() {
   const { settings, saveSettings } = useSettings();
   const [form, setForm] = useState<Settings>(settings);
   const [vacationWeeks, setVacationWeeks] = useState(settings.vacationWeeks.join(", "));
+  const hyroxMode = isHyroxCompetitionMode(form);
   const [status, setStatus] = useState("");
   const modulePrefs = resolveModulePreferences(form);
   const showSportSettings = modulePrefs.enabledModules.includes("training") || modulePrefs.enabledModules.includes("sessions");
   const showNutritionSettings = modulePrefs.enabledModules.includes("nutrition");
-  const showWeightSettings = showNutritionSettings || modulePrefs.enabledModules.includes("weight");
+  const showWeightSettings = !form.eatingDisorderHistory && (showNutritionSettings || modulePrefs.enabledModules.includes("weight"));
   const calculatedBmr = calculateBasalMetabolicRate({ ...form, useCalculatedBmr: true }, form.defaultBodyWeight);
   const displayedBmr = form.useCalculatedBmr ? calculatedBmr : form.dailyCalorieTarget;
 
@@ -39,7 +63,7 @@ export default function SettingsPage() {
     setForm((current) => ({
       ...current,
       [key]:
-        key === "targetDate" || key === "startDate"
+        key === "targetDate" || key === "startDate" || key === "injuryNotes"
           ? value
           : key === "appMode"
             ? (value as AppExperienceMode)
@@ -47,7 +71,13 @@ export default function SettingsPage() {
             ? (value as BadmintonVariant)
           : key === "sex"
             ? (value as BmrSex)
-            : key === "useCalculatedBmr"
+          : key === "sportLevel"
+            ? (value as UserSportLevel)
+          : key === "nutritionMode"
+            ? (value as NutritionTrackingMode)
+          : key === "useCalculatedBmr"
+              ? Boolean(value)
+            : key === "privacyConsentAccepted" || key === "eatingDisorderHistory"
               ? Boolean(value)
               : Number(value)
     }));
@@ -60,23 +90,62 @@ export default function SettingsPage() {
   };
 
   const updateModules = (next: Pick<Settings, "enabledModules" | "primaryModuleTabs">) => {
+    const nextNutritionMode =
+      next.enabledModules?.includes("nutrition") && (form.nutritionMode ?? "calories-macros") === "disabled"
+        ? "simple"
+        : form.nutritionMode ?? "calories-macros";
+    const guarded = applyNutritionModeToModules(nextNutritionMode, next.enabledModules ?? [], next.primaryModuleTabs ?? []);
+    const safeEnabled = form.eatingDisorderHistory ? guarded.enabledModules.filter((moduleId) => moduleId !== "weight") : guarded.enabledModules;
+    const safeTabs = form.eatingDisorderHistory ? guarded.primaryModuleTabs.filter((moduleId) => moduleId !== "weight") : guarded.primaryModuleTabs;
     const nextForm = {
       ...form,
-      enabledModules: next.enabledModules,
-      primaryModuleTabs: next.primaryModuleTabs,
-      navigationFocus: deriveNavigationFocusFromModules(next.enabledModules ?? [])
+      nutritionMode: nextNutritionMode,
+      enabledModules: safeEnabled,
+      primaryModuleTabs: safeTabs,
+      navigationFocus: deriveNavigationFocusFromModules(safeEnabled)
     };
 
     persistForm(nextForm, "Navigation mise à jour automatiquement.");
   };
 
+  const updateEatingDisorderHistory = (checked: boolean) => {
+    const safeModules = checked ? modulePrefs.enabledModules.filter((moduleId) => moduleId !== "weight") : modulePrefs.enabledModules;
+    const safeTabs = checked ? modulePrefs.primaryModuleTabs.filter((moduleId) => moduleId !== "weight") : modulePrefs.primaryModuleTabs;
+    const nextNutritionMode = checked && ["calories-macros", "advanced", "performance", "fat-loss-prudent", "muscle-gain"].includes(form.nutritionMode ?? "")
+      ? "no-calories"
+      : form.nutritionMode ?? "calories-macros";
+    const guarded = applyNutritionModeToModules(nextNutritionMode, safeModules, safeTabs);
+
+    persistForm(
+      {
+        ...form,
+        eatingDisorderHistory: checked,
+        nutritionMode: nextNutritionMode,
+        enabledModules: guarded.enabledModules,
+        primaryModuleTabs: guarded.primaryModuleTabs,
+        navigationFocus: deriveNavigationFocusFromModules(guarded.enabledModules)
+      },
+      checked
+        ? "Mode prudent activé : calories avancées et poids sont masqués par défaut."
+        : "Préférence santé mise à jour."
+    );
+  };
+
   const applyRecommendedModules = () => {
     const recommended = recommendedModulesByGoal[form.appMode ?? "competition"];
+    const nextNutritionMode =
+      recommended.enabled.includes("nutrition") && (form.nutritionMode ?? "calories-macros") === "disabled"
+        ? "simple"
+        : form.nutritionMode ?? "calories-macros";
+    const guarded = applyNutritionModeToModules(nextNutritionMode, recommended.enabled, recommended.tabs);
+    const safeEnabled = form.eatingDisorderHistory ? guarded.enabledModules.filter((moduleId) => moduleId !== "weight") : guarded.enabledModules;
+    const safeTabs = form.eatingDisorderHistory ? guarded.primaryModuleTabs.filter((moduleId) => moduleId !== "weight") : guarded.primaryModuleTabs;
     const nextForm = {
       ...form,
-      enabledModules: recommended.enabled,
-      primaryModuleTabs: recommended.tabs,
-      navigationFocus: deriveNavigationFocusFromModules(recommended.enabled)
+      nutritionMode: nextNutritionMode,
+      enabledModules: safeEnabled,
+      primaryModuleTabs: safeTabs,
+      navigationFocus: deriveNavigationFocusFromModules(safeEnabled)
     };
 
     persistForm(nextForm, "Configuration recommandée appliquée.");
@@ -95,9 +164,9 @@ export default function SettingsPage() {
         title="Profil et préférences"
         summary={
           showSportSettings && showNutritionSettings
-            ? "Mode principal, dates, poids, BMR, déficit et configuration compétition."
+            ? "Mode principal, dates, poids, BMR, déficit et modules."
             : showSportSettings
-              ? "Mode principal, calendrier, programme et configuration compétition."
+              ? "Mode principal, calendrier, programme et modules."
               : "Mode principal, nutrition, poids, BMR et déficit."
         }
         defaultOpen
@@ -121,7 +190,7 @@ export default function SettingsPage() {
                 ))}
               </select>
               <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
-                Phase 1 : ce choix prépare la personnalisation générale sans supprimer le programme HYROX.
+                Phase 1 : ce choix personnalise l'expérience sans supprimer les modes spécialisés.
               </span>
             </label>
             <div className="grid gap-3 sm:col-span-2 xl:col-span-4">
@@ -137,6 +206,36 @@ export default function SettingsPage() {
                 Appliquer la configuration recommandée pour ce mode
               </button>
             </div>
+            <label className="field-label sm:col-span-2">
+              Mode nutrition
+              <select
+                className="field"
+                value={form.nutritionMode ?? "calories-macros"}
+                onChange={(event) => {
+                  const mode = event.target.value as NutritionTrackingMode;
+                  const guarded = applyNutritionModeToModules(mode, modulePrefs.enabledModules, modulePrefs.primaryModuleTabs);
+                  persistForm(
+                    {
+                      ...form,
+                      nutritionMode: mode,
+                      enabledModules: guarded.enabledModules,
+                      primaryModuleTabs: guarded.primaryModuleTabs,
+                      navigationFocus: deriveNavigationFocusFromModules(guarded.enabledModules)
+                    },
+                    mode === "disabled" ? "Nutrition désactivée et retirée des menus." : "Mode nutrition mis à jour."
+                  );
+                }}
+              >
+                {nutritionModeOptions.map((mode) => (
+                  <option key={mode} value={mode}>
+                    {getNutritionModeLabel(mode)}
+                  </option>
+                ))}
+              </select>
+              <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
+                {getNutritionModeGuidance(form.nutritionMode ?? "calories-macros")}
+              </span>
+            </label>
             {showSportSettings ? (
             <>
             <label className="field-label">
@@ -147,17 +246,72 @@ export default function SettingsPage() {
               Début préparation
               <input className="field" type="date" value={form.startDate} onChange={(event) => update("startDate", event.target.value)} />
             </label>
-            <label className="field-label sm:col-span-2">
-              Configuration badminton du programme HYROX
-              <select className="field" value={form.badmintonVariant} onChange={(event) => update("badmintonVariant", event.target.value)}>
-                {BADMINTON_VARIANTS.map((variant) => (
-                  <option key={variant.id} value={variant.id}>
-                    {variant.label}
+            {hyroxMode ? (
+              <label className="field-label sm:col-span-2">
+                Configuration badminton du programme HYROX
+                <select className="field" value={form.badmintonVariant} onChange={(event) => update("badmintonVariant", event.target.value)}>
+                  {BADMINTON_VARIANTS.map((variant) => (
+                    <option key={variant.id} value={variant.id}>
+                      {variant.label}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
+                  Les 14 combinaisons 1/2/3 badmintons sont conservées dans le mode compétition HYROX.
+                </span>
+              </label>
+            ) : null}
+            <label className="field-label">
+              Niveau sportif
+              <select className="field" value={form.sportLevel ?? "intermediate"} onChange={(event) => update("sportLevel", event.target.value)}>
+                <option value="beginner">Débutant</option>
+                <option value="intermediate">Intermédiaire</option>
+                <option value="advanced">Confirmé</option>
+              </select>
+            </label>
+            <label className="field-label">
+              Durée max par séance
+              <select className="field" value={form.maxSessionDurationMin ?? 75} onChange={(event) => update("maxSessionDurationMin", event.target.value)}>
+                {[30, 45, 60, 75, 90].map((duration) => (
+                  <option key={duration} value={duration}>
+                    {duration} min
                   </option>
                 ))}
               </select>
+            </label>
+            <div className="field-label sm:col-span-2">
+              Jours disponibles
+              <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
+                {dayOptions.map((day) => {
+                  const active = form.availableDays?.includes(day.id) ?? false;
+
+                  return (
+                    <button
+                      key={day.id}
+                      type="button"
+                      className={`min-h-11 border text-sm font-black uppercase tracking-[0.05em] ${
+                        active ? "border-petrol-800 bg-limeSoft text-petrol-900" : "border-petrol-800/10 bg-white text-muted"
+                      }`}
+                      onClick={() => {
+                        const current = form.availableDays ?? [];
+                        const availableDays = active ? current.filter((item) => item !== day.id) : [...current, day.id];
+                        setForm((previous) => ({ ...previous, availableDays }));
+                      }}
+                    >
+                      {day.label}
+                    </button>
+                  );
+                })}
+              </div>
               <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
-                Les 10 combinaisons sont conservées dans le mode compétition HYROX.
+                Le planning transforme les séances des jours indisponibles en repos/mobilité.
+              </span>
+            </div>
+            <label className="field-label sm:col-span-2">
+              Douleurs / limitations
+              <input className="field" value={form.injuryNotes ?? ""} onChange={(event) => update("injuryNotes", event.target.value)} placeholder="Ex : mollet, genou, épaule..." />
+              <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
+                Ajouté aux consignes de séance et utilisé pour baisser l'agressivité.
               </span>
             </label>
             </>
@@ -182,6 +336,9 @@ export default function SettingsPage() {
             <label className="field-label">
               Protéines g/kg
               <input className="field" type="number" step="0.1" value={form.proteinPerKg} onChange={(event) => update("proteinPerKg", event.target.value)} />
+              <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
+                1,9 g/kg convient souvent à un sportif, mais ce n'est pas universel. Ajuste selon objectif, faim, santé et avis pro si besoin.
+              </span>
             </label>
             <label className="field-label">
               Taille
@@ -234,7 +391,7 @@ export default function SettingsPage() {
               Déficit cible kcal/jour
               <input className="field" type="number" value={form.targetDailyDeficit} onChange={(event) => update("targetDailyDeficit", event.target.value)} />
               <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
-                400 kcal = perte progressive, moins agressive pour l'entraînement.
+                La cible alimentaire part de la maintenance estimée, jamais de BMR - déficit. 400 kcal reste une valeur prudente à ajuster avec fatigue/faim/sommeil.
               </span>
             </label>
             </>
@@ -259,6 +416,53 @@ export default function SettingsPage() {
             {status ? <span className="text-sm font-black text-petrol-800">{status}</span> : null}
           </div>
         </form>
+      </CollapsibleSectionCard>
+
+      <CollapsibleSectionCard
+        eyebrow="Confidentialité"
+        title="Données locales santé / sport"
+        summary={form.privacyConsentAccepted ? "Consentement enregistré pour le stockage local." : "Consentement à valider avant un suivi complet."}
+      >
+        <div className="grid gap-4">
+          <p className="text-sm font-semibold leading-6 text-muted">
+            L'application stocke localement dans ce navigateur des données de sport, récupération, nutrition et poids. Il n'y a pas de backend en V1.
+            Tu peux exporter, importer, fusionner ou réinitialiser ces données depuis cette page.
+          </p>
+          <label className="flex items-start gap-3 text-sm font-bold leading-6 text-ink">
+            <input
+              className="mt-1"
+              type="checkbox"
+              checked={Boolean(form.privacyConsentAccepted)}
+              onChange={(event) => {
+                const accepted = event.target.checked;
+                const nextForm = {
+                  ...form,
+                  privacyConsentAccepted: accepted,
+                  privacyConsentAt: accepted ? new Date().toISOString() : undefined
+                };
+                persistForm(nextForm, accepted ? "Consentement confidentialité enregistré." : "Consentement retiré.");
+              }}
+            />
+            <span>J'accepte ce stockage local et je comprends que je reste responsable de mes exports/sauvegardes.</span>
+          </label>
+          {form.privacyConsentAt ? <p className="text-xs font-bold text-muted">Dernière validation : {new Date(form.privacyConsentAt).toLocaleString("fr-FR")}</p> : null}
+          <label className="flex items-start gap-3 border border-petrol-800/10 bg-mist/45 p-3 text-sm font-bold leading-6 text-ink">
+            <input
+              className="mt-1"
+              type="checkbox"
+              checked={Boolean(form.eatingDisorderHistory)}
+              onChange={(event) => updateEatingDisorderHistory(event.target.checked)}
+            />
+            <span>
+              Antécédents de troubles alimentaires ou suivi sensible : masquer par défaut les calories avancées et le poids. Tu peux garder un journal simple
+              basé sur repas, protéines, hydratation et sensations.
+            </span>
+          </label>
+          <div className="border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-semibold leading-6 text-ink">
+            Grossesse, pathologie, traitement, mineur, antécédents TCA : demande un avis médical avant d'utiliser les objectifs nutrition/poids.
+            Douleur persistante ou technique modifiée : demande un avis professionnel avant les séances intenses.
+          </div>
+        </div>
       </CollapsibleSectionCard>
 
       <CollapsibleSectionCard

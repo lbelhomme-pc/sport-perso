@@ -58,6 +58,12 @@ const settingsSchema = z.object({
   injuryNotes: z.string().default(DEFAULT_SETTINGS.injuryNotes ?? ""),
   targetEventType: z.enum(["hyrox", "other", "none"]).default(DEFAULT_SETTINGS.targetEventType ?? "hyrox"),
   programLengthWeeks: z.union([z.literal(4), z.literal(8), z.literal(12)]).default(DEFAULT_SETTINGS.programLengthWeeks ?? 12),
+  nutritionMode: z
+    .enum(["disabled", "simple", "no-calories", "calories-macros", "advanced", "performance", "fat-loss-prudent", "muscle-gain"])
+    .default(DEFAULT_SETTINGS.nutritionMode ?? "calories-macros"),
+  eatingDisorderHistory: z.boolean().default(DEFAULT_SETTINGS.eatingDisorderHistory ?? false),
+  privacyConsentAccepted: z.boolean().default(DEFAULT_SETTINGS.privacyConsentAccepted ?? false),
+  privacyConsentAt: z.string().optional(),
   startWeight: z.coerce.number().positive().default(DEFAULT_SETTINGS.startWeight),
   targetWeightLoss: z.coerce.number().positive().default(DEFAULT_SETTINGS.targetWeightLoss),
   proteinPerKg: z.coerce.number().positive().default(DEFAULT_SETTINGS.proteinPerKg),
@@ -140,6 +146,8 @@ const completedSessionSchema = z.object({
   rpe: z.coerce.number().min(0).max(10).optional(),
   difficulty: z.enum(["easy", "ok", "hard"]).optional(),
   pain: z.boolean().optional(),
+  painDuring: z.coerce.number().min(0).max(10).optional(),
+  fatigueDuring: z.coerce.number().min(0).max(10).optional(),
   energyAfter: z.enum(["fatigue", "normal", "strong"]).optional(),
   notes: z.string().optional(),
   completed: z.boolean().default(true),
@@ -161,10 +169,12 @@ const mealFoodItemSchema = z.object({
   protein: z.coerce.number().nonnegative(),
   carbs: z.coerce.number().nonnegative(),
   fat: z.coerce.number().nonnegative(),
+  fiber: z.coerce.number().nonnegative().optional(),
   foodCalories100g: z.coerce.number().nonnegative().optional(),
   foodProtein100g: z.coerce.number().nonnegative().optional(),
   foodCarbs100g: z.coerce.number().nonnegative().optional(),
-  foodFat100g: z.coerce.number().nonnegative().optional()
+  foodFat100g: z.coerce.number().nonnegative().optional(),
+  foodFiber100g: z.coerce.number().nonnegative().optional()
 });
 
 const mealSchema = z.object({
@@ -176,6 +186,7 @@ const mealSchema = z.object({
   protein: z.coerce.number().nonnegative(),
   carbs: z.coerce.number().nonnegative(),
   fat: z.coerce.number().nonnegative(),
+  fiber: z.coerce.number().nonnegative().optional(),
   notes: z.string().optional(),
   source: z.enum(["manual", "openfoodfacts", "common"]).optional(),
   foodCode: z.string().optional(),
@@ -189,6 +200,7 @@ const mealSchema = z.object({
   foodProtein100g: z.coerce.number().nonnegative().optional(),
   foodCarbs100g: z.coerce.number().nonnegative().optional(),
   foodFat100g: z.coerce.number().nonnegative().optional(),
+  foodFiber100g: z.coerce.number().nonnegative().optional(),
   updatedAt: z.string().optional(),
   items: z.array(mealFoodItemSchema).optional()
 });
@@ -201,6 +213,7 @@ const favoriteMealSchema = z.object({
   protein: z.coerce.number().nonnegative(),
   carbs: z.coerce.number().nonnegative(),
   fat: z.coerce.number().nonnegative(),
+  fiber: z.coerce.number().nonnegative().optional(),
   notes: z.string().optional(),
   items: z.array(mealFoodItemSchema).optional(),
   createdAt: z.string().default(""),
@@ -220,8 +233,12 @@ const dailyContextSchema = z.object({
   energyLevel: z.enum(["fatigue", "normal", "strong"]).default("normal"),
   sleepQuality: z.enum(["good", "medium", "bad"]).default("medium"),
   pain: z.boolean().default(false),
+  fatigueMorning: z.coerce.number().min(0).max(10).optional(),
+  painMorning: z.coerce.number().min(0).max(10).optional(),
+  hungerLevel: z.coerce.number().min(0).max(10).optional(),
   steps: z.coerce.number().nonnegative().default(0),
   floors: z.coerce.number().nonnegative().default(0),
+  waterMl: z.coerce.number().nonnegative().default(0),
   updatedAt: z.string().optional()
 });
 

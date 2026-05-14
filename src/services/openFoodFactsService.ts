@@ -11,6 +11,7 @@ export type FoodProduct = {
   protein100g: number;
   carbs100g: number;
   fat100g: number;
+  fiber100g?: number;
   origin: "common" | "openfoodfacts";
 };
 
@@ -77,6 +78,7 @@ function normalizeProduct(product: OpenFoodFactsRawProduct): FoodProduct | null 
     protein100g: Math.round(toNumber(nutriments.proteins_100g) * 10) / 10,
     carbs100g: Math.round(toNumber(nutriments.carbohydrates_100g) * 10) / 10,
     fat100g: Math.round(toNumber(nutriments.fat_100g) * 10) / 10,
+    fiber100g: Math.round(toNumber(nutriments.fiber_100g) * 10) / 10,
     origin: "openfoodfacts"
   };
 }
@@ -88,7 +90,8 @@ export function calculateFoodMacros(product: FoodProduct, quantityGrams: number)
     calories: Math.round(product.calories100g * ratio),
     protein: Math.round(product.protein100g * ratio * 10) / 10,
     carbs: Math.round(product.carbs100g * ratio * 10) / 10,
-    fat: Math.round(product.fat100g * ratio * 10) / 10
+    fat: Math.round(product.fat100g * ratio * 10) / 10,
+    fiber: Math.round((product.fiber100g ?? 0) * ratio * 10) / 10
   };
 }
 

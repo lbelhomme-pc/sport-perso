@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { ChevronDown, ListChecks, Pencil, PlayCircle, RotateCcw, StickyNote } from "lucide-react";
 import { SessionForm } from "../components/forms/SessionForm";
+import { BadmintonVariantSelector } from "../components/planning/BadmintonVariantSelector";
 import { SessionMode } from "../components/session/SessionMode";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
-import { BADMINTON_VARIANTS, ENERGY_LEVELS, PLANNED_TYPE_LABELS } from "../data/defaults";
+import { ENERGY_LEVELS } from "../data/defaults";
 import { buildPhases } from "../data/phases";
 import { getSessionChecklist } from "../data/sessionChecklists";
 import { getDisplayedVersion, getPlannedWeek, getTrainingContext } from "../data/trainingPlan";
@@ -13,7 +14,7 @@ import { applyPlannedSessionOverride, usePlanningOverrides } from "../hooks/useP
 import { useSessionChecklists } from "../hooks/useSessionChecklists";
 import { useSessions } from "../hooks/useSessions";
 import { useSettings } from "../hooks/useSettings";
-import type { BadmintonVariant, EnergyLevel, ExercisePrescription, PlannedSession, SessionChecklistItem } from "../types";
+import type { EnergyLevel, ExercisePrescription, PlannedSession, SessionChecklistItem } from "../types";
 import { formatShortDate, getCurrentWeekIndex, getTotalWeeks, getWeekEnd, getWeekStart, toISODate } from "../utils/dates";
 import {
   getActionableExercises,
@@ -24,6 +25,7 @@ import {
   getGuidanceExercises
 } from "../utils/exerciseDisplay";
 import { getCompletedForPlan } from "../utils/training";
+import { getPlannedTypeLabel, getProgramLabel, hideHyroxWhenGeneral, isHyroxCompetitionMode, personalizePlannedSession } from "../utils/sportLabels";
 
 function groupChecklistItems(items: SessionChecklistItem[]) {
   return items.reduce<Array<{ group: string; items: SessionChecklistItem[] }>>((groups, item) => {
@@ -69,61 +71,6 @@ function getPlanningSessionStatus({
   if (session.type !== "rest" && session.date < today) return "sautée";
   if (session.type !== "rest" && (energy !== "normal" || Boolean(note?.trim()))) return "adaptée";
   return "prévue";
-}
-
-function BadmintonVariantSelector({
-  value,
-  onChange
-}: {
-  value: BadmintonVariant;
-  onChange: (variant: BadmintonVariant) => void;
-}) {
-  const [expanded, setExpanded] = useState(false);
-  const activeVariant = BADMINTON_VARIANTS.find((variant) => variant.id === value);
-
-  return (
-    <div className="mt-4 border border-petrol-800/10 bg-white p-4">
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="eyebrow">Configuration compétition HYROX</p>
-          <p className="mt-1 text-xs font-bold text-muted">
-            Active : <span className="text-petrol-800">{activeVariant?.label ?? "Configuration inconnue"}</span>
-          </p>
-        </div>
-        <button type="button" className="ghost-button" onClick={() => setExpanded((current) => !current)}>
-          {expanded ? "Masquer les options" : "Choisir une config"}
-          <ChevronDown className={`h-4 w-4 transition ${expanded ? "rotate-180" : ""}`} />
-        </button>
-      </div>
-
-      {expanded ? (
-      <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
-        {BADMINTON_VARIANTS.map((variant) => {
-          const active = variant.id === value;
-
-          return (
-            <button
-              key={variant.id}
-              type="button"
-              className={`min-h-24 border p-3 text-left transition ${
-                active ? "border-petrol-800 bg-petrol-800 text-white" : "border-petrol-800/10 bg-mist/45 text-petrol-800 hover:border-petrol-800/35"
-              }`}
-              onClick={() => onChange(variant.id)}
-            >
-              <span className={active ? "text-[0.65rem] font-black uppercase tracking-[0.14em] text-limeSoft" : "text-[0.65rem] font-black uppercase tracking-[0.14em] text-muted"}>
-                {variant.shortLabel}
-              </span>
-              <span className="mt-2 block text-sm font-black leading-5">{variant.label}</span>
-              <span className={active ? "mt-2 block text-xs font-bold leading-5 text-white/65" : "mt-2 block text-xs font-bold leading-5 text-muted"}>
-                {variant.description}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-      ) : null}
-    </div>
-  );
 }
 
 function SessionChecklistPanel({
@@ -381,10 +328,11 @@ export default function PlanningPage() {
   const [openSessionId, setOpenSessionId] = useState<string | null>(null);
   const [showProgression, setShowProgression] = useState(false);
   const variant = settings.badmintonVariant;
+  const hyroxMode = isHyroxCompetitionMode(settings);
   const requestedWeek = Number(searchParams.get("week") ?? 0);
   const today = toISODate(new Date());
   const plannedWeek = getPlannedWeek(settings, week, variant).map((session) =>
-    applyPlannedSessionOverride(session, getOverride(session.id))
+    personalizePlannedSession(applyPlannedSessionOverride(session, getOverride(session.id)), settings)
   );
   const plannedWeekIds = plannedWeek.map((session) => session.id).join("|");
   const context = getTrainingContext(settings, week);
@@ -435,12 +383,16 @@ export default function PlanningPage() {
 
       <PageHeader
         eyebrow="Programmes"
-        title="Programme actif"
-        description="Le socle devient multi-sport. Le programme HYROX reste ici comme mode compétition spécialisé, avec semaine, configuration badminton et niveau d’énergie."
+        title={getProgramLabel(settings)}
+        description={
+          hyroxMode
+            ? "Mode compétition spécialisé : semaine, configuration badminton et niveau d'énergie restent disponibles."
+            : "Mode général : l'écran sert à préparer tes séances sans vocabulaire compétition inutile."
+        }
       />
 
       <SectionCard className="p-5 sm:p-6">
-        <div className="grid gap-3 lg:grid-cols-[0.8fr_1.45fr_0.75fr]">
+        <div className={`grid gap-3 ${hyroxMode ? "lg:grid-cols-2" : "lg:grid-cols-[0.8fr_1.45fr_0.75fr]"}`}>
           <label className="field-label">
             Semaine
             <select className="field" value={week} onChange={(event) => setWeek(Number(event.target.value))}>
@@ -453,23 +405,12 @@ export default function PlanningPage() {
             </select>
           </label>
 
-          <label className="field-label">
-            Configuration badminton HYROX
-            <select
-              className="field"
-              value={variant}
-              onChange={(event) => saveSettings({ ...settings, badmintonVariant: event.target.value as BadmintonVariant })}
-            >
-              {BADMINTON_VARIANTS.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
-            <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
-              14 configurations disponibles : 1, 2 ou 3 soirs de badminton selon la semaine.
-            </span>
-          </label>
+          {!hyroxMode ? (
+            <div className="field-label">
+              Organisation
+              <div className="field flex items-center text-sm font-black text-muted">Planning adapté aux modules et au niveau choisis.</div>
+            </div>
+          ) : null}
 
           <label className="field-label">
             État
@@ -483,16 +424,18 @@ export default function PlanningPage() {
           </label>
         </div>
 
-        <BadmintonVariantSelector
-          value={variant}
-          onChange={(nextVariant) => saveSettings({ ...settings, badmintonVariant: nextVariant })}
-        />
+        {hyroxMode ? (
+          <BadmintonVariantSelector
+            value={variant}
+            onChange={(nextVariant) => saveSettings({ ...settings, badmintonVariant: nextVariant })}
+          />
+        ) : null}
 
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           <div className="bg-mist/70 p-4">
             <p className="eyebrow">Phase</p>
-            <h2 className="mt-2 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{context.phase.title}</h2>
-            <p className="mt-2 text-sm font-semibold leading-6 text-muted">{context.phase.summary}</p>
+            <h2 className="mt-2 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{hideHyroxWhenGeneral(context.phase.title, settings)}</h2>
+            <p className="mt-2 text-sm font-semibold leading-6 text-muted">{hideHyroxWhenGeneral(context.phase.summary, settings)}</p>
           </div>
           <div className="bg-white p-4">
             <p className="eyebrow">Période</p>
@@ -564,7 +507,7 @@ export default function PlanningPage() {
                     week >= phase.from && week <= phase.to ? "border-petrol-800 bg-sage" : "border-petrol-800/15 bg-white"
                   }`}
                 >
-                  <p className="text-sm font-black text-petrol-800">{phase.title}</p>
+                  <p className="text-sm font-black text-petrol-800">{hideHyroxWhenGeneral(phase.title, settings)}</p>
                   <p className="text-xs font-bold text-muted">
                     Semaines {phase.from} à {phase.to}
                   </p>
@@ -578,7 +521,11 @@ export default function PlanningPage() {
           {plannedWeek.map((session) => {
             const completed = getCompletedForPlan(sessions, session.id);
             const content = getDisplayedVersion(session, energy);
-            const checklistItems = getSessionChecklist(session, energy);
+            const checklistItems = getSessionChecklist(session, energy).map((item) => ({
+              ...item,
+              group: hideHyroxWhenGeneral(item.group, settings),
+              label: hideHyroxWhenGeneral(item.label, settings)
+            }));
             const checkedItemIds = getCheckedItemIds(session.id);
             const hasStructuredExercises = getActionableExercises(session.exercises).length > 0;
             const override = getOverride(session.id);
@@ -604,7 +551,7 @@ export default function PlanningPage() {
                     </span>
                     <span className="min-w-0">
                       <span className="block text-[0.68rem] font-black uppercase tracking-[0.14em] text-muted">
-                        {session.day} · {PLANNED_TYPE_LABELS[session.type]}
+                        {session.day} · {getPlannedTypeLabel(session.type, settings)}
                       </span>
                       <span className="mt-1 block truncate font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
                         {session.title}

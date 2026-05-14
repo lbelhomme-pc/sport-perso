@@ -5,7 +5,7 @@ import { MealForm } from "../components/forms/MealForm";
 import { EmptyState } from "../components/ui/EmptyState";
 import { ProgressBar } from "../components/ui/ProgressBar";
 import { SectionCard } from "../components/ui/SectionCard";
-import { ENERGY_LEVELS, MEAL_TYPE_LABELS, PLANNED_TYPE_LABELS } from "../data/defaults";
+import { MEAL_TYPE_LABELS } from "../data/defaults";
 import { getPlannedWeek } from "../data/trainingPlan";
 import { useDailyContext } from "../hooks/useDailyContext";
 import { useFavoriteMeals } from "../hooks/useFavoriteMeals";
@@ -18,6 +18,9 @@ import type { CompletedSession, Meal, PlannedSession } from "../types";
 import { getAdaptiveDailyCalorieTarget, getDailyDeficit, getRemainingCaloriesToTarget } from "../utils/calories";
 import { formatLongDate, getWeekIndexForDate, toISODate } from "../utils/dates";
 import { getMealTotals, getProteinTarget } from "../utils/nutrition";
+import { tracksNutritionNumbers } from "../utils/nutritionMode";
+import { clampReadinessScore } from "../utils/readiness";
+import { getPlannedTypeLabel } from "../utils/sportLabels";
 
 function NutritionStat({ label, value, hint }: { label: string; value: string | number; hint?: string }) {
   return (
@@ -36,11 +39,15 @@ function parseMacro(value: string) {
 
 function QuickMealForm({
   date,
+  showNumbers,
+  showFiber,
   onSubmit,
   onDetailed,
   onCancel
 }: {
   date: string;
+  showNumbers: boolean;
+  showFiber: boolean;
   onSubmit: (meal: Meal) => void;
   onDetailed: () => void;
   onCancel: () => void;
@@ -52,6 +59,7 @@ function QuickMealForm({
     protein: "",
     carbs: "",
     fat: "",
+    fiber: "",
     notes: ""
   });
   const update = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }));
@@ -63,10 +71,11 @@ function QuickMealForm({
       date: form.date,
       mealType,
       name: MEAL_TYPE_LABELS[mealType],
-      calories: Math.round(parseMacro(form.calories)),
-      protein: Math.round(parseMacro(form.protein) * 10) / 10,
-      carbs: Math.round(parseMacro(form.carbs) * 10) / 10,
-      fat: Math.round(parseMacro(form.fat) * 10) / 10,
+      calories: showNumbers ? Math.round(parseMacro(form.calories)) : 0,
+      protein: showNumbers ? Math.round(parseMacro(form.protein) * 10) / 10 : 0,
+      carbs: showNumbers ? Math.round(parseMacro(form.carbs) * 10) / 10 : 0,
+      fat: showNumbers ? Math.round(parseMacro(form.fat) * 10) / 10 : 0,
+      fiber: showNumbers ? Math.round(parseMacro(form.fiber) * 10) / 10 : 0,
       notes: form.notes || undefined,
       source: "manual"
     });
@@ -75,7 +84,9 @@ function QuickMealForm({
   return (
     <div className="grid gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft">
       <div className="border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
-        Saisie rapide : une estimation suivie bat un repas oublié. Calories + protéines suffisent pour commencer.
+        {showNumbers
+          ? "Saisie rapide : une estimation suivie bat un repas oublié. Calories + protéines suffisent pour commencer."
+          : "Saisie rapide : type de repas, portions et sensations suffisent. Pas besoin de chiffres."}
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="field-label">
@@ -93,7 +104,8 @@ function QuickMealForm({
           </select>
         </label>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      {showNumbers ? (
+      <div className={`grid grid-cols-2 gap-3 ${showFiber ? "sm:grid-cols-5" : "sm:grid-cols-4"}`}>
         <label className="field-label">
           Calories
           <input className="field" inputMode="decimal" value={form.calories} onChange={(event) => update("calories", event.target.value)} placeholder="650" />
@@ -110,7 +122,18 @@ function QuickMealForm({
           Lipides
           <input className="field" inputMode="decimal" value={form.fat} onChange={(event) => update("fat", event.target.value)} placeholder="optionnel" />
         </label>
+        {showFiber ? (
+          <label className="field-label">
+            Fibres
+            <input className="field" inputMode="decimal" value={form.fiber} onChange={(event) => update("fiber", event.target.value)} placeholder="optionnel" />
+          </label>
+        ) : null}
       </div>
+      ) : (
+        <div className="border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
+          Mode sans calories : note le type de repas, les portions dans les notes, la source de protéines, l'eau et le timing autour séance.
+        </div>
+      )}
       <label className="field-label">
         Note facultative
         <input className="field" value={form.notes} onChange={(event) => update("notes", event.target.value)} placeholder="Ex : post-séance, resto, faim OK..." />
@@ -119,9 +142,11 @@ function QuickMealForm({
         <button type="button" className="ghost-button" onClick={onCancel}>
           Annuler
         </button>
+        {showNumbers ? (
         <button type="button" className="ghost-button" onClick={onDetailed}>
           Recherche / favoris
         </button>
+        ) : null}
         <button type="button" className="action-button" onClick={save}>
           <Plus className="h-4 w-4" /> Enregistrer rapide
         </button>
@@ -191,20 +216,24 @@ const nutritionActionToneClasses: Record<NextNutritionAction["tone"], string> = 
 
 function getNextNutritionAction({
   plannedSession,
+  plannedSessionLabel,
   completedSessions,
   deficit,
   targetDeficit,
   protein,
   proteinTarget,
-  remainingCalories
+  remainingCalories,
+  hungerLevel
 }: {
   plannedSession?: PlannedSession;
+  plannedSessionLabel?: string;
   completedSessions: CompletedSession[];
   deficit: number;
   targetDeficit: number;
   protein: number;
   proteinTarget: number;
   remainingCalories: number;
+  hungerLevel?: number;
 }): NextNutritionAction {
   const proteinGap = Math.max(0, Math.round(proteinTarget - protein));
   const deficitAboveTarget = Math.round(deficit - targetDeficit);
@@ -213,7 +242,7 @@ function getNextNutritionAction({
   const remainingChip =
     remainingCalories >= 0
       ? `Reste ${Math.round(remainingCalories)} kcal`
-      : `Objectif dépassé de ${Math.abs(Math.round(remainingCalories))} kcal`;
+      : `Au-dessus de la cible de ${Math.abs(Math.round(remainingCalories))} kcal`;
   const balanceChip =
     deficit >= 0 ? `Déficit ${Math.round(deficit)} kcal` : `Surplus ${Math.abs(Math.round(deficit))} kcal`;
   const chips = [
@@ -239,8 +268,10 @@ function getNextNutritionAction({
       eyebrow: "Énergie",
       title: "Déficit trop agressif",
       message:
-        "Ajoute 300 à 500 kcal simples aujourd'hui : féculent, fruit, laitage, huile d'olive/noix ou collation protéinée selon ta faim.",
-      chips: [`+${deficitAboveTarget} kcal vs cible`, ...chips]
+        (hungerLevel ?? 0) >= 8
+          ? "Déficit élevé + faim marquée : ajoute un repas simple protéiné/glucides et évite de transformer la perte de poids en fatigue."
+          : "Ajoute 300 à 500 kcal simples aujourd'hui : féculent, fruit, laitage, huile d'olive/noix ou collation protéinée selon ta faim.",
+      chips: [`+${deficitAboveTarget} kcal vs cible`, `Faim ${hungerLevel ?? 5}/10`, ...chips]
     };
   }
 
@@ -251,7 +282,7 @@ function getNextNutritionAction({
       title: "Collation légère si séance dans les 3 h",
       message:
         "Vise glucides + protéines digestes : banane + skyr, compote + whey, tartines + jambon, ou yaourt + céréales simples.",
-      chips: [`${PLANNED_TYPE_LABELS[plannedSession.type]} prévu`, `${plannedSession.durationMin} min`, ...chips]
+      chips: [`${plannedSessionLabel ?? "Séance"} prévu`, `${plannedSession.durationMin} min`, ...chips]
     };
   }
 
@@ -284,6 +315,8 @@ export default function MealsPage() {
   const { favoriteMeals, saveFavoriteFromMeal, createMealFromFavorite, deleteFavoriteMeal } = useFavoriteMeals();
   const { sessions } = useSessions();
   const { weights } = useWeight();
+  const showNutritionNumbers = tracksNutritionNumbers(settings);
+  const showFiber = showNutritionNumbers && settings.nutritionMode === "advanced";
   const [selectedDate, setSelectedDate] = useState(toISODate(new Date()));
   const [editing, setEditing] = useState<Meal | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -302,7 +335,7 @@ export default function MealsPage() {
   );
   const totals = getMealTotals(dayMeals);
   const latestWeight = weights[weights.length - 1]?.weight ?? settings.defaultBodyWeight;
-  const proteinTarget = getProteinTarget(latestWeight, settings.proteinPerKg);
+  const proteinTarget = showNutritionNumbers ? getProteinTarget(latestWeight, settings.proteinPerKg) : 0;
   const adaptiveCalorieTarget = getAdaptiveDailyCalorieTarget({
     settings,
     plannedSession: selectedPlannedSession,
@@ -312,16 +345,18 @@ export default function MealsPage() {
     floors: dailyContext.floors,
     bodyWeightKg: latestWeight
   });
-  const dailyDeficit = getDailyDeficit(dayMeals, adaptiveCalorieTarget.maintenanceTarget);
-  const remainingCalories = getRemainingCaloriesToTarget(dayMeals, adaptiveCalorieTarget.target);
+  const dailyDeficit = showNutritionNumbers ? getDailyDeficit(dayMeals, adaptiveCalorieTarget.maintenanceTarget) : 0;
+  const remainingCalories = showNutritionNumbers ? getRemainingCaloriesToTarget(dayMeals, adaptiveCalorieTarget.target) : 0;
   const nutritionAction = getNextNutritionAction({
     plannedSession: selectedPlannedSession,
+    plannedSessionLabel: selectedPlannedSession ? getPlannedTypeLabel(selectedPlannedSession.type, settings) : undefined,
     completedSessions: daySessions,
     deficit: dailyDeficit,
     targetDeficit: adaptiveCalorieTarget.targetDeficit,
     protein: totals.protein,
     proteinTarget,
-    remainingCalories
+    remainingCalories,
+    hungerLevel: dailyContext.hungerLevel
   });
 
   const saveExistingMealAsFavorite = (meal: Meal) => {
@@ -399,26 +434,65 @@ export default function MealsPage() {
                 Jour
                 <input className="field" type="date" value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} />
               </label>
-              <label className="field-label">
-                Ressenti
-                <select
-                  className="field"
-                  value={dailyContext.energyLevel}
-                  onChange={(event) =>
-                    saveDailyContext({
-                      ...dailyContext,
-                      date: selectedDate,
-                      energyLevel: event.target.value as typeof dailyContext.energyLevel
-                    })
-                  }
-                >
-                  {ENERGY_LEVELS.map((level) => (
-                    <option key={level.id} value={level.id}>
-                      {level.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <div className="field-label">
+                Réveil
+                <div className="grid gap-2 sm:grid-cols-3">
+                  <label className="grid gap-1">
+                    <span className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Fatigue /10</span>
+                    <input
+                      className="field"
+                      type="number"
+                      min="0"
+                      max="10"
+                      inputMode="numeric"
+                      value={dailyContext.fatigueMorning ?? 5}
+                      onChange={(event) =>
+                        saveDailyContext({
+                          ...dailyContext,
+                          date: selectedDate,
+                          fatigueMorning: clampReadinessScore(Number(event.target.value))
+                        })
+                      }
+                    />
+                  </label>
+                  <label className="grid gap-1">
+                    <span className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Douleur /10</span>
+                    <input
+                      className="field"
+                      type="number"
+                      min="0"
+                      max="10"
+                      inputMode="numeric"
+                      value={dailyContext.painMorning ?? 0}
+                      onChange={(event) =>
+                        saveDailyContext({
+                          ...dailyContext,
+                          date: selectedDate,
+                          painMorning: clampReadinessScore(Number(event.target.value))
+                        })
+                      }
+                    />
+                  </label>
+                  <label className="grid gap-1">
+                    <span className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Faim /10</span>
+                    <input
+                      className="field"
+                      type="number"
+                      min="0"
+                      max="10"
+                      inputMode="numeric"
+                      value={dailyContext.hungerLevel ?? 5}
+                      onChange={(event) =>
+                        saveDailyContext({
+                          ...dailyContext,
+                          date: selectedDate,
+                          hungerLevel: clampReadinessScore(Number(event.target.value))
+                        })
+                      }
+                    />
+                  </label>
+                </div>
+              </div>
               <div className="field-label">
                 Mouvement
                 <div className="grid gap-2 sm:grid-cols-2">
@@ -456,18 +530,46 @@ export default function MealsPage() {
                       placeholder="Ex : 8"
                     />
                   </label>
+                  <label className="grid gap-1">
+                    <span className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Eau ml</span>
+                    <input
+                      className="field"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={dailyContext.waterMl ? String(dailyContext.waterMl) : ""}
+                      onChange={(event) =>
+                        saveDailyContext({
+                          ...dailyContext,
+                          date: selectedDate,
+                          waterMl: Number(event.target.value.replace(/\D/g, ""))
+                        })
+                      }
+                      placeholder="Ex : 1500"
+                    />
+                    <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
+                      Suivi simple, sans objectif médical précis.
+                    </span>
+                  </label>
                 </div>
               </div>
             </div>
 
-            <div className={`border-l-4 p-4 sm:p-5 ${nutritionActionToneClasses[nutritionAction.tone]}`}>
+            <div className={`border-l-4 p-4 sm:p-5 ${showNutritionNumbers ? nutritionActionToneClasses[nutritionAction.tone] : "border-limeSoft bg-mist/60 text-ink"}`}>
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
-                  <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] opacity-70">{nutritionAction.eyebrow}</p>
-                  <h2 className="mt-2 font-display text-3xl font-black tracking-[-0.06em]">{nutritionAction.title}</h2>
-                  <p className="mt-2 max-w-3xl text-sm font-bold leading-6 opacity-80">{nutritionAction.message}</p>
+                  <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] opacity-70">
+                    {showNutritionNumbers ? nutritionAction.eyebrow : "Journal simple"}
+                  </p>
+                  <h2 className="mt-2 font-display text-3xl font-black tracking-[-0.06em]">
+                    {showNutritionNumbers ? nutritionAction.title : "Repas sans calories"}
+                  </h2>
+                  <p className="mt-2 max-w-3xl text-sm font-bold leading-6 opacity-80">
+                    {showNutritionNumbers
+                      ? nutritionAction.message
+                      : "Note repas, portions, protéines, hydratation et timing autour séance. Aucun calcul de calories ou macros n'est affiché dans ce mode."}
+                  </p>
                   <div className="mt-4 flex flex-wrap gap-2">
-                    {nutritionAction.chips.map((chip) => (
+                    {(showNutritionNumbers ? nutritionAction.chips : ["Sans calories", "Protéines", "Hydratation", "Timing séance"]).map((chip) => (
                       <span
                         key={chip}
                         className={`chip ${nutritionAction.tone === "recovery" ? "bg-white/15 text-white" : "bg-white/70"}`}
@@ -495,6 +597,8 @@ export default function MealsPage() {
               </div>
             </div>
 
+            {showNutritionNumbers ? (
+            <>
             <div className="grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
               <div className={remainingCalories >= 0 ? "bg-limeSoft p-4 text-petrol-900" : "bg-red-50 p-4 text-red-950"}>
                 <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] opacity-70">
@@ -516,6 +620,7 @@ export default function MealsPage() {
                   hint={balanceHint(dailyDeficit, settings.targetDailyDeficit)}
                 />
                 <NutritionStat label="Protéines" value={`${Math.round(totals.protein)} g`} hint={`/ ${proteinTarget} g`} />
+                {showFiber ? <NutritionStat label="Fibres" value={`${Math.round(totals.fiber)} g`} hint="mode avancé" /> : null}
                 <NutritionStat
                   label="NEAT bas"
                   value={`${adaptiveCalorieTarget.neatCalories} kcal`}
@@ -527,6 +632,7 @@ export default function MealsPage() {
             <div className="flex flex-wrap gap-2 text-xs font-black uppercase tracking-[0.08em] text-petrol-800">
               <span className="chip">Glucides {Math.round(totals.carbs)} g</span>
               <span className="chip">Lipides {Math.round(totals.fat)} g</span>
+              {showFiber ? <span className="chip">Fibres {Math.round(totals.fiber)} g</span> : null}
               <span className="chip">Dépense totale {adaptiveCalorieTarget.maintenanceTarget} kcal</span>
               <span className="chip">Cible à manger {adaptiveCalorieTarget.target} kcal</span>
             </div>
@@ -535,6 +641,10 @@ export default function MealsPage() {
               <div>
                 <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">BMR</p>
                 <p className="mt-1 text-petrol-800">{adaptiveCalorieTarget.base} kcal</p>
+              </div>
+              <div>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Activité de base</p>
+                <p className="mt-1 text-petrol-800">+{adaptiveCalorieTarget.baselineActivityCalories} kcal</p>
               </div>
               <div>
                 <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">EAT / sport</p>
@@ -570,12 +680,15 @@ export default function MealsPage() {
                 Voir le calcul
               </summary>
               <p className="mt-2">
-                Calcul simple : BMR {adaptiveCalorieTarget.base} + sport validé {adaptiveCalorieTarget.activityFuel} + pas{" "}
-                {adaptiveCalorieTarget.stepsNeatCalories} + étages {adaptiveCalorieTarget.floorsNeatCalories} + ressenti {adaptiveCalorieTarget.feelingFuel} - déficit{" "}
-                {adaptiveCalorieTarget.targetDeficit} = cible à manger {adaptiveCalorieTarget.target} kcal.{" "}
+                Calcul simple : BMR {adaptiveCalorieTarget.base} + activité de base {adaptiveCalorieTarget.baselineActivityCalories} + sport validé{" "}
+                {adaptiveCalorieTarget.activityFuel} + pas {adaptiveCalorieTarget.stepsNeatCalories} + étages {adaptiveCalorieTarget.floorsNeatCalories} + ressenti{" "}
+                {adaptiveCalorieTarget.feelingFuel} = maintenance estimée {adaptiveCalorieTarget.maintenanceTarget} kcal. Cible à manger = maintenance - déficit{" "}
+                {adaptiveCalorieTarget.targetDeficit}, plancher BMR {adaptiveCalorieTarget.minimumTarget} kcal : {adaptiveCalorieTarget.target} kcal.{" "}
                 {balanceFormulaSentence(dailyDeficit, adaptiveCalorieTarget.maintenanceTarget, Math.round(totals.calories))}
               </p>
             </details>
+            </>
+            ) : null}
           </div>
         </div>
       </section>
@@ -695,6 +808,8 @@ export default function MealsPage() {
               ) : (
                 <QuickMealForm
                   date={selectedDate}
+                  showNumbers={showNutritionNumbers}
+                  showFiber={showFiber}
                   onCancel={closeForm}
                   onDetailed={() => setDetailedForm(true)}
                   onSubmit={(meal) => {
@@ -729,6 +844,7 @@ export default function MealsPage() {
                       <span className="chip">{meal.protein} g prot.</span>
                       <span className="chip">{meal.carbs} g gluc.</span>
                       <span className="chip">{meal.fat} g lip.</span>
+                      {showFiber && (meal.fiber ?? 0) > 0 ? <span className="chip">{meal.fiber} g fibres</span> : null}
                       {meal.items?.length ? <span className="chip">{meal.items.length} aliment(s)</span> : null}
                       <span className="chip bg-white">{isOpen ? "Détails ouverts" : "Voir détails"}</span>
                     </div>
@@ -767,6 +883,7 @@ export default function MealsPage() {
                             <p className="text-sm font-black text-petrol-800">{item.foodName}</p>
                             <p className="text-xs font-bold text-muted">
                               {item.calories} kcal - P {item.protein} g | G {item.carbs} g | L {item.fat} g
+                              {showFiber && (item.fiber ?? 0) > 0 ? ` | Fibres ${item.fiber} g` : ""}
                             </p>
                           </div>
                         ))}

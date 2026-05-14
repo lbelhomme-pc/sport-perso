@@ -25,6 +25,7 @@ export function favoriteMealFromMeal(meal: Meal, name: string): FavoriteMeal {
     protein: rounded(meal.protein),
     carbs: rounded(meal.carbs),
     fat: rounded(meal.fat),
+    fiber: rounded(meal.fiber ?? 0),
     notes: meal.notes,
     items: cloneMealItems(meal.items),
     createdAt: now,
@@ -45,6 +46,7 @@ export function mealFromFavoriteMeal(favorite: FavoriteMeal, date: string): Meal
     protein: rounded(favorite.protein),
     carbs: rounded(favorite.carbs),
     fat: rounded(favorite.fat),
+    fiber: rounded(favorite.fiber ?? 0),
     notes: favorite.notes,
     source: firstItem?.source,
     foodCode: firstItem?.foodCode,
@@ -58,6 +60,7 @@ export function mealFromFavoriteMeal(favorite: FavoriteMeal, date: string): Meal
     foodProtein100g: firstItem?.foodProtein100g,
     foodCarbs100g: firstItem?.foodCarbs100g,
     foodFat100g: firstItem?.foodFat100g,
+    foodFiber100g: firstItem?.foodFiber100g,
     items,
     updatedAt: new Date().toISOString()
   };

@@ -24,6 +24,28 @@ export function AppLayout() {
     <div className="min-h-screen">
       <ScrollToTarget />
       {!settings.onboardingCompleted ? <OnboardingPrompt settings={settings} onComplete={saveSettings} /> : null}
+      {settings.onboardingCompleted && !settings.privacyConsentAccepted ? (
+        <div className="fixed inset-x-0 bottom-0 z-[70] border-t border-petrol-800/10 bg-white p-4 shadow-soft lg:bottom-auto lg:top-0">
+          <div className="mx-auto flex max-w-4xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-bold leading-6 text-ink">
+              Données locales : l'app stocke sport, récupération, nutrition et poids dans ce navigateur uniquement. Aucun backend en V1.
+            </p>
+            <button
+              type="button"
+              className="action-button justify-center"
+              onClick={() =>
+                saveSettings({
+                  ...settings,
+                  privacyConsentAccepted: true,
+                  privacyConsentAt: new Date().toISOString()
+                })
+              }
+            >
+              J'accepte
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <header className="sticky top-0 z-40 border-b border-white/70 bg-cream/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">

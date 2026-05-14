@@ -76,6 +76,16 @@ export type TargetEventType = "hyrox" | "other" | "none";
 
 export type NavigationFocus = "both" | "sport" | "nutrition";
 
+export type NutritionTrackingMode =
+  | "disabled"
+  | "simple"
+  | "no-calories"
+  | "calories-macros"
+  | "advanced"
+  | "performance"
+  | "fat-loss-prudent"
+  | "muscle-gain";
+
 export type AppModuleId =
   | "home"
   | "training"
@@ -100,8 +110,12 @@ export type DailyContext = {
   energyLevel: EnergyLevel;
   sleepQuality?: SleepQuality;
   pain?: boolean;
+  fatigueMorning?: number;
+  painMorning?: number;
+  hungerLevel?: number;
   steps?: number;
   floors?: number;
+  waterMl?: number;
   updatedAt?: string;
 };
 
@@ -209,6 +223,10 @@ export type Settings = {
   injuryNotes?: string;
   targetEventType?: TargetEventType;
   programLengthWeeks?: 4 | 8 | 12;
+  nutritionMode?: NutritionTrackingMode;
+  eatingDisorderHistory?: boolean;
+  privacyConsentAccepted?: boolean;
+  privacyConsentAt?: string;
   startWeight: number;
   targetWeightLoss: number;
   proteinPerKg: number;
@@ -255,6 +273,8 @@ export type CompletedSession = {
   rpe?: number;
   difficulty?: SessionDifficulty;
   pain?: boolean;
+  painDuring?: number;
+  fatigueDuring?: number;
   energyAfter?: EnergyLevel;
   notes?: string;
   completed: boolean;
@@ -271,6 +291,7 @@ export type Meal = {
   protein: number;
   carbs: number;
   fat: number;
+  fiber?: number;
   notes?: string;
   source?: "manual" | "openfoodfacts" | "common";
   foodCode?: string;
@@ -284,6 +305,7 @@ export type Meal = {
   foodProtein100g?: number;
   foodCarbs100g?: number;
   foodFat100g?: number;
+  foodFiber100g?: number;
   items?: MealFoodItem[];
   updatedAt?: string;
 };
@@ -302,10 +324,12 @@ export type MealFoodItem = {
   protein: number;
   carbs: number;
   fat: number;
+  fiber?: number;
   foodCalories100g?: number;
   foodProtein100g?: number;
   foodCarbs100g?: number;
   foodFat100g?: number;
+  foodFiber100g?: number;
 };
 
 export type FavoriteMeal = {
@@ -316,6 +340,7 @@ export type FavoriteMeal = {
   protein: number;
   carbs: number;
   fat: number;
+  fiber?: number;
   notes?: string;
   items?: MealFoodItem[];
   createdAt: string;

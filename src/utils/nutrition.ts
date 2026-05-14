@@ -10,9 +10,10 @@ export function getMealTotals(meals: Meal[]) {
       calories: total.calories + meal.calories,
       protein: total.protein + meal.protein,
       carbs: total.carbs + meal.carbs,
-      fat: total.fat + meal.fat
+      fat: total.fat + meal.fat,
+      fiber: total.fiber + (meal.fiber ?? 0)
     }),
-    { calories: 0, protein: 0, carbs: 0, fat: 0 }
+    { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }
   );
 }
 

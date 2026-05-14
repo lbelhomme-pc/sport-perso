@@ -1,7 +1,8 @@
-import type { CompletedSession, DashboardAlert, Meal, Settings, WeightEntry, WeekSummary } from "../types";
+import type { CompletedSession, DailyContext, DashboardAlert, Meal, Settings, WeightEntry, WeekSummary } from "../types";
 import { getMealTotals, getProteinTarget } from "../utils/nutrition";
 import { getDailyDeficit } from "../utils/calories";
 import { parseISO, subDays } from "date-fns";
+import { tracksNutritionNumbers } from "../utils/nutritionMode";
 
 function getRecentWeights(weights: WeightEntry[], days: number): WeightEntry[] {
   const sorted = [...weights].sort((a, b) => a.date.localeCompare(b.date));
@@ -23,6 +24,7 @@ export function generateDashboardAlerts(args: {
   todayMeals: Meal[];
   todaySessions: CompletedSession[];
   recentSessions: CompletedSession[];
+  recentDailyContexts?: DailyContext[];
   weights: WeightEntry[];
   weekSummary: WeekSummary;
   maintenanceCalorieTarget?: number;
@@ -32,7 +34,15 @@ export function generateDashboardAlerts(args: {
   const dailyDeficit = getDailyDeficit(args.todayMeals, args.maintenanceCalorieTarget ?? args.settings.dailyCalorieTarget);
   const proteinTarget = getProteinTarget(args.settings.defaultBodyWeight, args.settings.proteinPerKg);
   const intenseRecent = args.recentSessions.filter((session) => (session.rpe ?? 0) >= 8).length;
+  const painfulRecentSessions = args.recentSessions.filter((session) => session.pain || (session.painDuring ?? 0) >= 4).length;
+  const fatigueDays = args.recentDailyContexts?.filter((context) => context.energyLevel === "fatigue" || (context.fatigueMorning ?? 0) >= 7).length ?? 0;
+  const badSleepDays = args.recentDailyContexts?.filter((context) => context.sleepQuality === "bad").length ?? 0;
+  const painDays = args.recentDailyContexts?.filter((context) => context.pain || (context.painMorning ?? 0) >= 4).length ?? 0;
+  const hungryDays = args.recentDailyContexts?.filter((context) => (context.hungerLevel ?? 0) >= 8).length ?? 0;
+  const highPainTrainingSessions = args.recentSessions.filter((session) => (session.painDuring ?? 0) >= 7).length;
+  const highFatigueTrainingSessions = args.recentSessions.filter((session) => (session.fatigueDuring ?? 0) >= 8).length;
   const sevenDayTrend = getWeightTrend(args.weights, 7);
+  const showNutritionNumbers = tracksNutritionNumbers(args.settings);
 
   if (intenseRecent >= 3) {
     alerts.push({
@@ -43,16 +53,37 @@ export function generateDashboardAlerts(args: {
     });
   }
 
-  if (dailyDeficit > args.settings.targetDailyDeficit + 350) {
+  if (painfulRecentSessions >= 2 || painDays >= 3 || highPainTrainingSessions >= 1) {
+    alerts.push({
+      id: "pain-persistent",
+      tone: "danger",
+      title: "Douleur persistante",
+      message: "Douleur qui modifie ta foulée ou ta technique : stop séance intense et avis professionnel si ça persiste."
+    });
+  }
+
+  if (fatigueDays >= 3 || highFatigueTrainingSessions >= 2) {
+    alerts.push({
+      id: "fatigue-chronic",
+      tone: "warning",
+      title: "Fatigue qui s'accumule",
+      message: "Fatigue élevée au réveil ou pendant plusieurs séances. Passe la prochaine séance en version courte ou récupération active."
+    });
+  }
+
+  if (showNutritionNumbers && dailyDeficit > args.settings.targetDailyDeficit + 350) {
     alerts.push({
       id: "deficit",
       tone: "danger",
       title: "Déficit trop agressif",
-      message: "Le déficit réel estimé dépasse la cible de plus de 350 kcal. Ajoute un repas simple protéiné/glucides pour protéger la récup."
+      message:
+        hungryDays >= 1
+          ? "Déficit élevé + faim marquée : ajoute un repas simple protéiné/glucides et évite de transformer la perte de poids en fatigue."
+          : "Le déficit réel estimé dépasse la cible de plus de 350 kcal. Ajoute un repas simple protéiné/glucides pour protéger la récup."
     });
   }
 
-  if (mealTotals.protein > 0 && mealTotals.protein < proteinTarget * 0.75) {
+  if (showNutritionNumbers && mealTotals.protein > 0 && mealTotals.protein < proteinTarget * 0.75) {
     alerts.push({
       id: "protein",
       tone: "warning",
@@ -66,7 +97,12 @@ export function generateDashboardAlerts(args: {
       id: "weight-fast",
       tone: "warning",
       title: "Poids en baisse rapide",
-      message: "La tendance 7 jours baisse vite. Surveille sommeil, faim et qualité des séances."
+      message:
+        fatigueDays >= 2 && badSleepDays >= 2
+          ? "Perte rapide + fatigue + sommeil mauvais : augmente l'apport ou réduis la charge."
+          : fatigueDays >= 2 || badSleepDays >= 2
+            ? "Perte rapide avec fatigue ou sommeil fragile : augmente légèrement l'apport ou allège la charge."
+            : "La tendance 7 jours baisse vite. Regarde la moyenne longue, pas seulement le poids du jour."
     });
   }
 

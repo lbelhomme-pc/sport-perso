@@ -17,7 +17,7 @@ import { ChevronLeft, ChevronRight, Dumbbell, Footprints, Plus } from "lucide-re
 import { MealForm } from "../components/forms/MealForm";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
-import { MEAL_TYPE_LABELS, PLANNED_TYPE_LABELS, SESSION_TYPE_LABELS } from "../data/defaults";
+import { MEAL_TYPE_LABELS } from "../data/defaults";
 import { getPlannedWeek } from "../data/trainingPlan";
 import { useDailyContext } from "../hooks/useDailyContext";
 import { DAILY_HABIT_LABELS } from "../hooks/useDailyHabits";
@@ -27,6 +27,8 @@ import { useStoredData } from "../hooks/useStoredData";
 import { useUserModules } from "../hooks/useUserModules";
 import type { CompletedSessionType, DailyHabitType, PlannedSessionType } from "../types";
 import { getTotalWeeks, getWeekIndexForDate, toISODate } from "../utils/dates";
+import { tracksNutritionNumbers } from "../utils/nutritionMode";
+import { getCompletedTypeLabel, getPlannedTypeLabel, isHyroxCompetitionMode, personalizePlannedSession } from "../utils/sportLabels";
 
 type CalendarViewMode = "agenda" | "compact" | "grid";
 
@@ -83,9 +85,15 @@ function readInitialCalendarView(): CalendarViewMode {
 
 export default function CalendarPage() {
   const { settings } = useSettings();
+  const hyroxMode = isHyroxCompetitionMode(settings);
   const { isEnabled } = useUserModules();
   const showSport = isEnabled("training") || isEnabled("sessions");
   const showNutrition = isEnabled("nutrition");
+  const showNutritionNumbers = showNutrition && tracksNutritionNumbers(settings);
+  const plannedLabel = (type: PlannedSessionType) => getPlannedTypeLabel(type, settings);
+  const sessionLabel = (type: CompletedSessionType) => getCompletedTypeLabel(type, settings);
+  const plannedShortLabel = (type: PlannedSessionType) => (!hyroxMode && type === "hyrox" ? "Hybr" : PLANNED_SHORT_LABELS[type]);
+  const sessionShortLabel = (type: CompletedSessionType) => (!hyroxMode && type === "hyrox" ? "Hybr" : SESSION_SHORT_LABELS[type]);
   const { saveMeal } = useMeals();
   const data = useStoredData();
   const today = toISODate(new Date());
@@ -114,7 +122,9 @@ export default function CalendarPage() {
         .filter((week): week is number => typeof week === "number" && week >= 1 && week <= totalWeeks)
     )
   ];
-  const plannedSessions = weekIndexes.flatMap((week) => getPlannedWeek(settings, week, settings.badmintonVariant));
+  const plannedSessions = weekIndexes.flatMap((week) =>
+    getPlannedWeek(settings, week, settings.badmintonVariant).map((session) => personalizePlannedSession(session, settings))
+  );
   const selectedHabits = data.dailyHabits.filter((habit) => habit.date === selectedDate && habit.completed);
   const selectedCompletedSessions = showSport ? data.sessions.filter((session) => session.date === selectedDate && session.completed) : [];
   const selectedPlannedSessions = showSport ? plannedSessions.filter((session) => session.date === selectedDate && session.type !== "rest") : [];
@@ -236,7 +246,7 @@ export default function CalendarPage() {
                 {selectedPlannedSessions.length ? (
                   selectedPlannedSessions.map((session) => (
                     <p key={session.id} className="border-l-4 border-petrol-800 bg-mist/60 px-3 py-2 text-sm font-black text-petrol-800">
-                      Prévu : {PLANNED_TYPE_LABELS[session.type]} · {session.durationMin} min
+                      Prévu : {plannedLabel(session.type)} · {session.durationMin} min
                     </p>
                   ))
                 ) : (
@@ -244,7 +254,7 @@ export default function CalendarPage() {
                 )}
                 {selectedCompletedSessions.map((session) => (
                   <p key={session.id} className="border-l-4 border-limeSoft bg-petrol-800 px-3 py-2 text-sm font-black text-white">
-                    Fait : {SESSION_TYPE_LABELS[session.type]} · {session.durationMin} min
+                    Fait : {sessionLabel(session.type)} · {session.durationMin} min
                   </p>
                 ))}
                 <Link to={`/sessions?date=${selectedDate}&add=1`} className="action-button mt-2 justify-center">
@@ -271,7 +281,7 @@ export default function CalendarPage() {
                 {showNutrition
                   ? selectedMeals.map((meal) => (
                       <span key={meal.id} className="chip">
-                        {MEAL_TYPE_LABELS[meal.mealType]} · {meal.calories} kcal
+                        {MEAL_TYPE_LABELS[meal.mealType]}{showNutritionNumbers ? ` · ${meal.calories} kcal` : ""}
                       </span>
                     ))
                   : null}
@@ -415,17 +425,17 @@ export default function CalendarPage() {
                         ))}
                         {plannedForDay.map((session) => (
                           <span key={session.id} className="chip bg-mist">
-                            Prévu {PLANNED_SHORT_LABELS[session.type]} · {session.durationMin} min
+                            Prévu {plannedShortLabel(session.type)} · {session.durationMin} min
                           </span>
                         ))}
                         {completedSessions.map((session) => (
                           <span key={session.id} className="chip bg-petrol-800 text-white">
-                            Fait {SESSION_SHORT_LABELS[session.type]} · {session.durationMin} min
+                            Fait {sessionShortLabel(session.type)} · {session.durationMin} min
                           </span>
                         ))}
                         {mealsForDay.map((meal) => (
                           <span key={meal.id} className="chip bg-white">
-                            {MEAL_TYPE_LABELS[meal.mealType]} · {meal.calories} kcal
+                            {MEAL_TYPE_LABELS[meal.mealType]}{showNutritionNumbers ? ` · ${meal.calories} kcal` : ""}
                           </span>
                         ))}
                         {(movementForDay?.steps ?? 0) > 0 ? (
@@ -538,8 +548,8 @@ export default function CalendarPage() {
                     <div key={session.id} className="min-w-0 max-w-full border-l-2 border-petrol-800/20 bg-mist/60 px-1.5 py-1 sm:border-l-4 sm:px-2">
                       <p className="hidden text-[0.62rem] font-black uppercase tracking-[0.08em] text-muted sm:block">Prévu</p>
                       <p className="max-w-full truncate text-[0.55rem] font-black text-petrol-800 sm:text-xs">
-                        <span className="sm:hidden">{PLANNED_SHORT_LABELS[session.type]}</span>
-                        <span className="hidden sm:inline">{PLANNED_TYPE_LABELS[session.type]}</span>
+                        <span className="sm:hidden">{plannedShortLabel(session.type)}</span>
+                        <span className="hidden sm:inline">{plannedLabel(session.type)}</span>
                       </p>
                     </div>
                   ))}
@@ -548,8 +558,8 @@ export default function CalendarPage() {
                     <div key={session.id} className="min-w-0 max-w-full border-l-2 border-limeSoft bg-petrol-800 px-1.5 py-1 text-white sm:border-l-4 sm:px-2">
                       <p className="hidden text-[0.62rem] font-black uppercase tracking-[0.08em] text-limeSoft sm:block">Fait</p>
                       <p className="max-w-full truncate text-[0.55rem] font-black sm:text-xs">
-                        <span className="sm:hidden">{SESSION_SHORT_LABELS[session.type]}</span>
-                        <span className="hidden sm:inline">{SESSION_TYPE_LABELS[session.type]}</span>
+                        <span className="sm:hidden">{sessionShortLabel(session.type)}</span>
+                        <span className="hidden sm:inline">{sessionLabel(session.type)}</span>
                       </p>
                     </div>
                   ))}

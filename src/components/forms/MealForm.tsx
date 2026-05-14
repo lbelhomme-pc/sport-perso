@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Plus, Save, Search, Star, Trash2, X } from "lucide-react";
+import { MealItemsEditor } from "./MealItemsEditor";
 import { MEAL_TYPE_LABELS } from "../../data/defaults";
 import { useFavoriteMeals } from "../../hooks/useFavoriteMeals";
 import {
@@ -34,6 +35,7 @@ type MealFormState = {
   protein: string;
   carbs: string;
   fat: string;
+  fiber: string;
   notes: string;
 };
 
@@ -145,9 +147,10 @@ function getItemTotals(items: MealFoodItem[]) {
       calories: total.calories + item.calories,
       protein: total.protein + item.protein,
       carbs: total.carbs + item.carbs,
-      fat: total.fat + item.fat
+      fat: total.fat + item.fat,
+      fiber: total.fiber + (item.fiber ?? 0)
     }),
-    { calories: 0, protein: 0, carbs: 0, fat: 0 }
+    { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }
   );
 }
 
@@ -162,6 +165,7 @@ function productFromMeal(meal?: Partial<Meal>): FoodProduct | null {
     protein100g: meal.foodProtein100g ?? 0,
     carbs100g: meal.foodCarbs100g ?? 0,
     fat100g: meal.foodFat100g ?? 0,
+    fiber100g: meal.foodFiber100g ?? 0,
     servingQuantity: meal.servingQuantityGrams,
     origin: meal.source === "common" ? "common" : "openfoodfacts"
   };
@@ -186,10 +190,12 @@ function itemsFromMeal(meal?: Partial<Meal>): MealFoodItem[] {
       protein: meal.protein ?? 0,
       carbs: meal.carbs ?? 0,
       fat: meal.fat ?? 0,
+      fiber: meal.fiber ?? 0,
       foodCalories100g: meal.foodCalories100g,
       foodProtein100g: meal.foodProtein100g,
       foodCarbs100g: meal.foodCarbs100g,
-      foodFat100g: meal.foodFat100g
+      foodFat100g: meal.foodFat100g,
+      foodFiber100g: meal.foodFiber100g
     }
   ];
 }
@@ -224,6 +230,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
     protein: String(initial?.protein ?? ""),
     carbs: String(initial?.carbs ?? ""),
     fat: String(initial?.fat ?? ""),
+    fiber: String(initial?.fiber ?? ""),
     notes: initial?.notes ?? ""
   };
   const savedDraft = !isEditing ? readMealDraft() : null;
@@ -340,10 +347,12 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
         protein: macros.protein,
         carbs: macros.carbs,
         fat: macros.fat,
+        fiber: macros.fiber,
         foodCalories100g: selectedProduct.calories100g,
         foodProtein100g: selectedProduct.protein100g,
         foodCarbs100g: selectedProduct.carbs100g,
-        foodFat100g: selectedProduct.fat100g
+        foodFat100g: selectedProduct.fat100g,
+        foodFiber100g: selectedProduct.fiber100g
       }
     ]);
     setSearchError("");
@@ -375,10 +384,12 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
         protein: macros.protein,
         carbs: macros.carbs,
         fat: macros.fat,
+        fiber: macros.fiber,
         foodCalories100g: selectedFavoriteProduct.calories100g,
         foodProtein100g: selectedFavoriteProduct.protein100g,
         foodCarbs100g: selectedFavoriteProduct.carbs100g,
-        foodFat100g: selectedFavoriteProduct.fat100g
+        foodFat100g: selectedFavoriteProduct.fat100g,
+        foodFiber100g: selectedFavoriteProduct.fiber100g
       }
     ]);
     setSearchError("");
@@ -422,7 +433,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
           unit === "dose" ? quantityInputValue * (servingQuantityGrams ?? 30) : quantityInputValue;
 
         if (quantityGrams <= 0) {
-          return { ...item, quantityInput: quantityInputValue, quantityUnit: unit, quantityGrams: 0, calories: 0, protein: 0, carbs: 0, fat: 0 };
+          return { ...item, quantityInput: quantityInputValue, quantityUnit: unit, quantityGrams: 0, calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
         }
 
         const baseProduct: FoodProduct = {
@@ -437,6 +448,8 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
             item.foodCarbs100g ?? (item.quantityGrams > 0 ? (item.carbs / item.quantityGrams) * 100 : 0),
           fat100g:
             item.foodFat100g ?? (item.quantityGrams > 0 ? (item.fat / item.quantityGrams) * 100 : 0),
+          fiber100g:
+            item.foodFiber100g ?? (item.quantityGrams > 0 ? ((item.fiber ?? 0) / item.quantityGrams) * 100 : 0),
           origin: item.source === "openfoodfacts" ? "openfoodfacts" : "common"
         };
         const macros = calculateFoodMacros(baseProduct, quantityGrams);
@@ -451,10 +464,12 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
           protein: macros.protein,
           carbs: macros.carbs,
           fat: macros.fat,
+          fiber: macros.fiber,
           foodCalories100g: baseProduct.calories100g,
           foodProtein100g: baseProduct.protein100g,
           foodCarbs100g: baseProduct.carbs100g,
-          foodFat100g: baseProduct.fat100g
+          foodFat100g: baseProduct.fat100g,
+          foodFiber100g: baseProduct.fiber100g
         };
       })
     );
@@ -485,7 +500,8 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
           calories: parseDecimal(form.calories),
           protein: parseDecimal(form.protein),
           carbs: parseDecimal(form.carbs),
-          fat: parseDecimal(form.fat)
+          fat: parseDecimal(form.fat),
+          fiber: parseDecimal(form.fiber)
         };
     const firstItem = mealItems.length === 1 ? mealItems[0] : undefined;
 
@@ -498,6 +514,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
       protein: Math.round(totals.protein * 10) / 10,
       carbs: Math.round(totals.carbs * 10) / 10,
       fat: Math.round(totals.fat * 10) / 10,
+      fiber: Math.round((totals.fiber ?? 0) * 10) / 10,
       notes: form.notes || undefined,
       source: firstItem?.source,
       foodCode: firstItem?.foodCode,
@@ -511,6 +528,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
       foodProtein100g: firstItem?.foodProtein100g,
       foodCarbs100g: firstItem?.foodCarbs100g,
       foodFat100g: firstItem?.foodFat100g,
+      foodFiber100g: firstItem?.foodFiber100g,
       items: mealItems.length ? mealItems : undefined
     };
   };
@@ -528,6 +546,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
       protein: formatDecimal(meal.protein),
       carbs: formatDecimal(meal.carbs),
       fat: formatDecimal(meal.fat),
+      fiber: formatDecimal(meal.fiber ?? 0),
       notes: meal.notes ?? current.notes
     }));
     setMealItems(meal.items ?? []);
@@ -542,7 +561,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
     }
 
     const meal = buildMealPayload(makeId("meal-preview"), form.date);
-    if (!meal.items?.length && meal.calories + meal.protein + meal.carbs + meal.fat <= 0) {
+    if (!meal.items?.length && meal.calories + meal.protein + meal.carbs + meal.fat + (meal.fiber ?? 0) <= 0) {
       setFavoriteMealMessage("Ajoute au moins un aliment ou des macros avant de sauvegarder en favori.");
       return;
     }
@@ -738,6 +757,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
               <p className="mt-3 text-sm font-black uppercase tracking-[0.06em] text-petrol-700">
                 {previewMacros?.calories ?? 0} kcal | P {formatDecimal(previewMacros?.protein ?? 0)} g | G{" "}
                 {formatDecimal(previewMacros?.carbs ?? 0)} g | L {formatDecimal(previewMacros?.fat ?? 0)} g
+                {(previewMacros?.fiber ?? 0) > 0 ? ` | Fibres ${formatDecimal(previewMacros?.fiber ?? 0)} g` : ""}
               </p>
               <p className="mt-1 text-sm font-bold text-muted">{unitHint(selectedProduct, quantityUnit, effectiveQuantity)}</p>
             </div>
@@ -774,57 +794,13 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
 
         {favoriteMessage ? <p className="mt-3 text-sm font-black text-petrol-800">{favoriteMessage}</p> : null}
 
-        {mealItems.length ? (
-          <div className="mt-4 grid gap-2">
-            <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Aliments du repas</p>
-            {mealItems.map((item) => (
-              <div key={item.id} className="grid min-w-0 gap-3 overflow-hidden border border-petrol-800/10 bg-white p-3 sm:grid-cols-[minmax(0,1fr)_8rem_7rem_auto] sm:items-center">
-                <div className="min-w-0">
-                  <p className="break-words font-black text-petrol-800">{item.foodName}</p>
-                  <p className="text-sm font-bold text-muted">
-                    {getQuantityLabel(item.quantityInput ?? item.quantityGrams, item.quantityUnit ?? "g", item.quantityGrams)} -{" "}
-                    {item.calories} kcal - P {formatDecimal(item.protein)} g | G{" "}
-                    {formatDecimal(item.carbs)} g | L {formatDecimal(item.fat)} g
-                  </p>
-                </div>
-                <label className="field-label">
-                  Quantité
-                  <input
-                    className="field"
-                    inputMode="decimal"
-                    value={formatDecimal(item.quantityInput ?? item.quantityGrams)}
-                    onChange={(event) => updateItemQuantity(item.id, event.target.value)}
-                  />
-                </label>
-                <label className="field-label">
-                  Unité
-                  <select
-                    className="field"
-                    value={item.quantityUnit ?? "g"}
-                    onChange={(event) => {
-                      const currentUnit = item.quantityUnit ?? "g";
-                      const nextUnit = event.target.value as MealQuantityUnit;
-                      const nextValue =
-                        nextUnit === "dose" && currentUnit !== "dose"
-                          ? "1"
-                          : currentUnit === "dose" && nextUnit !== "dose"
-                            ? formatDecimal(item.quantityGrams)
-                            : formatDecimal(item.quantityInput ?? item.quantityGrams);
-                      updateItemQuantity(item.id, nextValue, nextUnit);
-                    }}
-                  >
-                    <option value="g">g</option>
-                    <option value="ml">ml</option>
-                    <option value="dose">dose</option>
-                  </select>
-                </label>
-                <button type="button" className="ghost-button w-full sm:w-auto" onClick={() => removeItem(item.id)} aria-label="Retirer l'aliment">
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-          </div>
-        ) : null}
+        <MealItemsEditor
+          items={mealItems}
+          formatDecimal={formatDecimal}
+          getQuantityLabel={getQuantityLabel}
+          onQuantityChange={updateItemQuantity}
+          onRemove={removeItem}
+        />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -844,7 +820,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
         </label>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
         <label className="field-label">
           Calories
           <input
@@ -883,6 +859,17 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
             readOnly={hasItems}
             value={hasItems ? formatDecimal(itemTotals.fat) : form.fat}
             onChange={(event) => update("fat", event.target.value)}
+          />
+        </label>
+        <label className="field-label">
+          Fibres
+          <input
+            className="field"
+            inputMode="decimal"
+            readOnly={hasItems}
+            value={hasItems ? formatDecimal(itemTotals.fiber) : form.fiber}
+            onChange={(event) => update("fiber", event.target.value)}
+            placeholder="optionnel"
           />
         </label>
       </div>

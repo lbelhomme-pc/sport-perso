@@ -6,13 +6,14 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { MetricCard } from "../components/ui/MetricCard";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
-import { SESSION_TYPE_LABELS } from "../data/defaults";
 import { useSessions } from "../hooks/useSessions";
 import { useSettings } from "../hooks/useSettings";
 import { makeId } from "../services/storageService";
 import type { CompletedSession, CompletedSessionType, SportType } from "../types";
 import { estimateCaloriesFromSession } from "../utils/calories";
 import { formatLongDate, toISODate } from "../utils/dates";
+import { energyFromFatigueScore, hasMeaningfulPain } from "../utils/readiness";
+import { getCompletedTypeLabel, isHyroxCompetitionMode } from "../utils/sportLabels";
 import { getAverageHeartRate, getAverageRpe } from "../utils/training";
 
 const fallbackSessionTypes: CompletedSessionType[] = [
@@ -29,24 +30,27 @@ function toCompletedSessionType(sport: SportType): CompletedSessionType {
   return sport;
 }
 
-function buildVisibleSessionTypes(enabledSports: SportType[] | undefined, sessions: CompletedSession[]) {
+function buildVisibleSessionTypes(enabledSports: SportType[] | undefined, sessions: CompletedSession[], hyroxMode: boolean) {
   const selectedSports = enabledSports?.length
     ? enabledSports.map(toCompletedSessionType)
     : fallbackSessionTypes.filter((type) => type !== "free" && type !== "other");
+  const normalizedSports = selectedSports.map((type) => (!hyroxMode && type === "hyrox" ? "hybrid" : type));
   const alreadyUsed = sessions.map((session) => session.type);
-  return Array.from(new Set<CompletedSessionType>([...selectedSports, ...alreadyUsed, "free", "other"]));
+  return Array.from(new Set<CompletedSessionType>([...normalizedSports, ...alreadyUsed, "free", "other"]));
 }
 
 function QuickSessionForm({
   date,
   typeOptions,
   onSubmit,
-  onDetailed
+  onDetailed,
+  getTypeLabel
 }: {
   date: string;
   typeOptions: CompletedSessionType[];
   onSubmit: (session: CompletedSession) => void;
   onDetailed: () => void;
+  getTypeLabel: (type: CompletedSessionType) => string;
 }) {
   const defaultType = typeOptions.includes("strength") ? "strength" : typeOptions[0] ?? "free";
   const [form, setForm] = useState({
@@ -54,7 +58,8 @@ function QuickSessionForm({
     type: defaultType as CompletedSessionType,
     durationMin: "45",
     rpe: "",
-    pain: "no",
+    fatigueDuring: "",
+    painDuring: "",
     notes: ""
   });
   const update = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }));
@@ -62,17 +67,21 @@ function QuickSessionForm({
   const save = () => {
     const durationMin = Math.max(0, Number(form.durationMin || 0));
     const rpe = form.rpe ? Number(form.rpe) : undefined;
+    const fatigueDuring = form.fatigueDuring ? Number(form.fatigueDuring) : undefined;
+    const painDuring = form.painDuring ? Number(form.painDuring) : undefined;
     onSubmit({
       id: makeId("session"),
       date: form.date,
       type: form.type,
-      title: SESSION_TYPE_LABELS[form.type],
+      title: getTypeLabel(form.type),
       durationMin,
       caloriesBurned: estimateCaloriesFromSession(form.type, durationMin),
       rpe,
       difficulty: rpe !== undefined && rpe >= 8 ? "hard" : rpe !== undefined && rpe <= 4 ? "easy" : "ok",
-      pain: form.pain === "yes",
-      energyAfter: "normal",
+      pain: hasMeaningfulPain(painDuring),
+      painDuring,
+      fatigueDuring,
+      energyAfter: fatigueDuring !== undefined ? energyFromFatigueScore(fatigueDuring) : "normal",
       notes: form.notes || undefined,
       completed: true
     });
@@ -93,7 +102,7 @@ function QuickSessionForm({
           <select className="field" value={form.type} onChange={(event) => update("type", event.target.value as CompletedSessionType)}>
             {typeOptions.map((value) => (
               <option key={value} value={value}>
-                {SESSION_TYPE_LABELS[value]}
+                {getTypeLabel(value)}
               </option>
             ))}
           </select>
@@ -107,13 +116,14 @@ function QuickSessionForm({
           <input className="field" type="number" min="0" max="10" inputMode="numeric" value={form.rpe} onChange={(event) => update("rpe", event.target.value)} />
         </label>
       </div>
-      <div className="grid gap-3 sm:grid-cols-[12rem_1fr]">
+      <div className="grid gap-3 sm:grid-cols-[1fr_1fr_1.5fr]">
         <label className="field-label">
-          Douleur
-          <select className="field" value={form.pain} onChange={(event) => update("pain", event.target.value)}>
-            <option value="no">Non</option>
-            <option value="yes">Oui</option>
-          </select>
+          Fatigue pendant / 10
+          <input className="field" type="number" min="0" max="10" inputMode="numeric" value={form.fatigueDuring} onChange={(event) => update("fatigueDuring", event.target.value)} placeholder="0-10" />
+        </label>
+        <label className="field-label">
+          Douleur pendant / 10
+          <input className="field" type="number" min="0" max="10" inputMode="numeric" value={form.painDuring} onChange={(event) => update("painDuring", event.target.value)} placeholder="0-10" />
         </label>
         <label className="field-label">
           Note facultative
@@ -169,6 +179,8 @@ function CompletedExercisesList({ session }: { session: CompletedSession }) {
 export default function SessionsPage() {
   const { sessions, saveSession, deleteSession } = useSessions();
   const { settings } = useSettings();
+  const hyroxMode = isHyroxCompetitionMode(settings);
+  const getTypeLabel = (type: CompletedSessionType) => getCompletedTypeLabel(type, settings);
   const [searchParams, setSearchParams] = useSearchParams();
   const queryDate = searchParams.get("date");
   const initialSessionDate = queryDate && /^\d{4}-\d{2}-\d{2}$/.test(queryDate) ? queryDate : toISODate(new Date());
@@ -178,10 +190,11 @@ export default function SessionsPage() {
   const [showForm, setShowForm] = useState(false);
   const [detailedForm, setDetailedForm] = useState(false);
   const [openSessionId, setOpenSessionId] = useState<string | null>(null);
+  const [saveMessage, setSaveMessage] = useState("");
   const formRef = useRef<HTMLDivElement>(null);
   const sessionTypeOptions = useMemo(
-    () => buildVisibleSessionTypes(settings.enabledSports, sessions),
-    [settings.enabledSports, sessions]
+    () => buildVisibleSessionTypes(settings.enabledSports, sessions, hyroxMode),
+    [settings.enabledSports, sessions, hyroxMode]
   );
   const filters: Array<CompletedSessionType | "all"> = useMemo(() => ["all", ...sessionTypeOptions], [sessionTypeOptions]);
   const filtered = filter === "all" ? sessions : sessions.filter((session) => session.type === filter);
@@ -256,9 +269,11 @@ export default function SessionsPage() {
               <SessionForm
                 initial={editing ?? { date: initialSessionDate }}
                 typeOptions={sessionTypeOptions}
+                getTypeLabel={getTypeLabel}
                 onCancel={closeForm}
                 onSubmit={(session) => {
                   saveSession(session);
+                  setSaveMessage("Séance enregistrée. Prochaine décision : récupération ou séance suivante.");
                   closeForm();
                 }}
               />
@@ -267,9 +282,11 @@ export default function SessionsPage() {
                 key={initialSessionDate}
                 date={initialSessionDate}
                 typeOptions={sessionTypeOptions}
+                getTypeLabel={getTypeLabel}
                 onDetailed={() => setDetailedForm(true)}
                 onSubmit={(session) => {
                   saveSession(session);
+                  setSaveMessage("Séance enregistrée. Prochaine décision : récupération ou séance suivante.");
                   closeForm();
                 }}
               />
@@ -277,6 +294,12 @@ export default function SessionsPage() {
           </div>
         </SectionCard>
         </div>
+      ) : null}
+
+      {saveMessage ? (
+        <SectionCard className="border-l-4 border-limeSoft p-4 text-sm font-black text-petrol-800">
+          {saveMessage}
+        </SectionCard>
       ) : null}
 
       <SectionCard className="p-5 sm:p-6">
@@ -287,7 +310,7 @@ export default function SessionsPage() {
               className={filter === item ? "action-button" : "ghost-button"}
               onClick={() => setFilter(item)}
             >
-              {item === "all" ? "Tout" : SESSION_TYPE_LABELS[item]}
+              {item === "all" ? "Tout" : getTypeLabel(item)}
             </button>
           ))}
         </div>
@@ -308,10 +331,12 @@ export default function SessionsPage() {
                     <p className="eyebrow">{formatLongDate(session.date)}</p>
                     <h2 className="mt-1 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{session.title}</h2>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <span className="chip">{SESSION_TYPE_LABELS[session.type]}</span>
+                      <span className="chip">{getTypeLabel(session.type)}</span>
                       <span className="chip">{session.durationMin} min</span>
                       {session.caloriesBurned ? <span className="chip">{session.caloriesBurned} kcal</span> : null}
                       {session.rpe ? <span className="chip">RPE {session.rpe}</span> : null}
+                      {session.fatigueDuring !== undefined ? <span className="chip">Fatigue {session.fatigueDuring}/10</span> : null}
+                      {session.painDuring !== undefined ? <span className="chip">Douleur {session.painDuring}/10</span> : null}
                       <span className="chip bg-white">{isOpen ? "Détails ouverts" : "Voir détails"}</span>
                     </div>
                   </button>

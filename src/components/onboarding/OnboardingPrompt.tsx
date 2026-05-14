@@ -2,8 +2,9 @@ import { useMemo, useState } from "react";
 import { CalendarDays, CheckCircle2, HeartPulse, Target } from "lucide-react";
 import { ModulePreferencesEditor } from "../modules/ModulePreferencesEditor";
 import { deriveNavigationFocusFromModules, recommendedModulesByGoal, resolveModulePreferences } from "../../data/modules";
-import type { AppExperienceMode, AppModuleId, Settings, SportType, TargetEventType, UserSportLevel, WeekdayKey } from "../../types";
+import type { AppExperienceMode, AppModuleId, NutritionTrackingMode, Settings, SportType, TargetEventType, UserSportLevel, WeekdayKey } from "../../types";
 import { toISODate } from "../../utils/dates";
+import { applyNutritionModeToModules, getNutritionModeGuidance, getNutritionModeLabel } from "../../utils/nutritionMode";
 
 type OnboardingPromptProps = {
   settings: Settings;
@@ -91,15 +92,31 @@ function buildProgramTargetDate(programLengthWeeks: number) {
   return toISODate(date);
 }
 
+function getRecommendedNutritionMode(goal: AppExperienceMode): NutritionTrackingMode {
+  if (goal === "weight-loss") return "fat-loss-prudent";
+  if (goal === "muscle-gain") return "muscle-gain";
+  if (goal === "performance" || goal === "competition" || goal === "hybrid") return "performance";
+  if (goal === "health") return "simple";
+  return "disabled";
+}
+
+const nutritionModeOptions: NutritionTrackingMode[] = ["disabled", "simple", "no-calories", "performance", "fat-loss-prudent", "muscle-gain", "advanced"];
+
 export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps) {
   const initialGoal = settings.appMode ?? "competition";
   const initialRecommendation = recommendedModulesByGoal[initialGoal];
+  const initialNutritionMode = settings.nutritionMode ?? getRecommendedNutritionMode(initialGoal);
   const initialModulePrefs = settings.onboardingCompleted
     ? resolveModulePreferences(settings)
     : { enabledModules: initialRecommendation.enabled, primaryModuleTabs: initialRecommendation.tabs };
+  const guardedInitialModulePrefs = applyNutritionModeToModules(
+    initialNutritionMode,
+    initialModulePrefs.enabledModules,
+    initialModulePrefs.primaryModuleTabs
+  );
   const [goal, setGoal] = useState<AppExperienceMode>(initialGoal);
-  const [enabledModules, setEnabledModules] = useState<AppModuleId[]>(initialModulePrefs.enabledModules);
-  const [primaryModuleTabs, setPrimaryModuleTabs] = useState<AppModuleId[]>(initialModulePrefs.primaryModuleTabs);
+  const [enabledModules, setEnabledModules] = useState<AppModuleId[]>(guardedInitialModulePrefs.enabledModules);
+  const [primaryModuleTabs, setPrimaryModuleTabs] = useState<AppModuleId[]>(guardedInitialModulePrefs.primaryModuleTabs);
   const [level, setLevel] = useState<UserSportLevel>(settings.sportLevel ?? "intermediate");
   const [availableDays, setAvailableDays] = useState<WeekdayKey[]>(
     settings.availableDays?.length ? settings.availableDays : ["tuesday", "wednesday", "thursday", "friday", "saturday"]
@@ -110,6 +127,9 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
   const [targetDate, setTargetDate] = useState(settings.targetDate);
   const [programLengthWeeks, setProgramLengthWeeks] = useState<4 | 8 | 12>(settings.programLengthWeeks ?? 12);
   const [weightGoal, setWeightGoal] = useState(settings.targetWeightLoss ? String(settings.targetWeightLoss) : "");
+  const [nutritionMode, setNutritionMode] = useState<NutritionTrackingMode>(initialNutritionMode);
+  const [eatingDisorderHistory, setEatingDisorderHistory] = useState(Boolean(settings.eatingDisorderHistory));
+  const [privacyAccepted, setPrivacyAccepted] = useState(Boolean(settings.privacyConsentAccepted));
 
   const selectedGoal = useMemo(() => goalOptions.find((option) => option.id === goal) ?? goalOptions[0], [goal]);
 
@@ -119,8 +139,11 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
 
     setGoal(nextGoal);
     setTargetEventType(next.eventType);
-    setEnabledModules(recommended.enabled);
-    setPrimaryModuleTabs(recommended.tabs);
+    const nextNutritionMode = getRecommendedNutritionMode(nextGoal);
+    const guarded = applyNutritionModeToModules(nextNutritionMode, recommended.enabled, recommended.tabs);
+    setNutritionMode(nextNutritionMode);
+    setEnabledModules(guarded.enabledModules);
+    setPrimaryModuleTabs(guarded.primaryModuleTabs);
   };
 
   const toggleDay = (day: WeekdayKey) => {
@@ -128,9 +151,15 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
   };
 
   const completeOnboarding = (skip = false) => {
-    const fallbackPrefs = resolveModulePreferences(settings);
-    const nextEnabledModules = skip ? fallbackPrefs.enabledModules : enabledModules;
-    const nextPrimaryTabs = skip ? fallbackPrefs.primaryModuleTabs : primaryModuleTabs;
+    const skippedPrefs = recommendedModulesByGoal.fitness;
+    const safeNutritionMode: NutritionTrackingMode = eatingDisorderHistory && ["calories-macros", "advanced", "performance", "fat-loss-prudent", "muscle-gain"].includes(nutritionMode)
+      ? "no-calories"
+      : nutritionMode;
+    const fallbackPrefs = skip
+      ? applyNutritionModeToModules("disabled", skippedPrefs.enabled, skippedPrefs.tabs)
+      : applyNutritionModeToModules(safeNutritionMode, enabledModules, primaryModuleTabs);
+    const nextEnabledModules = eatingDisorderHistory ? fallbackPrefs.enabledModules.filter((moduleId) => moduleId !== "weight") : fallbackPrefs.enabledModules;
+    const nextPrimaryTabs = eatingDisorderHistory ? fallbackPrefs.primaryModuleTabs.filter((moduleId) => moduleId !== "weight") : fallbackPrefs.primaryModuleTabs;
     const nextEventType = skip ? settings.targetEventType ?? "hyrox" : targetEventType;
     const nextProgramLength = skip ? settings.programLengthWeeks ?? 12 : programLengthWeeks;
     const nextTargetDate = nextEventType === "none" ? buildProgramTargetDate(nextProgramLength) : targetDate;
@@ -144,6 +173,10 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
       primaryModuleTabs: nextPrimaryTabs,
       navigationFocus: deriveNavigationFocusFromModules(nextEnabledModules),
       onboardingCompleted: true,
+      nutritionMode: skip ? "disabled" : safeNutritionMode,
+      eatingDisorderHistory,
+      privacyConsentAccepted: privacyAccepted,
+      privacyConsentAt: privacyAccepted ? new Date().toISOString() : settings.privacyConsentAt,
       sportLevel: skip ? settings.sportLevel : level,
       availableDays: skip ? settings.availableDays : availableDays,
       maxSessionDurationMin: skip ? settings.maxSessionDurationMin : maxDuration,
@@ -218,13 +251,44 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
                 enabledModules={enabledModules}
                 primaryModuleTabs={primaryModuleTabs}
                 onChange={(next) => {
-                  setEnabledModules(next.enabledModules);
-                  setPrimaryModuleTabs(next.primaryModuleTabs);
+                  const nextNutritionMode = next.enabledModules.includes("nutrition") && nutritionMode === "disabled" ? "simple" : nutritionMode;
+                  const guarded = applyNutritionModeToModules(nextNutritionMode, next.enabledModules, next.primaryModuleTabs);
+                  setNutritionMode(nextNutritionMode);
+                  setEnabledModules(guarded.enabledModules);
+                  setPrimaryModuleTabs(guarded.primaryModuleTabs);
                 }}
               />
               <p className="mt-3 text-xs font-bold leading-5 text-muted">
                 Recommandation appliquée selon l'objectif choisi, mais tu peux ajuster maintenant ou plus tard dans Profil.
               </p>
+            </section>
+
+            <section className="grid gap-3 border border-petrol-800/10 bg-mist/45 p-4">
+              <p className="eyebrow">Nutrition</p>
+              <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                {nutritionModeOptions.map((mode) => {
+                  const active = nutritionMode === mode;
+
+                  return (
+                    <button
+                      key={mode}
+                      type="button"
+                      className={`border p-3 text-left ${active ? "border-petrol-800 bg-petrol-800 text-white" : "border-petrol-800/10 bg-white text-petrol-800"}`}
+                      onClick={() => {
+                        const guarded = applyNutritionModeToModules(mode, enabledModules, primaryModuleTabs);
+                        setNutritionMode(mode);
+                        setEnabledModules(guarded.enabledModules);
+                        setPrimaryModuleTabs(guarded.primaryModuleTabs);
+                      }}
+                    >
+                      <span className="font-black">{getNutritionModeLabel(mode)}</span>
+                      <span className={active ? "mt-1 block text-xs font-bold text-white/70" : "mt-1 block text-xs font-bold text-muted"}>
+                        {getNutritionModeGuidance(mode)}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </section>
 
             <section className="grid gap-4 lg:grid-cols-2">
@@ -249,6 +313,38 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
                   ))}
                 </select>
               </label>
+            </section>
+
+            <section className="border border-petrol-800/10 bg-white p-4">
+              <p className="eyebrow">Confidentialité</p>
+              <label className="mt-3 flex items-start gap-3 text-sm font-bold leading-6 text-ink">
+                <input
+                  className="mt-1"
+                  type="checkbox"
+                  checked={eatingDisorderHistory}
+                  onChange={(event) => setEatingDisorderHistory(event.target.checked)}
+                />
+                <span>
+                  Suivi sensible ou antécédents de troubles alimentaires : masquer calories avancées et poids par défaut.
+                </span>
+              </label>
+              <label className="mt-3 flex items-start gap-3 text-sm font-bold leading-6 text-ink">
+                <input
+                  className="mt-1"
+                  type="checkbox"
+                  checked={privacyAccepted}
+                  onChange={(event) => setPrivacyAccepted(event.target.checked)}
+                />
+                <span>
+                  J'accepte que cette application stocke localement dans ce navigateur mes données de sport, récupération, nutrition et poids.
+                  Aucun backend n'est utilisé en V1. Je peux exporter, importer ou réinitialiser mes données dans Profil.
+                </span>
+              </label>
+              <p className="mt-3 border-l-4 border-limeSoft bg-mist/60 p-3 text-xs font-bold leading-5 text-ink">
+                Grossesse, pathologie, traitement, mineur, antécédents TCA : demande un avis médical avant d'utiliser les objectifs nutrition/poids.
+                Douleur persistante ou technique modifiée : avis professionnel avant les séances intenses.
+              </p>
+              {!privacyAccepted ? <p className="mt-2 text-xs font-black text-red-950">Consentement requis pour créer le suivi.</p> : null}
             </section>
 
             <section>
@@ -312,10 +408,10 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
             </section>
 
             <div className="flex flex-col-reverse gap-2 border-t border-petrol-800/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
-              <button type="button" className="ghost-button justify-center" onClick={() => completeOnboarding(true)}>
+              <button type="button" className="ghost-button justify-center" disabled={!privacyAccepted} onClick={() => completeOnboarding(true)}>
                 Passer pour l'instant
               </button>
-              <button type="button" className="action-button justify-center" onClick={() => completeOnboarding(false)}>
+              <button type="button" className="action-button justify-center" disabled={!privacyAccepted} onClick={() => completeOnboarding(false)}>
                 Créer mon suivi
               </button>
             </div>

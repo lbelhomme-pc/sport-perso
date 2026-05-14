@@ -5,6 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import { ComparisonBarChart } from "../components/charts/ComparisonBarChart";
 import { MetricBarChart } from "../components/charts/MetricBarChart";
 import { MetricLineChart } from "../components/charts/MetricLineChart";
+import { ProgressionSnapshot } from "../components/progress/ProgressionSnapshot";
 import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
 import { EmptyState } from "../components/ui/EmptyState";
 import { MetricCard } from "../components/ui/MetricCard";
@@ -13,10 +14,12 @@ import { SectionCard } from "../components/ui/SectionCard";
 import { getPlannedWeek } from "../data/trainingPlan";
 import { useStoredData } from "../hooks/useStoredData";
 import { useUserModules } from "../hooks/useUserModules";
+import { getSportProgressionSummary } from "../services/progressionService";
 import type { WeightEntry } from "../types";
 import { estimateNeatCalories } from "../utils/calories";
 import { formatShortDate, getTotalWeeks, getWeekStart, toISODate } from "../utils/dates";
 import { getMealTotals } from "../utils/nutrition";
+import { tracksNutritionNumbers } from "../utils/nutritionMode";
 import { getAverageHeartRate, getAverageRpe, summarizeWeek } from "../utils/training";
 
 function getBodyWeightForDate(weights: WeightEntry[], date: string, fallback: number): number {
@@ -67,6 +70,7 @@ export default function StatsPage() {
   const { isEnabled } = useUserModules();
   const showSport = isEnabled("training") || isEnabled("sessions");
   const showNutrition = isEnabled("nutrition");
+  const showNutritionNumbers = showNutrition && tracksNutritionNumbers(data.settings);
   const showWeight = isEnabled("weight");
   const showMovement = isEnabled("calendar");
   const totalWeeks = getTotalWeeks(data.settings.startDate, data.settings.targetDate);
@@ -133,11 +137,15 @@ export default function StatsPage() {
   const executionTrendReady = totalCompletedSessions > 0;
   const averageHeartRate = getAverageHeartRate(data.sessions);
   const averageRpe = getAverageRpe(data.sessions);
+  const progressionSummary = getSportProgressionSummary({
+    sessions: data.sessions,
+    dailyContexts: data.dailyContexts
+  });
   const hasAnyMetricCard =
     (showSport && data.sessions.length > 0) ||
     (showSport && totalSportCalories > 0) ||
-    (showNutrition && totalFood21Days > 0) ||
-    (showNutrition && totalProtein21Days > 0) ||
+    (showNutritionNumbers && totalFood21Days > 0) ||
+    (showNutritionNumbers && totalProtein21Days > 0) ||
     (showWeight && data.weights.length > 0) ||
     (showMovement && totalSteps21Days > 0) ||
     (showMovement && totalFloors21Days > 0) ||
@@ -146,7 +154,7 @@ export default function StatsPage() {
     (showSport && Boolean(averageRpe));
   const hasUsefulStats =
     (showSport && sessionTrendReady) ||
-    (showNutrition && foodTrendReady) ||
+    (showNutritionNumbers && foodTrendReady) ||
     (showWeight && weightTrendReady) ||
     (showMovement && movementTrendReady) ||
     (showSport && sportCaloriesReady) ||
@@ -177,7 +185,7 @@ export default function StatsPage() {
                 actionLabel="Ajouter une séance"
               />
             ) : null}
-            {showNutrition ? (
+            {showNutritionNumbers ? (
               <ChartEmptyState
                 icon={Utensils}
                 title="Pas encore de tendance nutrition"
@@ -224,8 +232,8 @@ export default function StatsPage() {
           {showSport && totalRacket ? <MetricCard label="Raquette" value={totalRacket} /> : null}
           {showSport && totalStrength ? <MetricCard label="Force" value={totalStrength} /> : null}
           {showSport && totalSportCalories ? <MetricCard label="Calories sport" value={totalSportCalories} /> : null}
-          {showNutrition && totalFood21Days ? <MetricCard label="Calories repas 21 j" value={`${totalFood21Days} kcal`} /> : null}
-          {showNutrition && totalProtein21Days ? <MetricCard label="Protéines 21 j" value={`${totalProtein21Days} g`} /> : null}
+          {showNutritionNumbers && totalFood21Days ? <MetricCard label="Calories repas 21 j" value={`${totalFood21Days} kcal`} /> : null}
+          {showNutritionNumbers && totalProtein21Days ? <MetricCard label="Protéines 21 j" value={`${totalProtein21Days} g`} /> : null}
           {showWeight && data.weights.length ? <MetricCard label="Pesées" value={data.weights.length} /> : null}
           {showMovement && totalSteps21Days ? <MetricCard label="Pas 21 j" value={totalSteps21Days.toLocaleString("fr-FR")} /> : null}
           {showMovement && totalFloors21Days ? <MetricCard label="Étages 21 j" value={totalFloors21Days.toLocaleString("fr-FR")} /> : null}
@@ -233,6 +241,17 @@ export default function StatsPage() {
           {showSport && averageHeartRate ? <MetricCard label="Moyenne FC" value={averageHeartRate} /> : null}
           {showSport && averageRpe ? <MetricCard label="RPE moyen" value={averageRpe} /> : null}
         </section>
+      ) : null}
+
+      {showSport ? (
+        <CollapsibleSectionCard
+          eyebrow="Progression sportive"
+          title="PR, régularité et deload"
+          summary="Une lecture coach : records utiles, volume, RPE, charge notée, équilibre de semaine et besoin éventuel d'alléger."
+          defaultOpen
+        >
+          <ProgressionSnapshot summary={progressionSummary} />
+        </CollapsibleSectionCard>
       ) : null}
 
       <div className="grid gap-5 xl:grid-cols-2">
@@ -281,7 +300,7 @@ export default function StatsPage() {
           </>
         ) : null}
 
-        {showNutrition ? (
+        {showNutritionNumbers ? (
           <>
             <CollapsibleSectionCard eyebrow="Calories alimentaires" title="21 derniers jours">
               {foodTrendReady && hasValue(dailySeries, "calories") ? (

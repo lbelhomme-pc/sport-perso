@@ -79,6 +79,10 @@ const energyLabels: Record<EnergyLevel, string> = {
   strong: "En forme : marge énergie légère"
 };
 
+function estimateBaselineActivityCalories(basalMetabolicRate: number): number {
+  return Math.round(basalMetabolicRate * 0.2);
+}
+
 export function getAdaptiveDailyCalorieTarget(args: {
   settings: Settings;
   plannedSession?: PlannedSession;
@@ -94,12 +98,15 @@ export function getAdaptiveDailyCalorieTarget(args: {
   const feelingFuel = energyFuelAdjustment[energyLevel];
   const bodyWeightKg = args.bodyWeightKg ?? args.settings.defaultBodyWeight;
   const basalMetabolicRate = calculateBasalMetabolicRate(args.settings, bodyWeightKg);
+  const baselineActivityCalories = estimateBaselineActivityCalories(basalMetabolicRate);
   const stepsNeatCalories = estimateNeatCaloriesFromSteps(args.steps ?? 0, bodyWeightKg);
   const floorsNeatCalories = estimateNeatCaloriesFromFloors(args.floors ?? 0, bodyWeightKg);
   const neatCalories = stepsNeatCalories + floorsNeatCalories;
-  const maintenanceTarget = basalMetabolicRate + activityFuel + feelingFuel + neatCalories;
+  const maintenanceTarget = basalMetabolicRate + baselineActivityCalories + activityFuel + feelingFuel + neatCalories;
   const targetDeficit = args.settings.targetDailyDeficit;
-  const target = maintenanceTarget - targetDeficit;
+  const rawTarget = maintenanceTarget - targetDeficit;
+  const minimumTarget = basalMetabolicRate;
+  const target = Math.max(minimumTarget, rawTarget);
   const activityLabel =
     sportCalories > 0
       ? `Sport validé : +${activityFuel} kcal`
@@ -109,8 +116,11 @@ export function getAdaptiveDailyCalorieTarget(args: {
 
   return {
     base: basalMetabolicRate,
+    baselineActivityCalories,
     maintenanceTarget,
     targetDeficit,
+    rawTarget,
+    minimumTarget,
     target,
     activityFuel,
     feelingFuel,
@@ -119,6 +129,6 @@ export function getAdaptiveDailyCalorieTarget(args: {
     neatCalories,
     activityLabel,
     feelingLabel: energyLabels[energyLevel],
-    shortReason: `Métabolisme basal ${basalMetabolicRate} kcal + sport validé ${activityFuel} + pas ${stepsNeatCalories} + étages ${floorsNeatCalories} + ressenti ${feelingFuel} - déficit ${targetDeficit} = objectif ${target} kcal`
+    shortReason: `Métabolisme basal ${basalMetabolicRate} kcal + activité de base ${baselineActivityCalories} + sport validé ${activityFuel} + pas ${stepsNeatCalories} + étages ${floorsNeatCalories} + ressenti ${feelingFuel} = maintenance estimée ${maintenanceTarget}. Cible alimentaire = maintenance - déficit ${targetDeficit}, jamais sous le BMR sans suivi pro : ${target} kcal.`
   };
 }

@@ -6,7 +6,8 @@ import type {
   ExercisePrescription,
   PlannedSession,
   PlannedSessionType,
-  Settings
+  Settings,
+  WeekdayKey
 } from "../types";
 import { getPhaseForWeek } from "./phases";
 import { getPreciseWeekPlan, type PreciseSessionPlan, type PreciseSessionSlot } from "./preciseTrainingPlan";
@@ -1014,6 +1015,60 @@ function buildSession(slot: DayTemplate["slot"], week: number, date: string, day
   return buildHyroxSession(week, date, day);
 }
 
+const dayToWeekdayKey: Record<string, WeekdayKey> = {
+  Lundi: "monday",
+  Mardi: "tuesday",
+  Mercredi: "wednesday",
+  Jeudi: "thursday",
+  Vendredi: "friday",
+  Samedi: "saturday",
+  Dimanche: "sunday"
+};
+
+function capSessionForUser(session: PlannedSession, settings: Settings): PlannedSession {
+  if (session.type === "rest") return session;
+
+  const availableDays = settings.availableDays?.length ? settings.availableDays : undefined;
+  const weekday = dayToWeekdayKey[session.day];
+
+  if (availableDays && weekday && !availableDays.includes(weekday)) {
+    return {
+      ...buildRestSession(session.week, session.date, session.day),
+      id: session.id,
+      title: "Repos - jour indisponible",
+      objective: `Jour non disponible dans ton profil. Séance prévue initialement : ${session.title}.`,
+      normalVersion: "Repos ou mobilité 8-12 min si tu veux garder le rythme sans forcer.",
+      strongVersion: "Garde l'énergie pour un jour disponible.",
+      tags: ["Indisponible", "Repos"]
+    };
+  }
+
+  const maxDuration = settings.maxSessionDurationMin;
+  const level = settings.sportLevel ?? "intermediate";
+  const levelDurationFactor = level === "beginner" ? 0.85 : level === "advanced" ? 1 : 0.95;
+  const levelCap = Math.round(session.durationMin * levelDurationFactor);
+  const durationCap = maxDuration ? Math.min(levelCap, maxDuration) : levelCap;
+  const shouldCapDuration = durationCap > 0 && durationCap < session.durationMin;
+  const injuryNotes = settings.injuryNotes?.trim();
+  const constraintNotes = [
+    shouldCapDuration ? `Durée adaptée à ton profil : ${durationCap} min max.` : null,
+    level === "beginner" ? "Niveau débutant : priorité technique, RPE contrôlé, aucun échec." : null,
+    injuryNotes ? `Limite déclarée : ${injuryNotes}. Stop si la douleur augmente.` : null
+  ].filter((item): item is string => Boolean(item));
+
+  if (!constraintNotes.length) return session;
+
+  return {
+    ...session,
+    durationMin: shouldCapDuration ? durationCap : session.durationMin,
+    objective: `${session.objective} ${constraintNotes.join(" ")}`,
+    fatigueVersion: `${constraintNotes.join(" ")} ${session.fatigueVersion}`,
+    normalVersion: shouldCapDuration ? `Format ${durationCap} min : garde l'échauffement, puis coupe les bonus. ${session.normalVersion}` : session.normalVersion,
+    rpeTarget: level === "beginner" && session.rpeTarget.includes("8") ? "RPE 5-7" : session.rpeTarget,
+    tags: Array.from(new Set([...session.tags, level === "beginner" ? "Adapté débutant" : "", injuryNotes ? "Douleur à surveiller" : ""].filter(Boolean)))
+  };
+}
+
 export function getPlannedWeek(
   settings: Settings,
   week: number,
@@ -1033,9 +1088,11 @@ export function getPlannedWeek(
       return buildPostRaceRecoverySession(week, date, template.day);
     }
 
-    return vacation
+    const session = vacation
       ? getVacationSession(template.slot, week, date, template.day)
       : buildSession(template.slot, week, date, template.day);
+
+    return capSessionForUser(session, settings);
   });
 }
 

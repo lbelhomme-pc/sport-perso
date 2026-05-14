@@ -7,11 +7,13 @@ import { estimateCaloriesFromSession } from "../../utils/calories";
 import { toISODate } from "../../utils/dates";
 import { buildCompletedExercises, mergeSessionNotesWithPlannedExercises } from "../../utils/sessionExercises";
 import { makeId } from "../../services/storageService";
+import { energyFromFatigueScore, hasMeaningfulPain } from "../../utils/readiness";
 
 type SessionFormProps = {
   initial?: Partial<CompletedSession>;
   planned?: PlannedSession;
   typeOptions?: CompletedSessionType[];
+  getTypeLabel?: (type: CompletedSessionType) => string;
   onSubmit: (session: CompletedSession) => void;
   onCancel?: () => void;
 };
@@ -21,9 +23,10 @@ function mapPlannedType(type: PlannedSession["type"]): CompletedSession["type"] 
   return type;
 }
 
-export function SessionForm({ initial, planned, typeOptions, onSubmit, onCancel }: SessionFormProps) {
+export function SessionForm({ initial, planned, typeOptions, getTypeLabel, onSubmit, onCancel }: SessionFormProps) {
   const plannedType = planned ? mapPlannedType(planned.type) : undefined;
   const availableTypeOptions = typeOptions?.length ? typeOptions : (Object.keys(SESSION_TYPE_LABELS) as CompletedSessionType[]);
+  const typeLabel = getTypeLabel ?? ((type: CompletedSessionType) => SESSION_TYPE_LABELS[type]);
   const { sessionExerciseLogs } = useSessionExerciseLogs(planned?.id);
   const [form, setForm] = useState<{
     id: string;
@@ -38,6 +41,8 @@ export function SessionForm({ initial, planned, typeOptions, onSubmit, onCancel 
     rpe: string;
     difficulty: SessionDifficulty;
     pain: boolean;
+    painDuring: string;
+    fatigueDuring: string;
     energyAfter: EnergyLevel;
     notes: string;
     completed: boolean;
@@ -54,6 +59,8 @@ export function SessionForm({ initial, planned, typeOptions, onSubmit, onCancel 
     rpe: String(initial?.rpe ?? ""),
     difficulty: initial?.difficulty ?? "ok",
     pain: initial?.pain ?? false,
+    painDuring: String(initial?.painDuring ?? ""),
+    fatigueDuring: String(initial?.fatigueDuring ?? ""),
     energyAfter: initial?.energyAfter ?? "normal",
     notes: initial?.notes ?? "",
     completed: initial?.completed ?? true
@@ -69,21 +76,25 @@ export function SessionForm({ initial, planned, typeOptions, onSubmit, onCancel 
     const calories = form.caloriesBurned
       ? Number(form.caloriesBurned)
       : estimateCaloriesFromSession(form.type, durationMin);
+    const painDuring = form.painDuring ? Number(form.painDuring) : undefined;
+    const fatigueDuring = form.fatigueDuring ? Number(form.fatigueDuring) : undefined;
 
     onSubmit({
       id: form.id,
       plannedSessionId: form.plannedSessionId || undefined,
       date: form.date,
       type: form.type,
-      title: form.title || SESSION_TYPE_LABELS[form.type],
+      title: form.title || typeLabel(form.type),
       durationMin,
       averageHeartRate: form.averageHeartRate ? Number(form.averageHeartRate) : undefined,
       maxHeartRate: form.maxHeartRate ? Number(form.maxHeartRate) : undefined,
       caloriesBurned: calories,
       rpe: form.rpe ? Number(form.rpe) : undefined,
       difficulty: form.difficulty,
-      pain: form.pain,
-      energyAfter: form.energyAfter,
+      pain: hasMeaningfulPain(painDuring, form.pain),
+      painDuring,
+      fatigueDuring,
+      energyAfter: fatigueDuring !== undefined ? energyFromFatigueScore(fatigueDuring) : form.energyAfter,
       notes: mergeSessionNotesWithPlannedExercises(form.notes, planned),
       completed: form.completed,
       exercises: buildCompletedExercises(planned, form.completed, sessionExerciseLogs) ?? initial?.exercises
@@ -108,7 +119,7 @@ export function SessionForm({ initial, planned, typeOptions, onSubmit, onCancel 
           <select className="field" value={form.type} onChange={(event) => update("type", event.target.value as CompletedSession["type"])}>
             {availableTypeOptions.map((value) => (
               <option key={value} value={value}>
-                {SESSION_TYPE_LABELS[value]}
+                {typeLabel(value)}
               </option>
             ))}
           </select>
@@ -143,7 +154,7 @@ export function SessionForm({ initial, planned, typeOptions, onSubmit, onCancel 
         </label>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-4">
         <label className="field-label">
           Difficulté
           <select className="field" value={form.difficulty} onChange={(event) => update("difficulty", event.target.value as SessionDifficulty)}>
@@ -153,11 +164,12 @@ export function SessionForm({ initial, planned, typeOptions, onSubmit, onCancel 
           </select>
         </label>
         <label className="field-label">
-          Douleur
-          <select className="field" value={form.pain ? "yes" : "no"} onChange={(event) => update("pain", event.target.value === "yes")}>
-            <option value="no">Non</option>
-            <option value="yes">Oui</option>
-          </select>
+          Fatigue pendant / 10
+          <input className="field" type="number" min="0" max="10" inputMode="numeric" value={form.fatigueDuring} onChange={(event) => update("fatigueDuring", event.target.value)} placeholder="0-10" />
+        </label>
+        <label className="field-label">
+          Douleur pendant / 10
+          <input className="field" type="number" min="0" max="10" inputMode="numeric" value={form.painDuring} onChange={(event) => update("painDuring", event.target.value)} placeholder="0-10" />
         </label>
         <label className="field-label">
           Énergie après

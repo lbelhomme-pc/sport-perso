@@ -191,15 +191,25 @@ function fallbackModulesFromFocus(focus: NavigationFocus = "both") {
   };
 }
 
-export const DEFAULT_MODULES_ENABLED = ["home", "training", "sessions", "nutrition", "calendar", "progress", "weight", "recovery", "profile"] as AppModuleId[];
-export const DEFAULT_PRIMARY_TABS = ["home", "training", "sessions", "nutrition", "profile"] as AppModuleId[];
+export const DEFAULT_MODULES_ENABLED = ["home", "training", "sessions", "calendar", "progress", "recovery", "profile"] as AppModuleId[];
+export const DEFAULT_PRIMARY_TABS = ["home", "training", "sessions", "progress", "profile"] as AppModuleId[];
+
+function applyModuleGuards(settings: AppSettings, modules: AppModuleId[]) {
+  const nutritionMode = settings.nutritionMode ?? "calories-macros";
+  const withoutNutrition = nutritionMode === "disabled" ? modules.filter((moduleId) => moduleId !== "nutrition") : modules;
+  const guarded = settings.eatingDisorderHistory
+    ? withoutNutrition.filter((moduleId) => moduleId !== "weight")
+    : withoutNutrition;
+
+  return guarded;
+}
 
 export function resolveModulePreferences(settings: AppSettings): ModulePreferences {
   const fallback = fallbackModulesFromFocus(settings.navigationFocus);
-  const enabled = uniqueModules(settings.enabledModules?.length ? settings.enabledModules : fallback.enabled);
+  const enabled = uniqueModules(applyModuleGuards(settings, settings.enabledModules?.length ? settings.enabledModules : fallback.enabled));
   const normalizedEnabled = uniqueModules(["home" as AppModuleId, ...enabled, "profile" as AppModuleId]);
   const primaryFromSettings = settings.primaryModuleTabs?.length ? settings.primaryModuleTabs : fallback.tabs;
-  const primaryTabs = uniqueModulesInUserOrder(primaryFromSettings)
+  const primaryTabs = uniqueModulesInUserOrder(applyModuleGuards(settings, primaryFromSettings))
     .filter((moduleId) => normalizedEnabled.includes(moduleId) && modulesConfig[moduleId].canBeMainTab)
     .slice(0, MAX_PRIMARY_TABS);
   const resolvedPrimaryTabs: AppModuleId[] = primaryTabs.includes("home")

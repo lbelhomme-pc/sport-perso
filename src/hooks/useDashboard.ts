@@ -41,11 +41,13 @@ export function useDashboard() {
   const weekMealTotals = getMealTotals(weekMeals);
   const recentCutoff = toISODate(subDays(new Date(), 6));
   const recentSessions = data.sessions.filter((session) => session.date >= recentCutoff);
+  const recentDailyContexts = data.dailyContexts.filter((context) => context.date >= recentCutoff);
   const alerts = generateDashboardAlerts({
     settings: data.settings,
     todayMeals,
     todaySessions,
     recentSessions,
+    recentDailyContexts,
     weights: data.weights,
     weekSummary,
     maintenanceCalorieTarget: adaptiveCalorieTarget.maintenanceTarget
@@ -53,6 +55,8 @@ export function useDashboard() {
 
   return {
     settings: data.settings,
+    allSessions: data.sessions,
+    dailyContexts: data.dailyContexts,
     today,
     yesterday,
     currentWeek,

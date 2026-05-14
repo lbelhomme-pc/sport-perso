@@ -1,8 +1,9 @@
 import { useDailyContext } from "../hooks/useDailyContext";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
-import type { EnergyLevel, SleepQuality } from "../types";
+import type { SleepQuality } from "../types";
 import { toISODate } from "../utils/dates";
+import { readinessLabel } from "../utils/readiness";
 
 export default function RecoveryPage() {
   const today = toISODate(new Date());
@@ -13,24 +14,27 @@ export default function RecoveryPage() {
       <PageHeader
         eyebrow="Récupération"
         title="État du jour"
-        description="Sommeil, fatigue et douleur : trois signaux simples pour adapter la séance sans négocier avec ton ego."
+        description="Au réveil, note fatigue et douleur de 1 à 10. Ces signaux adaptent la séance sans négocier avec ton ego."
       />
 
       <SectionCard className="p-5 sm:p-6">
         <div className="grid gap-4 sm:grid-cols-3">
           <label className="field-label">
-            Fatigue
-            <select
+            Fatigue au réveil / 10
+            <input
               className="field"
-              value={dailyContext.energyLevel}
+              type="number"
+              min="0"
+              max="10"
+              inputMode="numeric"
+              value={dailyContext.fatigueMorning ?? 5}
               onChange={(event) =>
-                saveDailyContext({ ...dailyContext, date: today, energyLevel: event.target.value as EnergyLevel })
+                saveDailyContext({ ...dailyContext, date: today, fatigueMorning: Number(event.target.value) })
               }
-            >
-              <option value="strong">Faible</option>
-              <option value="normal">Normale</option>
-              <option value="fatigue">Élevée</option>
-            </select>
+            />
+            <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
+              {readinessLabel(dailyContext.fatigueMorning)} - 0 reposé, 10 vidé.
+            </span>
           </label>
           <label className="field-label">
             Sommeil
@@ -47,22 +51,26 @@ export default function RecoveryPage() {
             </select>
           </label>
           <label className="field-label">
-            Douleur
-            <select
+            Douleur au réveil / 10
+            <input
               className="field"
-              value={dailyContext.pain ? "yes" : "no"}
-              onChange={(event) => saveDailyContext({ ...dailyContext, date: today, pain: event.target.value === "yes" })}
-            >
-              <option value="no">Non</option>
-              <option value="yes">Oui</option>
-            </select>
+              type="number"
+              min="0"
+              max="10"
+              inputMode="numeric"
+              value={dailyContext.painMorning ?? 0}
+              onChange={(event) => saveDailyContext({ ...dailyContext, date: today, painMorning: Number(event.target.value) })}
+            />
+            <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
+              {readinessLabel(dailyContext.painMorning)} - 0 aucune, 10 bloquante.
+            </span>
           </label>
         </div>
 
         <p className="mt-5 border-l-4 border-limeSoft bg-mist/60 p-4 text-sm font-bold leading-6 text-ink">
-          {dailyContext.pain
+          {(dailyContext.painMorning ?? 0) >= 4
             ? "Douleur signalée : garde une version courte ou remplace par mobilité."
-            : dailyContext.energyLevel === "fatigue" || dailyContext.sleepQuality === "bad"
+            : (dailyContext.fatigueMorning ?? 5) >= 7 || dailyContext.sleepQuality === "bad"
               ? "Récupération fragile : baisse l'intensité, garde la technique propre."
               : "Feu vert prudent : tu peux suivre le plan, sans transformer la séance en test maximal."}
         </p>
