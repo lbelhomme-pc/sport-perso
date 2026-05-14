@@ -10,9 +10,9 @@ import { useDailyContext } from "../hooks/useDailyContext";
 import { useDashboard } from "../hooks/useDashboard";
 import { useSessionChecklists } from "../hooks/useSessionChecklists";
 import { useSessions } from "../hooks/useSessions";
+import { useUserModules } from "../hooks/useUserModules";
 import type { CompletedSession, EnergyLevel, PlannedSession, SleepQuality } from "../types";
 import { formatLongDate } from "../utils/dates";
-import { wantsNutrition, wantsSport } from "../utils/navigationFocus";
 import { getProteinTarget } from "../utils/nutrition";
 import { getCompletedForPlan } from "../utils/training";
 
@@ -60,7 +60,7 @@ function coachThread({
   pain?: boolean;
 }) {
   const yesterdayDone = yesterdaySessions[0];
-  const todayLabel = todayPlanned ? `${PLANNED_TYPE_LABELS[todayPlanned.type]} — ${todayPlanned.title}` : "récup active ou repos";
+  const todayLabel = todayPlanned ? `${PLANNED_TYPE_LABELS[todayPlanned.type]} - ${todayPlanned.title}` : "récup active ou repos";
 
   if (yesterdayDone && todayPlanned) {
     return `Hier : ${yesterdayDone.title} validée. Aujourd'hui : ${todayLabel}. ${
@@ -92,44 +92,55 @@ function updateNumberInput(value: string) {
 
 export default function DashboardPage() {
   const dashboard = useDashboard();
-  const focus = dashboard.settings.navigationFocus ?? "both";
-  const showSport = wantsSport(focus);
-  const showNutrition = wantsNutrition(focus);
+  const { isEnabled } = useUserModules();
+  const showTraining = isEnabled("training");
+  const showSessions = isEnabled("sessions");
+  const showSport = showTraining || showSessions;
+  const showNutrition = isEnabled("nutrition");
+  const showWeight = isEnabled("weight");
+  const showCalendar = isEnabled("calendar");
+  const showRecovery = isEnabled("recovery");
+  const showQuickCheck = showRecovery || showCalendar;
   const { dailyContext, saveDailyContext } = useDailyContext(dashboard.today);
   const { sessions, saveSession, deletePlannedSessionCompletion } = useSessions();
   const { getCheckedItemIds, toggleChecklistItem } = useSessionChecklists();
   const [sessionMode, setSessionMode] = useState<PlannedSession | null>(null);
   const [loggingSession, setLoggingSession] = useState<PlannedSession | null>(null);
+  const todayPlanned = showTraining ? dashboard.todayPlanned : undefined;
   const proteinTarget = getProteinTarget(dashboard.calculationWeight, dashboard.settings.proteinPerKg);
   const proteinRatio = proteinTarget > 0 ? dashboard.todayMealTotals.protein / proteinTarget : 1;
   const completedTodaySession = dashboard.todaySessions.find((session) => session.completed);
-  const todayTypeLabel = dashboard.todayPlanned ? PLANNED_TYPE_LABELS[dashboard.todayPlanned.type] : "Repos / libre";
-  const todayAction = dashboard.todayPlanned
-    ? dashboard.todaySessions.some((session) => session.plannedSessionId === dashboard.todayPlanned?.id)
+  const todayTypeLabel = todayPlanned ? PLANNED_TYPE_LABELS[todayPlanned.type] : showSessions ? "Séance libre" : "Suivi du jour";
+  const todayAction = todayPlanned
+    ? dashboard.todaySessions.some((session) => session.plannedSessionId === todayPlanned.id)
       ? "Voir / corriger la séance"
       : "Démarrer / enregistrer la séance"
-    : "Ajouter une séance libre";
+    : showSessions
+      ? "Ajouter une séance libre"
+      : "Personnaliser";
   const mealAdvice = nutritionAdvice(
-    completedTodaySession?.type ?? dashboard.todayPlanned?.type,
-    completedTodaySession?.durationMin ?? dashboard.todayPlanned?.durationMin,
+    completedTodaySession?.type ?? todayPlanned?.type,
+    completedTodaySession?.durationMin ?? todayPlanned?.durationMin,
     proteinRatio,
     Boolean(completedTodaySession)
   );
   const coachMessage = coachThread({
     yesterdaySessions: dashboard.yesterdaySessions,
-    todayPlanned: dashboard.todayPlanned,
+    todayPlanned,
     energy: dailyContext.energyLevel,
     pain: dailyContext.pain
   });
-  const nutritionReminders = [
-    dashboard.todayMeals.length ? null : "Repas non saisi",
-    dashboard.latestWeight ? null : "Poids absent",
-    proteinRatio < 0.75 ? "Protéines basses" : null
-  ].filter((item): item is string => Boolean(item));
+  const nutritionReminders = showNutrition
+    ? [
+        dashboard.todayMeals.length ? null : "Repas non saisi",
+        dashboard.latestWeight ? null : "Poids absent",
+        proteinRatio < 0.75 ? "Protéines basses" : null
+      ].filter((item): item is string => Boolean(item))
+    : [];
 
   return (
     <>
-      {showSport && sessionMode ? (
+      {showTraining && sessionMode ? (
         <SessionMode
           session={sessionMode}
           energy={dailyContext.energyLevel}
@@ -146,100 +157,111 @@ export default function DashboardPage() {
       ) : null}
 
       {showSport ? (
-      <SectionCard className="border-l-4 border-limeSoft p-4 sm:p-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="eyebrow">Aujourd'hui</p>
-            <p className="mt-1 text-sm font-bold text-muted">{formatLongDate(dashboard.today)}</p>
-            <h1 className="mt-3 font-display text-3xl font-black leading-tight tracking-[-0.06em] text-petrol-800 sm:text-5xl">
-              {todayTypeLabel} · {dashboard.todayPlanned?.durationMin ? `${dashboard.todayPlanned.durationMin} min` : "souple"}
-            </h1>
-            <p className="mt-2 text-xl font-black leading-tight text-petrol-800">
-              {dashboard.todayPlanned?.title ?? "Aujourd'hui repos : mobilité 8 min si ça fait du bien"}
-            </p>
+        <SectionCard className="border-l-4 border-limeSoft p-4 sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="eyebrow">Aujourd'hui</p>
+              <p className="mt-1 text-sm font-bold text-muted">{formatLongDate(dashboard.today)}</p>
+              <h1 className="mt-3 font-display text-3xl font-black leading-tight tracking-[-0.06em] text-petrol-800 sm:text-5xl">
+                {todayTypeLabel} · {todayPlanned?.durationMin ? `${todayPlanned.durationMin} min` : "souple"}
+              </h1>
+              <p className="mt-2 text-xl font-black leading-tight text-petrol-800">
+                {todayPlanned?.title ?? "Aujourd'hui repos : mobilité 8 min si ça fait du bien"}
+              </p>
+            </div>
+            <span className="chip bg-limeSoft text-petrol-900">Semaine {dashboard.currentWeek}</span>
           </div>
-          <span className="chip bg-limeSoft text-petrol-900">Semaine {dashboard.currentWeek}</span>
-        </div>
 
-        <p className="mt-4 border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
-          {coachMessage}
-        </p>
-
-        <details className="mt-4 border border-petrol-800/10 bg-white p-3">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-800">
-            Version du jour
-            <ChevronDown className="h-4 w-4" aria-hidden="true" />
-          </summary>
-          <p className="mt-3 text-sm font-semibold leading-6 text-muted">
-          {dashboard.todayPlanned
-            ? getDisplayedVersion(dashboard.todayPlanned, dailyContext.energyLevel)
-            : "Pas de séance prévue. Si tu bouges quand même, saisis une séance libre, sinon récupère vraiment."}
+          <p className="mt-4 border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
+            {coachMessage}
           </p>
-        </details>
 
-        <div className={`mt-5 grid gap-2 ${showNutrition ? "sm:grid-cols-[1fr_1fr_auto]" : "sm:grid-cols-[1fr_auto]"}`}>
-          {dashboard.todayPlanned ? (
-            <button
-              type="button"
-              className="action-button"
-              onClick={() => {
-                if (dashboard.todayPlanned) setSessionMode(dashboard.todayPlanned);
-              }}
-            >
-              <PlayCircle className="h-5 w-5" /> {todayAction}
-            </button>
-          ) : (
-            <Link to="/sessions" className="action-button">
-              <PlayCircle className="h-5 w-5" /> {todayAction}
-            </Link>
-          )}
-          {showNutrition ? (
-            <Link to="/meals" className="ghost-button">
-              <Utensils className="h-5 w-5" /> Ajouter repas
-            </Link>
+          {todayPlanned ? (
+            <details className="mt-4 border border-petrol-800/10 bg-white p-3">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-800">
+                Version du jour
+                <ChevronDown className="h-4 w-4" aria-hidden="true" />
+              </summary>
+              <p className="mt-3 text-sm font-semibold leading-6 text-muted">
+                {getDisplayedVersion(todayPlanned, dailyContext.energyLevel)}
+              </p>
+            </details>
           ) : null}
-          {dashboard.todayPlanned ? (
-            <Link to="/planning" className="ghost-button">
-              Voir détails
-            </Link>
-          ) : null}
-        </div>
-      </SectionCard>
-      ) : (
-      <SectionCard className="border-l-4 border-limeSoft p-4 sm:p-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="eyebrow">Aujourd'hui</p>
-            <p className="mt-1 text-sm font-bold text-muted">{formatLongDate(dashboard.today)}</p>
-            <h1 className="mt-3 font-display text-3xl font-black leading-tight tracking-[-0.06em] text-petrol-800 sm:text-5xl">
-              Nutrition et mouvement
-            </h1>
-            <p className="mt-2 text-xl font-black leading-tight text-petrol-800">
-              Reste environ {remainingLabel(dashboard.remainingCalories)} sur ta journée.
-            </p>
+
+          <div className={`mt-5 grid gap-2 ${showNutrition ? "sm:grid-cols-[1fr_1fr_auto]" : "sm:grid-cols-[1fr_auto]"}`}>
+            {todayPlanned ? (
+              <button type="button" className="action-button" onClick={() => setSessionMode(todayPlanned)}>
+                <PlayCircle className="h-5 w-5" /> {todayAction}
+              </button>
+            ) : (
+              <Link to={showSessions ? "/sessions" : "/settings"} className="action-button">
+                <PlayCircle className="h-5 w-5" /> {todayAction}
+              </Link>
+            )}
+            {showNutrition ? (
+              <Link to="/meals" className="ghost-button">
+                <Utensils className="h-5 w-5" /> Ajouter repas
+              </Link>
+            ) : null}
+            {todayPlanned ? (
+              <Link to="/planning" className="ghost-button">
+                Voir détails
+              </Link>
+            ) : null}
           </div>
-          <span className="chip bg-limeSoft text-petrol-900">Sans sport dans le menu</span>
-        </div>
+        </SectionCard>
+      ) : (
+        <SectionCard className="border-l-4 border-limeSoft p-4 sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="eyebrow">Aujourd'hui</p>
+              <p className="mt-1 text-sm font-bold text-muted">{formatLongDate(dashboard.today)}</p>
+              <h1 className="mt-3 font-display text-3xl font-black leading-tight tracking-[-0.06em] text-petrol-800 sm:text-5xl">
+                {showNutrition ? "Nutrition et mouvement" : showRecovery ? "Récupération et habitudes" : "Ton espace du jour"}
+              </h1>
+              <p className="mt-2 text-xl font-black leading-tight text-petrol-800">
+                {showNutrition
+                  ? `Reste environ ${remainingLabel(dashboard.remainingCalories)} sur ta journée.`
+                  : showRecovery
+                    ? recoveryHint(dailyContext.energyLevel, dailyContext.sleepQuality, dailyContext.pain)
+                    : "Choisis une action rapide ou ajuste tes modules dans le profil."}
+              </p>
+            </div>
+            <span className="chip bg-limeSoft text-petrol-900">Menu personnalisé</span>
+          </div>
 
-        <p className="mt-4 border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
-          Priorité : noter un repas simple, le poids si utile, et tes pas. Les séances et le programme ne sont pas affichés tant que le sport n'est pas choisi dans les réglages.
-        </p>
+          <p className="mt-4 border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
+            {showNutrition
+              ? "Priorité : noter un repas simple, le poids si utile, et tes pas. Les séances et le programme restent cachés tant que le sport n'est pas choisi dans les réglages."
+              : "Les blocs désactivés ne sont pas affichés ici. Tu peux les réactiver plus tard dans Profil sans perdre tes données."}
+          </p>
 
-        <div className="mt-5 grid gap-2 sm:grid-cols-3">
-          <Link to="/meals" className="action-button">
-            <Utensils className="h-5 w-5" /> Saisir un repas
-          </Link>
-          <Link to="/weight" className="ghost-button">
-            <Scale className="h-5 w-5" /> Saisir le poids
-          </Link>
-          <Link to="/calendar" className="ghost-button">
-            <CalendarCheck2 className="h-5 w-5" /> Calendrier
-          </Link>
-        </div>
-      </SectionCard>
+          <div className="mt-5 grid gap-2 sm:grid-cols-3">
+            {showNutrition ? (
+              <Link to="/meals" className="action-button">
+                <Utensils className="h-5 w-5" /> Saisir un repas
+              </Link>
+            ) : null}
+            {showWeight ? (
+              <Link to="/weight" className={showNutrition ? "ghost-button" : "action-button"}>
+                <Scale className="h-5 w-5" /> Saisir le poids
+              </Link>
+            ) : null}
+            {showCalendar ? (
+              <Link to="/calendar" className={showNutrition || showWeight ? "ghost-button" : "action-button"}>
+                <CalendarCheck2 className="h-5 w-5" /> Calendrier
+              </Link>
+            ) : null}
+            {!showNutrition && !showWeight && !showCalendar ? (
+              <Link to="/settings" className="action-button">
+                Personnaliser mes modules
+              </Link>
+            ) : null}
+          </div>
+        </SectionCard>
       )}
 
-      {showSport && loggingSession ? (
+      {showTraining && loggingSession ? (
         <SectionCard className="p-4 sm:p-6">
           <p className="eyebrow">Fin de séance</p>
           <h2 className="title-lg mt-2">Saisir le réel</h2>
@@ -260,159 +282,163 @@ export default function DashboardPage() {
       ) : null}
 
       {showNutrition ? (
-      <SectionCard className="p-4 sm:p-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="eyebrow">Nutrition utile</p>
-            <h2 className="title-lg mt-2">Reste environ : {remainingLabel(dashboard.remainingCalories)}</h2>
+        <SectionCard className="p-4 sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="eyebrow">Nutrition utile</p>
+              <h2 className="title-lg mt-2">Reste environ : {remainingLabel(dashboard.remainingCalories)}</h2>
+            </div>
+            <Link to="/meals" className="action-button">
+              <Utensils className="h-5 w-5" /> Saisir mon repas
+            </Link>
           </div>
-          <Link to="/meals" className="action-button">
-            <Utensils className="h-5 w-5" /> Saisir mon repas
-          </Link>
-        </div>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <div className="border border-petrol-800/10 bg-white p-4">
-            <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Protéines</p>
-            <p className="mt-1 font-display text-3xl font-black tracking-[-0.05em] text-petrol-800">
-              {Math.round(dashboard.todayMealTotals.protein)} / {proteinTarget} g
-            </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <div className="border border-petrol-800/10 bg-white p-4">
+              <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Protéines</p>
+              <p className="mt-1 font-display text-3xl font-black tracking-[-0.05em] text-petrol-800">
+                {Math.round(dashboard.todayMealTotals.protein)} / {proteinTarget} g
+              </p>
+            </div>
+            <div className="border-l-4 border-limeSoft bg-mist/50 p-4">
+              <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Conseil</p>
+              <p className="mt-2 text-base font-semibold leading-7 text-ink">{mealAdvice}</p>
+            </div>
           </div>
-          <div className="border-l-4 border-limeSoft bg-mist/50 p-4">
-            <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Conseil</p>
-            <p className="mt-2 text-base font-semibold leading-7 text-ink">{mealAdvice}</p>
-          </div>
-        </div>
 
-        {nutritionReminders.length ? (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {nutritionReminders.map((reminder) => (
-              <span key={reminder} className="chip bg-red-50 text-red-950">
-                {reminder}
-              </span>
-            ))}
-          </div>
-        ) : null}
-      </SectionCard>
+          {nutritionReminders.length ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {nutritionReminders.map((reminder) => (
+                <span key={reminder} className="chip bg-red-50 text-red-950">
+                  {reminder}
+                </span>
+              ))}
+            </div>
+          ) : null}
+        </SectionCard>
       ) : null}
 
-      <SectionCard className="p-4 sm:p-6">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="eyebrow">Check rapide</p>
-            <h2 className="title-lg mt-2">{showSport ? "Comment tu arrives aujourd'hui ?" : "Mouvement du jour"}</h2>
+      {showQuickCheck ? (
+        <SectionCard className="p-4 sm:p-6">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="eyebrow">Check rapide</p>
+              <h2 className="title-lg mt-2">{showRecovery ? "Comment tu arrives aujourd'hui ?" : "Mouvement du jour"}</h2>
+            </div>
+            <p className="max-w-md text-sm font-semibold leading-6 text-muted">
+              {showRecovery
+                ? recoveryHint(dailyContext.energyLevel, dailyContext.sleepQuality, dailyContext.pain)
+                : "Saisis juste les pas et les étages si tu veux garder une trace simple de ta journée."}
+            </p>
           </div>
-          <p className="max-w-md text-sm font-semibold leading-6 text-muted">
-            {showSport
-              ? recoveryHint(dailyContext.energyLevel, dailyContext.sleepQuality, dailyContext.pain)
-              : "Saisis juste les pas et les étages. Le reste du suivi sport reste caché."}
-          </p>
-        </div>
 
-        <div className={`mt-5 grid gap-3 ${showSport ? "lg:grid-cols-4" : "sm:grid-cols-2"}`}>
-          {showSport ? (
-          <>
-          <label className="field-label">
-            Fatigue
-            <select
-              className="field"
-              value={dailyContext.energyLevel}
-              onChange={(event) =>
-                saveDailyContext({
-                  ...dailyContext,
-                  date: dashboard.today,
-                  energyLevel: event.target.value as EnergyLevel
-                })
-              }
-            >
-              {energyOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className={`mt-5 grid gap-3 ${showRecovery && showCalendar ? "lg:grid-cols-5" : showRecovery ? "lg:grid-cols-3" : "sm:grid-cols-2"}`}>
+            {showRecovery ? (
+              <>
+                <label className="field-label">
+                  Fatigue
+                  <select
+                    className="field"
+                    value={dailyContext.energyLevel}
+                    onChange={(event) =>
+                      saveDailyContext({
+                        ...dailyContext,
+                        date: dashboard.today,
+                        energyLevel: event.target.value as EnergyLevel
+                      })
+                    }
+                  >
+                    {energyOptions.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
-          <label className="field-label">
-            Sommeil
-            <select
-              className="field"
-              value={dailyContext.sleepQuality ?? "medium"}
-              onChange={(event) =>
-                saveDailyContext({
-                  ...dailyContext,
-                  date: dashboard.today,
-                  sleepQuality: event.target.value as SleepQuality
-                })
-              }
-            >
-              {sleepOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
+                <label className="field-label">
+                  Sommeil
+                  <select
+                    className="field"
+                    value={dailyContext.sleepQuality ?? "medium"}
+                    onChange={(event) =>
+                      saveDailyContext({
+                        ...dailyContext,
+                        date: dashboard.today,
+                        sleepQuality: event.target.value as SleepQuality
+                      })
+                    }
+                  >
+                    {sleepOptions.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
-          <label className="field-label">
-            Douleur
-            <select
-              className="field"
-              value={dailyContext.pain ? "yes" : "no"}
-              onChange={(event) =>
-                saveDailyContext({
-                  ...dailyContext,
-                  date: dashboard.today,
-                  pain: event.target.value === "yes"
-                })
-              }
-            >
-              <option value="no">Non</option>
-              <option value="yes">Oui</option>
-            </select>
-          </label>
-          </>
-          ) : null}
+                <label className="field-label">
+                  Douleur
+                  <select
+                    className="field"
+                    value={dailyContext.pain ? "yes" : "no"}
+                    onChange={(event) =>
+                      saveDailyContext({
+                        ...dailyContext,
+                        date: dashboard.today,
+                        pain: event.target.value === "yes"
+                      })
+                    }
+                  >
+                    <option value="no">Non</option>
+                    <option value="yes">Oui</option>
+                  </select>
+                </label>
+              </>
+            ) : null}
 
-          <label className="field-label">
-            Pas
-            <input
-              className="field"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={dailyContext.steps ? String(dailyContext.steps) : ""}
-              onChange={(event) =>
-                saveDailyContext({
-                  ...dailyContext,
-                  date: dashboard.today,
-                  steps: updateNumberInput(event.target.value)
-                })
-              }
-              placeholder="Ex : 8500"
-            />
-          </label>
+            {showCalendar ? (
+              <>
+                <label className="field-label">
+                  Pas
+                  <input
+                    className="field"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={dailyContext.steps ? String(dailyContext.steps) : ""}
+                    onChange={(event) =>
+                      saveDailyContext({
+                        ...dailyContext,
+                        date: dashboard.today,
+                        steps: updateNumberInput(event.target.value)
+                      })
+                    }
+                    placeholder="Ex : 8500"
+                  />
+                </label>
 
-          {!showSport ? (
-            <label className="field-label">
-              Étages
-              <input
-                className="field"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={dailyContext.floors ? String(dailyContext.floors) : ""}
-                onChange={(event) =>
-                  saveDailyContext({
-                    ...dailyContext,
-                    date: dashboard.today,
-                    floors: updateNumberInput(event.target.value)
-                  })
-                }
-                placeholder="Ex : 8"
-              />
-            </label>
-          ) : null}
-        </div>
-      </SectionCard>
+                <label className="field-label">
+                  Étages
+                  <input
+                    className="field"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={dailyContext.floors ? String(dailyContext.floors) : ""}
+                    onChange={(event) =>
+                      saveDailyContext({
+                        ...dailyContext,
+                        date: dashboard.today,
+                        floors: updateNumberInput(event.target.value)
+                      })
+                    }
+                    placeholder="Ex : 8"
+                  />
+                </label>
+              </>
+            ) : null}
+          </div>
+        </SectionCard>
+      ) : null}
     </>
   );
 }

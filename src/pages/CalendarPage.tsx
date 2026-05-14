@@ -24,9 +24,9 @@ import { DAILY_HABIT_LABELS } from "../hooks/useDailyHabits";
 import { useMeals } from "../hooks/useMeals";
 import { useSettings } from "../hooks/useSettings";
 import { useStoredData } from "../hooks/useStoredData";
+import { useUserModules } from "../hooks/useUserModules";
 import type { CompletedSessionType, DailyHabitType, PlannedSessionType } from "../types";
 import { getTotalWeeks, getWeekIndexForDate, toISODate } from "../utils/dates";
-import { wantsNutrition, wantsSport } from "../utils/navigationFocus";
 
 type CalendarViewMode = "agenda" | "compact" | "grid";
 
@@ -83,9 +83,9 @@ function readInitialCalendarView(): CalendarViewMode {
 
 export default function CalendarPage() {
   const { settings } = useSettings();
-  const focus = settings.navigationFocus ?? "both";
-  const showSport = wantsSport(focus);
-  const showNutrition = wantsNutrition(focus);
+  const { isEnabled } = useUserModules();
+  const showSport = isEnabled("training") || isEnabled("sessions");
+  const showNutrition = isEnabled("nutrition");
   const { saveMeal } = useMeals();
   const data = useStoredData();
   const today = toISODate(new Date());
@@ -171,13 +171,15 @@ export default function CalendarPage() {
     <>
       <PageHeader
         eyebrow="Agenda"
-        title={showSport ? "Jours, habitudes et séances" : "Jours, repas et mouvement"}
+        title={showSport ? "Jours, habitudes et séances" : showNutrition ? "Jours, repas et mouvement" : "Jours et habitudes"}
         description={
           showSport && showNutrition
             ? "Une vue simple pour voir les jours cochés, les séances prévues, les repas et ce que tu as réellement fait."
             : showSport
               ? "Une vue simple pour voir les jours cochés, les séances prévues et ce que tu as réellement fait."
-              : "Une vue simple pour voir les jours cochés, les repas et ton mouvement quotidien."
+              : showNutrition
+                ? "Une vue simple pour voir les jours cochés, les repas et ton mouvement quotidien."
+                : "Une vue simple pour voir les jours cochés et ton mouvement quotidien."
         }
       />
 

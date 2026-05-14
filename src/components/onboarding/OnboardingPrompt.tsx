@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
-import { CalendarDays, CheckCircle2, Dumbbell, HeartPulse, LayoutGrid, Target, Utensils } from "lucide-react";
-import type { AppExperienceMode, NavigationFocus, Settings, SportType, TargetEventType, UserSportLevel, WeekdayKey } from "../../types";
+import { CalendarDays, CheckCircle2, HeartPulse, Target } from "lucide-react";
+import { ModulePreferencesEditor } from "../modules/ModulePreferencesEditor";
+import { deriveNavigationFocusFromModules, recommendedModulesByGoal, resolveModulePreferences } from "../../data/modules";
+import type { AppExperienceMode, AppModuleId, Settings, SportType, TargetEventType, UserSportLevel, WeekdayKey } from "../../types";
 import { toISODate } from "../../utils/dates";
 
 type OnboardingPromptProps = {
@@ -11,7 +13,7 @@ type OnboardingPromptProps = {
 const goalOptions: Array<{ id: AppExperienceMode; label: string; description: string; sports: SportType[]; eventType: TargetEventType }> = [
   {
     id: "competition",
-    label: "Préparer HYROX",
+    label: "Préparer une compétition",
     description: "Planifier une date cible, les séances clés et les adaptations fatigue.",
     sports: ["hyrox", "strength", "run", "badminton", "recovery"],
     eventType: "hyrox"
@@ -32,16 +34,37 @@ const goalOptions: Array<{ id: AppExperienceMode; label: string; description: st
   },
   {
     id: "muscle-gain",
-    label: "Progresser en musculation",
+    label: "Prendre du muscle",
     description: "Suivre charges, volume, protéines et récupération.",
     sports: ["strength", "mobility", "recovery"],
     eventType: "none"
   },
   {
+    id: "performance",
+    label: "Améliorer une performance",
+    description: "Suivre chronos, charges, régularité et tests clés.",
+    sports: ["strength", "run", "hybrid", "test", "recovery"],
+    eventType: "other"
+  },
+  {
+    id: "hybrid",
+    label: "Sport hybride",
+    description: "Combiner force, cardio, puissance et endurance sans tout mélanger.",
+    sports: ["hybrid", "strength", "run", "recovery"],
+    eventType: "none"
+  },
+  {
     id: "racket",
     label: "Raquette + condition physique",
-    description: "Badminton, appuis, explosivité et cardio intermittent.",
+    description: "Badminton, tennis ou padel : appuis, explosivité et cardio intermittent.",
     sports: ["badminton", "racket", "strength", "mobility", "recovery"],
+    eventType: "none"
+  },
+  {
+    id: "health",
+    label: "Santé & régularité",
+    description: "Bouger plus, récupérer mieux et garder une routine simple.",
+    sports: ["mobility", "recovery", "free"],
     eventType: "none"
   }
 ];
@@ -50,32 +73,6 @@ const levelOptions: Array<{ id: UserSportLevel; label: string }> = [
   { id: "beginner", label: "Débutant" },
   { id: "intermediate", label: "Intermédiaire" },
   { id: "advanced", label: "Confirmé" }
-];
-
-const navigationFocusOptions: Array<{
-  id: NavigationFocus;
-  label: string;
-  description: string;
-  icon: typeof Dumbbell;
-}> = [
-  {
-    id: "sport",
-    label: "Sport surtout",
-    description: "Menu principal : Aujourd'hui, Programme, Sport, Calendrier. Nutrition et repas sont masqués.",
-    icon: Dumbbell
-  },
-  {
-    id: "nutrition",
-    label: "Nutrition surtout",
-    description: "Menu principal : Aujourd'hui, Repas, Poids, Calendrier. Le sport est masqué.",
-    icon: Utensils
-  },
-  {
-    id: "both",
-    label: "Sport + nutrition",
-    description: "Menu principal complet : Programme, Sport, Repas et Calendrier restent devant.",
-    icon: LayoutGrid
-  }
 ];
 
 const dayOptions: Array<{ id: WeekdayKey; label: string }> = [
@@ -96,8 +93,13 @@ function buildProgramTargetDate(programLengthWeeks: number) {
 
 export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps) {
   const initialGoal = settings.appMode ?? "competition";
+  const initialRecommendation = recommendedModulesByGoal[initialGoal];
+  const initialModulePrefs = settings.onboardingCompleted
+    ? resolveModulePreferences(settings)
+    : { enabledModules: initialRecommendation.enabled, primaryModuleTabs: initialRecommendation.tabs };
   const [goal, setGoal] = useState<AppExperienceMode>(initialGoal);
-  const [navigationFocus, setNavigationFocus] = useState<NavigationFocus>(settings.navigationFocus ?? "both");
+  const [enabledModules, setEnabledModules] = useState<AppModuleId[]>(initialModulePrefs.enabledModules);
+  const [primaryModuleTabs, setPrimaryModuleTabs] = useState<AppModuleId[]>(initialModulePrefs.primaryModuleTabs);
   const [level, setLevel] = useState<UserSportLevel>(settings.sportLevel ?? "intermediate");
   const [availableDays, setAvailableDays] = useState<WeekdayKey[]>(
     settings.availableDays?.length ? settings.availableDays : ["tuesday", "wednesday", "thursday", "friday", "saturday"]
@@ -111,13 +113,24 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
 
   const selectedGoal = useMemo(() => goalOptions.find((option) => option.id === goal) ?? goalOptions[0], [goal]);
 
+  const selectGoal = (nextGoal: AppExperienceMode) => {
+    const next = goalOptions.find((option) => option.id === nextGoal) ?? goalOptions[0];
+    const recommended = recommendedModulesByGoal[nextGoal];
+
+    setGoal(nextGoal);
+    setTargetEventType(next.eventType);
+    setEnabledModules(recommended.enabled);
+    setPrimaryModuleTabs(recommended.tabs);
+  };
+
   const toggleDay = (day: WeekdayKey) => {
-    setAvailableDays((current) =>
-      current.includes(day) ? current.filter((item) => item !== day) : [...current, day]
-    );
+    setAvailableDays((current) => (current.includes(day) ? current.filter((item) => item !== day) : [...current, day]));
   };
 
   const completeOnboarding = (skip = false) => {
+    const fallbackPrefs = resolveModulePreferences(settings);
+    const nextEnabledModules = skip ? fallbackPrefs.enabledModules : enabledModules;
+    const nextPrimaryTabs = skip ? fallbackPrefs.primaryModuleTabs : primaryModuleTabs;
     const nextEventType = skip ? settings.targetEventType ?? "hyrox" : targetEventType;
     const nextProgramLength = skip ? settings.programLengthWeeks ?? 12 : programLengthWeeks;
     const nextTargetDate = nextEventType === "none" ? buildProgramTargetDate(nextProgramLength) : targetDate;
@@ -127,7 +140,9 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
       ...settings,
       appMode: skip ? settings.appMode : goal,
       enabledSports: skip ? settings.enabledSports : selectedGoal.sports,
-      navigationFocus: skip ? settings.navigationFocus ?? "both" : navigationFocus,
+      enabledModules: nextEnabledModules,
+      primaryModuleTabs: nextPrimaryTabs,
+      navigationFocus: deriveNavigationFocusFromModules(nextEnabledModules),
       onboardingCompleted: true,
       sportLevel: skip ? settings.sportLevel : level,
       availableDays: skip ? settings.availableDays : availableDays,
@@ -151,7 +166,7 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
               Ton coach doit d'abord te comprendre.
             </h1>
             <p className="mt-4 text-sm font-semibold leading-6 text-white/75">
-              Pas de formulaire soviétique : juste assez d'infos pour proposer le bon niveau, la bonne durée et les bonnes priorités.
+              Choisis ce qui t'intéresse vraiment. Un module désactivé disparaît de l'expérience visible, mais reste réactivable plus tard.
             </p>
             <div className="mt-6 grid gap-3 text-sm font-bold">
               <div className="flex gap-3">
@@ -164,7 +179,7 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
               </div>
               <div className="flex gap-3">
                 <HeartPulse className="mt-0.5 h-5 w-5 text-limeSoft" />
-                <span>Douleurs ou limites pour éviter le mode héros fragile.</span>
+                <span>Modules et 5 onglets principaux maximum.</span>
               </div>
             </div>
           </aside>
@@ -183,10 +198,7 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
                       className={`border p-4 text-left transition ${
                         active ? "border-petrol-800 bg-petrol-800 text-white" : "border-petrol-800/10 bg-white text-petrol-800 hover:border-petrol-800/35"
                       }`}
-                      onClick={() => {
-                        setGoal(option.id);
-                        setTargetEventType(option.eventType);
-                      }}
+                      onClick={() => selectGoal(option.id)}
                     >
                       <span className="flex items-start justify-between gap-3">
                         <span className="text-base font-black">{option.label}</span>
@@ -202,34 +214,17 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
             </section>
 
             <section>
-              <p className="eyebrow">Onglets utiles au quotidien</p>
-              <div className="mt-3 grid gap-2 lg:grid-cols-3">
-                {navigationFocusOptions.map((option) => {
-                  const active = option.id === navigationFocus;
-
-                  return (
-                    <button
-                      key={option.id}
-                      type="button"
-                      className={`border p-4 text-left transition ${
-                        active ? "border-petrol-800 bg-petrol-800 text-white" : "border-petrol-800/10 bg-white text-petrol-800 hover:border-petrol-800/35"
-                      }`}
-                      onClick={() => setNavigationFocus(option.id)}
-                    >
-                      <span className="flex items-start justify-between gap-3">
-                        <span className="flex items-center gap-2 text-base font-black">
-                          <option.icon className="h-5 w-5" aria-hidden="true" />
-                          {option.label}
-                        </span>
-                        {active ? <CheckCircle2 className="h-5 w-5 text-limeSoft" /> : null}
-                      </span>
-                      <span className={active ? "mt-2 block text-xs font-bold leading-5 text-white/70" : "mt-2 block text-xs font-bold leading-5 text-muted"}>
-                        {option.description}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+              <ModulePreferencesEditor
+                enabledModules={enabledModules}
+                primaryModuleTabs={primaryModuleTabs}
+                onChange={(next) => {
+                  setEnabledModules(next.enabledModules);
+                  setPrimaryModuleTabs(next.primaryModuleTabs);
+                }}
+              />
+              <p className="mt-3 text-xs font-bold leading-5 text-muted">
+                Recommandation appliquée selon l'objectif choisi, mais tu peux ajuster maintenant ou plus tard dans Profil.
+              </p>
             </section>
 
             <section className="grid gap-4 lg:grid-cols-2">
@@ -308,22 +303,11 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
             <section className="grid gap-4 lg:grid-cols-2">
               <label className="field-label">
                 Objectif poids facultatif
-                <input
-                  className="field"
-                  inputMode="decimal"
-                  value={weightGoal}
-                  onChange={(event) => setWeightGoal(event.target.value)}
-                  placeholder="Ex : 6 kg"
-                />
+                <input className="field" inputMode="decimal" value={weightGoal} onChange={(event) => setWeightGoal(event.target.value)} placeholder="Ex : 6 kg" />
               </label>
               <label className="field-label">
                 Douleurs / limites
-                <input
-                  className="field"
-                  value={injuryNotes}
-                  onChange={(event) => setInjuryNotes(event.target.value)}
-                  placeholder="Ex : mollet, genou, épaule..."
-                />
+                <input className="field" value={injuryNotes} onChange={(event) => setInjuryNotes(event.target.value)} placeholder="Ex : mollet, genou, épaule..." />
               </label>
             </section>
 

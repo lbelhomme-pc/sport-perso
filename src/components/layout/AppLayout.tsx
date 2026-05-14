@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { APP_NAME } from "../../data/defaults";
-import { getPrimaryRoutes } from "../../app/routes";
+import { getPrimaryRoutes, getRouteMeta } from "../../app/routes";
 import { OnboardingPrompt } from "../onboarding/OnboardingPrompt";
 import { useSettings } from "../../hooks/useSettings";
 
@@ -14,7 +14,7 @@ export function AppLayout() {
   const { settings, saveSettings } = useSettings();
   const appIconUrl = `${import.meta.env.BASE_URL}icon.svg`;
   const location = useLocation();
-  const primaryRoutes = getPrimaryRoutes(settings.navigationFocus ?? "both");
+  const primaryRoutes = getPrimaryRoutes(settings);
   const isOnPrimaryRoute = primaryRoutes.some((route) =>
     route.path === "/" ? location.pathname === "/" : location.pathname.startsWith(route.path)
   );
@@ -36,15 +36,21 @@ export function AppLayout() {
 
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Navigation principale">
             {primaryRoutes.map((route) => (
-              <NavLink
-                key={route.path}
-                to={route.path}
-                className={({ isActive }) => navClass(isActive || (route.path === "/more" && !isOnPrimaryRoute))}
-                end={route.path === "/"}
-              >
-                <route.icon className="h-4 w-4" aria-hidden="true" />
-                {route.label}
-              </NavLink>
+              (() => {
+                const meta = getRouteMeta(route);
+
+                return (
+                  <NavLink
+                    key={route.path}
+                    to={route.path}
+                    className={({ isActive }) => navClass(isActive || (!isOnPrimaryRoute && route.moduleId === "profile"))}
+                    end={route.path === "/"}
+                  >
+                    <meta.icon className="h-4 w-4" aria-hidden="true" />
+                    {meta.label}
+                  </NavLink>
+                );
+              })()
             ))}
           </nav>
         </div>
@@ -57,19 +63,25 @@ export function AppLayout() {
       <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-petrol-800/10 bg-white/95 px-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl lg:hidden" aria-label="Navigation mobile">
         <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${primaryRoutes.length}, minmax(0, 1fr))` }}>
           {primaryRoutes.map((route) => (
-            <NavLink
-              key={route.path}
-              to={route.path}
-              end={route.path === "/"}
-              className={({ isActive }) =>
-                `grid min-h-[3.75rem] place-items-center gap-1 px-1 py-2 text-[0.68rem] font-black uppercase leading-none tracking-[0.02em] ${
-                  isActive || (route.path === "/more" && !isOnPrimaryRoute) ? "bg-petrol-800 text-white" : "text-muted"
-                }`
-              }
-            >
-              <route.icon className="h-4 w-4" aria-hidden="true" />
-              {route.shortLabel}
-            </NavLink>
+            (() => {
+              const meta = getRouteMeta(route);
+
+              return (
+                <NavLink
+                  key={route.path}
+                  to={route.path}
+                  end={route.path === "/"}
+                  className={({ isActive }) =>
+                    `grid min-h-[3.75rem] place-items-center gap-1 px-1 py-2 text-[0.68rem] font-black uppercase leading-none tracking-[0.02em] ${
+                      isActive || (!isOnPrimaryRoute && route.moduleId === "profile") ? "bg-petrol-800 text-white" : "text-muted"
+                    }`
+                  }
+                >
+                  <meta.icon className="h-4 w-4" aria-hidden="true" />
+                  {meta.shortLabel}
+                </NavLink>
+              );
+            })()
           ))}
         </div>
       </nav>

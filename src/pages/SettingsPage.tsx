@@ -3,13 +3,14 @@ import { Download, RefreshCcw, Save, Upload } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
 import { PwaInstallButton } from "../components/ui/PwaInstallButton";
+import { ModulePreferencesEditor } from "../components/modules/ModulePreferencesEditor";
 import { BADMINTON_VARIANTS, GENERAL_SPORT_MODES } from "../data/defaults";
+import { deriveNavigationFocusFromModules, recommendedModulesByGoal, resolveModulePreferences } from "../data/modules";
 import { exportJson, getExportPreview, importJsonFile, mergeJsonFiles } from "../services/exportService";
 import { resetData } from "../services/storageService";
 import { useSettings } from "../hooks/useSettings";
-import type { AppExperienceMode, BadmintonVariant, BmrSex, NavigationFocus, Settings } from "../types";
+import type { AppExperienceMode, BadmintonVariant, BmrSex, Settings } from "../types";
 import { calculateBasalMetabolicRate } from "../utils/calories";
-import { wantsNutrition, wantsSport } from "../utils/navigationFocus";
 
 function parseVacationWeeks(value: string): number[] {
   return [
@@ -22,20 +23,15 @@ function parseVacationWeeks(value: string): number[] {
   ].sort((a, b) => a - b);
 }
 
-const navigationFocusOptions: Array<{ id: NavigationFocus; label: string; hint: string }> = [
-  { id: "sport", label: "Sport surtout", hint: "Programme, Sport et Calendrier restent devant." },
-  { id: "nutrition", label: "Nutrition surtout", hint: "Repas, Poids et Calendrier restent devant." },
-  { id: "both", label: "Sport + nutrition", hint: "Programme, Sport, Repas et Calendrier restent devant." }
-];
-
 export default function SettingsPage() {
   const { settings, saveSettings } = useSettings();
   const [form, setForm] = useState<Settings>(settings);
   const [vacationWeeks, setVacationWeeks] = useState(settings.vacationWeeks.join(", "));
   const [status, setStatus] = useState("");
-  const settingsFocus = form.navigationFocus ?? "both";
-  const showSportSettings = wantsSport(settingsFocus);
-  const showNutritionSettings = wantsNutrition(settingsFocus);
+  const modulePrefs = resolveModulePreferences(form);
+  const showSportSettings = modulePrefs.enabledModules.includes("training") || modulePrefs.enabledModules.includes("sessions");
+  const showNutritionSettings = modulePrefs.enabledModules.includes("nutrition");
+  const showWeightSettings = showNutritionSettings || modulePrefs.enabledModules.includes("weight");
   const calculatedBmr = calculateBasalMetabolicRate({ ...form, useCalculatedBmr: true }, form.defaultBodyWeight);
   const displayedBmr = form.useCalculatedBmr ? calculatedBmr : form.dailyCalorieTarget;
 
@@ -47,8 +43,6 @@ export default function SettingsPage() {
           ? value
           : key === "appMode"
             ? (value as AppExperienceMode)
-          : key === "navigationFocus"
-            ? (value as NavigationFocus)
           : key === "badmintonVariant"
             ? (value as BadmintonVariant)
           : key === "sex"
@@ -57,6 +51,20 @@ export default function SettingsPage() {
               ? Boolean(value)
               : Number(value)
     }));
+  };
+
+  const updateModules = (next: Pick<Settings, "enabledModules" | "primaryModuleTabs">) => {
+    setForm((current) => ({
+      ...current,
+      enabledModules: next.enabledModules,
+      primaryModuleTabs: next.primaryModuleTabs,
+      navigationFocus: deriveNavigationFocusFromModules(next.enabledModules ?? [])
+    }));
+  };
+
+  const applyRecommendedModules = () => {
+    const recommended = recommendedModulesByGoal[form.appMode ?? "competition"];
+    updateModules({ enabledModules: recommended.enabled, primaryModuleTabs: recommended.tabs });
   };
 
   return (
@@ -101,23 +109,16 @@ export default function SettingsPage() {
                 Phase 1 : ce choix prépare la personnalisation générale sans supprimer le programme HYROX.
               </span>
             </label>
-            <label className="field-label">
-              Onglets principaux
-              <select
-                className="field"
-                value={form.navigationFocus ?? "both"}
-                onChange={(event) => update("navigationFocus", event.target.value as NavigationFocus)}
-              >
-                {navigationFocusOptions.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
-                {navigationFocusOptions.find((option) => option.id === (form.navigationFocus ?? "both"))?.hint}
-              </span>
-            </label>
+            <div className="grid gap-3 sm:col-span-2 xl:col-span-4">
+              <ModulePreferencesEditor
+                enabledModules={modulePrefs.enabledModules}
+                primaryModuleTabs={modulePrefs.primaryModuleTabs}
+                onChange={updateModules}
+              />
+              <button type="button" className="ghost-button justify-center sm:w-fit" onClick={applyRecommendedModules}>
+                Appliquer la configuration recommandée pour ce mode
+              </button>
+            </div>
             {showSportSettings ? (
             <>
             <label className="field-label">
@@ -143,7 +144,7 @@ export default function SettingsPage() {
             </label>
             </>
             ) : null}
-            {showNutritionSettings ? (
+            {showWeightSettings ? (
             <>
             <label className="field-label">
               Poids de départ

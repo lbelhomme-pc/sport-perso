@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { getMoreRoutes } from "../app/routes";
+import { getMoreRoutes, getRouteMeta } from "../app/routes";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
 import { useSettings } from "../hooks/useSettings";
@@ -16,7 +16,7 @@ const moreHints: Record<string, string> = {
 
 export default function MorePage() {
   const { settings } = useSettings();
-  const moreLinks = getMoreRoutes(settings.navigationFocus ?? "both");
+  const moreLinks = getMoreRoutes(settings);
 
   return (
     <>
@@ -29,19 +29,25 @@ export default function MorePage() {
       <SectionCard className="p-4 sm:p-6">
         <div className="grid gap-3 sm:grid-cols-2">
           {moreLinks.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className="group flex min-h-24 items-center gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft transition hover:-translate-y-0.5 hover:border-petrol-800/25"
-            >
-              <span className="grid h-12 w-12 shrink-0 place-items-center bg-petrol-800 text-limeSoft">
-                <item.icon className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <span>
-                <span className="block text-base font-black text-petrol-800">{item.label}</span>
-                <span className="mt-1 block text-sm font-semibold leading-5 text-muted">{moreHints[item.path]}</span>
-              </span>
-            </Link>
+            (() => {
+              const meta = getRouteMeta(item);
+
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className="group flex min-h-24 items-center gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft transition hover:-translate-y-0.5 hover:border-petrol-800/25"
+                >
+                  <span className="grid h-12 w-12 shrink-0 place-items-center bg-petrol-800 text-limeSoft">
+                    <meta.icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <span>
+                    <span className="block text-base font-black text-petrol-800">{meta.label}</span>
+                    <span className="mt-1 block text-sm font-semibold leading-5 text-muted">{moreHints[item.path] ?? meta.description}</span>
+                  </span>
+                </Link>
+              );
+            })()
           ))}
         </div>
       </SectionCard>

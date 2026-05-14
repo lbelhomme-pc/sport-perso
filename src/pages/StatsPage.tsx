@@ -12,18 +12,15 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
 import { getPlannedWeek } from "../data/trainingPlan";
 import { useStoredData } from "../hooks/useStoredData";
+import { useUserModules } from "../hooks/useUserModules";
 import type { WeightEntry } from "../types";
 import { estimateNeatCalories } from "../utils/calories";
 import { formatShortDate, getTotalWeeks, getWeekStart, toISODate } from "../utils/dates";
-import { wantsNutrition, wantsSport } from "../utils/navigationFocus";
 import { getMealTotals } from "../utils/nutrition";
 import { getAverageHeartRate, getAverageRpe, summarizeWeek } from "../utils/training";
 
 function getBodyWeightForDate(weights: WeightEntry[], date: string, fallback: number): number {
-  const previousWeight = [...weights]
-    .filter((entry) => entry.date <= date)
-    .sort((a, b) => b.date.localeCompare(a.date))[0];
-
+  const previousWeight = [...weights].filter((entry) => entry.date <= date).sort((a, b) => b.date.localeCompare(a.date))[0];
   return previousWeight?.weight ?? fallback;
 }
 
@@ -67,9 +64,11 @@ function ChartEmptyState({
 
 export default function StatsPage() {
   const data = useStoredData();
-  const focus = data.settings.navigationFocus ?? "both";
-  const showSport = wantsSport(focus);
-  const showNutrition = wantsNutrition(focus);
+  const { isEnabled } = useUserModules();
+  const showSport = isEnabled("training") || isEnabled("sessions");
+  const showNutrition = isEnabled("nutrition");
+  const showWeight = isEnabled("weight");
+  const showMovement = isEnabled("calendar");
   const totalWeeks = getTotalWeeks(data.settings.startDate, data.settings.targetDate);
   const weekSeries = Array.from({ length: totalWeeks }, (_, index) => {
     const week = index + 1;
@@ -122,9 +121,7 @@ export default function StatsPage() {
   const totalFood21Days = dailySeries.reduce((total, day) => total + day.calories, 0);
   const totalProtein21Days = dailySeries.reduce((total, day) => total + day.protein, 0);
   const mealDaysCount = countUniqueDates(data.meals);
-  const movementDaysCount = countUniqueDates(
-    data.dailyContexts.filter((context) => (context.steps ?? 0) > 0 || (context.floors ?? 0) > 0)
-  );
+  const movementDaysCount = countUniqueDates(data.dailyContexts.filter((context) => (context.steps ?? 0) > 0 || (context.floors ?? 0) > 0));
   const floorDaysCount = countUniqueDates(data.dailyContexts.filter((context) => (context.floors ?? 0) > 0));
   const sessionsWithCalories = data.sessions.filter((session) => (session.caloriesBurned ?? 0) > 0).length;
   const weightTrendReady = hasWeightTrend(data.weights);
@@ -141,16 +138,17 @@ export default function StatsPage() {
     (showSport && totalSportCalories > 0) ||
     (showNutrition && totalFood21Days > 0) ||
     (showNutrition && totalProtein21Days > 0) ||
-    totalSteps21Days > 0 ||
-    totalFloors21Days > 0 ||
-    totalNeat21Days > 0 ||
+    (showWeight && data.weights.length > 0) ||
+    (showMovement && totalSteps21Days > 0) ||
+    (showMovement && totalFloors21Days > 0) ||
+    (showMovement && totalNeat21Days > 0) ||
     (showSport && Boolean(averageHeartRate)) ||
     (showSport && Boolean(averageRpe));
   const hasUsefulStats =
     (showSport && sessionTrendReady) ||
     (showNutrition && foodTrendReady) ||
-    (showNutrition && weightTrendReady) ||
-    movementTrendReady ||
+    (showWeight && weightTrendReady) ||
+    (showMovement && movementTrendReady) ||
     (showSport && sportCaloriesReady) ||
     (showSport && executionTrendReady);
 
@@ -180,30 +178,32 @@ export default function StatsPage() {
               />
             ) : null}
             {showNutrition ? (
-              <>
-                <ChartEmptyState
-                  icon={Utensils}
-                  title="Pas encore de tendance nutrition"
-                  message="Ajoute 3 jours de repas pour voir les calories et les protéines évoluer sans graphique fantôme."
-                  to="/meals"
-                  actionLabel="Ajouter un repas"
-                />
-                <ChartEmptyState
-                  icon={Scale}
-                  title="Tendance poids en attente"
-                  message="Ajoute 2 pesées espacées de 7 jours pour afficher une tendance fiable plutôt qu'un bruit quotidien."
-                  to="/weight"
-                  actionLabel="Saisir le poids"
-                />
-              </>
+              <ChartEmptyState
+                icon={Utensils}
+                title="Pas encore de tendance nutrition"
+                message="Ajoute 3 jours de repas pour voir les calories et les protéines évoluer sans graphique fantôme."
+                to="/meals"
+                actionLabel="Ajouter un repas"
+              />
             ) : null}
-            <ChartEmptyState
-              icon={Footprints}
-              title="Mouvement quotidien absent"
-              message="Ajoute tes pas sur 3 jours pour voir la dépense NEAT estimée et les habitudes de mouvement."
-              to="/calendar"
-              actionLabel="Saisir les pas"
-            />
+            {showWeight ? (
+              <ChartEmptyState
+                icon={Scale}
+                title="Tendance poids en attente"
+                message="Ajoute 2 pesées espacées de 7 jours pour afficher une tendance fiable plutôt qu'un bruit quotidien."
+                to="/weight"
+                actionLabel="Saisir le poids"
+              />
+            ) : null}
+            {showMovement ? (
+              <ChartEmptyState
+                icon={Footprints}
+                title="Mouvement quotidien absent"
+                message="Ajoute tes pas sur 3 jours pour voir la dépense de mouvement estimée."
+                to="/calendar"
+                actionLabel="Saisir les pas"
+              />
+            ) : null}
           </div>
         </SectionCard>
       </>
@@ -215,13 +215,7 @@ export default function StatsPage() {
       <PageHeader
         eyebrow="Progression"
         title="Tendances"
-        description={
-          showSport && showNutrition
-            ? "Une vue large pour repérer ce qui monte, ce qui fatigue et ce qui nourrit vraiment ta progression."
-            : showSport
-              ? "Une vue centrée sur l'entraînement, la charge et le mouvement quotidien."
-              : "Une vue centrée sur la nutrition, le poids et le mouvement quotidien."
-        }
+        description="Une vue utile uniquement avec les modules activés, pour décider quoi ajuster sans afficher de blocs fantômes."
       />
 
       {hasAnyMetricCard ? (
@@ -232,9 +226,10 @@ export default function StatsPage() {
           {showSport && totalSportCalories ? <MetricCard label="Calories sport" value={totalSportCalories} /> : null}
           {showNutrition && totalFood21Days ? <MetricCard label="Calories repas 21 j" value={`${totalFood21Days} kcal`} /> : null}
           {showNutrition && totalProtein21Days ? <MetricCard label="Protéines 21 j" value={`${totalProtein21Days} g`} /> : null}
-          {totalSteps21Days ? <MetricCard label="Pas 21 j" value={totalSteps21Days.toLocaleString("fr-FR")} /> : null}
-          {totalFloors21Days ? <MetricCard label="Étages 21 j" value={totalFloors21Days.toLocaleString("fr-FR")} /> : null}
-          {totalNeat21Days ? <MetricCard label="Mouvement 21 j" value={`${totalNeat21Days} kcal`} /> : null}
+          {showWeight && data.weights.length ? <MetricCard label="Pesées" value={data.weights.length} /> : null}
+          {showMovement && totalSteps21Days ? <MetricCard label="Pas 21 j" value={totalSteps21Days.toLocaleString("fr-FR")} /> : null}
+          {showMovement && totalFloors21Days ? <MetricCard label="Étages 21 j" value={totalFloors21Days.toLocaleString("fr-FR")} /> : null}
+          {showMovement && totalNeat21Days ? <MetricCard label="Mouvement 21 j" value={`${totalNeat21Days} kcal`} /> : null}
           {showSport && averageHeartRate ? <MetricCard label="Moyenne FC" value={averageHeartRate} /> : null}
           {showSport && averageRpe ? <MetricCard label="RPE moyen" value={averageRpe} /> : null}
         </section>
@@ -242,202 +237,206 @@ export default function StatsPage() {
 
       <div className="grid gap-5 xl:grid-cols-2">
         {showSport ? (
-        <>
-        <CollapsibleSectionCard eyebrow="Volume hebdomadaire" title="Minutes par semaine">
-          {sessionTrendReady && hasValue(weekSeries, "volume") ? (
-            <MetricBarChart
-              data={weekSeries}
-              xKey="week"
-              yKey="volume"
-              suffix=" min"
-              summary={`${totalVolumeMinutes} min enregistrées sur le programme affiché.`}
-            />
-          ) : (
-            <ChartEmptyState
-              icon={Dumbbell}
-              title="Ajoute 2 séances pour voir ton volume"
-              message="Le volume devient lisible quand tu as au moins deux séances enregistrées avec une durée."
-              to="/sessions"
-              actionLabel="Ajouter une séance"
-            />
-          )}
-        </CollapsibleSectionCard>
+          <>
+            <CollapsibleSectionCard eyebrow="Volume hebdomadaire" title="Minutes par semaine">
+              {sessionTrendReady && hasValue(weekSeries, "volume") ? (
+                <MetricBarChart
+                  data={weekSeries}
+                  xKey="week"
+                  yKey="volume"
+                  suffix=" min"
+                  summary={`${totalVolumeMinutes} min enregistrées sur le programme affiché.`}
+                />
+              ) : (
+                <ChartEmptyState
+                  icon={Dumbbell}
+                  title="Ajoute 2 séances pour voir ton volume"
+                  message="Le volume devient lisible quand tu as au moins deux séances enregistrées avec une durée."
+                  to="/sessions"
+                  actionLabel="Ajouter une séance"
+                />
+              )}
+            </CollapsibleSectionCard>
 
-        <CollapsibleSectionCard eyebrow="Calories sport" title="Dépense par semaine">
-          {sportCaloriesReady && hasValue(weekSeries, "calories") ? (
-            <MetricBarChart
-              data={weekSeries}
-              xKey="week"
-              yKey="calories"
-              color="#DCEFA3"
-              suffix=" kcal"
-              summary={`${totalSportCalories} kcal sport enregistrées au total.`}
-            />
-          ) : (
-            <ChartEmptyState
-              icon={Dumbbell}
-              title="Calories sport en attente"
-              message="Ajoute les calories sur 2 séances pour voir une dépense hebdomadaire utile."
-              to="/sessions"
-              actionLabel="Compléter une séance"
-            />
-          )}
-        </CollapsibleSectionCard>
-        </>
+            <CollapsibleSectionCard eyebrow="Calories sport" title="Dépense par semaine">
+              {sportCaloriesReady && hasValue(weekSeries, "calories") ? (
+                <MetricBarChart
+                  data={weekSeries}
+                  xKey="week"
+                  yKey="calories"
+                  color="#DCEFA3"
+                  suffix=" kcal"
+                  summary={`${totalSportCalories} kcal sport enregistrées au total.`}
+                />
+              ) : (
+                <ChartEmptyState
+                  icon={Dumbbell}
+                  title="Calories sport en attente"
+                  message="Ajoute les calories sur 2 séances pour voir une dépense hebdomadaire utile."
+                  to="/sessions"
+                  actionLabel="Compléter une séance"
+                />
+              )}
+            </CollapsibleSectionCard>
+          </>
         ) : null}
 
         {showNutrition ? (
-        <>
-        <CollapsibleSectionCard eyebrow="Calories alimentaires" title="21 derniers jours">
-          {foodTrendReady && hasValue(dailySeries, "calories") ? (
-            <MetricLineChart
-              data={dailySeries}
-              xKey="date"
-              yKey="calories"
-              suffix=" kcal"
-              summary={`${totalFood21Days} kcal saisies sur les 21 derniers jours.`}
-            />
-          ) : (
-            <ChartEmptyState
-              icon={Utensils}
-              title="Ajoute 3 jours de repas"
-              message="La tendance calories devient intéressante à partir de 3 journées saisies, même approximatives."
-              to="/meals"
-              actionLabel="Ajouter un repas"
-            />
-          )}
-        </CollapsibleSectionCard>
+          <>
+            <CollapsibleSectionCard eyebrow="Calories alimentaires" title="21 derniers jours">
+              {foodTrendReady && hasValue(dailySeries, "calories") ? (
+                <MetricLineChart
+                  data={dailySeries}
+                  xKey="date"
+                  yKey="calories"
+                  suffix=" kcal"
+                  summary={`${totalFood21Days} kcal saisies sur les 21 derniers jours.`}
+                />
+              ) : (
+                <ChartEmptyState
+                  icon={Utensils}
+                  title="Ajoute 3 jours de repas"
+                  message="La tendance calories devient intéressante à partir de 3 journées saisies, même approximatives."
+                  to="/meals"
+                  actionLabel="Ajouter un repas"
+                />
+              )}
+            </CollapsibleSectionCard>
 
-        <CollapsibleSectionCard eyebrow="Protéines" title="21 derniers jours">
-          {foodTrendReady && hasValue(dailySeries, "protein") ? (
-            <MetricLineChart
-              data={dailySeries}
-              xKey="date"
-              yKey="protein"
-              color="#0A4B61"
-              suffix=" g"
-              summary={`${totalProtein21Days} g de protéines saisies sur les 21 derniers jours.`}
-            />
-          ) : (
-            <ChartEmptyState
-              icon={Utensils}
-              title="Protéines pas encore lisibles"
-              message="Ajoute 3 jours de repas pour voir si ton apport protéiné devient régulier."
-              to="/meals"
-              actionLabel="Ajouter un repas"
-            />
-          )}
-        </CollapsibleSectionCard>
-        </>
+            <CollapsibleSectionCard eyebrow="Protéines" title="21 derniers jours">
+              {foodTrendReady && hasValue(dailySeries, "protein") ? (
+                <MetricLineChart
+                  data={dailySeries}
+                  xKey="date"
+                  yKey="protein"
+                  color="#0A4B61"
+                  suffix=" g"
+                  summary={`${totalProtein21Days} g de protéines saisies sur les 21 derniers jours.`}
+                />
+              ) : (
+                <ChartEmptyState
+                  icon={Utensils}
+                  title="Protéines pas encore lisibles"
+                  message="Ajoute 3 jours de repas pour voir si ton apport protéiné devient régulier."
+                  to="/meals"
+                  actionLabel="Ajouter un repas"
+                />
+              )}
+            </CollapsibleSectionCard>
+          </>
         ) : null}
 
-        <CollapsibleSectionCard eyebrow="Pas quotidiens" title="21 derniers jours">
-          {movementTrendReady && hasValue(dailySeries, "steps") ? (
-            <MetricBarChart
-              data={dailySeries}
-              xKey="date"
-              yKey="steps"
-              color="#0A4B61"
-              suffix=" pas"
-              summary={`${totalSteps21Days.toLocaleString("fr-FR")} pas saisis sur 21 jours.`}
-            />
-          ) : (
-            <ChartEmptyState
-              icon={Footprints}
-              title="Ajoute tes pas sur 3 jours"
-              message="Trois journées suffisent pour commencer à voir une habitude de mouvement fiable."
-              to="/calendar"
-              actionLabel="Saisir les pas"
-            />
-          )}
-        </CollapsibleSectionCard>
+        {showMovement ? (
+          <>
+            <CollapsibleSectionCard eyebrow="Pas quotidiens" title="21 derniers jours">
+              {movementTrendReady && hasValue(dailySeries, "steps") ? (
+                <MetricBarChart
+                  data={dailySeries}
+                  xKey="date"
+                  yKey="steps"
+                  color="#0A4B61"
+                  suffix=" pas"
+                  summary={`${totalSteps21Days.toLocaleString("fr-FR")} pas saisis sur 21 jours.`}
+                />
+              ) : (
+                <ChartEmptyState
+                  icon={Footprints}
+                  title="Ajoute tes pas sur 3 jours"
+                  message="Trois journées suffisent pour commencer à voir une habitude de mouvement fiable."
+                  to="/calendar"
+                  actionLabel="Saisir les pas"
+                />
+              )}
+            </CollapsibleSectionCard>
 
-        <CollapsibleSectionCard eyebrow="Mouvement estimé" title="Calories via pas + étages">
-          {movementTrendReady && hasValue(dailySeries, "neat") ? (
-            <MetricLineChart
-              data={dailySeries}
-              xKey="date"
-              yKey="neat"
-              color="#DCEFA3"
-              suffix=" kcal"
-              summary={`${totalNeat21Days} kcal de mouvement estimées via pas + étages.`}
-            />
-          ) : (
-            <ChartEmptyState
-              icon={Footprints}
-              title="NEAT pas encore calculable"
-              message="Ajoute tes pas, et si possible les étages, sur 3 jours pour afficher la dépense de mouvement."
-              to="/calendar"
-              actionLabel="Saisir mouvement"
-            />
-          )}
-        </CollapsibleSectionCard>
+            <CollapsibleSectionCard eyebrow="Mouvement estimé" title="Calories via pas + étages">
+              {movementTrendReady && hasValue(dailySeries, "neat") ? (
+                <MetricLineChart
+                  data={dailySeries}
+                  xKey="date"
+                  yKey="neat"
+                  color="#DCEFA3"
+                  suffix=" kcal"
+                  summary={`${totalNeat21Days} kcal de mouvement estimées via pas + étages.`}
+                />
+              ) : (
+                <ChartEmptyState
+                  icon={Footprints}
+                  title="Mouvement pas encore calculable"
+                  message="Ajoute tes pas, et si possible les étages, sur 3 jours pour afficher la dépense de mouvement."
+                  to="/calendar"
+                  actionLabel="Saisir mouvement"
+                />
+              )}
+            </CollapsibleSectionCard>
 
-        <CollapsibleSectionCard eyebrow="Étages quotidiens" title="21 derniers jours">
-          {floorsTrendReady && hasValue(dailySeries, "floors") ? (
-            <MetricBarChart
-              data={dailySeries}
-              xKey="date"
-              yKey="floors"
-              color="#DCEFA3"
-              suffix=" étages"
-              summary={`${totalFloors21Days.toLocaleString("fr-FR")} étages saisis sur 21 jours.`}
-            />
-          ) : (
-            <ChartEmptyState
-              icon={Footprints}
-              title="Étages non renseignés"
-              message="Ajoute les étages sur 2 jours si tu veux isoler leur contribution au mouvement."
-              to="/calendar"
-              actionLabel="Saisir les étages"
-            />
-          )}
-        </CollapsibleSectionCard>
+            <CollapsibleSectionCard eyebrow="Étages quotidiens" title="21 derniers jours">
+              {floorsTrendReady && hasValue(dailySeries, "floors") ? (
+                <MetricBarChart
+                  data={dailySeries}
+                  xKey="date"
+                  yKey="floors"
+                  color="#DCEFA3"
+                  suffix=" étages"
+                  summary={`${totalFloors21Days.toLocaleString("fr-FR")} étages saisis sur 21 jours.`}
+                />
+              ) : (
+                <ChartEmptyState
+                  icon={Footprints}
+                  title="Étages non renseignés"
+                  message="Ajoute les étages sur 2 jours si tu veux isoler leur contribution au mouvement."
+                  to="/calendar"
+                  actionLabel="Saisir les étages"
+                />
+              )}
+            </CollapsibleSectionCard>
+          </>
+        ) : null}
 
-        {showNutrition ? (
-        <CollapsibleSectionCard eyebrow="Poids" title="Courbe">
-          {weightTrendReady ? (
-            <MetricLineChart
-              data={weightSeries}
-              xKey="date"
-              yKey="weight"
-              suffix=" kg"
-              summary={`${weightSeries.length} pesée${weightSeries.length > 1 ? "s" : ""} enregistrée${weightSeries.length > 1 ? "s" : ""}.`}
-            />
-          ) : (
-            <ChartEmptyState
-              icon={Scale}
-              title="Ajoute 2 pesées espacées de 7 jours"
-              message="Le poids varie beaucoup au jour le jour. Deux points espacés évitent une fausse tendance."
-              to="/weight"
-              actionLabel="Saisir le poids"
-            />
-          )}
-        </CollapsibleSectionCard>
+        {showWeight ? (
+          <CollapsibleSectionCard eyebrow="Poids" title="Courbe">
+            {weightTrendReady ? (
+              <MetricLineChart
+                data={weightSeries}
+                xKey="date"
+                yKey="weight"
+                suffix=" kg"
+                summary={`${weightSeries.length} pesée${weightSeries.length > 1 ? "s" : ""} enregistrée${weightSeries.length > 1 ? "s" : ""}.`}
+              />
+            ) : (
+              <ChartEmptyState
+                icon={Scale}
+                title="Ajoute 2 pesées espacées de 7 jours"
+                message="Le poids varie beaucoup au jour le jour. Deux points espacés évitent une fausse tendance."
+                to="/weight"
+                actionLabel="Saisir le poids"
+              />
+            )}
+          </CollapsibleSectionCard>
         ) : null}
 
         {showSport ? (
-        <CollapsibleSectionCard eyebrow="Réalisées vs prévues" title="Exécution semaine">
-          {executionTrendReady ? (
-            <ComparisonBarChart
-              data={weekSeries}
-              xKey="week"
-              firstKey="planned"
-              secondKey="completed"
-              firstName="Prévues"
-              secondName="Réalisées"
-              summary={`${totalCompletedSessions} séances réalisées / ${totalPlannedSessions} prévues.`}
-            />
-          ) : (
-            <ChartEmptyState
-              icon={CalendarCheck}
-              title="Aucune séance enregistrée cette semaine"
-              message="Valide une séance du planning pour comparer ce qui était prévu avec ce qui a été fait."
-              to="/planning"
-              actionLabel="Voir le programme"
-            />
-          )}
-        </CollapsibleSectionCard>
+          <CollapsibleSectionCard eyebrow="Réalisées vs prévues" title="Exécution semaine">
+            {executionTrendReady ? (
+              <ComparisonBarChart
+                data={weekSeries}
+                xKey="week"
+                firstKey="planned"
+                secondKey="completed"
+                firstName="Prévues"
+                secondName="Réalisées"
+                summary={`${totalCompletedSessions} séances réalisées / ${totalPlannedSessions} prévues.`}
+              />
+            ) : (
+              <ChartEmptyState
+                icon={CalendarCheck}
+                title="Aucune séance enregistrée cette semaine"
+                message="Valide une séance du planning pour comparer ce qui était prévu avec ce qui a été fait."
+                to="/planning"
+                actionLabel="Voir le programme"
+              />
+            )}
+          </CollapsibleSectionCard>
         ) : null}
       </div>
     </>

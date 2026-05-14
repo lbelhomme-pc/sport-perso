@@ -12,6 +12,8 @@ export const DEFAULT_SETTINGS: Settings = {
   appMode: "competition",
   enabledSports: ["badminton", "strength", "run", "hyrox", "recovery"],
   navigationFocus: "both",
+  enabledModules: ["home", "training", "sessions", "nutrition", "calendar", "progress", "weight", "recovery", "profile"],
+  primaryModuleTabs: ["home", "training", "sessions", "nutrition", "profile"],
   onboardingCompleted: false,
   sportLevel: "intermediate",
   availableDays: ["tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],

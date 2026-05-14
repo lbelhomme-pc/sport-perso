@@ -72,6 +72,17 @@ export type TargetEventType = "hyrox" | "other" | "none";
 
 export type NavigationFocus = "both" | "sport" | "nutrition";
 
+export type AppModuleId =
+  | "home"
+  | "training"
+  | "sessions"
+  | "nutrition"
+  | "calendar"
+  | "progress"
+  | "weight"
+  | "recovery"
+  | "profile";
+
 export type UserSportProfile = {
   primaryMode: AppExperienceMode;
   sports: SportType[];
@@ -185,6 +196,8 @@ export type Settings = {
   appMode?: AppExperienceMode;
   enabledSports?: SportType[];
   navigationFocus?: NavigationFocus;
+  enabledModules?: AppModuleId[];
+  primaryModuleTabs?: AppModuleId[];
   onboardingCompleted?: boolean;
   sportLevel?: UserSportLevel;
   availableDays?: WeekdayKey[];
