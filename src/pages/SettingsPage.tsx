@@ -53,18 +53,33 @@ export default function SettingsPage() {
     }));
   };
 
+  const persistForm = (nextForm: Settings, message: string) => {
+    setForm(nextForm);
+    saveSettings({ ...nextForm, vacationWeeks: parseVacationWeeks(vacationWeeks) });
+    setStatus(message);
+  };
+
   const updateModules = (next: Pick<Settings, "enabledModules" | "primaryModuleTabs">) => {
-    setForm((current) => ({
-      ...current,
+    const nextForm = {
+      ...form,
       enabledModules: next.enabledModules,
       primaryModuleTabs: next.primaryModuleTabs,
       navigationFocus: deriveNavigationFocusFromModules(next.enabledModules ?? [])
-    }));
+    };
+
+    persistForm(nextForm, "Navigation mise à jour automatiquement.");
   };
 
   const applyRecommendedModules = () => {
     const recommended = recommendedModulesByGoal[form.appMode ?? "competition"];
-    updateModules({ enabledModules: recommended.enabled, primaryModuleTabs: recommended.tabs });
+    const nextForm = {
+      ...form,
+      enabledModules: recommended.enabled,
+      primaryModuleTabs: recommended.tabs,
+      navigationFocus: deriveNavigationFocusFromModules(recommended.enabled)
+    };
+
+    persistForm(nextForm, "Configuration recommandée appliquée.");
   };
 
   return (
@@ -115,6 +130,9 @@ export default function SettingsPage() {
                 primaryModuleTabs={modulePrefs.primaryModuleTabs}
                 onChange={updateModules}
               />
+              <p className="text-xs font-bold leading-5 text-muted">
+                Les onglets changent maintenant tout de suite : pas besoin d'appuyer sur Enregistrer pour la navigation.
+              </p>
               <button type="button" className="ghost-button justify-center sm:w-fit" onClick={applyRecommendedModules}>
                 Appliquer la configuration recommandée pour ce mode
               </button>
