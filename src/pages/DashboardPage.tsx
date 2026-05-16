@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CalendarCheck2, ChevronDown, PlayCircle, Scale, Utensils } from "lucide-react";
+import { CalendarCheck2, ChevronDown, PlayCircle, Scale, Trash2, Utensils } from "lucide-react";
 import { SessionForm } from "../components/forms/SessionForm";
 import { ProgressionSnapshot } from "../components/progress/ProgressionSnapshot";
 import { SessionMode } from "../components/session/SessionMode";
@@ -113,9 +113,8 @@ export default function DashboardPage() {
   const showWeight = isEnabled("weight");
   const showCalendar = isEnabled("calendar");
   const showRecovery = isEnabled("recovery");
-  const showQuickCheck = showCalendar;
   const { dailyContext, saveDailyContext } = useDailyContext(dashboard.today);
-  const { sessions, saveSession, deletePlannedSessionCompletion } = useSessions();
+  const { sessions, saveSession, deleteSession, deletePlannedSessionCompletion } = useSessions();
   const { getCheckedItemIds, toggleChecklistItem } = useSessionChecklists();
   const [sessionMode, setSessionMode] = useState<PlannedSession | null>(null);
   const [loggingSession, setLoggingSession] = useState<PlannedSession | null>(null);
@@ -163,6 +162,46 @@ export default function DashboardPage() {
         proteinRatio < 0.75 ? "Protéines basses" : null
       ].filter((item): item is string => Boolean(item))
     : [];
+  const todayLoggedSessions = dashboard.todaySessions.filter((session) => session.completed);
+  const movementInputs = showCalendar ? (
+    <div className="mt-4 grid gap-2 sm:grid-cols-2">
+      <label className="field-label">
+        Pas aujourd'hui
+        <input
+          className="field"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          value={dailyContext.steps ? String(dailyContext.steps) : ""}
+          onChange={(event) =>
+            saveDailyContext({
+              ...dailyContext,
+              date: dashboard.today,
+              steps: updateNumberInput(event.target.value)
+            })
+          }
+          placeholder="Ex : 8500"
+        />
+      </label>
+
+      <label className="field-label">
+        Étages aujourd'hui
+        <input
+          className="field"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          value={dailyContext.floors ? String(dailyContext.floors) : ""}
+          onChange={(event) =>
+            saveDailyContext({
+              ...dailyContext,
+              date: dashboard.today,
+              floors: updateNumberInput(event.target.value)
+            })
+          }
+          placeholder="Ex : 8"
+        />
+      </label>
+    </div>
+  ) : null;
 
   return (
     <>
@@ -263,6 +302,8 @@ export default function DashboardPage() {
             </div>
           ) : null}
 
+          {movementInputs}
+
           {todayPlanned ? (
             <details className="mt-4 border border-petrol-800/10 bg-white p-3">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-800">
@@ -296,6 +337,32 @@ export default function DashboardPage() {
               </Link>
             ) : null}
           </div>
+
+          {todayLoggedSessions.length ? (
+            <div className="mt-4 grid gap-2 border border-petrol-800/10 bg-white p-3">
+              <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Séances enregistrées aujourd'hui</p>
+              {todayLoggedSessions.map((session) => (
+                <div key={session.id} className="flex flex-col gap-2 border-l-4 border-limeSoft bg-mist/45 p-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="font-black text-petrol-800">{session.title}</p>
+                    <p className="text-sm font-bold text-muted">
+                      {getCompletedTypeLabel(session.type, dashboard.settings)} · {session.durationMin} min
+                      {session.caloriesBurned ? ` · ${session.caloriesBurned} kcal` : ""}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="ghost-button justify-center"
+                    onClick={() => {
+                      if (window.confirm("Supprimer cette séance enregistrée ?")) deleteSession(session.id);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" /> Supprimer
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : null}
 
           <div className="mt-4 border border-petrol-800/10 bg-white p-3 text-sm font-bold leading-6 text-ink">
             Tendance utile : {progressionSummary.coachingMessage}
@@ -391,6 +458,8 @@ export default function DashboardPage() {
               </label>
             </div>
           ) : null}
+
+          {movementInputs}
 
           <div className="mt-5 grid gap-2 sm:grid-cols-3">
             {showNutrition ? (
@@ -495,66 +564,6 @@ export default function DashboardPage() {
         </CollapsibleSectionCard>
       ) : null}
 
-      {showQuickCheck ? (
-        <CollapsibleSectionCard
-          eyebrow="Mouvement"
-          title="Pas et étages"
-          summary="Le mouvement reste disponible, sans surcharger la carte principale."
-        >
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p className="text-sm font-semibold leading-6 text-muted">
-                Pas besoin d'être parfait : une estimation vaut mieux que rien.
-              </p>
-            </div>
-            <p className="max-w-md text-sm font-semibold leading-6 text-muted">
-              Saisis juste les pas et les étages si tu veux garder une trace simple de ta journée.
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {showCalendar ? (
-              <>
-                <label className="field-label">
-                  Pas
-                  <input
-                    className="field"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={dailyContext.steps ? String(dailyContext.steps) : ""}
-                    onChange={(event) =>
-                      saveDailyContext({
-                        ...dailyContext,
-                        date: dashboard.today,
-                        steps: updateNumberInput(event.target.value)
-                      })
-                    }
-                    placeholder="Ex : 8500"
-                  />
-                </label>
-
-                <label className="field-label">
-                  Étages
-                  <input
-                    className="field"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={dailyContext.floors ? String(dailyContext.floors) : ""}
-                    onChange={(event) =>
-                      saveDailyContext({
-                        ...dailyContext,
-                        date: dashboard.today,
-                        floors: updateNumberInput(event.target.value)
-                      })
-                    }
-                    placeholder="Ex : 8"
-                  />
-                </label>
-              </>
-            ) : null}
-          </div>
-        </CollapsibleSectionCard>
-      ) : null}
     </>
   );
 }

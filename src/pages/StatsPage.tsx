@@ -17,7 +17,7 @@ import { useUserModules } from "../hooks/useUserModules";
 import { getSportProgressionSummary } from "../services/progressionService";
 import type { WeightEntry } from "../types";
 import { estimateNeatCalories } from "../utils/calories";
-import { formatShortDate, getTotalWeeks, getWeekStart, toISODate } from "../utils/dates";
+import { formatShortDate, getMonday, getTotalWeeks, getWeekStart, parseDate, toISODate } from "../utils/dates";
 import { getMealTotals } from "../utils/nutrition";
 import { tracksNutritionNumbers } from "../utils/nutritionMode";
 import { getAverageHeartRate, getAverageRpe, summarizeWeek } from "../utils/training";
@@ -40,6 +40,34 @@ function hasWeightTrend(weights: WeightEntry[]) {
 
   const sorted = [...weights].sort((a, b) => a.date.localeCompare(b.date));
   return differenceInCalendarDays(new Date(sorted[sorted.length - 1].date), new Date(sorted[0].date)) >= 7;
+}
+
+function averageRounded(total: number, count: number) {
+  return count > 0 ? Math.round(total / count) : 0;
+}
+
+function getWeekKey(date: string) {
+  return toISODate(getMonday(parseDate(date)));
+}
+
+function getMonthKey(date: string) {
+  return date.slice(0, 7);
+}
+
+function averageGroupedTotal<T>(items: T[], getKey: (item: T) => string, getValue: (item: T) => number) {
+  const totals = new Map<string, number>();
+
+  items.forEach((item) => {
+    const value = getValue(item);
+    if (value <= 0) return;
+    const key = getKey(item);
+    totals.set(key, (totals.get(key) ?? 0) + value);
+  });
+
+  return averageRounded(
+    [...totals.values()].reduce((total, value) => total + value, 0),
+    totals.size
+  );
 }
 
 function ChartEmptyState({
@@ -113,9 +141,23 @@ export default function StatsPage() {
     weight: entry.weight
   }));
 
-  const totalSportCalories = data.sessions.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
+  const sessionsWithCalories = data.sessions.filter((session) => session.completed && (session.caloriesBurned ?? 0) > 0);
+  const totalSportCalories = sessionsWithCalories.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
   const totalRacket = data.sessions.filter((session) => session.type === "badminton" || session.type === "racket").length;
   const totalStrength = data.sessions.filter((session) => session.type === "strength").length;
+  const stepContexts = data.dailyContexts.filter((context) => (context.steps ?? 0) > 0);
+  const floorContexts = data.dailyContexts.filter((context) => (context.floors ?? 0) > 0);
+  const totalRecordedSteps = stepContexts.reduce((total, context) => total + (context.steps ?? 0), 0);
+  const totalRecordedFloors = floorContexts.reduce((total, context) => total + (context.floors ?? 0), 0);
+  const averageSportCaloriesPerSession = averageRounded(totalSportCalories, sessionsWithCalories.length);
+  const averageSportCaloriesPerWeek = averageGroupedTotal(sessionsWithCalories, (session) => getWeekKey(session.date), (session) => session.caloriesBurned ?? 0);
+  const averageSportCaloriesPerMonth = averageGroupedTotal(sessionsWithCalories, (session) => getMonthKey(session.date), (session) => session.caloriesBurned ?? 0);
+  const averageStepsPerDay = averageRounded(totalRecordedSteps, stepContexts.length);
+  const averageStepsPerWeek = averageGroupedTotal(stepContexts, (context) => getWeekKey(context.date), (context) => context.steps ?? 0);
+  const averageStepsPerMonth = averageGroupedTotal(stepContexts, (context) => getMonthKey(context.date), (context) => context.steps ?? 0);
+  const averageFloorsPerDay = averageRounded(totalRecordedFloors, floorContexts.length);
+  const averageFloorsPerWeek = averageGroupedTotal(floorContexts, (context) => getWeekKey(context.date), (context) => context.floors ?? 0);
+  const averageFloorsPerMonth = averageGroupedTotal(floorContexts, (context) => getMonthKey(context.date), (context) => context.floors ?? 0);
   const totalSteps21Days = dailySeries.reduce((total, day) => total + day.steps, 0);
   const totalFloors21Days = dailySeries.reduce((total, day) => total + day.floors, 0);
   const totalNeat21Days = dailySeries.reduce((total, day) => total + day.neat, 0);
@@ -127,10 +169,9 @@ export default function StatsPage() {
   const mealDaysCount = countUniqueDates(data.meals);
   const movementDaysCount = countUniqueDates(data.dailyContexts.filter((context) => (context.steps ?? 0) > 0 || (context.floors ?? 0) > 0));
   const floorDaysCount = countUniqueDates(data.dailyContexts.filter((context) => (context.floors ?? 0) > 0));
-  const sessionsWithCalories = data.sessions.filter((session) => (session.caloriesBurned ?? 0) > 0).length;
   const weightTrendReady = hasWeightTrend(data.weights);
   const sessionTrendReady = data.sessions.length >= 2;
-  const sportCaloriesReady = sessionsWithCalories >= 2;
+  const sportCaloriesReady = sessionsWithCalories.length >= 2;
   const foodTrendReady = mealDaysCount >= 3;
   const movementTrendReady = movementDaysCount >= 3;
   const floorsTrendReady = floorDaysCount >= 2;
@@ -156,9 +197,20 @@ export default function StatsPage() {
     (showSport && sessionTrendReady) ||
     (showNutritionNumbers && foodTrendReady) ||
     (showWeight && weightTrendReady) ||
-    (showMovement && movementTrendReady) ||
+    (showMovement && (movementTrendReady || stepContexts.length > 0 || floorContexts.length > 0)) ||
     (showSport && sportCaloriesReady) ||
+    (showSport && sessionsWithCalories.length > 0) ||
     (showSport && executionTrendReady);
+  const hasAverageCards =
+    (showSport && averageSportCaloriesPerSession > 0) ||
+    (showSport && averageSportCaloriesPerWeek > 0) ||
+    (showSport && averageSportCaloriesPerMonth > 0) ||
+    (showMovement && averageStepsPerDay > 0) ||
+    (showMovement && averageStepsPerWeek > 0) ||
+    (showMovement && averageStepsPerMonth > 0) ||
+    (showMovement && averageFloorsPerDay > 0) ||
+    (showMovement && averageFloorsPerWeek > 0) ||
+    (showMovement && averageFloorsPerMonth > 0);
 
   if (!hasUsefulStats) {
     return (
@@ -241,6 +293,49 @@ export default function StatsPage() {
           {showSport && averageHeartRate ? <MetricCard label="Moyenne FC" value={averageHeartRate} /> : null}
           {showSport && averageRpe ? <MetricCard label="RPE moyen" value={averageRpe} /> : null}
         </section>
+      ) : null}
+
+      {hasAverageCards ? (
+        <SectionCard className="p-5 sm:p-6">
+          <p className="eyebrow">Moyennes utiles</p>
+          <h2 className="title-lg mt-2">Calories, pas et étages</h2>
+          <p className="mt-2 text-sm font-semibold leading-6 text-muted">
+            Calculé uniquement sur les séances ou journées renseignées, pour éviter qu'une absence de saisie compte comme une mauvaise journée.
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {showSport && averageSportCaloriesPerSession ? (
+              <MetricCard
+                label="Calories / séance"
+                value={`${averageSportCaloriesPerSession} kcal`}
+                hint={`${sessionsWithCalories.length} séance${sessionsWithCalories.length > 1 ? "s" : ""} avec calories`}
+              />
+            ) : null}
+            {showSport && averageSportCaloriesPerWeek ? (
+              <MetricCard label="Calories / semaine" value={`${averageSportCaloriesPerWeek} kcal`} hint="Semaines avec sport renseigné" />
+            ) : null}
+            {showSport && averageSportCaloriesPerMonth ? (
+              <MetricCard label="Calories / mois" value={`${averageSportCaloriesPerMonth} kcal`} hint="Mois avec sport renseigné" />
+            ) : null}
+            {showMovement && averageStepsPerDay ? (
+              <MetricCard label="Pas / jour" value={averageStepsPerDay.toLocaleString("fr-FR")} hint={`${stepContexts.length} jour${stepContexts.length > 1 ? "s" : ""} renseigné${stepContexts.length > 1 ? "s" : ""}`} />
+            ) : null}
+            {showMovement && averageStepsPerWeek ? (
+              <MetricCard label="Pas / semaine" value={averageStepsPerWeek.toLocaleString("fr-FR")} hint="Semaines avec pas renseignés" />
+            ) : null}
+            {showMovement && averageStepsPerMonth ? (
+              <MetricCard label="Pas / mois" value={averageStepsPerMonth.toLocaleString("fr-FR")} hint="Mois avec pas renseignés" />
+            ) : null}
+            {showMovement && averageFloorsPerDay ? (
+              <MetricCard label="Étages / jour" value={averageFloorsPerDay.toLocaleString("fr-FR")} hint={`${floorContexts.length} jour${floorContexts.length > 1 ? "s" : ""} renseigné${floorContexts.length > 1 ? "s" : ""}`} />
+            ) : null}
+            {showMovement && averageFloorsPerWeek ? (
+              <MetricCard label="Étages / semaine" value={averageFloorsPerWeek.toLocaleString("fr-FR")} hint="Semaines avec étages renseignés" />
+            ) : null}
+            {showMovement && averageFloorsPerMonth ? (
+              <MetricCard label="Étages / mois" value={averageFloorsPerMonth.toLocaleString("fr-FR")} hint="Mois avec étages renseignés" />
+            ) : null}
+          </div>
+        </SectionCard>
       ) : null}
 
       {showSport ? (

@@ -354,7 +354,7 @@ export default function SessionsPage() {
                       }}
                       aria-label="Supprimer la séance"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" /> Supprimer
                     </button>
                   </div>
                 </div>
