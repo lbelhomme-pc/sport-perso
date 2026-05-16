@@ -80,18 +80,18 @@ function coachThread({
   }
 
   if (todayPlanned) {
-    return `Aujourd'hui : ${todayLabel}. Objectif : faire la bonne séance, pas prouver que tu es invincible un mardi soir.`;
+    return `Aujourd'hui : ${todayLabel}. Objectif : faire la bonne séance, proprement, sans forcer inutilement.`;
   }
 
-  return "Aujourd'hui : pas de séance obligatoire. Mobilité 8 min, marche ou vrai repos : les trois comptent si c'est cohérent.";
+  return "Aujourd'hui : pas de séance obligatoire. Mobilité 8 min, marche ou repos complet : les trois peuvent être utiles.";
 }
 
 function recoveryHint(energy: EnergyLevel, sleep?: SleepQuality, pain?: boolean, fatigueMorning?: number, painMorning?: number) {
   if ((fatigueMorning ?? 0) >= 7 && ((painMorning ?? 0) >= 4 || pain)) return "Fatigue élevée + douleur signalée : séance courte recommandée aujourd'hui.";
   if ((painMorning ?? 0) >= 4 || pain) return `Douleur au réveil ${painMorning ?? "signalée"}/10 : baisse la version et note précisément où ça gêne.`;
-  if (sleep === "bad") return "Sommeil mauvais : vise technique/propre, pas héroïque.";
+  if (sleep === "bad") return "Sommeil mauvais : vise propre et facile, sans forcer.";
   if ((fatigueMorning ?? 0) >= 7 || energy === "fatigue") return `Fatigue au réveil ${fatigueMorning ?? "élevée"}/10 : version courte ou récupération active.`;
-  return "Feu vert prudent : fais le plan, sans transformer la séance en test ego.";
+  return "Feu vert prudent : fais le plan, proprement.";
 }
 
 function updateNumberInput(value: string) {
@@ -125,10 +125,10 @@ export default function DashboardPage() {
   const todayTypeLabel = todayPlanned ? getPlannedTypeLabel(todayPlanned.type, dashboard.settings) : showSessions ? "Séance libre" : "Suivi du jour";
   const todayAction = todayPlanned
     ? dashboard.todaySessions.some((session) => session.plannedSessionId === todayPlanned.id)
-      ? "Voir / corriger la séance"
-      : "Démarrer / enregistrer la séance"
+      ? "Corriger la séance"
+      : "Démarrer séance"
     : showSessions
-      ? "Ajouter une séance libre"
+      ? "Ajouter activité"
       : "Personnaliser";
   const nutritionSessionLabel = completedTodaySession
     ? getCompletedTypeLabel(completedTodaySession.type, dashboard.settings)
@@ -227,12 +227,12 @@ export default function DashboardPage() {
             <div>
               <p className="eyebrow">Aujourd'hui</p>
               <p className="mt-1 text-sm font-bold text-muted">{formatLongDate(dashboard.today)}</p>
-              <h1 className="mt-3 font-display text-3xl font-black leading-tight tracking-[-0.06em] text-petrol-800 sm:text-5xl">
-                {todayTypeLabel} · {todayPlanned?.durationMin ? `${todayPlanned.durationMin} min` : "souple"}
-              </h1>
-              <p className="mt-2 text-xl font-black leading-tight text-petrol-800">
-                {todayPlanned?.title ?? "Aujourd'hui repos : mobilité 8 min si ça fait du bien"}
+              <p className="mt-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-700">
+                {todayTypeLabel}{todayPlanned?.durationMin ? ` · ${todayPlanned.durationMin} min` : ""}
               </p>
+              <h1 className="mt-2 font-display text-3xl font-black leading-tight tracking-[-0.06em] text-petrol-800 sm:text-5xl">
+                {todayPlanned?.title ?? "Aujourd'hui repos : mobilité 8 min si ça fait du bien"}
+              </h1>
             </div>
             <span className="chip bg-limeSoft text-petrol-900">Semaine {dashboard.currentWeek}</span>
           </div>
@@ -240,6 +240,28 @@ export default function DashboardPage() {
           <p className="mt-4 border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
             {coachMessage}
           </p>
+
+          <div className={`mt-5 grid gap-2 ${showNutrition ? "sm:grid-cols-[1fr_1fr_auto]" : "sm:grid-cols-[1fr_auto]"}`}>
+            {todayPlanned ? (
+              <button type="button" className="action-button" onClick={() => setSessionMode(todayPlanned)}>
+                <PlayCircle className="h-5 w-5" /> {todayAction}
+              </button>
+            ) : (
+              <Link to={showSessions ? `/sessions?date=${dashboard.today}&add=1` : "/settings"} className="action-button">
+                <PlayCircle className="h-5 w-5" /> {todayAction}
+              </Link>
+            )}
+            {showNutrition ? (
+              <Link to={`/meals?date=${dashboard.today}&add=1`} className="ghost-button">
+                <Utensils className="h-5 w-5" /> Ajouter repas
+              </Link>
+            ) : null}
+            {todayPlanned ? (
+              <Link to={`/planning?week=${dashboard.currentWeek}#${todayPlanned.id}`} className="ghost-button">
+                Voir détails
+              </Link>
+            ) : null}
+          </div>
 
           {showRecovery ? (
             <div className="mt-4 grid gap-2 sm:grid-cols-3">
@@ -307,7 +329,7 @@ export default function DashboardPage() {
           {todayPlanned ? (
             <details className="mt-4 border border-petrol-800/10 bg-white p-3">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-800">
-                Version du jour
+                Voir la version du jour
                 <ChevronDown className="h-4 w-4" aria-hidden="true" />
               </summary>
               <p className="mt-3 text-sm font-semibold leading-6 text-muted">
@@ -315,28 +337,6 @@ export default function DashboardPage() {
               </p>
             </details>
           ) : null}
-
-          <div className={`mt-5 grid gap-2 ${showNutrition ? "sm:grid-cols-[1fr_1fr_auto]" : "sm:grid-cols-[1fr_auto]"}`}>
-            {todayPlanned ? (
-              <button type="button" className="action-button" onClick={() => setSessionMode(todayPlanned)}>
-                <PlayCircle className="h-5 w-5" /> {todayAction}
-              </button>
-            ) : (
-              <Link to={showSessions ? `/sessions?date=${dashboard.today}&add=1` : "/settings"} className="action-button">
-                <PlayCircle className="h-5 w-5" /> {todayAction}
-              </Link>
-            )}
-            {showNutrition ? (
-              <Link to={`/meals?date=${dashboard.today}&add=1`} className="ghost-button">
-                <Utensils className="h-5 w-5" /> Ajouter repas
-              </Link>
-            ) : null}
-            {todayPlanned ? (
-              <Link to={`/planning?week=${dashboard.currentWeek}#${todayPlanned.id}`} className="ghost-button">
-                Voir détails
-              </Link>
-            ) : null}
-          </div>
 
           {todayLoggedSessions.length ? (
             <div className="mt-4 grid gap-2 border border-petrol-800/10 bg-white p-3">
@@ -509,8 +509,8 @@ export default function DashboardPage() {
       {showSport ? (
         <CollapsibleSectionCard
           eyebrow="Détail progression"
-          title="Progression sportive"
-          summary="PR, volume, RPE, régularité et deload restent accessibles sans envahir l'accueil."
+          title="Progression"
+          summary="Les détails restent ici pour garder l'accueil centré sur l'action du jour."
         >
           <ProgressionSnapshot summary={progressionSummary} compact />
         </CollapsibleSectionCard>
@@ -520,12 +520,12 @@ export default function DashboardPage() {
         <CollapsibleSectionCard
           eyebrow="Détail nutrition"
           title={showNutritionNumbers ? `Reste environ : ${remainingLabel(dashboard.remainingCalories)}` : "Journal repas sans calories"}
-          summary="Replié par défaut : tu l'ouvres seulement quand tu veux décider quoi manger ou vérifier les protéines."
+          summary="À ouvrir quand tu veux décider quoi manger ou vérifier les protéines."
         >
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-sm font-semibold leading-6 text-muted">
-                {showNutritionNumbers ? "Objectif : comprendre la prochaine action, pas lire un tableau de bord nucléaire." : "Mode simple : repas et sensations, sans chiffres imposés."}
+                {showNutritionNumbers ? "Objectif : comprendre la prochaine action, pas lire un tableau compliqué." : "Mode simple : repas et sensations, sans chiffres imposés."}
               </p>
             </div>
             <Link to={`/meals?date=${dashboard.today}&add=1`} className="action-button">

@@ -129,6 +129,6 @@ export function getAdaptiveDailyCalorieTarget(args: {
     neatCalories,
     activityLabel,
     feelingLabel: energyLabels[energyLevel],
-    shortReason: `Métabolisme basal ${basalMetabolicRate} kcal + activité de base ${baselineActivityCalories} + sport validé ${activityFuel} + pas ${stepsNeatCalories} + étages ${floorsNeatCalories} + ressenti ${feelingFuel} = maintenance estimée ${maintenanceTarget}. Cible alimentaire = maintenance - déficit ${targetDeficit}, jamais sous le BMR sans suivi pro : ${target} kcal.`
+    shortReason: `Métabolisme de base ${basalMetabolicRate} kcal + activité de base ${baselineActivityCalories} + sport validé ${activityFuel} + pas ${stepsNeatCalories} + étages ${floorsNeatCalories} + ressenti ${feelingFuel} = maintenance estimée ${maintenanceTarget}. Cible alimentaire = maintenance - déficit ${targetDeficit}, jamais sous le métabolisme de base sans suivi pro : ${target} kcal.`
   };
 }

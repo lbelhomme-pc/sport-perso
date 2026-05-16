@@ -296,10 +296,12 @@ export default function StatsPage() {
       ) : null}
 
       {hasAverageCards ? (
-        <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">Moyennes utiles</p>
-          <h2 className="title-lg mt-2">Calories, pas et étages</h2>
-          <p className="mt-2 text-sm font-semibold leading-6 text-muted">
+        <CollapsibleSectionCard
+          eyebrow="Moyennes utiles"
+          title="Calories, pas et étages"
+          summary="Secondaire : à ouvrir quand tu veux comparer tes moyennes sans surcharger l'écran."
+        >
+          <p className="text-sm font-semibold leading-6 text-muted">
             Calculé uniquement sur les séances ou journées renseignées, pour éviter qu'une absence de saisie compte comme une mauvaise journée.
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -335,7 +337,7 @@ export default function StatsPage() {
               <MetricCard label="Étages / mois" value={averageFloorsPerMonth.toLocaleString("fr-FR")} hint="Mois avec étages renseignés" />
             ) : null}
           </div>
-        </SectionCard>
+        </CollapsibleSectionCard>
       ) : null}
 
       {showSport ? (

@@ -33,7 +33,7 @@ export const modulesConfig: Record<AppModuleId, AppModuleConfig> = {
   home: {
     id: "home",
     label: "Accueil",
-    shortLabel: "Home",
+    shortLabel: "Jour",
     description: "Synthèse du jour, action principale et rappels utiles.",
     route: "/",
     defaultEnabled: true,
@@ -112,8 +112,8 @@ export const modulesConfig: Record<AppModuleId, AppModuleConfig> = {
   },
   profile: {
     id: "profile",
-    label: "Profil",
-    shortLabel: "Profil",
+    label: "Plus",
+    shortLabel: "Plus",
     description: "Objectifs, préférences, modules, export et installation PWA.",
     route: "/settings",
     defaultEnabled: true,
@@ -212,9 +212,9 @@ export function resolveModulePreferences(settings: AppSettings): ModulePreferenc
   const primaryTabs = uniqueModulesInUserOrder(applyModuleGuards(settings, primaryFromSettings))
     .filter((moduleId) => normalizedEnabled.includes(moduleId) && modulesConfig[moduleId].canBeMainTab)
     .slice(0, MAX_PRIMARY_TABS);
-  const resolvedPrimaryTabs: AppModuleId[] = primaryTabs.includes("home")
-    ? primaryTabs
-    : (["home" as AppModuleId, ...primaryTabs].slice(0, MAX_PRIMARY_TABS) as AppModuleId[]);
+  const tabsWithHome = primaryTabs.includes("home") ? primaryTabs : (["home" as AppModuleId, ...primaryTabs] as AppModuleId[]);
+  const tabsWithoutProfile = tabsWithHome.filter((moduleId) => moduleId !== "profile").slice(0, MAX_PRIMARY_TABS - 1);
+  const resolvedPrimaryTabs: AppModuleId[] = [...tabsWithoutProfile, "profile" as AppModuleId];
 
   return {
     enabledModules: normalizedEnabled,

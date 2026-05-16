@@ -622,7 +622,7 @@ export default function MealsPage() {
                 <NutritionStat label="Protéines" value={`${Math.round(totals.protein)} g`} hint={`/ ${proteinTarget} g`} />
                 {showFiber ? <NutritionStat label="Fibres" value={`${Math.round(totals.fiber)} g`} hint="mode avancé" /> : null}
                 <NutritionStat
-                  label="NEAT bas"
+                  label="Mouvement"
                   value={`${adaptiveCalorieTarget.neatCalories} kcal`}
                   hint={`${dailyContext.steps ?? 0} pas + ${dailyContext.floors ?? 0} étages`}
                 />
@@ -639,7 +639,7 @@ export default function MealsPage() {
 
             <div className="grid gap-2 border border-petrol-800/10 bg-mist/45 p-3 text-sm font-bold sm:grid-cols-3">
               <div>
-                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">BMR</p>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Métabolisme de base</p>
                 <p className="mt-1 text-petrol-800">{adaptiveCalorieTarget.base} kcal</p>
               </div>
               <div>
@@ -647,11 +647,11 @@ export default function MealsPage() {
                 <p className="mt-1 text-petrol-800">+{adaptiveCalorieTarget.baselineActivityCalories} kcal</p>
               </div>
               <div>
-                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">EAT / sport</p>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Sport validé</p>
                 <p className="mt-1 text-petrol-800">{signedCalories(adaptiveCalorieTarget.activityFuel)}</p>
               </div>
               <div>
-                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">NEAT</p>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Mouvement quotidien</p>
                 <p className="mt-1 text-petrol-800">
                   {adaptiveCalorieTarget.neatCalories} kcal
                   <span className="text-muted"> ({adaptiveCalorieTarget.stepsNeatCalories} pas + {adaptiveCalorieTarget.floorsNeatCalories} étages)</span>
@@ -662,7 +662,7 @@ export default function MealsPage() {
                 <p className="mt-1 text-petrol-800">{signedCalories(adaptiveCalorieTarget.feelingFuel)}</p>
               </div>
               <div>
-                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Total dépensé</p>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Total dépensé estimé</p>
                 <p className="mt-1 text-petrol-800">{adaptiveCalorieTarget.maintenanceTarget} kcal</p>
               </div>
               <div>
@@ -680,10 +680,10 @@ export default function MealsPage() {
                 Voir le calcul
               </summary>
               <p className="mt-2">
-                Calcul simple : BMR {adaptiveCalorieTarget.base} + activité de base {adaptiveCalorieTarget.baselineActivityCalories} + sport validé{" "}
+                Calcul simple : métabolisme de base {adaptiveCalorieTarget.base} + activité de base {adaptiveCalorieTarget.baselineActivityCalories} + sport validé{" "}
                 {adaptiveCalorieTarget.activityFuel} + pas {adaptiveCalorieTarget.stepsNeatCalories} + étages {adaptiveCalorieTarget.floorsNeatCalories} + ressenti{" "}
                 {adaptiveCalorieTarget.feelingFuel} = maintenance estimée {adaptiveCalorieTarget.maintenanceTarget} kcal. Cible à manger = maintenance - déficit{" "}
-                {adaptiveCalorieTarget.targetDeficit}, plancher BMR {adaptiveCalorieTarget.minimumTarget} kcal : {adaptiveCalorieTarget.target} kcal.{" "}
+                {adaptiveCalorieTarget.targetDeficit}, plancher métabolisme de base {adaptiveCalorieTarget.minimumTarget} kcal : {adaptiveCalorieTarget.target} kcal.{" "}
                 {balanceFormulaSentence(dailyDeficit, adaptiveCalorieTarget.maintenanceTarget, Math.round(totals.calories))}
               </p>
             </details>

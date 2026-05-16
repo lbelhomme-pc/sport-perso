@@ -39,6 +39,10 @@ export function getRouteMeta(route: AppRoute) {
 }
 
 export function getRouteByModule(moduleId: AppModuleId) {
+  if (moduleId === "profile") {
+    return appRoutes.find((route) => route.path === "/more");
+  }
+
   return appRoutes.find((route) => route.moduleId === moduleId);
 }
 

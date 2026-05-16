@@ -67,7 +67,7 @@ a {
 
 @layer components {
   .page-shell {
-    @apply mx-auto flex w-full max-w-7xl flex-col gap-5 overflow-x-hidden px-4 pb-28 pt-4 sm:px-6 lg:px-8;
+    @apply mx-auto flex w-full max-w-7xl flex-col gap-4 overflow-x-hidden px-4 pb-28 pt-4 sm:px-6 lg:px-8;
   }
 
   .panel {
@@ -83,19 +83,19 @@ a {
   }
 
   .title-xl {
-    @apply font-display text-4xl font-black leading-[0.96] tracking-[-0.07em] text-petrol-800 sm:text-5xl lg:text-6xl;
+    @apply font-display text-3xl font-black leading-[0.98] tracking-[-0.06em] text-petrol-800 sm:text-5xl lg:text-6xl;
   }
 
   .title-lg {
-    @apply font-display text-3xl font-black leading-tight tracking-[-0.05em] text-petrol-800 sm:text-4xl;
+    @apply font-display text-2xl font-black leading-tight tracking-[-0.05em] text-petrol-800 sm:text-3xl;
   }
 
   .action-button {
-    @apply inline-flex min-h-12 w-full max-w-full items-center justify-center gap-2 whitespace-normal bg-petrol-800 px-5 py-3 text-center text-sm font-black uppercase leading-tight tracking-[0.06em] text-white transition hover:bg-petrol-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto;
+    @apply inline-flex min-h-12 w-full max-w-full items-center justify-center gap-2 whitespace-normal bg-petrol-800 px-5 py-3 text-center text-[0.82rem] font-black uppercase leading-tight tracking-[0.04em] text-white transition hover:bg-petrol-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto;
   }
 
   .ghost-button {
-    @apply inline-flex min-h-12 max-w-full items-center justify-center gap-2 whitespace-normal border border-petrol-800/15 bg-white px-5 py-3 text-center text-sm font-black uppercase leading-tight tracking-[0.06em] text-petrol-800 transition hover:border-petrol-800/35 hover:bg-mist/60 active:scale-[0.99];
+    @apply inline-flex min-h-12 max-w-full items-center justify-center gap-2 whitespace-normal border border-petrol-800/15 bg-white px-5 py-3 text-center text-[0.82rem] font-black uppercase leading-tight tracking-[0.04em] text-petrol-800 transition hover:border-petrol-800/35 hover:bg-mist/60 active:scale-[0.99];
   }
 
   .chip {

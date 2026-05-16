@@ -164,10 +164,10 @@ export default function SettingsPage() {
         title="Profil et préférences"
         summary={
           showSportSettings && showNutritionSettings
-            ? "Mode principal, dates, poids, BMR, déficit et modules."
+            ? "Mode principal, dates, poids, métabolisme de base, déficit et modules."
             : showSportSettings
               ? "Mode principal, calendrier, programme et modules."
-              : "Mode principal, nutrition, poids, BMR et déficit."
+              : "Mode principal, nutrition, poids, métabolisme de base et déficit."
         }
         defaultOpen
       >
@@ -326,7 +326,7 @@ export default function SettingsPage() {
               Poids actuel par défaut
               <input className="field" type="number" step="0.1" value={form.defaultBodyWeight} onChange={(event) => update("defaultBodyWeight", event.target.value)} />
               <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
-                Utilisé pour le calcul BMR si aucune pesée récente n'est saisie.
+                Utilisé pour le calcul du métabolisme de base si aucune pesée récente n'est saisie.
               </span>
             </label>
             <label className="field-label">
@@ -350,14 +350,14 @@ export default function SettingsPage() {
               <input className="field" type="number" value={form.age} onChange={(event) => update("age", event.target.value)} />
             </label>
             <label className="field-label">
-              Sexe formule BMR
+              Sexe pour le calcul
               <select className="field" value={form.sex} onChange={(event) => update("sex", event.target.value)}>
                 <option value="male">Homme</option>
                 <option value="female">Femme</option>
               </select>
             </label>
             <label className="field-label">
-              Calcul BMR automatique
+              Calcul automatique du métabolisme
               <select
                 className="field"
                 value={form.useCalculatedBmr ? "yes" : "no"}
@@ -371,7 +371,7 @@ export default function SettingsPage() {
               </span>
             </label>
             <label className="field-label">
-              Métabolisme basal utilisé
+              Métabolisme de base utilisé
               <input
                 className={`field ${form.useCalculatedBmr ? "bg-mist/60" : ""}`}
                 type="number"
@@ -391,7 +391,7 @@ export default function SettingsPage() {
               Déficit cible kcal/jour
               <input className="field" type="number" value={form.targetDailyDeficit} onChange={(event) => update("targetDailyDeficit", event.target.value)} />
               <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
-                La cible alimentaire part de la maintenance estimée, jamais de BMR - déficit. 400 kcal reste une valeur prudente à ajuster avec fatigue/faim/sommeil.
+                La cible alimentaire part de la maintenance estimée, jamais du métabolisme de base moins déficit. 400 kcal reste une valeur prudente à ajuster avec fatigue/faim/sommeil.
               </span>
             </label>
             </>

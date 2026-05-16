@@ -89,7 +89,7 @@ export function ModulePreferencesEditor({ enabledModules, primaryModuleTabs, onC
           const module = modulesConfig[moduleId];
           const enabled = enabledSet.has(moduleId);
           const inTabs = tabSet.has(moduleId);
-          const tabLocked = moduleId === "home";
+          const tabLocked = moduleId === "home" || moduleId === "profile";
           const tabBlocked = enabled && !inTabs && tabCount >= MAX_PRIMARY_TABS;
           const locked = moduleId === "home" || moduleId === "profile";
           const tabButtonDisabled = tabLocked || !enabled || tabBlocked;

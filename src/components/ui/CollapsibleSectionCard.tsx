@@ -36,7 +36,7 @@ export function CollapsibleSectionCard({
             {summary ? <p className={dark ? "mt-2 text-sm font-semibold leading-6 text-white/70" : "mt-2 text-sm font-semibold leading-6 text-muted"}>{summary}</p> : null}
           </div>
           <span className={dark ? "chip bg-white/10 text-white" : "chip bg-white"}>
-            {open ? "Fermer" : "Ouvrir"}
+            {open ? "Masquer" : "Détails"}
             <ChevronDown className="h-4 w-4 transition group-open:rotate-180" />
           </span>
         </div>
