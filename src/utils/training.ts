@@ -10,6 +10,24 @@ export function getCompletedForPlan(sessions: CompletedSession[], plannedSession
   return sessions.find((session) => session.plannedSessionId === plannedSessionId && session.completed);
 }
 
+export function getPlannedCompletion(plannedSessions: PlannedSession[], completedSessions: CompletedSession[]) {
+  const plannedTrainings = plannedSessions.filter((session) => session.type !== "rest");
+  const plannedIds = new Set(plannedTrainings.map((session) => session.id));
+  const completedIds = new Set(
+    completedSessions
+      .filter((session) => session.completed && session.plannedSessionId && plannedIds.has(session.plannedSessionId))
+      .map((session) => session.plannedSessionId!)
+  );
+  const planned = plannedTrainings.length;
+  const completed = completedIds.size;
+
+  return {
+    planned,
+    completed,
+    ratio: planned > 0 ? Math.round((completed / planned) * 100) : 0
+  };
+}
+
 export function summarizeWeek(
   week: number,
   weekStart: Date,
@@ -18,11 +36,12 @@ export function summarizeWeek(
 ): WeekSummary {
   const weekSessions = completedSessions.filter((session) => isDateInWeek(session.date, weekStart));
   const plannedTrainings = plannedSessions.filter((session) => session.type !== "rest");
+  const plannedCompletion = getPlannedCompletion(plannedSessions, completedSessions);
 
   return {
     week,
     planned: plannedTrainings.length,
-    completed: weekSessions.filter((session) => session.completed).length,
+    completed: plannedCompletion.completed,
     badminton: weekSessions.filter((session) => session.type === "badminton").length,
     strength: weekSessions.filter((session) => session.type === "strength").length,
     volumeMin: weekSessions.reduce((total, session) => total + session.durationMin, 0),

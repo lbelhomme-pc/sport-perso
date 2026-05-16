@@ -15,7 +15,7 @@ import { useSessionChecklists } from "../hooks/useSessionChecklists";
 import { useSessions } from "../hooks/useSessions";
 import { useSettings } from "../hooks/useSettings";
 import type { EnergyLevel, ExercisePrescription, PlannedSession, SessionChecklistItem } from "../types";
-import { formatShortDate, getCurrentWeekIndex, getTotalWeeks, getWeekEnd, getWeekStart, toISODate } from "../utils/dates";
+import { formatShortDate, getCurrentWeekIndex, getTotalWeeks, getWeekEnd, getWeekStart } from "../utils/dates";
 import {
   getActionableExercises,
   getExerciseCheckId,
@@ -24,7 +24,7 @@ import {
   getExerciseInstruction,
   getGuidanceExercises
 } from "../utils/exerciseDisplay";
-import { getCompletedForPlan } from "../utils/training";
+import { getCompletedForPlan, getPlannedCompletion } from "../utils/training";
 import { getPlannedTypeLabel, getProgramLabel, hideHyroxWhenGeneral, isHyroxCompetitionMode, personalizePlannedSession } from "../utils/sportLabels";
 
 function groupChecklistItems(items: SessionChecklistItem[]) {
@@ -58,17 +58,14 @@ function getPlanningSessionStatus({
   session,
   completed,
   energy,
-  note,
-  today
+  note
 }: {
   session: PlannedSession;
   completed: boolean;
   energy: EnergyLevel;
   note?: string;
-  today: string;
 }): PlanningSessionStatus {
   if (completed) return "faite";
-  if (session.type !== "rest" && session.date < today) return "sautée";
   if (session.type !== "rest" && (energy !== "normal" || Boolean(note?.trim()))) return "adaptée";
   return "prévue";
 }
@@ -330,17 +327,18 @@ export default function PlanningPage() {
   const variant = settings.badmintonVariant;
   const hyroxMode = isHyroxCompetitionMode(settings);
   const requestedWeek = Number(searchParams.get("week") ?? 0);
-  const today = toISODate(new Date());
   const plannedWeek = getPlannedWeek(settings, week, variant).map((session) =>
     personalizePlannedSession(applyPlannedSessionOverride(session, getOverride(session.id)), settings)
   );
-  const plannedWeekIds = plannedWeek.map((session) => session.id).join("|");
+  const plannedTrainingWeek = plannedWeek.filter((session) => session.type !== "rest");
+  const weekProgramCompletion = getPlannedCompletion(plannedTrainingWeek, sessions);
+  const plannedWeekIds = plannedTrainingWeek.map((session) => session.id).join("|");
   const context = getTrainingContext(settings, week);
   const phases = buildPhases(totalWeeks);
 
   useEffect(() => {
     setOpenSessionId((current) => {
-      if (current && plannedWeek.some((session) => session.id === current)) return current;
+      if (current && plannedTrainingWeek.some((session) => session.id === current)) return current;
       return null;
     });
   }, [plannedWeekIds]);
@@ -386,8 +384,8 @@ export default function PlanningPage() {
         title={getProgramLabel(settings)}
         description={
           hyroxMode
-            ? "Mode compétition spécialisé : semaine, configuration badminton et niveau d'énergie restent disponibles."
-            : "Mode général : l'écran sert à préparer tes séances sans vocabulaire compétition inutile."
+            ? "Mode compétition spécialisé : la semaine devient une liste de séances à choisir selon tes contraintes, pas un agenda rigide."
+            : "Mode général : prépare tes séances de la semaine, puis choisis chaque jour celle qui colle à ta vraie vie."
         }
       />
 
@@ -422,6 +420,26 @@ export default function PlanningPage() {
               ))}
             </select>
           </label>
+        </div>
+
+        <div className="mt-5 border border-petrol-800/10 bg-white p-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="eyebrow">Séances de la semaine</p>
+              <p className="mt-1 text-sm font-semibold leading-6 text-muted">
+                Elles ne sont pas verrouillées par jour : tu choisis la séance du moment depuis l'accueil.
+              </p>
+            </div>
+            <div className="text-left sm:text-right">
+              <p className="font-display text-3xl font-black tracking-[-0.05em] text-petrol-800">
+                {weekProgramCompletion.completed}/{weekProgramCompletion.planned} · {weekProgramCompletion.ratio} %
+              </p>
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">validées</p>
+            </div>
+          </div>
+          <div className="mt-3 h-2 overflow-hidden bg-mist">
+            <div className="h-full bg-limeSoft" style={{ width: `${weekProgramCompletion.ratio}%` }} />
+          </div>
         </div>
 
         {hyroxMode ? (
@@ -518,7 +536,7 @@ export default function PlanningPage() {
         ) : null}
 
         <div className="grid gap-3">
-          {plannedWeek.map((session) => {
+          {plannedTrainingWeek.map((session, index) => {
             const completed = getCompletedForPlan(sessions, session.id);
             const content = getDisplayedVersion(session, energy);
             const checklistItems = getSessionChecklist(session, energy).map((item) => ({
@@ -534,8 +552,7 @@ export default function PlanningPage() {
               session,
               completed: Boolean(completed),
               energy,
-              note: override?.notes,
-              today
+              note: override?.notes
             });
 
             return (
@@ -547,11 +564,11 @@ export default function PlanningPage() {
                     onClick={() => setOpenSessionId(isOpen ? null : session.id)}
                   >
                     <span className={`flex min-w-[4.75rem] shrink-0 items-center justify-center px-3 py-2 text-center font-display text-lg font-black leading-none ${isOpen ? "bg-petrol-800 text-limeSoft" : "bg-mist text-petrol-800"}`}>
-                      {formatShortDate(session.date)}
+                      #{index + 1}
                     </span>
                     <span className="min-w-0">
                       <span className="block text-[0.68rem] font-black uppercase tracking-[0.14em] text-muted">
-                        {session.day} · {getPlannedTypeLabel(session.type, settings)}
+                        {getPlannedTypeLabel(session.type, settings)} · repère initial {session.day} {formatShortDate(session.date)}
                       </span>
                       <span className="mt-1 block truncate font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
                         {session.title}

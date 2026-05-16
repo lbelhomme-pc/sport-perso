@@ -15,7 +15,8 @@ export function useDailyContext(date: string) {
     hungerLevel: 5,
     steps: 0,
     floors: 0,
-    waterMl: 0
+    waterMl: 0,
+    selectedPlannedSessionId: undefined
   };
 
   return {

@@ -19,13 +19,16 @@ import { getProteinTarget } from "../utils/nutrition";
 import { tracksNutritionNumbers } from "../utils/nutritionMode";
 import { clampReadinessScore } from "../utils/readiness";
 import { getCompletedTypeLabel, getPlannedTypeLabel, personalizePlannedSession } from "../utils/sportLabels";
-import { getCompletedForPlan } from "../utils/training";
+import { getCompletedForPlan, getPlannedCompletion } from "../utils/training";
 
 const sleepOptions: Array<{ id: SleepQuality; label: string }> = [
   { id: "good", label: "Bon" },
   { id: "medium", label: "Moyen" },
   { id: "bad", label: "Mauvais" }
 ];
+
+const CHOOSE_SESSION_CHOICE = "__choose-session__";
+const FREE_SESSION_CHOICE = "__free-session__";
 
 function remainingLabel(value: number) {
   if (value > 150) return `${Math.round(value)} kcal`;
@@ -118,18 +121,40 @@ export default function DashboardPage() {
   const { getCheckedItemIds, toggleChecklistItem } = useSessionChecklists();
   const [sessionMode, setSessionMode] = useState<PlannedSession | null>(null);
   const [loggingSession, setLoggingSession] = useState<PlannedSession | null>(null);
-  const todayPlanned = showTraining && dashboard.todayPlanned ? personalizePlannedSession(dashboard.todayPlanned, dashboard.settings) : undefined;
+  const weekSessionOptions = showTraining
+    ? dashboard.plannedWeek
+        .filter((session) => session.type !== "rest")
+        .map((session) => personalizePlannedSession(session, dashboard.settings))
+    : [];
+  const chosenSessionId = dailyContext.selectedPlannedSessionId;
+  const chosenWeekSession =
+    chosenSessionId && chosenSessionId !== FREE_SESSION_CHOICE
+      ? weekSessionOptions.find((session) => session.id === chosenSessionId)
+      : undefined;
+  const todayPlanned = chosenWeekSession;
+  const selectedPlanChoice = chosenSessionId ?? CHOOSE_SESSION_CHOICE;
+  const waitingForSessionChoice = selectedPlanChoice === CHOOSE_SESSION_CHOICE;
+  const weekProgramCompletion = getPlannedCompletion(weekSessionOptions, dashboard.allSessions);
   const proteinTarget = getProteinTarget(dashboard.calculationWeight, dashboard.settings.proteinPerKg);
   const proteinRatio = proteinTarget > 0 ? dashboard.todayMealTotals.protein / proteinTarget : 1;
   const completedTodaySession = dashboard.todaySessions.find((session) => session.completed);
-  const todayTypeLabel = todayPlanned ? getPlannedTypeLabel(todayPlanned.type, dashboard.settings) : showSessions ? "Séance libre" : "Suivi du jour";
+  const completedPlannedSession = todayPlanned ? getCompletedForPlan(sessions, todayPlanned.id) : undefined;
+  const todayTypeLabel = todayPlanned
+    ? getPlannedTypeLabel(todayPlanned.type, dashboard.settings)
+    : waitingForSessionChoice
+      ? "Programme semaine"
+      : showSessions
+        ? "Séance libre"
+        : "Suivi du jour";
   const todayAction = todayPlanned
-    ? dashboard.todaySessions.some((session) => session.plannedSessionId === todayPlanned.id)
+    ? completedPlannedSession
       ? "Corriger la séance"
       : "Démarrer séance"
-    : showSessions
-      ? "Ajouter activité"
-      : "Personnaliser";
+    : waitingForSessionChoice
+      ? "Choisir une séance"
+      : showSessions
+        ? "Ajouter activité"
+        : "Personnaliser";
   const nutritionSessionLabel = completedTodaySession
     ? getCompletedTypeLabel(completedTodaySession.type, dashboard.settings)
     : todayPlanned
@@ -142,14 +167,16 @@ export default function DashboardPage() {
     Boolean(completedTodaySession),
     nutritionSessionLabel
   );
-  const coachMessage = coachThread({
-    yesterdaySessions: dashboard.yesterdaySessions,
-    todayPlanned,
-    todayTypeLabel,
-    energy: dailyContext.energyLevel,
-    pain: dailyContext.pain,
-    fatigueMorning: dailyContext.fatigueMorning
-  });
+  const coachMessage = waitingForSessionChoice
+    ? "Programme de la semaine : choisis la séance la plus réaliste aujourd'hui. Si les contraintes changent, sélectionne une activité libre et garde le fil sans te battre avec le calendrier."
+    : coachThread({
+        yesterdaySessions: dashboard.yesterdaySessions,
+        todayPlanned,
+        todayTypeLabel,
+        energy: dailyContext.energyLevel,
+        pain: dailyContext.pain,
+        fatigueMorning: dailyContext.fatigueMorning
+      });
   const progressionSummary = getSportProgressionSummary({
     sessions: dashboard.allSessions,
     dailyContexts: dashboard.dailyContexts,
@@ -231,7 +258,7 @@ export default function DashboardPage() {
                 {todayTypeLabel}{todayPlanned?.durationMin ? ` · ${todayPlanned.durationMin} min` : ""}
               </p>
               <h1 className="mt-2 font-display text-3xl font-black leading-tight tracking-[-0.06em] text-petrol-800 sm:text-5xl">
-                {todayPlanned?.title ?? "Aujourd'hui repos : mobilité 8 min si ça fait du bien"}
+                {todayPlanned?.title ?? (waitingForSessionChoice ? "Choisis ta séance du jour" : "Activité libre aujourd'hui")}
               </h1>
             </div>
             <span className="chip bg-limeSoft text-petrol-900">Semaine {dashboard.currentWeek}</span>
@@ -241,9 +268,41 @@ export default function DashboardPage() {
             {coachMessage}
           </p>
 
+          {showTraining && weekSessionOptions.length ? (
+            <label className="field-label mt-4">
+              Séance choisie aujourd'hui
+              <select
+                className="field"
+                value={selectedPlanChoice}
+                onChange={(event) =>
+                  saveDailyContext({
+                    ...dailyContext,
+                    date: dashboard.today,
+                    selectedPlannedSessionId: event.target.value === CHOOSE_SESSION_CHOICE ? undefined : event.target.value
+                  })
+                }
+              >
+                <option value={CHOOSE_SESSION_CHOICE}>Choisir une séance de la semaine</option>
+                <option value={FREE_SESSION_CHOICE}>Autre activité / séance libre</option>
+                {weekSessionOptions.map((session) => (
+                  <option key={session.id} value={session.id}>
+                    {getPlannedTypeLabel(session.type, dashboard.settings)} - {session.title} - {session.durationMin} min
+                  </option>
+                ))}
+              </select>
+              <span className="text-[0.72rem] font-bold normal-case leading-5 tracking-normal text-muted">
+                Choisis dans les séances de la semaine selon tes contraintes du jour. Le planning garde la structure, toi tu gardes la liberté.
+              </span>
+            </label>
+          ) : null}
+
           <div className={`mt-5 grid gap-2 ${showNutrition ? "sm:grid-cols-[1fr_1fr_auto]" : "sm:grid-cols-[1fr_auto]"}`}>
             {todayPlanned ? (
               <button type="button" className="action-button" onClick={() => setSessionMode(todayPlanned)}>
+                <PlayCircle className="h-5 w-5" /> {todayAction}
+              </button>
+            ) : waitingForSessionChoice ? (
+              <button type="button" className="action-button opacity-70" disabled>
                 <PlayCircle className="h-5 w-5" /> {todayAction}
               </button>
             ) : (
@@ -262,6 +321,23 @@ export default function DashboardPage() {
               </Link>
             ) : null}
           </div>
+
+          {weekProgramCompletion.planned ? (
+            <div className="mt-4 border border-petrol-800/10 bg-white p-3">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Programme semaine</p>
+                <p className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
+                  {weekProgramCompletion.completed}/{weekProgramCompletion.planned} · {weekProgramCompletion.ratio} %
+                </p>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden bg-mist">
+                <div className="h-full bg-limeSoft" style={{ width: `${weekProgramCompletion.ratio}%` }} />
+              </div>
+              <p className="mt-2 text-sm font-bold leading-6 text-muted">
+                Compte les séances prévues de la semaine validées, même si tu les fais un autre jour.
+              </p>
+            </div>
+          ) : null}
 
           {showRecovery ? (
             <div className="mt-4 grid gap-2 sm:grid-cols-3">
@@ -496,6 +572,7 @@ export default function DashboardPage() {
           <div className="mt-5">
             <SessionForm
               planned={loggingSession}
+              initial={getCompletedForPlan(sessions, loggingSession.id) ?? { date: dashboard.today }}
               onCancel={() => setLoggingSession(null)}
               onSubmit={(session) => {
                 saveSession(session);

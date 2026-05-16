@@ -4,7 +4,8 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
 import { PwaInstallButton } from "../components/ui/PwaInstallButton";
 import { ModulePreferencesEditor } from "../components/modules/ModulePreferencesEditor";
-import { BADMINTON_VARIANTS, GENERAL_SPORT_MODES } from "../data/defaults";
+import { BadmintonVariantSelector } from "../components/planning/BadmintonVariantSelector";
+import { GENERAL_SPORT_MODES } from "../data/defaults";
 import { deriveNavigationFocusFromModules, recommendedModulesByGoal, resolveModulePreferences } from "../data/modules";
 import { exportJson, getExportPreview, importJsonFile, mergeJsonFiles } from "../services/exportService";
 import { resetData } from "../services/storageService";
@@ -247,19 +248,15 @@ export default function SettingsPage() {
               <input className="field" type="date" value={form.startDate} onChange={(event) => update("startDate", event.target.value)} />
             </label>
             {hyroxMode ? (
-              <label className="field-label sm:col-span-2">
-                Configuration badminton du programme HYROX
-                <select className="field" value={form.badmintonVariant} onChange={(event) => update("badmintonVariant", event.target.value)}>
-                  {BADMINTON_VARIANTS.map((variant) => (
-                    <option key={variant.id} value={variant.id}>
-                      {variant.label}
-                    </option>
-                  ))}
-                </select>
-                <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
-                  Les 14 combinaisons 1/2/3 badmintons sont conservées dans le mode compétition HYROX.
-                </span>
-              </label>
+              <div className="sm:col-span-2">
+                <BadmintonVariantSelector
+                  value={form.badmintonVariant}
+                  onChange={(badmintonVariant) => setForm((previous) => ({ ...previous, badmintonVariant }))}
+                />
+                <p className="mt-2 text-xs font-bold leading-5 text-muted">
+                  Tu choisis le volume réaliste de badminton. Le planning propose ensuite les séances de la semaine, mais l'accueil reste flexible jour par jour.
+                </p>
+              </div>
             ) : null}
             <label className="field-label">
               Niveau sportif

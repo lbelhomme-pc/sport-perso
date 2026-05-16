@@ -26,7 +26,7 @@ export function useDashboard() {
   const calculationWeight = latestWeight?.weight ?? data.settings.defaultBodyWeight;
   const adaptiveCalorieTarget = getAdaptiveDailyCalorieTarget({
     settings: data.settings,
-    plannedSession: todayPlanned,
+    plannedSession: undefined,
     sessions: todaySessions,
     energyLevel: todayContext?.energyLevel,
     steps: todayContext?.steps,

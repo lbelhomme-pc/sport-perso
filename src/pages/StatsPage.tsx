@@ -15,12 +15,12 @@ import { getPlannedWeek } from "../data/trainingPlan";
 import { useStoredData } from "../hooks/useStoredData";
 import { useUserModules } from "../hooks/useUserModules";
 import { getSportProgressionSummary } from "../services/progressionService";
-import type { WeightEntry } from "../types";
+import type { CompletedSession, PlannedSession, WeightEntry } from "../types";
 import { estimateNeatCalories } from "../utils/calories";
-import { formatShortDate, getMonday, getTotalWeeks, getWeekStart, parseDate, toISODate } from "../utils/dates";
+import { formatShortDate, getCurrentWeekIndex, getMonday, getTotalWeeks, getWeekStart, parseDate, toISODate } from "../utils/dates";
 import { getMealTotals } from "../utils/nutrition";
 import { tracksNutritionNumbers } from "../utils/nutritionMode";
-import { getAverageHeartRate, getAverageRpe, summarizeWeek } from "../utils/training";
+import { getAverageHeartRate, getAverageRpe, getPlannedCompletion, summarizeWeek } from "../utils/training";
 
 function getBodyWeightForDate(weights: WeightEntry[], date: string, fallback: number): number {
   const previousWeight = [...weights].filter((entry) => entry.date <= date).sort((a, b) => b.date.localeCompare(a.date))[0];
@@ -70,6 +70,10 @@ function averageGroupedTotal<T>(items: T[], getKey: (item: T) => string, getValu
   );
 }
 
+function getWeekProgramStats(plannedWeek: PlannedSession[], sessions: CompletedSession[]) {
+  return getPlannedCompletion(plannedWeek, sessions);
+}
+
 function ChartEmptyState({
   icon,
   title,
@@ -100,21 +104,25 @@ export default function StatsPage() {
   const showNutrition = isEnabled("nutrition");
   const showNutritionNumbers = showNutrition && tracksNutritionNumbers(data.settings);
   const showWeight = isEnabled("weight");
-  const showMovement = isEnabled("calendar");
+  const calendarEnabled = isEnabled("calendar");
   const totalWeeks = getTotalWeeks(data.settings.startDate, data.settings.targetDate);
+  const currentWeek = getCurrentWeekIndex(data.settings.startDate, data.settings.targetDate);
   const weekSeries = Array.from({ length: totalWeeks }, (_, index) => {
     const week = index + 1;
     const plannedWeek = getPlannedWeek(data.settings, week, data.settings.badmintonVariant);
     const summary = summarizeWeek(week, getWeekStart(data.settings.startDate, week), plannedWeek, data.sessions);
+    const programStats = getWeekProgramStats(plannedWeek, data.sessions);
 
     return {
       week: `S${week}`,
       volume: summary.volumeMin,
       calories: summary.sportCalories,
-      planned: summary.planned,
-      completed: summary.completed
+      planned: programStats.planned,
+      completed: programStats.completed,
+      completionRate: programStats.ratio
     };
   });
+  const currentWeekProgram = weekSeries[currentWeek - 1];
 
   const startDaily = subDays(new Date(), 20);
   const dailySeries = Array.from({ length: 21 }, (_, index) => {
@@ -147,6 +155,7 @@ export default function StatsPage() {
   const totalStrength = data.sessions.filter((session) => session.type === "strength").length;
   const stepContexts = data.dailyContexts.filter((context) => (context.steps ?? 0) > 0);
   const floorContexts = data.dailyContexts.filter((context) => (context.floors ?? 0) > 0);
+  const showMovement = calendarEnabled || stepContexts.length > 0 || floorContexts.length > 0;
   const totalRecordedSteps = stepContexts.reduce((total, context) => total + (context.steps ?? 0), 0);
   const totalRecordedFloors = floorContexts.reduce((total, context) => total + (context.floors ?? 0), 0);
   const averageSportCaloriesPerSession = averageRounded(totalSportCalories, sessionsWithCalories.length);
@@ -183,6 +192,7 @@ export default function StatsPage() {
     dailyContexts: data.dailyContexts
   });
   const hasAnyMetricCard =
+    (showSport && Boolean(currentWeekProgram?.planned)) ||
     (showSport && data.sessions.length > 0) ||
     (showSport && totalSportCalories > 0) ||
     (showNutritionNumbers && totalFood21Days > 0) ||
@@ -194,6 +204,7 @@ export default function StatsPage() {
     (showSport && Boolean(averageHeartRate)) ||
     (showSport && Boolean(averageRpe));
   const hasUsefulStats =
+    (showSport && Boolean(currentWeekProgram?.planned)) ||
     (showSport && sessionTrendReady) ||
     (showNutritionNumbers && foodTrendReady) ||
     (showWeight && weightTrendReady) ||
@@ -281,6 +292,14 @@ export default function StatsPage() {
       {hasAnyMetricCard ? (
         <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {showSport && data.sessions.length ? <MetricCard label="Total séances" value={data.sessions.length} /> : null}
+          {showSport && currentWeekProgram?.planned ? (
+            <MetricCard
+              label="Programme semaine"
+              value={`${currentWeekProgram.completed}/${currentWeekProgram.planned}`}
+              hint={`${currentWeekProgram.completionRate} % des séances prévues`}
+              tone="lime"
+            />
+          ) : null}
           {showSport && totalRacket ? <MetricCard label="Raquette" value={totalRacket} /> : null}
           {showSport && totalStrength ? <MetricCard label="Force" value={totalStrength} /> : null}
           {showSport && totalSportCalories ? <MetricCard label="Calories sport" value={totalSportCalories} /> : null}
@@ -296,15 +315,36 @@ export default function StatsPage() {
       ) : null}
 
       {hasAverageCards ? (
-        <CollapsibleSectionCard
-          eyebrow="Moyennes utiles"
-          title="Calories, pas et étages"
-          summary="Secondaire : à ouvrir quand tu veux comparer tes moyennes sans surcharger l'écran."
-        >
-          <p className="text-sm font-semibold leading-6 text-muted">
-            Calculé uniquement sur les séances ou journées renseignées, pour éviter qu'une absence de saisie compte comme une mauvaise journée.
+        <SectionCard className="p-5 sm:p-6">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="eyebrow">Moyennes</p>
+              <h2 className="title-lg mt-2">Pas, étages et calories</h2>
+            </div>
+            <span className="chip bg-limeSoft text-petrol-900">Visible directement</span>
+          </div>
+          <p className="mt-2 text-sm font-semibold leading-6 text-muted">
+            Calculé uniquement sur les séances ou journées renseignées. Une journée non saisie ne compte pas comme zéro.
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {showMovement && averageStepsPerDay ? (
+              <MetricCard label="Pas / jour" value={averageStepsPerDay.toLocaleString("fr-FR")} hint={`${stepContexts.length} jour${stepContexts.length > 1 ? "s" : ""} renseigné${stepContexts.length > 1 ? "s" : ""}`} tone="lime" />
+            ) : null}
+            {showMovement && averageStepsPerWeek ? (
+              <MetricCard label="Pas / semaine" value={averageStepsPerWeek.toLocaleString("fr-FR")} hint="Semaines avec pas renseignés" />
+            ) : null}
+            {showMovement && averageStepsPerMonth ? (
+              <MetricCard label="Pas / mois" value={averageStepsPerMonth.toLocaleString("fr-FR")} hint="Mois avec pas renseignés" />
+            ) : null}
+            {showMovement && averageFloorsPerDay ? (
+              <MetricCard label="Étages / jour" value={averageFloorsPerDay.toLocaleString("fr-FR")} hint={`${floorContexts.length} jour${floorContexts.length > 1 ? "s" : ""} renseigné${floorContexts.length > 1 ? "s" : ""}`} tone="lime" />
+            ) : null}
+            {showMovement && averageFloorsPerWeek ? (
+              <MetricCard label="Étages / semaine" value={averageFloorsPerWeek.toLocaleString("fr-FR")} hint="Semaines avec étages renseignés" />
+            ) : null}
+            {showMovement && averageFloorsPerMonth ? (
+              <MetricCard label="Étages / mois" value={averageFloorsPerMonth.toLocaleString("fr-FR")} hint="Mois avec étages renseignés" />
+            ) : null}
             {showSport && averageSportCaloriesPerSession ? (
               <MetricCard
                 label="Calories / séance"
@@ -318,26 +358,8 @@ export default function StatsPage() {
             {showSport && averageSportCaloriesPerMonth ? (
               <MetricCard label="Calories / mois" value={`${averageSportCaloriesPerMonth} kcal`} hint="Mois avec sport renseigné" />
             ) : null}
-            {showMovement && averageStepsPerDay ? (
-              <MetricCard label="Pas / jour" value={averageStepsPerDay.toLocaleString("fr-FR")} hint={`${stepContexts.length} jour${stepContexts.length > 1 ? "s" : ""} renseigné${stepContexts.length > 1 ? "s" : ""}`} />
-            ) : null}
-            {showMovement && averageStepsPerWeek ? (
-              <MetricCard label="Pas / semaine" value={averageStepsPerWeek.toLocaleString("fr-FR")} hint="Semaines avec pas renseignés" />
-            ) : null}
-            {showMovement && averageStepsPerMonth ? (
-              <MetricCard label="Pas / mois" value={averageStepsPerMonth.toLocaleString("fr-FR")} hint="Mois avec pas renseignés" />
-            ) : null}
-            {showMovement && averageFloorsPerDay ? (
-              <MetricCard label="Étages / jour" value={averageFloorsPerDay.toLocaleString("fr-FR")} hint={`${floorContexts.length} jour${floorContexts.length > 1 ? "s" : ""} renseigné${floorContexts.length > 1 ? "s" : ""}`} />
-            ) : null}
-            {showMovement && averageFloorsPerWeek ? (
-              <MetricCard label="Étages / semaine" value={averageFloorsPerWeek.toLocaleString("fr-FR")} hint="Semaines avec étages renseignés" />
-            ) : null}
-            {showMovement && averageFloorsPerMonth ? (
-              <MetricCard label="Étages / mois" value={averageFloorsPerMonth.toLocaleString("fr-FR")} hint="Mois avec étages renseignés" />
-            ) : null}
           </div>
-        </CollapsibleSectionCard>
+        </SectionCard>
       ) : null}
 
       {showSport ? (
@@ -541,7 +563,7 @@ export default function StatsPage() {
                 secondKey="completed"
                 firstName="Prévues"
                 secondName="Réalisées"
-                summary={`${totalCompletedSessions} séances réalisées / ${totalPlannedSessions} prévues.`}
+                summary={`${totalCompletedSessions} séances prévues validées / ${totalPlannedSessions} prévues. Une séance compte même si tu la fais un autre jour.`}
               />
             ) : (
               <ChartEmptyState

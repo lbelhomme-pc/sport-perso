@@ -239,6 +239,7 @@ const dailyContextSchema = z.object({
   steps: z.coerce.number().nonnegative().default(0),
   floors: z.coerce.number().nonnegative().default(0),
   waterMl: z.coerce.number().nonnegative().default(0),
+  selectedPlannedSessionId: z.string().optional(),
   updatedAt: z.string().optional()
 });
 

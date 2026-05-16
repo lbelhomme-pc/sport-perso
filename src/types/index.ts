@@ -116,6 +116,7 @@ export type DailyContext = {
   steps?: number;
   floors?: number;
   waterMl?: number;
+  selectedPlannedSessionId?: string;
   updatedAt?: string;
 };
 
