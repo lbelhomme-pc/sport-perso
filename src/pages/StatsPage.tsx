@@ -103,7 +103,7 @@ function ProgressOverviewCard({
   const completion = volumeGoalMin > 0 ? Math.round((volumeMin / volumeGoalMin) * 100) : 0;
 
   return (
-    <section className="overflow-hidden rounded-panel border border-white/10 bg-[#030909] p-5 text-white shadow-panel sm:p-6">
+    <section className="theme-stat-card overflow-hidden rounded-panel border border-white/10 p-5 shadow-panel sm:p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-black uppercase tracking-[0.18em] text-white/70">Progression</p>
@@ -191,7 +191,7 @@ function CompactSportRows({ rows }: { rows: CompactSportRow[] }) {
         const maxValue = Math.max(...row.values, 1);
 
         return (
-          <article key={row.id} className="grid grid-cols-[minmax(0,1fr)_7.25rem] items-center gap-4 rounded-card border border-white/10 bg-[#030909] p-4 text-white shadow-panel">
+          <article key={row.id} className="theme-stat-card grid grid-cols-[minmax(0,1fr)_7.25rem] items-center gap-4 rounded-card border border-white/10 p-4 shadow-panel">
             <div className="min-w-0">
               <Icon className="h-5 w-5" style={{ color: row.color }} aria-hidden="true" />
               <p className="mt-2 text-[0.68rem] font-black uppercase tracking-[0.15em] text-white/55">{row.label}</p>

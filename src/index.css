@@ -24,6 +24,9 @@
   --theme-primary-button-bg: #00354a;
   --theme-primary-button-bg-hover: #00283a;
   --theme-primary-button-text: #ffffff;
+  --theme-stat-card-bg:
+    radial-gradient(circle at 90% 0%, rgba(220, 239, 163, 0.22), transparent 16rem),
+    linear-gradient(145deg, #0a4b61 0%, #00354a 58%, #00283a 100%);
   color: #0c3447;
   background: #f4f4ee;
   font-synthesis: none;
@@ -51,13 +54,16 @@ html[data-theme="soft-blue"] {
   --theme-panel-border: rgba(255, 255, 255, 0.78);
   --theme-field-bg: rgba(255, 255, 255, 0.92);
   --theme-ghost-bg: rgba(255, 255, 255, 0.80);
+  --theme-stat-card-bg:
+    radial-gradient(circle at 90% 0%, rgba(220, 239, 163, 0.20), transparent 16rem),
+    linear-gradient(145deg, #0d5f78 0%, #0a4b61 58%, #00354a 100%);
 }
 
 html[data-theme="dark"] {
   color-scheme: dark;
-  --color-petrol-900: 244 244 238;
-  --color-petrol-800: 244 244 238;
-  --color-petrol-700: 220 239 163;
+  --color-petrol-900: 0 40 58;
+  --color-petrol-800: 0 53 74;
+  --color-petrol-700: 10 75 97;
   --color-cream: 5 16 23;
   --color-mist: 19 43 54;
   --color-lime-soft: 220 239 163;
@@ -76,6 +82,9 @@ html[data-theme="dark"] {
   --theme-primary-button-bg: #dcefa3;
   --theme-primary-button-bg-hover: #f4f4ee;
   --theme-primary-button-text: #00283a;
+  --theme-stat-card-bg:
+    radial-gradient(circle at 88% 0%, rgba(220, 239, 163, 0.14), transparent 18rem),
+    linear-gradient(145deg, #071822 0%, #040b10 60%, #02070a 100%);
 }
 
 * {
@@ -148,6 +157,11 @@ a {
       linear-gradient(145deg, #00354a 0%, #00283a 64%, #051b25 100%);
   }
 
+  .theme-stat-card {
+    background: var(--theme-stat-card-bg);
+    color: #fff;
+  }
+
   .eyebrow {
     @apply text-[0.68rem] font-black uppercase tracking-[0.16em] text-petrol-700;
   }
@@ -200,6 +214,20 @@ html[data-theme="dark"] .bg-white\/80,
 html[data-theme="dark"] .bg-white\/85,
 html[data-theme="dark"] .bg-white\/90 {
   background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html[data-theme="dark"] .text-ink,
+html[data-theme="dark"] .text-petrol-800,
+html[data-theme="dark"] .text-petrol-900 {
+  color: rgb(var(--color-ink)) !important;
+}
+
+html[data-theme="dark"] .text-muted {
+  color: rgb(var(--color-muted)) !important;
+}
+
+html[data-theme="dark"] .text-petrol-700 {
+  color: rgb(var(--color-lime-soft)) !important;
 }
 
 html[data-theme="dark"] .shadow-soft,
