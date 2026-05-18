@@ -103,32 +103,32 @@ function ProgressOverviewCard({
   const completion = volumeGoalMin > 0 ? Math.round((volumeMin / volumeGoalMin) * 100) : 0;
 
   return (
-    <section className="theme-stat-card overflow-hidden rounded-panel border border-white/10 p-5 shadow-panel sm:p-6">
+    <section className="theme-stat-card overflow-hidden rounded-panel border p-5 shadow-panel sm:p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-black uppercase tracking-[0.18em] text-white/70">Progression</p>
-          <p className="mt-3 font-display text-5xl font-black tracking-[-0.08em] text-white sm:text-6xl">
+          <p className="stat-muted text-sm font-black uppercase tracking-[0.18em]">Progression</p>
+          <p className="mt-3 font-display text-5xl font-black tracking-[-0.08em] sm:text-6xl">
             {formatCompactNumber(volumeMin)}
-            <span className="ml-2 text-2xl text-white/65">min</span>
+            <span className="stat-muted ml-2 text-2xl">min</span>
           </p>
         </div>
         <div className="text-right">
-          <p className="text-[0.65rem] font-black uppercase tracking-[0.16em] text-white/60">Objectif semaine</p>
-          <p className="mt-1 font-display text-2xl font-black tracking-[-0.05em] text-limeSoft">{formatCompactNumber(volumeGoalMin)} min</p>
-          <p className="text-sm font-black text-white/55">{completion} %</p>
+          <p className="stat-muted text-[0.65rem] font-black uppercase tracking-[0.16em]">Objectif semaine</p>
+          <p className="stat-accent mt-1 font-display text-2xl font-black tracking-[-0.05em]">{formatCompactNumber(volumeGoalMin)} min</p>
+          <p className="stat-soft text-sm font-black">{completion} %</p>
         </div>
       </div>
 
-      <div className="mt-5 flex items-center gap-5 text-[0.68rem] font-black uppercase tracking-[0.16em] text-white/60">
+      <div className="stat-muted mt-5 flex items-center gap-5 text-[0.68rem] font-black uppercase tracking-[0.16em]">
         <span className="inline-flex items-center gap-2">
-          <span className="h-2 w-5 bg-[#1e8b7d]" /> Réel
+          <span className="stat-bar h-2 w-5 rounded-full" /> Réel
         </span>
         <span className="inline-flex items-center gap-2">
           <span className="h-0 w-5 border-t border-dashed border-limeSoft" /> Objectif
         </span>
       </div>
 
-      <div className="mt-5 grid h-56 grid-cols-7 items-end gap-2 border-y border-white/10 py-5">
+      <div className="stat-divider mt-5 grid h-56 grid-cols-7 items-end gap-2 border-y py-5">
         {days.map((day) => {
           const barHeight = day.value > 0 ? clampPercent((day.value / maxValue) * 100) : 0;
           const goalBottom = clampPercent((day.goal / maxValue) * 100);
@@ -136,9 +136,9 @@ function ProgressOverviewCard({
           return (
             <div key={day.label} className="flex h-full min-w-0 flex-col justify-end gap-2">
               <div className="relative flex h-full items-end">
-                <span className="absolute left-0 right-0 border-t border-dashed border-limeSoft/80" style={{ bottom: `${goalBottom}%` }} />
+                <span className="stat-goal-line absolute left-0 right-0 border-t border-dashed" style={{ bottom: `${goalBottom}%` }} />
                 <div
-                  className={`w-full rounded-t-xl border border-limeSoft/35 ${day.isToday ? "bg-limeSoft text-petrol-900" : "bg-[#1e8b7d]"}`}
+                  className={`w-full rounded-t-xl border border-petrol-800/10 ${day.isToday ? "bg-limeSoft text-petrol-900" : "stat-bar"}`}
                   style={{ height: `${barHeight}%` }}
                   title={`${day.value} min`}
                 >
@@ -147,24 +147,24 @@ function ProgressOverviewCard({
                   ) : null}
                 </div>
               </div>
-              <p className="truncate text-center text-[0.65rem] font-black uppercase tracking-[0.08em] text-white/55">{day.label}</p>
+              <p className="stat-soft truncate text-center text-[0.65rem] font-black uppercase tracking-[0.08em]">{day.label}</p>
             </div>
           );
         })}
       </div>
 
-      <div className="grid grid-cols-3 divide-x divide-white/10 border-b border-white/10 text-center">
+      <div className="stat-divider grid grid-cols-3 divide-x border-b text-center">
         <div className="p-3">
-          <p className="text-[0.65rem] font-black uppercase tracking-[0.14em] text-white/55">Pas</p>
-          <p className="mt-1 font-display text-xl font-black tracking-[-0.05em] text-limeSoft">{formatCompactNumber(steps)}</p>
+          <p className="stat-soft text-[0.65rem] font-black uppercase tracking-[0.14em]">Pas</p>
+          <p className="stat-accent mt-1 font-display text-xl font-black tracking-[-0.05em]">{formatCompactNumber(steps)}</p>
         </div>
         <div className="p-3">
-          <p className="text-[0.65rem] font-black uppercase tracking-[0.14em] text-white/55">Calories</p>
-          <p className="mt-1 font-display text-xl font-black tracking-[-0.05em] text-limeSoft">{formatCompactNumber(calories)}</p>
+          <p className="stat-soft text-[0.65rem] font-black uppercase tracking-[0.14em]">Calories</p>
+          <p className="stat-accent mt-1 font-display text-xl font-black tracking-[-0.05em]">{formatCompactNumber(calories)}</p>
         </div>
         <div className="p-3">
-          <p className="text-[0.65rem] font-black uppercase tracking-[0.14em] text-white/55">Séances</p>
-          <p className="mt-1 font-display text-xl font-black tracking-[-0.05em] text-limeSoft">{sessions}</p>
+          <p className="stat-soft text-[0.65rem] font-black uppercase tracking-[0.14em]">Séances</p>
+          <p className="stat-accent mt-1 font-display text-xl font-black tracking-[-0.05em]">{sessions}</p>
         </div>
       </div>
     </section>
@@ -191,15 +191,15 @@ function CompactSportRows({ rows }: { rows: CompactSportRow[] }) {
         const maxValue = Math.max(...row.values, 1);
 
         return (
-          <article key={row.id} className="theme-stat-card grid grid-cols-[minmax(0,1fr)_7.25rem] items-center gap-4 rounded-card border border-white/10 p-4 shadow-panel">
+          <article key={row.id} className="theme-stat-card grid grid-cols-[minmax(0,1fr)_7.25rem] items-center gap-4 rounded-card border p-4 shadow-panel">
             <div className="min-w-0">
               <Icon className="h-5 w-5" style={{ color: row.color }} aria-hidden="true" />
-              <p className="mt-2 text-[0.68rem] font-black uppercase tracking-[0.15em] text-white/55">{row.label}</p>
-              <p className="mt-1 truncate font-display text-3xl font-black tracking-[-0.06em] text-white">{row.value}</p>
-              <p className="mt-1 text-xs font-bold leading-5 text-white/55">{row.helper}</p>
+              <p className="stat-soft mt-2 text-[0.68rem] font-black uppercase tracking-[0.15em]">{row.label}</p>
+              <p className="mt-1 truncate font-display text-3xl font-black tracking-[-0.06em]">{row.value}</p>
+              <p className="stat-soft mt-1 text-xs font-bold leading-5">{row.helper}</p>
             </div>
 
-            <div className="flex h-24 items-end justify-end gap-2 border-l border-white/10 pl-3" aria-hidden="true">
+            <div className="stat-divider flex h-24 items-end justify-end gap-2 border-l pl-3" aria-hidden="true">
               {row.values.map((value, index) => {
                 const height = value > 0 ? clampPercent((value / maxValue) * 100) : 9;
 

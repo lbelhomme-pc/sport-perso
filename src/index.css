@@ -25,8 +25,14 @@
   --theme-primary-button-bg-hover: #00283a;
   --theme-primary-button-text: #ffffff;
   --theme-stat-card-bg:
-    radial-gradient(circle at 90% 0%, rgba(220, 239, 163, 0.22), transparent 16rem),
-    linear-gradient(145deg, #0a4b61 0%, #00354a 58%, #00283a 100%);
+    radial-gradient(circle at 88% 0%, rgba(220, 239, 163, 0.42), transparent 16rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96) 0%, rgba(244, 244, 238, 0.92) 58%, rgba(227, 233, 233, 0.86) 100%);
+  --theme-stat-card-text: #0c3447;
+  --theme-stat-card-muted: rgba(12, 52, 71, 0.62);
+  --theme-stat-card-soft: rgba(12, 52, 71, 0.42);
+  --theme-stat-card-divider: rgba(0, 53, 74, 0.12);
+  --theme-stat-card-bar: #0a4b61;
+  --theme-stat-card-accent: #00354a;
   color: #0c3447;
   background: #f4f4ee;
   font-synthesis: none;
@@ -55,8 +61,14 @@ html[data-theme="soft-blue"] {
   --theme-field-bg: rgba(255, 255, 255, 0.92);
   --theme-ghost-bg: rgba(255, 255, 255, 0.80);
   --theme-stat-card-bg:
-    radial-gradient(circle at 90% 0%, rgba(220, 239, 163, 0.20), transparent 16rem),
-    linear-gradient(145deg, #0d5f78 0%, #0a4b61 58%, #00354a 100%);
+    radial-gradient(circle at 88% 0%, rgba(220, 239, 163, 0.32), transparent 16rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.90) 0%, rgba(235, 245, 248, 0.92) 56%, rgba(211, 229, 235, 0.9) 100%);
+  --theme-stat-card-text: #083041;
+  --theme-stat-card-muted: rgba(8, 48, 65, 0.62);
+  --theme-stat-card-soft: rgba(8, 48, 65, 0.42);
+  --theme-stat-card-divider: rgba(10, 75, 97, 0.14);
+  --theme-stat-card-bar: #0d5f78;
+  --theme-stat-card-accent: #0a4b61;
 }
 
 html[data-theme="dark"] {
@@ -85,6 +97,12 @@ html[data-theme="dark"] {
   --theme-stat-card-bg:
     radial-gradient(circle at 88% 0%, rgba(220, 239, 163, 0.14), transparent 18rem),
     linear-gradient(145deg, #071822 0%, #040b10 60%, #02070a 100%);
+  --theme-stat-card-text: #ffffff;
+  --theme-stat-card-muted: rgba(255, 255, 255, 0.62);
+  --theme-stat-card-soft: rgba(255, 255, 255, 0.42);
+  --theme-stat-card-divider: rgba(255, 255, 255, 0.12);
+  --theme-stat-card-bar: #23a291;
+  --theme-stat-card-accent: #dcefa3;
 }
 
 * {
@@ -159,7 +177,49 @@ a {
 
   .theme-stat-card {
     background: var(--theme-stat-card-bg);
-    color: #fff;
+    color: var(--theme-stat-card-text);
+    border-color: var(--theme-stat-card-divider);
+  }
+
+  .theme-stat-card [class*="text-white"] {
+    color: var(--theme-stat-card-text) !important;
+  }
+
+  .theme-stat-card [class*="text-white/"],
+  .theme-stat-card [class*="text-white\\/"] {
+    color: var(--theme-stat-card-muted) !important;
+  }
+
+  .theme-stat-card [class*="text-limeSoft"] {
+    color: var(--theme-stat-card-accent) !important;
+  }
+
+  .theme-stat-card [class*="border-white"] {
+    border-color: var(--theme-stat-card-divider) !important;
+  }
+
+  .stat-muted {
+    color: var(--theme-stat-card-muted);
+  }
+
+  .stat-soft {
+    color: var(--theme-stat-card-soft);
+  }
+
+  .stat-accent {
+    color: var(--theme-stat-card-accent);
+  }
+
+  .stat-divider {
+    border-color: var(--theme-stat-card-divider);
+  }
+
+  .stat-bar {
+    background: var(--theme-stat-card-bar);
+  }
+
+  .stat-goal-line {
+    border-color: var(--theme-stat-card-accent);
   }
 
   .eyebrow {
