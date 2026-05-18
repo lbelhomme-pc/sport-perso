@@ -12,6 +12,7 @@ export const DEFAULT_SETTINGS: Settings = {
   appMode: "competition",
   enabledSports: ["badminton", "strength", "run", "hyrox", "recovery"],
   navigationFocus: "sport",
+  theme: "light",
   enabledModules: ["home", "training", "sessions", "calendar", "progress", "recovery", "profile"],
   primaryModuleTabs: ["home", "training", "sessions", "progress", "profile"],
   onboardingCompleted: false,

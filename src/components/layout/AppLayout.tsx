@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { APP_NAME } from "../../data/defaults";
 import { getPrimaryRoutes, getRouteMeta } from "../../app/routes";
@@ -16,12 +17,17 @@ export function AppLayout() {
   const appIconUrl = `${import.meta.env.BASE_URL}icon.svg`;
   const location = useLocation();
   const primaryRoutes = getPrimaryRoutes(settings);
+  const theme = settings.theme ?? "light";
   const isOnPrimaryRoute = primaryRoutes.some((route) =>
     route.path === "/" ? location.pathname === "/" : location.pathname.startsWith(route.path)
   );
 
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" data-theme={theme}>
       <ScrollToTarget />
       {!settings.onboardingCompleted ? <OnboardingPrompt settings={settings} onComplete={saveSettings} /> : null}
       {settings.onboardingCompleted && !settings.privacyConsentAccepted ? (
@@ -84,7 +90,7 @@ export function AppLayout() {
         <Outlet />
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-petrol-800/10 bg-white/[0.88] px-2 pb-[calc(0.55rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur-2xl lg:hidden" aria-label="Navigation mobile">
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-petrol-800/10 bg-cream/90 px-2 pb-[calc(0.55rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur-2xl lg:hidden" aria-label="Navigation mobile">
         <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${primaryRoutes.length}, minmax(0, 1fr))` }}>
           {primaryRoutes.map((route) => (
             (() => {

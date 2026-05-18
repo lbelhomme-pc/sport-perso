@@ -3,12 +3,79 @@
 @tailwind utilities;
 
 :root {
+  --color-petrol-900: 0 40 58;
+  --color-petrol-800: 0 53 74;
+  --color-petrol-700: 10 75 97;
+  --color-cream: 244 244 238;
+  --color-mist: 227 233 233;
+  --color-lime-soft: 220 239 163;
+  --color-sage: 217 221 208;
+  --color-ink: 12 52 71;
+  --color-muted: 111 129 136;
+  --theme-body-bg:
+    radial-gradient(circle at 18% 2%, rgba(220, 239, 163, 0.52), transparent 24rem),
+    radial-gradient(circle at 94% 12%, rgba(10, 75, 97, 0.10), transparent 28rem),
+    linear-gradient(135deg, #f4f4ee 0%, #eff1eb 48%, #e4e9e7 100%);
+  --theme-html-bg: #f4f4ee;
+  --theme-panel-bg: rgba(255, 255, 255, 0.82);
+  --theme-panel-border: rgba(255, 255, 255, 0.75);
+  --theme-field-bg: rgba(255, 255, 255, 0.9);
+  --theme-ghost-bg: rgba(255, 255, 255, 0.85);
+  --theme-primary-button-bg: #00354a;
+  --theme-primary-button-bg-hover: #00283a;
+  --theme-primary-button-text: #ffffff;
   color: #0c3447;
   background: #f4f4ee;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html[data-theme="soft-blue"] {
+  --color-petrol-900: 0 40 58;
+  --color-petrol-800: 0 53 74;
+  --color-petrol-700: 10 75 97;
+  --color-cream: 235 245 248;
+  --color-mist: 211 229 235;
+  --color-lime-soft: 220 239 163;
+  --color-sage: 205 224 226;
+  --color-ink: 8 48 65;
+  --color-muted: 91 119 130;
+  --theme-body-bg:
+    radial-gradient(circle at 16% 0%, rgba(220, 239, 163, 0.42), transparent 22rem),
+    radial-gradient(circle at 86% 8%, rgba(10, 75, 97, 0.20), transparent 28rem),
+    linear-gradient(135deg, #edf8fb 0%, #e8f2f4 48%, #dbe9ed 100%);
+  --theme-html-bg: #edf8fb;
+  --theme-panel-bg: rgba(255, 255, 255, 0.78);
+  --theme-panel-border: rgba(255, 255, 255, 0.78);
+  --theme-field-bg: rgba(255, 255, 255, 0.92);
+  --theme-ghost-bg: rgba(255, 255, 255, 0.80);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --color-petrol-900: 244 244 238;
+  --color-petrol-800: 244 244 238;
+  --color-petrol-700: 220 239 163;
+  --color-cream: 5 16 23;
+  --color-mist: 19 43 54;
+  --color-lime-soft: 220 239 163;
+  --color-sage: 43 63 65;
+  --color-ink: 244 244 238;
+  --color-muted: 159 180 188;
+  --theme-body-bg:
+    radial-gradient(circle at 20% 0%, rgba(220, 239, 163, 0.10), transparent 22rem),
+    radial-gradient(circle at 86% 6%, rgba(10, 75, 97, 0.40), transparent 28rem),
+    linear-gradient(135deg, #040b10 0%, #071822 48%, #02070a 100%);
+  --theme-html-bg: #040b10;
+  --theme-panel-bg: rgba(8, 31, 42, 0.82);
+  --theme-panel-border: rgba(255, 255, 255, 0.10);
+  --theme-field-bg: rgba(255, 255, 255, 0.08);
+  --theme-ghost-bg: rgba(255, 255, 255, 0.08);
+  --theme-primary-button-bg: #dcefa3;
+  --theme-primary-button-bg-hover: #f4f4ee;
+  --theme-primary-button-text: #00283a;
 }
 
 * {
@@ -19,7 +86,7 @@ html {
   width: 100%;
   min-height: 100%;
   overflow-x: hidden;
-  background: #f4f4ee;
+  background: var(--theme-html-bg);
 }
 
 body {
@@ -27,11 +94,9 @@ body {
   min-height: 100%;
   margin: 0;
   overflow-x: hidden;
-  background:
-    radial-gradient(circle at 18% 2%, rgba(220, 239, 163, 0.52), transparent 24rem),
-    radial-gradient(circle at 94% 12%, rgba(10, 75, 97, 0.10), transparent 28rem),
-    linear-gradient(135deg, #f4f4ee 0%, #eff1eb 48%, #e4e9e7 100%);
+  background: var(--theme-body-bg);
   font-family: Aptos, "Segoe UI", "Helvetica Neue", sans-serif;
+  color: rgb(var(--color-ink));
 }
 
 #root {
@@ -72,6 +137,8 @@ a {
 
   .panel {
     @apply min-w-0 overflow-hidden rounded-panel border border-white/75 bg-white/[0.82] shadow-soft backdrop-blur-xl;
+    background: var(--theme-panel-bg);
+    border-color: var(--theme-panel-border);
   }
 
   .panel-dark {
@@ -95,10 +162,17 @@ a {
 
   .action-button {
     @apply inline-flex min-h-11 w-full max-w-full items-center justify-center gap-2 whitespace-normal rounded-full bg-petrol-800 px-5 py-3 text-center text-[0.74rem] font-black uppercase leading-tight tracking-[0.08em] text-white shadow-soft transition duration-200 hover:-translate-y-0.5 hover:bg-petrol-900 hover:shadow-lift active:translate-y-0 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto;
+    background: var(--theme-primary-button-bg);
+    color: var(--theme-primary-button-text);
+  }
+
+  .action-button:hover {
+    background: var(--theme-primary-button-bg-hover);
   }
 
   .ghost-button {
     @apply inline-flex min-h-11 max-w-full items-center justify-center gap-2 whitespace-normal rounded-full border border-petrol-800/10 bg-white/[0.85] px-5 py-3 text-center text-[0.74rem] font-black uppercase leading-tight tracking-[0.08em] text-petrol-800 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-petrol-800/25 hover:bg-white hover:shadow-soft active:translate-y-0 active:scale-[0.99];
+    background: var(--theme-ghost-bg);
   }
 
   .chip {
@@ -111,9 +185,24 @@ a {
 
   .field {
     @apply min-h-12 w-full min-w-0 max-w-full rounded-card border border-petrol-800/10 bg-white/90 px-4 text-sm font-bold text-ink outline-none shadow-sm transition focus:border-petrol-800 focus:bg-white focus:shadow-soft;
+    background: var(--theme-field-bg);
   }
 
   .textarea-field {
     @apply min-h-24 w-full min-w-0 max-w-full rounded-card border border-petrol-800/10 bg-white/90 px-4 py-3 text-sm font-bold text-ink outline-none shadow-sm transition focus:border-petrol-800 focus:bg-white focus:shadow-soft;
+    background: var(--theme-field-bg);
   }
+}
+
+html[data-theme="dark"] .bg-white,
+html[data-theme="dark"] .bg-white\/70,
+html[data-theme="dark"] .bg-white\/80,
+html[data-theme="dark"] .bg-white\/85,
+html[data-theme="dark"] .bg-white\/90 {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html[data-theme="dark"] .shadow-soft,
+html[data-theme="dark"] .shadow-panel {
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.34);
 }

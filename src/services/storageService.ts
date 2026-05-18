@@ -43,6 +43,7 @@ const settingsSchema = z.object({
     )
     .default(DEFAULT_SETTINGS.enabledSports ?? ["badminton", "strength", "run", "hyrox", "recovery"]),
   navigationFocus: z.enum(["both", "sport", "nutrition"]).default(DEFAULT_SETTINGS.navigationFocus ?? "both"),
+  theme: z.enum(["light", "dark", "soft-blue"]).default(DEFAULT_SETTINGS.theme ?? "light"),
   enabledModules: z
     .array(z.enum(["home", "training", "sessions", "nutrition", "calendar", "progress", "weight", "recovery", "profile"]))
     .default(DEFAULT_SETTINGS.enabledModules ?? ["home", "training", "sessions", "nutrition", "profile"]),

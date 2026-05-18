@@ -76,6 +76,8 @@ export type TargetEventType = "hyrox" | "other" | "none";
 
 export type NavigationFocus = "both" | "sport" | "nutrition";
 
+export type AppTheme = "light" | "dark" | "soft-blue";
+
 export type NutritionTrackingMode =
   | "disabled"
   | "simple"
@@ -215,6 +217,7 @@ export type Settings = {
   appMode?: AppExperienceMode;
   enabledSports?: SportType[];
   navigationFocus?: NavigationFocus;
+  theme?: AppTheme;
   enabledModules?: AppModuleId[];
   primaryModuleTabs?: AppModuleId[];
   onboardingCompleted?: boolean;

@@ -5,16 +5,16 @@ export default {
     extend: {
       colors: {
         petrol: {
-          900: "#00283A",
-          800: "#00354A",
-          700: "#0A4B61"
+          900: "rgb(var(--color-petrol-900) / <alpha-value>)",
+          800: "rgb(var(--color-petrol-800) / <alpha-value>)",
+          700: "rgb(var(--color-petrol-700) / <alpha-value>)"
         },
-        cream: "#F4F4EE",
-        mist: "#E3E9E9",
-        limeSoft: "#DCEFA3",
-        sage: "#D9DDD0",
-        ink: "#0C3447",
-        muted: "#6F8188"
+        cream: "rgb(var(--color-cream) / <alpha-value>)",
+        mist: "rgb(var(--color-mist) / <alpha-value>)",
+        limeSoft: "rgb(var(--color-lime-soft) / <alpha-value>)",
+        sage: "rgb(var(--color-sage) / <alpha-value>)",
+        ink: "rgb(var(--color-ink) / <alpha-value>)",
+        muted: "rgb(var(--color-muted) / <alpha-value>)"
       },
       boxShadow: {
         panel: "0 28px 90px rgba(0, 40, 58, 0.14)",

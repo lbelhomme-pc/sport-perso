@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, RefreshCcw, Save, Upload } from "lucide-react";
+import { Download, Palette, RefreshCcw, Save, Upload } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
 import { PwaInstallButton } from "../components/ui/PwaInstallButton";
@@ -10,7 +10,7 @@ import { deriveNavigationFocusFromModules, recommendedModulesByGoal, resolveModu
 import { exportJson, getExportPreview, importJsonFile, mergeJsonFiles } from "../services/exportService";
 import { resetData } from "../services/storageService";
 import { useSettings } from "../hooks/useSettings";
-import type { AppExperienceMode, BadmintonVariant, BmrSex, NutritionTrackingMode, Settings, UserSportLevel, WeekdayKey } from "../types";
+import type { AppExperienceMode, AppTheme, BadmintonVariant, BmrSex, NutritionTrackingMode, Settings, UserSportLevel, WeekdayKey } from "../types";
 import { calculateBasalMetabolicRate } from "../utils/calories";
 import { applyNutritionModeToModules, getNutritionModeGuidance, getNutritionModeLabel } from "../utils/nutritionMode";
 import { isHyroxCompetitionMode } from "../utils/sportLabels";
@@ -47,6 +47,12 @@ const nutritionModeOptions: NutritionTrackingMode[] = [
   "muscle-gain"
 ];
 
+const themeOptions: Array<{ id: AppTheme; label: string; description: string }> = [
+  { id: "light", label: "Clair", description: "Fond crème, sobre et lisible." },
+  { id: "dark", label: "Sombre", description: "Premium, moins lumineux le soir." },
+  { id: "soft-blue", label: "Bleu léger", description: "Plus frais, doux et sportif." }
+];
+
 export default function SettingsPage() {
   const { settings, saveSettings } = useSettings();
   const [form, setForm] = useState<Settings>(settings);
@@ -68,6 +74,8 @@ export default function SettingsPage() {
           ? value
           : key === "appMode"
             ? (value as AppExperienceMode)
+          : key === "theme"
+            ? (value as AppTheme)
           : key === "badmintonVariant"
             ? (value as BadmintonVariant)
           : key === "sex"
@@ -159,6 +167,40 @@ export default function SettingsPage() {
         title="Objectifs et préférences"
         description="La V1 reste sans backend. Tout est stocké dans ce navigateur, avec export/import JSON pour sauvegarder ou migrer."
       />
+
+      <CollapsibleSectionCard
+        eyebrow="Apparence"
+        title="Theme de l'application"
+        summary="Choisis l'ambiance visuelle : clair, sombre ou bleu leger."
+        defaultOpen
+      >
+        <div className="grid gap-3 sm:grid-cols-3">
+          {themeOptions.map((option) => {
+            const selected = (form.theme ?? "light") === option.id;
+
+            return (
+              <button
+                key={option.id}
+                type="button"
+                className={`rounded-card border p-4 text-left transition duration-200 hover:-translate-y-0.5 hover:shadow-soft ${
+                  selected
+                    ? "border-[#00354A] bg-[#00354A] text-white"
+                    : "border-petrol-800/10 bg-white/70 text-ink"
+                }`}
+                onClick={() => persistForm({ ...form, theme: option.id }, `Theme ${option.label.toLowerCase()} applique.`)}
+              >
+                <span className={`grid h-9 w-9 place-items-center rounded-full ${selected ? "bg-white/15" : "bg-mist"}`}>
+                  <Palette className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <span className="mt-3 block font-display text-xl font-black tracking-[-0.05em]">{option.label}</span>
+                <span className={`mt-1 block text-sm font-bold leading-5 ${selected ? "text-white/70" : "text-muted"}`}>
+                  {option.description}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </CollapsibleSectionCard>
 
       <CollapsibleSectionCard
         eyebrow="Objectifs"
