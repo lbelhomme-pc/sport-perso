@@ -1,12 +1,11 @@
 import { addDays, differenceInCalendarDays, subDays } from "date-fns";
 import { Link } from "react-router-dom";
-import { BarChart3, CalendarCheck, Dumbbell, Flame, Footprints, HeartPulse, Scale, Utensils } from "lucide-react";
+import { Award, BarChart3, CalendarCheck, Dumbbell, Flame, Footprints, Gauge, HeartPulse, Scale, TrendingUp, Utensils } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { ComparisonBarChart } from "../components/charts/ComparisonBarChart";
 import { MetricBarChart } from "../components/charts/MetricBarChart";
 import { MetricLineChart } from "../components/charts/MetricLineChart";
-import { ProgressionSnapshot } from "../components/progress/ProgressionSnapshot";
 import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
 import { EmptyState } from "../components/ui/EmptyState";
 import { MetricCard } from "../components/ui/MetricCard";
@@ -275,14 +274,45 @@ function StatsBlock({ title, children }: { title: string; children: ReactNode })
   );
 }
 
-function CompactStatPill({ label, value, hint, tone = "default" }: { label: string; value: ReactNode; hint?: ReactNode; tone?: "default" | "lime" }) {
-  const toneClass = tone === "lime" ? "border-limeSoft bg-limeSoft/70 text-petrol-900" : "border-petrol-800/10 bg-white text-ink";
+function formatTrendPercent(value: number) {
+  if (!Number.isFinite(value) || value === 0) return "Stable";
+  return `${value > 0 ? "+" : ""}${Math.round(value)} %`;
+}
+
+type SportSummaryTileData = {
+  icon: LucideIcon;
+  label: string;
+  value: ReactNode;
+  hint?: ReactNode;
+  tone?: "default" | "lime" | "warm" | "cool";
+};
+
+function SportSummaryTile({
+  icon: Icon,
+  label,
+  value,
+  hint,
+  tone = "default"
+}: SportSummaryTileData) {
+  const toneClass =
+    tone === "lime"
+      ? "bg-limeSoft/80 text-petrol-900"
+      : tone === "warm"
+        ? "bg-[#F5A623]/15 text-petrol-800"
+        : tone === "cool"
+          ? "bg-[#24D9D2]/12 text-petrol-800"
+          : "bg-white/75 text-ink";
 
   return (
-    <div className={`min-w-0 border px-3 py-2 ${toneClass}`}>
-      <p className="truncate text-[0.62rem] font-black uppercase tracking-[0.1em] text-muted">{label}</p>
-      <div className="mt-1 truncate font-display text-xl font-black tracking-[-0.05em]">{value}</div>
-      {hint ? <p className="mt-1 truncate text-[0.7rem] font-bold text-muted">{hint}</p> : null}
+    <div className={`min-w-0 rounded-card p-3 shadow-sm ${toneClass}`}>
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/70 text-petrol-800">
+          <Icon className="h-4 w-4" aria-hidden="true" />
+        </span>
+        <p className="truncate text-[0.58rem] font-black uppercase tracking-[0.09em] text-muted">{label}</p>
+      </div>
+      <div className="mt-2 truncate font-display text-xl font-black tracking-[-0.05em] sm:text-2xl">{value}</div>
+      {hint ? <p className="mt-1 truncate text-[0.66rem] font-bold text-muted">{hint}</p> : null}
     </div>
   );
 }
@@ -481,6 +511,63 @@ export default function StatsPage() {
         }
       : null
   ].filter((row): row is CompactSportRow => Boolean(row));
+  const sportSummaryTileCandidates: Array<SportSummaryTileData | null> = [
+    currentWeekProgram?.planned
+      ? {
+          icon: CalendarCheck,
+          label: "Programme",
+          value: `${currentWeekProgram.completed}/${currentWeekProgram.planned}`,
+          hint: `${currentWeekProgram.completionRate} % validé`,
+          tone: "lime" as const
+        }
+      : null,
+    data.sessions.length
+      ? {
+          icon: Dumbbell,
+          label: "Séances",
+          value: data.sessions.length,
+          hint: "Total enregistré",
+          tone: "default" as const
+        }
+      : null,
+    totalVolumeMinutes > 0
+      ? {
+          icon: Gauge,
+          label: "Volume",
+          value: `${formatCompactNumber(totalVolumeMinutes)} min`,
+          hint: "Total affiché",
+          tone: "cool" as const
+        }
+      : null,
+    totalSportCalories > 0
+      ? {
+          icon: Flame,
+          label: "Calories",
+          value: `${formatCompactNumber(totalSportCalories)}`,
+          hint: averageSportCaloriesPerSession ? `${averageSportCaloriesPerSession} kcal / séance` : "Total sport",
+          tone: "warm" as const
+        }
+      : null,
+    averageRpe
+      ? {
+          icon: TrendingUp,
+          label: "RPE moyen",
+          value: averageRpe,
+          hint: "Ressenti global",
+          tone: "default" as const
+        }
+      : null,
+    averageHeartRate
+      ? {
+          icon: HeartPulse,
+          label: "FC moyenne",
+          value: `${averageHeartRate}`,
+          hint: "bpm",
+          tone: "default" as const
+        }
+      : null
+  ];
+  const sportSummaryTiles = sportSummaryTileCandidates.filter((item): item is SportSummaryTileData => Boolean(item));
   const hasUsefulStats =
     (showSport && Boolean(currentWeekProgram?.planned)) ||
     (showSport && sessionTrendReady) ||
@@ -591,50 +678,98 @@ export default function StatsPage() {
 
       {showSport ? (
         <CollapsibleSectionCard title="Sport">
-          <div className="grid gap-4">
-            <StatsBlock title="Progression">
-              <ProgressionSnapshot summary={progressionSummary} />
-            </StatsBlock>
+          <section className="theme-stat-card overflow-hidden rounded-panel border p-4 shadow-panel sm:p-5">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <span className="grid h-12 w-12 place-items-center rounded-full bg-petrol-800 text-limeSoft">
+                  <Dumbbell className="h-6 w-6" aria-hidden="true" />
+                </span>
+                <p className="stat-muted mt-4 text-[0.68rem] font-black uppercase tracking-[0.16em]">Synthèse sport</p>
+                <h2 className="mt-1 font-display text-4xl font-black tracking-[-0.07em] sm:text-5xl">
+                  {formatCompactNumber(progressionSummary.volume7d)}
+                  <span className="stat-muted ml-2 text-2xl">min</span>
+                </h2>
+                <p className="stat-soft mt-1 text-sm font-bold">
+                  {progressionSummary.sessions7d} séance{progressionSummary.sessions7d > 1 ? "s" : ""} sur 7 jours, {progressionSummary.activeDays7d} jour{progressionSummary.activeDays7d > 1 ? "s" : ""} actif{progressionSummary.activeDays7d > 1 ? "s" : ""}.
+                </p>
+              </div>
 
-            <StatsBlock title="Séances">
-              <div className="grid gap-4">
-                <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-                  {currentWeekProgram?.planned ? (
-                    <CompactStatPill
-                      label="Programme"
-                      value={`${currentWeekProgram.completed}/${currentWeekProgram.planned}`}
-                      hint={`${currentWeekProgram.completionRate} % validé`}
-                      tone="lime"
-                    />
-                  ) : null}
-                  {data.sessions.length ? <CompactStatPill label="Séances" value={data.sessions.length} hint="Total enregistré" /> : null}
-                  {totalVolumeMinutes > 0 ? <CompactStatPill label="Volume" value={`${totalVolumeMinutes} min`} hint="Total affiché" /> : null}
-                  {totalSportCalories > 0 ? (
-                    <CompactStatPill
-                      label="Calories"
-                      value={`${totalSportCalories} kcal`}
-                      hint={averageSportCaloriesPerSession ? `${averageSportCaloriesPerSession} kcal / séance` : "Total sport"}
-                    />
-                  ) : null}
-                  {averageRpe ? <CompactStatPill label="RPE moyen" value={averageRpe} /> : null}
-                  {averageHeartRate ? <CompactStatPill label="FC moyenne" value={averageHeartRate} /> : null}
+              <div className="grid grid-cols-2 gap-2 text-center sm:min-w-64">
+                <div className="rounded-card bg-white/70 px-3 py-2">
+                  <p className="stat-soft text-[0.58rem] font-black uppercase tracking-[0.12em]">Tendance 7 j</p>
+                  <p className="stat-accent mt-1 font-display text-2xl font-black tracking-[-0.05em]">
+                    {formatTrendPercent(progressionSummary.volumeTrendPercent)}
+                  </p>
+                </div>
+                <div className="rounded-card bg-white/70 px-3 py-2">
+                  <p className="stat-soft text-[0.58rem] font-black uppercase tracking-[0.12em]">RPE 7 j</p>
+                  <p className="stat-accent mt-1 font-display text-2xl font-black tracking-[-0.05em]">
+                    {progressionSummary.averageRpe7d || "n/a"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+              {sportSummaryTiles.map((tile) => (
+                <SportSummaryTile key={tile.label} {...tile} />
+              ))}
+            </div>
+
+            <div className="mt-4 grid gap-3 xl:grid-cols-[minmax(0,0.86fr)_minmax(0,1.34fr)]">
+              <div className="grid gap-3 rounded-card bg-white/70 p-3">
+                <div className="flex items-start gap-3">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-petrol-800 text-limeSoft">
+                    <Gauge className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <p className="text-sm font-bold leading-6 text-ink">{progressionSummary.coachingMessage}</p>
                 </div>
 
-                <div className="border-t border-petrol-800/10 pt-4">
-                  <div className="grid grid-cols-3 gap-1 bg-mist/60 p-1">
-                    {SPORT_SESSION_CHARTS.map((mode) => (
-                      <button
-                        key={mode.id}
-                        type="button"
-                        className={`min-h-10 px-2 text-center text-[0.62rem] font-black uppercase tracking-[0.06em] transition ${
-                          sportSessionChart === mode.id ? "bg-petrol-800 text-white" : "bg-white text-petrol-800 hover:bg-white/70"
-                        }`}
-                        onClick={() => setSportSessionChart(mode.id)}
-                      >
-                        {mode.label}
-                      </button>
+                {progressionSummary.records.length ? (
+                  <div className="grid gap-2 sm:grid-cols-3 xl:grid-cols-1">
+                    {progressionSummary.records.slice(0, 3).map((record) => (
+                      <div key={`${record.label}-${record.value}`} className="rounded-card bg-mist/55 p-3">
+                        <p className="flex items-center gap-2 text-[0.62rem] font-black uppercase tracking-[0.08em] text-muted">
+                          <TrendingUp className="h-4 w-4" aria-hidden="true" /> {record.label}
+                        </p>
+                        <p className="mt-1 font-display text-xl font-black tracking-[-0.05em] text-petrol-800">{record.value}</p>
+                        <p className="mt-1 text-xs font-bold text-muted">{record.hint}</p>
+                      </div>
                     ))}
                   </div>
+                ) : null}
+
+                <div className="flex flex-wrap gap-2">
+                  {progressionSummary.badges.map((badge) => (
+                    <span
+                      key={badge.id}
+                      className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-[0.6rem] font-black uppercase tracking-[0.05em] ${
+                        badge.earned ? "bg-limeSoft text-petrol-900" : "bg-mist text-muted"
+                      }`}
+                      title={badge.hint}
+                    >
+                      <Award className="h-4 w-4" aria-hidden="true" />
+                      {badge.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-card bg-white/70 p-3">
+                <div className="grid grid-cols-3 gap-1 rounded-full bg-mist/70 p-1">
+                  {SPORT_SESSION_CHARTS.map((mode) => (
+                    <button
+                      key={mode.id}
+                      type="button"
+                      className={`min-h-10 rounded-full px-2 text-center text-[0.62rem] font-black uppercase tracking-[0.06em] transition ${
+                        sportSessionChart === mode.id ? "bg-petrol-800 text-white shadow-soft" : "text-petrol-800 hover:bg-white/70"
+                      }`}
+                      onClick={() => setSportSessionChart(mode.id)}
+                    >
+                      {mode.label}
+                    </button>
+                  ))}
+                </div>
 
                   <div className="mt-4 min-w-0">
                     {sportSessionChart === "volume" ? (
@@ -702,8 +837,7 @@ export default function StatsPage() {
                   </div>
                 </div>
               </div>
-            </StatsBlock>
-          </div>
+          </section>
         </CollapsibleSectionCard>
       ) : null}
 
