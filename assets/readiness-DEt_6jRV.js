@@ -1,0 +1,1 @@
+function e(n){return Number.isFinite(n)?Math.max(0,Math.min(10,Math.round(n))):0}function t(n){const r=n.trim();if(r)return e(Number(r))}function i(n){const r=e(n??5);return r>=7?"fatigue":r<=3?"strong":"normal"}function u(n,r=!1){return e(n??0)>=4||r}function a(n){const r=e(n??0);return r>=8?"élevé":r>=4?"présent":r>0?"léger":"aucun"}export{e as c,i as e,u as h,t as p,a as r};
