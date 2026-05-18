@@ -168,7 +168,7 @@ export default function DashboardPage() {
     nutritionSessionLabel
   );
   const coachMessage = waitingForSessionChoice
-    ? "Programme de la semaine : choisis la séance la plus réaliste aujourd'hui. Si les contraintes changent, sélectionne une activité libre et garde le fil sans te battre avec le calendrier."
+    ? "Choisis une séance de la semaine ou une activité libre."
     : coachThread({
         yesterdaySessions: dashboard.yesterdaySessions,
         todayPlanned,
@@ -290,9 +290,6 @@ export default function DashboardPage() {
                   </option>
                 ))}
               </select>
-              <span className="text-[0.72rem] font-bold normal-case leading-5 tracking-normal text-muted">
-                Choisis dans les séances de la semaine selon tes contraintes du jour. Le planning garde la structure, toi tu gardes la liberté.
-              </span>
             </label>
           ) : null}
 
@@ -333,74 +330,76 @@ export default function DashboardPage() {
               <div className="mt-3 h-2 overflow-hidden bg-mist">
                 <div className="h-full bg-limeSoft" style={{ width: `${weekProgramCompletion.ratio}%` }} />
               </div>
-              <p className="mt-2 text-sm font-bold leading-6 text-muted">
-                Compte les séances prévues de la semaine validées, même si tu les fais un autre jour.
-              </p>
             </div>
           ) : null}
 
-          {showRecovery ? (
-            <div className="mt-4 grid gap-2 sm:grid-cols-3">
-              <label className="field-label">
-                Fatigue /10
-                <input
-                  className="field"
-                  type="number"
-                  min="0"
-                  max="10"
-                  inputMode="numeric"
-                  value={dailyContext.fatigueMorning ?? 5}
-                  onChange={(event) =>
-                    saveDailyContext({
-                      ...dailyContext,
-                      date: dashboard.today,
-                      fatigueMorning: updateScoreInput(event.target.value)
-                    })
-                  }
-                />
-              </label>
-              <label className="field-label">
-                Douleur /10
-                <input
-                  className="field"
-                  type="number"
-                  min="0"
-                  max="10"
-                  inputMode="numeric"
-                  value={dailyContext.painMorning ?? 0}
-                  onChange={(event) =>
-                    saveDailyContext({
-                      ...dailyContext,
-                      date: dashboard.today,
-                      painMorning: updateScoreInput(event.target.value)
-                    })
-                  }
-                />
-              </label>
-              <label className="field-label">
-                Sommeil
-                <select
-                  className="field"
-                  value={dailyContext.sleepQuality ?? "medium"}
-                  onChange={(event) =>
-                    saveDailyContext({
-                      ...dailyContext,
-                      date: dashboard.today,
-                      sleepQuality: event.target.value as SleepQuality
-                    })
-                  }
-                >
-                  {sleepOptions.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+          {showRecovery || showCalendar ? (
+            <div className="mt-5 border-t border-petrol-800/10 pt-4">
+              <p className="eyebrow">Le quotidien</p>
+              {showRecovery ? (
+                <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                  <label className="field-label">
+                    Fatigue /10
+                    <input
+                      className="field"
+                      type="number"
+                      min="0"
+                      max="10"
+                      inputMode="numeric"
+                      value={dailyContext.fatigueMorning ?? 5}
+                      onChange={(event) =>
+                        saveDailyContext({
+                          ...dailyContext,
+                          date: dashboard.today,
+                          fatigueMorning: updateScoreInput(event.target.value)
+                        })
+                      }
+                    />
+                  </label>
+                  <label className="field-label">
+                    Douleur /10
+                    <input
+                      className="field"
+                      type="number"
+                      min="0"
+                      max="10"
+                      inputMode="numeric"
+                      value={dailyContext.painMorning ?? 0}
+                      onChange={(event) =>
+                        saveDailyContext({
+                          ...dailyContext,
+                          date: dashboard.today,
+                          painMorning: updateScoreInput(event.target.value)
+                        })
+                      }
+                    />
+                  </label>
+                  <label className="field-label">
+                    Sommeil
+                    <select
+                      className="field"
+                      value={dailyContext.sleepQuality ?? "medium"}
+                      onChange={(event) =>
+                        saveDailyContext({
+                          ...dailyContext,
+                          date: dashboard.today,
+                          sleepQuality: event.target.value as SleepQuality
+                        })
+                      }
+                    >
+                      {sleepOptions.map((option) => (
+                        <option key={option.id} value={option.id}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              {movementInputs}
             </div>
           ) : null}
-
-          {movementInputs}
 
           {todayPlanned ? (
             <details className="mt-4 border border-petrol-800/10 bg-white p-3">
@@ -440,9 +439,6 @@ export default function DashboardPage() {
             </div>
           ) : null}
 
-          <div className="mt-4 border border-petrol-800/10 bg-white p-3 text-sm font-bold leading-6 text-ink">
-            Tendance utile : {progressionSummary.coachingMessage}
-          </div>
         </SectionCard>
       ) : (
         <SectionCard className="border-l-4 border-limeSoft p-4 sm:p-6">
@@ -587,7 +583,6 @@ export default function DashboardPage() {
         <CollapsibleSectionCard
           eyebrow="Détail progression"
           title="Progression"
-          summary="Les détails restent ici pour garder l'accueil centré sur l'action du jour."
         >
           <ProgressionSnapshot summary={progressionSummary} compact />
         </CollapsibleSectionCard>
@@ -597,12 +592,11 @@ export default function DashboardPage() {
         <CollapsibleSectionCard
           eyebrow="Détail nutrition"
           title={showNutritionNumbers ? `Reste environ : ${remainingLabel(dashboard.remainingCalories)}` : "Journal repas sans calories"}
-          summary="À ouvrir quand tu veux décider quoi manger ou vérifier les protéines."
         >
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-sm font-semibold leading-6 text-muted">
-                {showNutritionNumbers ? "Objectif : comprendre la prochaine action, pas lire un tableau compliqué." : "Mode simple : repas et sensations, sans chiffres imposés."}
+                {showNutritionNumbers ? "Protéines et conseil rapide." : "Repas et sensations."}
               </p>
             </div>
             <Link to={`/meals?date=${dashboard.today}&add=1`} className="action-button">

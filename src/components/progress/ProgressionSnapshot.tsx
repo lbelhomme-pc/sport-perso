@@ -4,7 +4,7 @@ import type { SportProgressionSummary } from "../../services/progressionService"
 export function ProgressionSnapshot({ summary, compact = false }: { summary: SportProgressionSummary; compact?: boolean }) {
   return (
     <div className="grid gap-4">
-      <div className={`grid gap-3 ${compact ? "sm:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-4"}`}>
+      <div className={`grid gap-3 ${compact ? "sm:grid-cols-2" : "md:grid-cols-2"}`}>
         <div className="border border-petrol-800/10 bg-white p-4">
           <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">Volume 7 j</p>
           <p className="mt-1 font-display text-3xl font-black tracking-[-0.05em] text-petrol-800">{summary.volume7d} min</p>
@@ -16,20 +16,6 @@ export function ProgressionSnapshot({ summary, compact = false }: { summary: Spo
             {summary.averageRpe7d || "n/a"}
           </p>
           <p className="mt-1 text-sm font-bold text-muted">sur les séances notées</p>
-        </div>
-        <div className="border border-petrol-800/10 bg-white p-4">
-          <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">Charge notée</p>
-          <p className="mt-1 font-display text-3xl font-black tracking-[-0.05em] text-petrol-800">
-            {summary.strengthVolume30d ? `${summary.strengthVolume30d} kg` : "n/a"}
-          </p>
-          <p className="mt-1 text-sm font-bold text-muted">volume force sur 30 j</p>
-        </div>
-        <div className={summary.deloadRecommended ? "border border-red-100 bg-red-50 p-4 text-red-950" : "border border-petrol-800/10 bg-limeSoft/45 p-4 text-petrol-900"}>
-          <p className="text-xs font-black uppercase tracking-[0.12em] opacity-70">Deload</p>
-          <p className="mt-1 font-display text-3xl font-black tracking-[-0.05em]">
-            {summary.deloadRecommended ? "À alléger" : "OK"}
-          </p>
-          <p className="mt-1 text-sm font-bold opacity-80">{summary.deloadReason}</p>
         </div>
       </div>
 

@@ -241,7 +241,7 @@ function ExercisePrescriptionPanel({
 
       {!actionableExercises.length ? (
         <p className="mt-4 border border-petrol-800/10 bg-white p-3 text-sm font-bold text-muted">
-          Rien à cocher ici : cette séance sert surtout à récupérer, préparer ou noter les sensations.
+          Rien à cocher ici.
         </p>
       ) : null}
     </details>
@@ -461,7 +461,7 @@ export default function PlanningPage() {
               {formatShortDate(getWeekStart(settings.startDate, week))} - {formatShortDate(getWeekEnd(settings.startDate, week))}
             </h2>
             <p className="mt-2 text-sm font-semibold text-muted">
-              {context.deload ? "Semaine allégée planifiée." : "Semaine de charge progressive."}
+              Organisation flexible.
             </p>
           </div>
           <div className="bg-limeSoft p-4 text-petrol-900">
@@ -655,7 +655,6 @@ export default function PlanningPage() {
 
                   <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex flex-wrap gap-2">
-                      {context.deload ? <span className="chip bg-amber-100">Semaine allégée</span> : null}
                       {context.vacation ? <span className="chip bg-limeSoft">Vacances</span> : null}
                       {session.tags.map((tag) => (
                         <span key={tag} className="chip">

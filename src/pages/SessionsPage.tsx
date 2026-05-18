@@ -20,8 +20,14 @@ const fallbackSessionTypes: CompletedSessionType[] = [
   "strength",
   "run",
   "badminton",
+  "racket",
+  "hybrid",
+  "bike",
+  "swim",
+  "mobility",
   "hyrox",
   "recovery",
+  "test",
   "free",
   "other"
 ];
@@ -31,12 +37,11 @@ function toCompletedSessionType(sport: SportType): CompletedSessionType {
 }
 
 function buildVisibleSessionTypes(enabledSports: SportType[] | undefined, sessions: CompletedSession[], hyroxMode: boolean) {
-  const selectedSports = enabledSports?.length
-    ? enabledSports.map(toCompletedSessionType)
-    : fallbackSessionTypes.filter((type) => type !== "free" && type !== "other");
+  const selectedSports = enabledSports?.length ? enabledSports.map(toCompletedSessionType) : [];
+  const baseTypes = hyroxMode ? fallbackSessionTypes : fallbackSessionTypes.filter((type) => type !== "hyrox");
   const normalizedSports = selectedSports.map((type) => (!hyroxMode && type === "hyrox" ? "hybrid" : type));
   const alreadyUsed = sessions.map((session) => session.type);
-  return Array.from(new Set<CompletedSessionType>([...normalizedSports, ...alreadyUsed, "free", "other"]));
+  return Array.from(new Set<CompletedSessionType>([...baseTypes, ...normalizedSports, ...alreadyUsed]));
 }
 
 function QuickSessionForm({
@@ -197,9 +202,13 @@ export default function SessionsPage() {
     [settings.enabledSports, sessions, hyroxMode]
   );
   const filters: Array<CompletedSessionType | "all"> = useMemo(() => ["all", ...sessionTypeOptions], [sessionTypeOptions]);
-  const filtered = filter === "all" ? sessions : sessions.filter((session) => session.type === filter);
-  const totalCalories = filtered.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
-  const totalVolume = filtered.reduce((total, session) => total + session.durationMin, 0);
+  const orderedSessions = useMemo(
+    () => [...sessions].sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id)),
+    [sessions]
+  );
+  const displayedSessions = filter === "all" ? orderedSessions : orderedSessions.filter((session) => session.type === filter);
+  const totalCalories = sessions.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
+  const totalVolume = sessions.reduce((total, session) => total + session.durationMin, 0);
 
   useEffect(() => {
     if (shouldOpenFromQuery) {
@@ -215,12 +224,12 @@ export default function SessionsPage() {
   }, [filter, filters]);
 
   useEffect(() => {
-    if (!showForm && !editing) return;
+    if (!showForm) return;
 
     window.setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 0);
-  }, [editing, detailedForm, showForm]);
+  }, [detailedForm, showForm]);
 
   const closeForm = () => {
     setEditing(null);
@@ -237,12 +246,13 @@ export default function SessionsPage() {
     <>
       <PageHeader
         eyebrow="Historique"
-        title="Séances et sports"
-        description="Tout ce que tu as vraiment fait. Les filtres suivent tes sports activés, avec séance libre et autre en secours."
+        title="Séances"
+        description="Historique complet, ajout rapide et modification directe."
         action={
           <button
             className="action-button"
             onClick={() => {
+              setEditing(null);
               setShowForm(true);
               setDetailedForm(false);
             }}
@@ -253,21 +263,21 @@ export default function SessionsPage() {
       />
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="Séances filtrées" value={filtered.length} />
+        <MetricCard label="Séances" value={sessions.length} />
         <MetricCard label="Volume" value={`${totalVolume} min`} />
         <MetricCard label="Calories sport" value={totalCalories} />
-        <MetricCard label="RPE moyen" value={getAverageRpe(filtered) || "—"} />
+        <MetricCard label="RPE moyen" value={getAverageRpe(sessions) || "—"} />
       </section>
 
-      {showForm || editing ? (
+      {showForm ? (
         <div ref={formRef}>
         <SectionCard className="p-5 sm:p-6">
-          <p className="eyebrow">{editing ? "Modifier" : "Ajouter"}</p>
-          <h2 className="title-lg mt-2">{editing ? editing.title : "Nouvelle séance"}</h2>
+          <p className="eyebrow">Ajouter</p>
+          <h2 className="title-lg mt-2">Nouvelle séance</h2>
           <div className="mt-5">
-            {editing || detailedForm ? (
+            {detailedForm ? (
               <SessionForm
-                initial={editing ?? { date: initialSessionDate }}
+                initial={{ date: initialSessionDate }}
                 typeOptions={sessionTypeOptions}
                 getTypeLabel={getTypeLabel}
                 onCancel={closeForm}
@@ -303,22 +313,22 @@ export default function SessionsPage() {
       ) : null}
 
       <SectionCard className="p-5 sm:p-6">
-        <div className="flex flex-wrap gap-2">
-          {filters.map((item) => (
-            <button
-              key={item}
-              className={filter === item ? "action-button" : "ghost-button"}
-              onClick={() => setFilter(item)}
-            >
-              {item === "all" ? "Tout" : getTypeLabel(item)}
-            </button>
-          ))}
-        </div>
+        <label className="field-label max-w-md">
+          Filtre
+          <select className="field" value={filter} onChange={(event) => setFilter(event.target.value as CompletedSessionType | "all")}>
+            {filters.map((item) => (
+              <option key={item} value={item}>
+                {item === "all" ? "Toutes les séances" : getTypeLabel(item)}
+              </option>
+            ))}
+          </select>
+        </label>
 
         <div className="mt-5 grid gap-3">
-          {filtered.length ? (
-            filtered.map((session) => {
+          {displayedSessions.length ? (
+            displayedSessions.map((session) => {
               const isOpen = openSessionId === session.id;
+              const isEditing = editing?.id === session.id;
 
               return (
               <article key={session.id} className="border border-petrol-800/10 bg-white p-4 shadow-soft">
@@ -344,7 +354,15 @@ export default function SessionsPage() {
                     <button className="ghost-button" onClick={() => setOpenSessionId(isOpen ? null : session.id)} aria-label={isOpen ? "Replier la séance" : "Développer la séance"}>
                       <ChevronDown className={`h-4 w-4 transition ${isOpen ? "rotate-180" : ""}`} />
                     </button>
-                    <button className="ghost-button" onClick={() => setEditing(session)} aria-label="Modifier la séance">
+                    <button
+                      className="ghost-button"
+                      onClick={() => {
+                        setEditing(isEditing ? null : session);
+                        setOpenSessionId(session.id);
+                        setShowForm(false);
+                      }}
+                      aria-label="Modifier la séance"
+                    >
                       <Edit3 className="h-4 w-4" />
                     </button>
                     <button
@@ -359,7 +377,22 @@ export default function SessionsPage() {
                   </div>
                 </div>
 
-                {isOpen ? (
+                {isEditing ? (
+                <div className="mt-4 border-t border-petrol-800/10 pt-4">
+                  <SessionForm
+                    initial={session}
+                    typeOptions={sessionTypeOptions}
+                    getTypeLabel={getTypeLabel}
+                    onCancel={() => setEditing(null)}
+                    onSubmit={(updatedSession) => {
+                      saveSession(updatedSession);
+                      setSaveMessage("Séance enregistrée.");
+                      setEditing(null);
+                      setOpenSessionId(updatedSession.id);
+                    }}
+                  />
+                </div>
+                ) : isOpen ? (
                 <div className="mt-4 border-t border-petrol-800/10 pt-4">
                 <div className="mt-4 grid gap-3 sm:grid-cols-3">
                   <MetricCard label="FC moyenne" value={session.averageHeartRate ?? "—"} />
@@ -379,7 +412,7 @@ export default function SessionsPage() {
               );
             })
           ) : (
-            <EmptyState icon={Dumbbell} title="Aucune séance" message="Ajoute ta première séance ou change le filtre." />
+            <EmptyState icon={Dumbbell} title="Aucune séance" message="Ajoute une séance ou change le filtre." />
           )}
         </div>
       </SectionCard>

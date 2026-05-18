@@ -74,6 +74,103 @@ function getWeekProgramStats(plannedWeek: PlannedSession[], sessions: CompletedS
   return getPlannedCompletion(plannedWeek, sessions);
 }
 
+const DAY_LABELS = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
+
+function formatCompactNumber(value: number) {
+  return value.toLocaleString("fr-FR");
+}
+
+function clampPercent(value: number) {
+  return Math.min(100, Math.max(4, value));
+}
+
+function ProgressOverviewCard({
+  days,
+  volumeMin,
+  volumeGoalMin,
+  steps,
+  calories,
+  sessions
+}: {
+  days: Array<{ label: string; value: number; goal: number; isToday: boolean }>;
+  volumeMin: number;
+  volumeGoalMin: number;
+  steps: number;
+  calories: number;
+  sessions: number;
+}) {
+  const maxValue = Math.max(...days.map((day) => day.value), ...days.map((day) => day.goal), 1);
+  const completion = volumeGoalMin > 0 ? Math.round((volumeMin / volumeGoalMin) * 100) : 0;
+
+  return (
+    <section className="overflow-hidden border border-petrol-800 bg-[#030909] p-5 text-white shadow-soft sm:p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-white/70">Progression</p>
+          <p className="mt-3 font-display text-5xl font-black tracking-[-0.08em] text-white sm:text-6xl">
+            {formatCompactNumber(volumeMin)}
+            <span className="ml-2 text-2xl text-white/65">min</span>
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-[0.65rem] font-black uppercase tracking-[0.16em] text-white/60">Objectif semaine</p>
+          <p className="mt-1 font-display text-2xl font-black tracking-[-0.05em] text-limeSoft">{formatCompactNumber(volumeGoalMin)} min</p>
+          <p className="text-sm font-black text-white/55">{completion} %</p>
+        </div>
+      </div>
+
+      <div className="mt-5 flex items-center gap-5 text-[0.68rem] font-black uppercase tracking-[0.16em] text-white/60">
+        <span className="inline-flex items-center gap-2">
+          <span className="h-2 w-5 bg-[#1e8b7d]" /> Réel
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span className="h-0 w-5 border-t border-dashed border-limeSoft" /> Objectif
+        </span>
+      </div>
+
+      <div className="mt-5 grid h-56 grid-cols-7 items-end gap-2 border-y border-white/10 py-5">
+        {days.map((day) => {
+          const barHeight = day.value > 0 ? clampPercent((day.value / maxValue) * 100) : 0;
+          const goalBottom = clampPercent((day.goal / maxValue) * 100);
+
+          return (
+            <div key={day.label} className="flex h-full min-w-0 flex-col justify-end gap-2">
+              <div className="relative flex h-full items-end">
+                <span className="absolute left-0 right-0 border-t border-dashed border-limeSoft/80" style={{ bottom: `${goalBottom}%` }} />
+                <div
+                  className={`w-full border border-limeSoft/35 ${day.isToday ? "bg-limeSoft text-petrol-900" : "bg-[#1e8b7d]"}`}
+                  style={{ height: `${barHeight}%` }}
+                  title={`${day.value} min`}
+                >
+                  {day.isToday && day.value > 0 ? (
+                    <span className="mx-auto mt-1 block w-fit bg-limeSoft px-1 text-[0.62rem] font-black text-petrol-900">{day.value}</span>
+                  ) : null}
+                </div>
+              </div>
+              <p className="truncate text-center text-[0.65rem] font-black uppercase tracking-[0.08em] text-white/55">{day.label}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="grid grid-cols-3 divide-x divide-white/10 border-b border-white/10 text-center">
+        <div className="p-3">
+          <p className="text-[0.65rem] font-black uppercase tracking-[0.14em] text-white/55">Pas</p>
+          <p className="mt-1 font-display text-xl font-black tracking-[-0.05em] text-limeSoft">{formatCompactNumber(steps)}</p>
+        </div>
+        <div className="p-3">
+          <p className="text-[0.65rem] font-black uppercase tracking-[0.14em] text-white/55">Calories</p>
+          <p className="mt-1 font-display text-xl font-black tracking-[-0.05em] text-limeSoft">{formatCompactNumber(calories)}</p>
+        </div>
+        <div className="p-3">
+          <p className="text-[0.65rem] font-black uppercase tracking-[0.14em] text-white/55">Séances</p>
+          <p className="mt-1 font-display text-xl font-black tracking-[-0.05em] text-limeSoft">{sessions}</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ChartEmptyState({
   icon,
   title,
@@ -107,6 +204,10 @@ export default function StatsPage() {
   const calendarEnabled = isEnabled("calendar");
   const totalWeeks = getTotalWeeks(data.settings.startDate, data.settings.targetDate);
   const currentWeek = getCurrentWeekIndex(data.settings.startDate, data.settings.targetDate);
+  const currentPlannedWeek = getPlannedWeek(data.settings, currentWeek, data.settings.badmintonVariant);
+  const currentWeekVolumeGoal = currentPlannedWeek
+    .filter((session) => session.type !== "rest")
+    .reduce((total, session) => total + session.durationMin, 0);
   const weekSeries = Array.from({ length: totalWeeks }, (_, index) => {
     const week = index + 1;
     const plannedWeek = getPlannedWeek(data.settings, week, data.settings.badmintonVariant);
@@ -123,6 +224,26 @@ export default function StatsPage() {
     };
   });
   const currentWeekProgram = weekSeries[currentWeek - 1];
+  const progressStart = subDays(new Date(), 6);
+  const progressDays = Array.from({ length: 7 }, (_, index) => {
+    const date = addDays(progressStart, index);
+    const isoDate = toISODate(date);
+    const sessionsForDay = data.sessions.filter((session) => session.completed && session.date === isoDate);
+
+    return {
+      label: DAY_LABELS[date.getDay()],
+      value: sessionsForDay.reduce((total, session) => total + session.durationMin, 0),
+      goal: Math.max(10, Math.round((currentWeekVolumeGoal || 210) / 7)),
+      isToday: isoDate === toISODate(new Date()),
+      steps: data.dailyContexts.find((context) => context.date === isoDate)?.steps ?? 0,
+      calories: sessionsForDay.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0),
+      sessions: sessionsForDay.length
+    };
+  });
+  const progressVolumeMin = progressDays.reduce((total, day) => total + day.value, 0);
+  const progressSteps = progressDays.reduce((total, day) => total + day.steps, 0);
+  const progressCalories = progressDays.reduce((total, day) => total + day.calories, 0);
+  const progressSessionCount = progressDays.reduce((total, day) => total + day.sessions, 0);
 
   const startDaily = subDays(new Date(), 20);
   const dailySeries = Array.from({ length: 21 }, (_, index) => {
@@ -151,8 +272,6 @@ export default function StatsPage() {
 
   const sessionsWithCalories = data.sessions.filter((session) => session.completed && (session.caloriesBurned ?? 0) > 0);
   const totalSportCalories = sessionsWithCalories.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
-  const totalRacket = data.sessions.filter((session) => session.type === "badminton" || session.type === "racket").length;
-  const totalStrength = data.sessions.filter((session) => session.type === "strength").length;
   const stepContexts = data.dailyContexts.filter((context) => (context.steps ?? 0) > 0);
   const floorContexts = data.dailyContexts.filter((context) => (context.floors ?? 0) > 0);
   const showMovement = calendarEnabled || stepContexts.length > 0 || floorContexts.length > 0;
@@ -191,18 +310,6 @@ export default function StatsPage() {
     sessions: data.sessions,
     dailyContexts: data.dailyContexts
   });
-  const hasAnyMetricCard =
-    (showSport && Boolean(currentWeekProgram?.planned)) ||
-    (showSport && data.sessions.length > 0) ||
-    (showSport && totalSportCalories > 0) ||
-    (showNutritionNumbers && totalFood21Days > 0) ||
-    (showNutritionNumbers && totalProtein21Days > 0) ||
-    (showWeight && data.weights.length > 0) ||
-    (showMovement && totalSteps21Days > 0) ||
-    (showMovement && totalFloors21Days > 0) ||
-    (showMovement && totalNeat21Days > 0) ||
-    (showSport && Boolean(averageHeartRate)) ||
-    (showSport && Boolean(averageRpe));
   const hasUsefulStats =
     (showSport && Boolean(currentWeekProgram?.planned)) ||
     (showSport && sessionTrendReady) ||
@@ -286,33 +393,31 @@ export default function StatsPage() {
       <PageHeader
         eyebrow="Progression"
         title="Tendances"
-        description="Une vue utile uniquement avec les modules activés, pour décider quoi ajuster sans afficher de blocs fantômes."
+        description="Synthèse claire, puis détails si besoin."
       />
 
-      {hasAnyMetricCard ? (
-        <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {showSport && data.sessions.length ? <MetricCard label="Total séances" value={data.sessions.length} /> : null}
-          {showSport && currentWeekProgram?.planned ? (
-            <MetricCard
-              label="Programme semaine"
-              value={`${currentWeekProgram.completed}/${currentWeekProgram.planned}`}
-              hint={`${currentWeekProgram.completionRate} % des séances prévues`}
-              tone="lime"
-            />
-          ) : null}
-          {showSport && totalRacket ? <MetricCard label="Raquette" value={totalRacket} /> : null}
-          {showSport && totalStrength ? <MetricCard label="Force" value={totalStrength} /> : null}
-          {showSport && totalSportCalories ? <MetricCard label="Calories sport" value={totalSportCalories} /> : null}
-          {showNutritionNumbers && totalFood21Days ? <MetricCard label="Calories repas 21 j" value={`${totalFood21Days} kcal`} /> : null}
-          {showNutritionNumbers && totalProtein21Days ? <MetricCard label="Protéines 21 j" value={`${totalProtein21Days} g`} /> : null}
-          {showWeight && data.weights.length ? <MetricCard label="Pesées" value={data.weights.length} /> : null}
-          {showMovement && totalSteps21Days ? <MetricCard label="Pas 21 j" value={totalSteps21Days.toLocaleString("fr-FR")} /> : null}
-          {showMovement && totalFloors21Days ? <MetricCard label="Étages 21 j" value={totalFloors21Days.toLocaleString("fr-FR")} /> : null}
-          {showMovement && totalNeat21Days ? <MetricCard label="Mouvement 21 j" value={`${totalNeat21Days} kcal`} /> : null}
-          {showSport && averageHeartRate ? <MetricCard label="Moyenne FC" value={averageHeartRate} /> : null}
-          {showSport && averageRpe ? <MetricCard label="RPE moyen" value={averageRpe} /> : null}
-        </section>
-      ) : null}
+      <ProgressOverviewCard
+        days={progressDays}
+        volumeMin={progressVolumeMin}
+        volumeGoalMin={currentWeekVolumeGoal || progressDays.reduce((total, day) => total + day.goal, 0)}
+        steps={progressSteps}
+        calories={progressCalories}
+        sessions={progressSessionCount}
+      />
+
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {showSport && currentWeekProgram?.planned ? (
+          <MetricCard
+            label="Programme"
+            value={`${currentWeekProgram.completed}/${currentWeekProgram.planned}`}
+            hint={`${currentWeekProgram.completionRate} % validé`}
+            tone="lime"
+          />
+        ) : null}
+        {showSport && data.sessions.length ? <MetricCard label="Séances totales" value={data.sessions.length} /> : null}
+        {showSport && averageRpe ? <MetricCard label="RPE moyen" value={averageRpe} /> : null}
+        {showSport && averageHeartRate ? <MetricCard label="FC moyenne" value={averageHeartRate} /> : null}
+      </section>
 
       {hasAverageCards ? (
         <SectionCard className="p-5 sm:p-6">
@@ -365,8 +470,7 @@ export default function StatsPage() {
       {showSport ? (
         <CollapsibleSectionCard
           eyebrow="Progression sportive"
-          title="PR, régularité et deload"
-          summary="Une lecture coach : records utiles, volume, RPE, charge notée, équilibre de semaine et besoin éventuel d'alléger."
+          title="PR et régularité"
           defaultOpen
         >
           <ProgressionSnapshot summary={progressionSummary} />

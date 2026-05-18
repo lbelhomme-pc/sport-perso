@@ -105,11 +105,6 @@ export function getSportProgressionSummary({
     completed.filter((session) => (session.rpe ?? 10) <= 7),
     (session) => session.durationMin
   );
-  const maxLoad = sessions30d
-    .flatMap((session) => session.exercises ?? [])
-    .map((exercise) => exercise.loadKg ?? 0)
-    .reduce((best, load) => Math.max(best, load), 0);
-
   const records: ProgressionRecord[] = [
     longest
       ? {
@@ -123,13 +118,6 @@ export function getSportProgressionSummary({
           label: "Plus grosse dépense",
           value: `${Math.round(calories.caloriesBurned)} kcal`,
           hint: calories.title
-        }
-      : undefined,
-    maxLoad > 0
-      ? {
-          label: "Charge max notée",
-          value: `${maxLoad} kg`,
-          hint: "D'après les exercices renseignés"
         }
       : undefined,
     rpeControlledLong
@@ -148,19 +136,19 @@ export function getSportProgressionSummary({
     averageRpe7d >= 8 ||
     (volumeTrendPercent > 35 && volume7d >= 180);
   const deloadReason = highPainDays >= 2 || highPainSessions >= 1
-    ? "Douleur répétée : baisse charge, impacts et intensité."
+    ? "Douleur répétée : baisse impacts et intensité."
     : highFatigueDays >= 3
       ? "Fatigue haute plusieurs matins : récup active ou semaine allégée."
       : averageRpe7d >= 8
         ? "RPE moyen élevé : garde de la marge sur les prochaines séances."
         : volumeTrendPercent > 35 && volume7d >= 180
           ? "Volume en hausse rapide : stabilise avant d'ajouter plus."
-          : "Charge cohérente : progresse sans forcer tous les voyants.";
+          : "Progression cohérente : garde de la marge.";
 
   const coachingMessage = !completed.length
     ? "Saisis 2 séances pour obtenir une vraie lecture de progression."
     : deloadRecommended
-      ? `Deload conseillé : ${deloadReason}`
+      ? `À alléger : ${deloadReason}`
       : activeDays7d >= 3
         ? `Bonne régularité : ${activeDays7d} jours actifs, volume ${formatSignedPercent(volumeTrendPercent)}.`
         : "Objectif simple : vise 2 à 3 jours actifs cette semaine avant de chercher plus compliqué.";
@@ -183,12 +171,6 @@ export function getSportProgressionSummary({
       label: "Repos respecté",
       hint: "Au moins 1 jour sans séance sur 7.",
       earned: restDays7d >= 1
-    },
-    {
-      id: "deload-smart",
-      label: "Deload intelligent",
-      hint: "Aucun signal fort de fatigue/douleur cette semaine.",
-      earned: !deloadRecommended && completed.length > 0
     }
   ];
 
