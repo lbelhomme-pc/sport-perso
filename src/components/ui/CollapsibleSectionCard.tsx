@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 
 type CollapsibleSectionCardProps = {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   summary?: string;
   children: ReactNode;
@@ -31,8 +31,10 @@ export function CollapsibleSectionCard({
       <summary className="cursor-pointer list-none p-4 transition hover:bg-white/[0.45] sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className={dark ? "text-[0.68rem] font-black uppercase tracking-[0.16em] text-limeSoft" : "eyebrow"}>{eyebrow}</p>
-            <h2 className={dark ? "mt-1.5 font-display text-2xl font-black tracking-[-0.06em] text-white" : "title-lg mt-1.5"}>{title}</h2>
+            {eyebrow ? <p className={dark ? "text-[0.68rem] font-black uppercase tracking-[0.16em] text-limeSoft" : "eyebrow"}>{eyebrow}</p> : null}
+            <h2 className={dark ? `${eyebrow ? "mt-1.5 " : ""}font-display text-2xl font-black tracking-[-0.06em] text-white` : `${eyebrow ? "mt-1.5 " : ""}title-lg`}>
+              {title}
+            </h2>
             {summary ? <p className={dark ? "mt-2 text-sm font-semibold leading-6 text-white/70" : "mt-2 text-sm font-semibold leading-6 text-muted"}>{summary}</p> : null}
           </div>
           <span className={dark ? "chip bg-white/10 text-white" : "chip bg-white/80"}>
