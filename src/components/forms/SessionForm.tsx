@@ -8,6 +8,7 @@ import { toISODate } from "../../utils/dates";
 import { buildCompletedExercises, mergeSessionNotesWithPlannedExercises } from "../../utils/sessionExercises";
 import { makeId } from "../../services/storageService";
 import { energyFromFatigueScore, hasMeaningfulPain } from "../../utils/readiness";
+import { detailsToFormValues, getSessionDetailConfig, normalizeSessionDetails } from "../../utils/sessionDetails";
 
 type SessionFormProps = {
   initial?: Partial<CompletedSession>;
@@ -44,6 +45,7 @@ export function SessionForm({ initial, planned, typeOptions, getTypeLabel, onSub
     painDuring: string;
     fatigueDuring: string;
     energyAfter: EnergyLevel;
+    sessionDetails: Record<string, string>;
     notes: string;
     completed: boolean;
   }>({
@@ -62,6 +64,7 @@ export function SessionForm({ initial, planned, typeOptions, getTypeLabel, onSub
     painDuring: String(initial?.painDuring ?? ""),
     fatigueDuring: String(initial?.fatigueDuring ?? ""),
     energyAfter: initial?.energyAfter ?? "normal",
+    sessionDetails: detailsToFormValues(initial?.sessionDetails),
     notes: initial?.notes ?? "",
     completed: initial?.completed ?? true
   });
@@ -69,6 +72,12 @@ export function SessionForm({ initial, planned, typeOptions, getTypeLabel, onSub
   const update = (key: keyof typeof form, value: string | boolean) => {
     setForm((current) => ({ ...current, [key]: value }));
   };
+
+  const updateDetail = (key: string, value: string) => {
+    setForm((current) => ({ ...current, sessionDetails: { ...current.sessionDetails, [key]: value } }));
+  };
+
+  const detailConfig = getSessionDetailConfig(form.type);
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
@@ -95,6 +104,7 @@ export function SessionForm({ initial, planned, typeOptions, getTypeLabel, onSub
       painDuring,
       fatigueDuring,
       energyAfter: fatigueDuring !== undefined ? energyFromFatigueScore(fatigueDuring) : form.energyAfter,
+      sessionDetails: normalizeSessionDetails(form.type, form.sessionDetails),
       notes: mergeSessionNotesWithPlannedExercises(form.notes, planned),
       completed: form.completed,
       exercises: buildCompletedExercises(planned, form.completed, sessionExerciseLogs) ?? initial?.exercises
@@ -152,6 +162,42 @@ export function SessionForm({ initial, planned, typeOptions, getTypeLabel, onSub
           RPE / ressenti
           <input className="field" type="number" min="0" max="10" value={form.rpe} onChange={(event) => update("rpe", event.target.value)} />
         </label>
+      </div>
+
+      <div className="grid gap-3 border border-petrol-800/10 bg-mist/45 p-3">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.12em] text-petrol-800">{detailConfig.title}</p>
+          <p className="mt-1 text-xs font-bold leading-5 text-muted">{detailConfig.hint}</p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {detailConfig.fields.map((field) => (
+            <label key={field.key} className="field-label">
+              {field.label}
+              {field.unit ? <span className="normal-case tracking-normal text-muted"> ({field.unit})</span> : null}
+              {field.type === "select" ? (
+                <select className="field" value={form.sessionDetails[field.key] ?? ""} onChange={(event) => updateDetail(field.key, event.target.value)}>
+                  <option value="">Non renseigne</option>
+                  {field.options?.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  className="field"
+                  type={field.type === "number" ? "number" : "text"}
+                  inputMode={field.type === "number" ? "decimal" : undefined}
+                  min={field.type === "number" ? "0" : undefined}
+                  step={field.type === "number" ? "0.1" : undefined}
+                  value={form.sessionDetails[field.key] ?? ""}
+                  onChange={(event) => updateDetail(field.key, event.target.value)}
+                  placeholder={field.placeholder}
+                />
+              )}
+            </label>
+          ))}
+        </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-4">

@@ -13,6 +13,7 @@ import type { CompletedSession, CompletedSessionType, SportType } from "../types
 import { estimateCaloriesFromSession } from "../utils/calories";
 import { formatLongDate, toISODate } from "../utils/dates";
 import { energyFromFatigueScore, hasMeaningfulPain } from "../utils/readiness";
+import { formatSessionDetails } from "../utils/sessionDetails";
 import { getCompletedTypeLabel, isHyroxCompetitionMode } from "../utils/sportLabels";
 import { getAverageHeartRate, getAverageRpe } from "../utils/training";
 
@@ -341,6 +342,7 @@ export default function SessionsPage() {
             displayedSessions.map((session) => {
               const isOpen = openSessionId === session.id;
               const isEditing = editing?.id === session.id;
+              const detailRows = formatSessionDetails(session.type, session.sessionDetails);
 
               return (
               <article key={session.id} className="border border-petrol-800/10 bg-white p-4 shadow-soft">
@@ -411,6 +413,17 @@ export default function SessionsPage() {
                   <MetricCard label="FC max" value={session.maxHeartRate ?? "—"} />
                   <MetricCard label="FC moy. filtre" value={getAverageHeartRate([session]) || "—"} />
                 </div>
+
+                {detailRows.length ? (
+                  <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                    {detailRows.map((detail) => (
+                      <div key={detail.label} className="rounded-card border border-petrol-800/10 bg-mist/45 p-3">
+                        <p className="text-[0.65rem] font-black uppercase tracking-[0.08em] text-muted">{detail.label}</p>
+                        <p className="mt-1 text-sm font-black text-petrol-800">{detail.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
 
                 {session.notes ? (
                   <p className="mt-4 whitespace-pre-line border-l-4 border-limeSoft bg-mist/50 p-4 text-sm font-semibold text-ink">

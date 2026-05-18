@@ -172,7 +172,6 @@ export default function SettingsPage() {
         eyebrow="Apparence"
         title="Theme de l'application"
         summary="Choisis l'ambiance visuelle : clair, sombre ou bleu leger."
-        defaultOpen
       >
         <div className="grid gap-3 sm:grid-cols-3">
           {themeOptions.map((option) => {
@@ -212,7 +211,6 @@ export default function SettingsPage() {
               ? "Mode principal, calendrier, programme et modules."
               : "Mode principal, nutrition, poids, métabolisme de base et déficit."
         }
-        defaultOpen
       >
         <form
           className="grid gap-5"

@@ -120,6 +120,8 @@ const sessionExerciseLogSchema = z.object({
   updatedAt: z.string().optional()
 });
 
+const sessionDetailValueSchema = z.union([z.string(), z.number(), z.boolean()]);
+
 const completedSessionSchema = z.object({
   id: z.string(),
   plannedSessionId: z.string().optional(),
@@ -150,6 +152,7 @@ const completedSessionSchema = z.object({
   painDuring: z.coerce.number().min(0).max(10).optional(),
   fatigueDuring: z.coerce.number().min(0).max(10).optional(),
   energyAfter: z.enum(["fatigue", "normal", "strong"]).optional(),
+  sessionDetails: z.record(sessionDetailValueSchema).optional(),
   notes: z.string().optional(),
   completed: z.boolean().default(true),
   exercises: z.array(completedExerciseEntrySchema).optional(),
