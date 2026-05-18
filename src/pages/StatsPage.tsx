@@ -191,6 +191,7 @@ type CompactSportRow = {
   helper: string;
   color: string;
   values: number[];
+  dayLabels: string[];
 };
 
 function CompactSportRows({ rows }: { rows: CompactSportRow[] }) {
@@ -203,7 +204,7 @@ function CompactSportRows({ rows }: { rows: CompactSportRow[] }) {
         const maxValue = Math.max(...row.values, 1);
 
         return (
-          <article key={row.id} className="theme-stat-card grid grid-cols-[minmax(0,1fr)_7.25rem] items-center gap-4 rounded-card border p-4 shadow-panel">
+          <article key={row.id} className="theme-stat-card grid grid-cols-[minmax(0,1fr)_7.5rem] items-center gap-4 rounded-card border p-4 shadow-panel">
             <div className="min-w-0">
               <Icon className="h-5 w-5" style={{ color: row.color }} aria-hidden="true" />
               <p className="stat-soft mt-2 text-[0.68rem] font-black uppercase tracking-[0.15em]">{row.label}</p>
@@ -211,22 +212,29 @@ function CompactSportRows({ rows }: { rows: CompactSportRow[] }) {
               <p className="stat-soft mt-1 text-xs font-bold leading-5">{row.helper}</p>
             </div>
 
-            <div className="stat-divider flex h-24 items-end justify-end gap-2 border-l pl-3" aria-hidden="true">
-              {row.values.map((value, index) => {
-                const height = value > 0 ? clampPercent((value / maxValue) * 100) : 9;
+            <div className="stat-divider border-l pl-3" aria-hidden="true">
+              <div className="grid h-20 grid-cols-7 items-end gap-1">
+                {row.values.map((value, index) => {
+                  const height = value > 0 ? clampPercent((value / maxValue) * 100) : 9;
 
-                return (
-                  <span
-                    key={`${row.id}-${index}`}
-                    className="w-2 rounded-full"
-                    style={{
-                      height: `${height}%`,
-                      backgroundColor: row.color,
-                      opacity: value > 0 ? 1 : 0.18
-                    }}
-                  />
-                );
-              })}
+                  return (
+                    <span
+                      key={`${row.id}-${index}`}
+                      className="mx-auto w-2 rounded-full"
+                      style={{
+                        height: `${height}%`,
+                        backgroundColor: row.color,
+                        opacity: value > 0 ? 1 : 0.18
+                      }}
+                    />
+                  );
+                })}
+              </div>
+              <div className="stat-soft mt-1 grid grid-cols-7 gap-1 text-center text-[0.5rem] font-black uppercase leading-none tracking-[0.02em]">
+                {row.dayLabels.map((label, index) => (
+                  <span key={`${row.id}-label-${index}`}>{label}</span>
+                ))}
+              </div>
             </div>
           </article>
         );
@@ -322,6 +330,7 @@ export default function StatsPage() {
 
     return {
       label: DAY_LABELS[date.getDay()],
+      shortLabel: WEEKDAY_INITIALS[date.getDay()],
       value: sessionsForDay.reduce((total, session) => total + session.durationMin, 0),
       goal: Math.max(10, Math.round((currentWeekVolumeGoal || 210) / 7)),
       isToday: isoDate === toISODate(new Date()),
@@ -419,7 +428,8 @@ export default function StatsPage() {
           value: `${progressSessionCount}`,
           helper: `${progressVolumeMin} min sur 7 jours`,
           color: "#DCEFA3",
-          values: progressDays.map((day) => day.value)
+          values: progressDays.map((day) => day.value),
+          dayLabels: progressDays.map((day) => day.shortLabel)
         }
       : null,
     showSport
@@ -430,7 +440,8 @@ export default function StatsPage() {
           value: `${formatCompactNumber(progressCalories)} kcal`,
           helper: "Calories saisies dans les séances",
           color: "#F5A623",
-          values: progressDays.map((day) => day.calories)
+          values: progressDays.map((day) => day.calories),
+          dayLabels: progressDays.map((day) => day.shortLabel)
         }
       : null,
     showMovement
@@ -441,7 +452,8 @@ export default function StatsPage() {
           value: formatCompactNumber(progressSteps),
           helper: "Total des 7 derniers jours",
           color: "#24D9D2",
-          values: progressDays.map((day) => day.steps)
+          values: progressDays.map((day) => day.steps),
+          dayLabels: progressDays.map((day) => day.shortLabel)
         }
       : null,
     showMovement && progressFloors > 0
@@ -452,7 +464,8 @@ export default function StatsPage() {
           value: formatCompactNumber(progressFloors),
           helper: "Étages saisis cette semaine",
           color: "#7EE6A4",
-          values: progressDays.map((day) => day.floors)
+          values: progressDays.map((day) => day.floors),
+          dayLabels: progressDays.map((day) => day.shortLabel)
         }
       : null,
     showSport && progressHeartRate > 0
@@ -463,7 +476,8 @@ export default function StatsPage() {
           value: `${progressHeartRate} bpm`,
           helper: "Moyenne des séances avec FC",
           color: "#F06AD8",
-          values: progressHeartRateValues
+          values: progressHeartRateValues,
+          dayLabels: progressDays.map((day) => day.shortLabel)
         }
       : null
   ].filter((row): row is CompactSportRow => Boolean(row));

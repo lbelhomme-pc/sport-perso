@@ -209,6 +209,13 @@ export default function SessionsPage() {
   const displayedSessions = filter === "all" ? orderedSessions : orderedSessions.filter((session) => session.type === filter);
   const totalCalories = sessions.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
   const totalVolume = sessions.reduce((total, session) => total + session.durationMin, 0);
+  const averageRpe = getAverageRpe(sessions);
+  const summaryStats = [
+    { label: "Séances", value: sessions.length, hint: "Total" },
+    { label: "Volume", value: totalVolume.toLocaleString("fr-FR"), hint: "min" },
+    { label: "Calories", value: totalCalories.toLocaleString("fr-FR"), hint: "sport kcal" },
+    { label: "RPE", value: averageRpe || "—", hint: "moyen" }
+  ];
 
   useEffect(() => {
     if (shouldOpenFromQuery) {
@@ -262,11 +269,16 @@ export default function SessionsPage() {
         }
       />
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="Séances" value={sessions.length} />
-        <MetricCard label="Volume" value={`${totalVolume} min`} />
-        <MetricCard label="Calories sport" value={totalCalories} />
-        <MetricCard label="RPE moyen" value={getAverageRpe(sessions) || "—"} />
+      <section className="rounded-panel border border-petrol-800/10 bg-white/90 p-2 shadow-soft">
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+          {summaryStats.map((stat) => (
+            <div key={stat.label} className="min-w-0 rounded-card bg-mist/55 px-2 py-2">
+              <p className="truncate text-[0.52rem] font-black uppercase tracking-[0.07em] text-muted sm:text-[0.6rem]">{stat.label}</p>
+              <p className="mt-1 truncate font-display text-xl font-black tracking-[-0.05em] text-petrol-800 sm:text-2xl">{stat.value}</p>
+              <p className="mt-0.5 truncate text-[0.55rem] font-bold text-muted sm:text-[0.65rem]">{stat.hint}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       {showForm ? (
