@@ -5,6 +5,12 @@ export function clampReadinessScore(value: number): number {
   return Math.max(0, Math.min(10, Math.round(value)));
 }
 
+export function parseOptionalReadinessScore(value: string): number | undefined {
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  return clampReadinessScore(Number(trimmed));
+}
+
 export function energyFromFatigueScore(score?: number): EnergyLevel {
   const value = clampReadinessScore(score ?? 5);
   if (value >= 7) return "fatigue";

@@ -19,7 +19,7 @@ import { getAdaptiveDailyCalorieTarget, getDailyDeficit, getRemainingCaloriesToT
 import { formatLongDate, getWeekIndexForDate, toISODate } from "../utils/dates";
 import { getMealTotals, getProteinTarget } from "../utils/nutrition";
 import { tracksNutritionNumbers } from "../utils/nutritionMode";
-import { clampReadinessScore } from "../utils/readiness";
+import { clampReadinessScore, parseOptionalReadinessScore } from "../utils/readiness";
 import { getPlannedTypeLabel } from "../utils/sportLabels";
 
 function NutritionStat({ label, value, hint }: { label: string; value: string | number; hint?: string }) {
@@ -445,12 +445,12 @@ export default function MealsPage() {
                       min="0"
                       max="10"
                       inputMode="numeric"
-                      value={dailyContext.fatigueMorning ?? 5}
+                      value={dailyContext.fatigueMorning ?? ""}
                       onChange={(event) =>
                         saveDailyContext({
                           ...dailyContext,
                           date: selectedDate,
-                          fatigueMorning: clampReadinessScore(Number(event.target.value))
+                          fatigueMorning: parseOptionalReadinessScore(event.target.value)
                         })
                       }
                     />
@@ -463,12 +463,12 @@ export default function MealsPage() {
                       min="0"
                       max="10"
                       inputMode="numeric"
-                      value={dailyContext.painMorning ?? 0}
+                      value={dailyContext.painMorning ?? ""}
                       onChange={(event) =>
                         saveDailyContext({
                           ...dailyContext,
                           date: selectedDate,
-                          painMorning: clampReadinessScore(Number(event.target.value))
+                          painMorning: parseOptionalReadinessScore(event.target.value)
                         })
                       }
                     />

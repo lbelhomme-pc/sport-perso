@@ -3,7 +3,7 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
 import type { SleepQuality } from "../types";
 import { toISODate } from "../utils/dates";
-import { readinessLabel } from "../utils/readiness";
+import { parseOptionalReadinessScore, readinessLabel } from "../utils/readiness";
 
 export default function RecoveryPage() {
   const today = toISODate(new Date());
@@ -27,9 +27,9 @@ export default function RecoveryPage() {
               min="0"
               max="10"
               inputMode="numeric"
-              value={dailyContext.fatigueMorning ?? 5}
+              value={dailyContext.fatigueMorning ?? ""}
               onChange={(event) =>
-                saveDailyContext({ ...dailyContext, date: today, fatigueMorning: Number(event.target.value) })
+                saveDailyContext({ ...dailyContext, date: today, fatigueMorning: parseOptionalReadinessScore(event.target.value) })
               }
             />
             <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
@@ -58,8 +58,8 @@ export default function RecoveryPage() {
               min="0"
               max="10"
               inputMode="numeric"
-              value={dailyContext.painMorning ?? 0}
-              onChange={(event) => saveDailyContext({ ...dailyContext, date: today, painMorning: Number(event.target.value) })}
+              value={dailyContext.painMorning ?? ""}
+              onChange={(event) => saveDailyContext({ ...dailyContext, date: today, painMorning: parseOptionalReadinessScore(event.target.value) })}
             />
             <span className="text-[0.65rem] font-bold normal-case tracking-normal text-muted">
               {readinessLabel(dailyContext.painMorning)} - 0 aucune, 10 bloquante.

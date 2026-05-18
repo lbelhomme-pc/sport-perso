@@ -17,7 +17,7 @@ import type { CompletedSession, EnergyLevel, PlannedSession, SleepQuality } from
 import { formatLongDate } from "../utils/dates";
 import { getProteinTarget } from "../utils/nutrition";
 import { tracksNutritionNumbers } from "../utils/nutritionMode";
-import { clampReadinessScore } from "../utils/readiness";
+import { parseOptionalReadinessScore } from "../utils/readiness";
 import { getCompletedTypeLabel, getPlannedTypeLabel, personalizePlannedSession } from "../utils/sportLabels";
 import { getCompletedForPlan, getPlannedCompletion } from "../utils/training";
 
@@ -102,7 +102,7 @@ function updateNumberInput(value: string) {
 }
 
 function updateScoreInput(value: string) {
-  return clampReadinessScore(Number(value.replace(/\D/g, "")));
+  return parseOptionalReadinessScore(value);
 }
 
 export default function DashboardPage() {
@@ -412,7 +412,7 @@ export default function DashboardPage() {
                   min="0"
                   max="10"
                   inputMode="numeric"
-                  value={dailyContext.fatigueMorning ?? 5}
+                  value={dailyContext.fatigueMorning ?? ""}
                   onChange={(event) =>
                     saveDailyContext({
                       ...dailyContext,
@@ -430,7 +430,7 @@ export default function DashboardPage() {
                   min="0"
                   max="10"
                   inputMode="numeric"
-                  value={dailyContext.painMorning ?? 0}
+                  value={dailyContext.painMorning ?? ""}
                   onChange={(event) =>
                     saveDailyContext({
                       ...dailyContext,
@@ -523,7 +523,7 @@ export default function DashboardPage() {
                   min="0"
                   max="10"
                   inputMode="numeric"
-                  value={dailyContext.fatigueMorning ?? 5}
+                  value={dailyContext.fatigueMorning ?? ""}
                   onChange={(event) =>
                     saveDailyContext({
                       ...dailyContext,
@@ -541,7 +541,7 @@ export default function DashboardPage() {
                   min="0"
                   max="10"
                   inputMode="numeric"
-                  value={dailyContext.painMorning ?? 0}
+                  value={dailyContext.painMorning ?? ""}
                   onChange={(event) =>
                     saveDailyContext({
                       ...dailyContext,

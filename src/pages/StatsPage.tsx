@@ -1,7 +1,7 @@
 import { addDays, differenceInCalendarDays, subDays } from "date-fns";
 import { Link } from "react-router-dom";
 import { BarChart3, CalendarCheck, Dumbbell, Flame, Footprints, HeartPulse, Scale, Utensils } from "lucide-react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { ComparisonBarChart } from "../components/charts/ComparisonBarChart";
 import { MetricBarChart } from "../components/charts/MetricBarChart";
@@ -75,6 +75,12 @@ function getWeekProgramStats(plannedWeek: PlannedSession[], sessions: CompletedS
 }
 
 const DAY_LABELS = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
+type SportSessionChart = "volume" | "calories" | "execution";
+const SPORT_SESSION_CHARTS: Array<{ id: SportSessionChart; label: string }> = [
+  { id: "volume", label: "Volume" },
+  { id: "calories", label: "Calories" },
+  { id: "execution", label: "Prévu/fait" }
+];
 
 function formatCompactNumber(value: number) {
   return value.toLocaleString("fr-FR");
@@ -255,9 +261,22 @@ function StatsBlock({ title, children }: { title: string; children: ReactNode })
   );
 }
 
+function CompactStatPill({ label, value, hint, tone = "default" }: { label: string; value: ReactNode; hint?: ReactNode; tone?: "default" | "lime" }) {
+  const toneClass = tone === "lime" ? "border-limeSoft bg-limeSoft/70 text-petrol-900" : "border-petrol-800/10 bg-white text-ink";
+
+  return (
+    <div className={`min-w-0 border px-3 py-2 ${toneClass}`}>
+      <p className="truncate text-[0.62rem] font-black uppercase tracking-[0.1em] text-muted">{label}</p>
+      <div className="mt-1 truncate font-display text-xl font-black tracking-[-0.05em]">{value}</div>
+      {hint ? <p className="mt-1 truncate text-[0.7rem] font-bold text-muted">{hint}</p> : null}
+    </div>
+  );
+}
+
 export default function StatsPage() {
   const data = useStoredData();
   const { isEnabled } = useUserModules();
+  const [sportSessionChart, setSportSessionChart] = useState<SportSessionChart>("volume");
   const showSport = isEnabled("training") || isEnabled("sessions");
   const showNutrition = isEnabled("nutrition");
   const showNutritionNumbers = showNutrition && tracksNutritionNumbers(data.settings);
@@ -349,8 +368,6 @@ export default function StatsPage() {
   const totalRecordedSteps = stepContexts.reduce((total, context) => total + (context.steps ?? 0), 0);
   const totalRecordedFloors = floorContexts.reduce((total, context) => total + (context.floors ?? 0), 0);
   const averageSportCaloriesPerSession = averageRounded(totalSportCalories, sessionsWithCalories.length);
-  const averageSportCaloriesPerWeek = averageGroupedTotal(sessionsWithCalories, (session) => getWeekKey(session.date), (session) => session.caloriesBurned ?? 0);
-  const averageSportCaloriesPerMonth = averageGroupedTotal(sessionsWithCalories, (session) => getMonthKey(session.date), (session) => session.caloriesBurned ?? 0);
   const averageStepsPerDay = averageRounded(totalRecordedSteps, stepContexts.length);
   const averageStepsPerWeek = averageGroupedTotal(stepContexts, (context) => getWeekKey(context.date), (context) => context.steps ?? 0);
   const averageStepsPerMonth = averageGroupedTotal(stepContexts, (context) => getMonthKey(context.date), (context) => context.steps ?? 0);
@@ -453,10 +470,6 @@ export default function StatsPage() {
     (showSport && sportCaloriesReady) ||
     (showSport && sessionsWithCalories.length > 0) ||
     (showSport && executionTrendReady);
-  const hasSportAverageCards =
-    (showSport && averageSportCaloriesPerSession > 0) ||
-    (showSport && averageSportCaloriesPerWeek > 0) ||
-    (showSport && averageSportCaloriesPerMonth > 0);
   const hasMovementAverageCards =
     (showMovement && averageStepsPerDay > 0) ||
     (showMovement && averageStepsPerWeek > 0) ||
@@ -565,39 +578,47 @@ export default function StatsPage() {
 
             <StatsBlock title="Séances">
               <div className="grid gap-4">
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
                   {currentWeekProgram?.planned ? (
-                    <MetricCard
+                    <CompactStatPill
                       label="Programme"
                       value={`${currentWeekProgram.completed}/${currentWeekProgram.planned}`}
                       hint={`${currentWeekProgram.completionRate} % validé`}
                       tone="lime"
                     />
                   ) : null}
-                  {data.sessions.length ? <MetricCard label="Séances totales" value={data.sessions.length} /> : null}
-                  {averageRpe ? <MetricCard label="RPE moyen" value={averageRpe} /> : null}
-                  {averageHeartRate ? <MetricCard label="FC moyenne" value={averageHeartRate} /> : null}
+                  {data.sessions.length ? <CompactStatPill label="Séances" value={data.sessions.length} hint="Total enregistré" /> : null}
+                  {totalVolumeMinutes > 0 ? <CompactStatPill label="Volume" value={`${totalVolumeMinutes} min`} hint="Total affiché" /> : null}
+                  {totalSportCalories > 0 ? (
+                    <CompactStatPill
+                      label="Calories"
+                      value={`${totalSportCalories} kcal`}
+                      hint={averageSportCaloriesPerSession ? `${averageSportCaloriesPerSession} kcal / séance` : "Total sport"}
+                    />
+                  ) : null}
+                  {averageRpe ? <CompactStatPill label="RPE moyen" value={averageRpe} /> : null}
+                  {averageHeartRate ? <CompactStatPill label="FC moyenne" value={averageHeartRate} /> : null}
                 </div>
 
-                {hasSportAverageCards ? (
-                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                    {averageSportCaloriesPerSession ? (
-                      <MetricCard
-                        label="Calories / séance"
-                        value={`${averageSportCaloriesPerSession} kcal`}
-                        hint={`${sessionsWithCalories.length} séance${sessionsWithCalories.length > 1 ? "s" : ""} avec calories`}
-                      />
-                    ) : null}
-                    {averageSportCaloriesPerWeek ? <MetricCard label="Calories / semaine" value={`${averageSportCaloriesPerWeek} kcal`} hint="Semaines avec sport renseigné" /> : null}
-                    {averageSportCaloriesPerMonth ? <MetricCard label="Calories / mois" value={`${averageSportCaloriesPerMonth} kcal`} hint="Mois avec sport renseigné" /> : null}
+                <div className="border-t border-petrol-800/10 pt-4">
+                  <div className="grid grid-cols-3 gap-1 bg-mist/60 p-1">
+                    {SPORT_SESSION_CHARTS.map((mode) => (
+                      <button
+                        key={mode.id}
+                        type="button"
+                        className={`min-h-10 px-2 text-center text-[0.62rem] font-black uppercase tracking-[0.06em] transition ${
+                          sportSessionChart === mode.id ? "bg-petrol-800 text-white" : "bg-white text-petrol-800 hover:bg-white/70"
+                        }`}
+                        onClick={() => setSportSessionChart(mode.id)}
+                      >
+                        {mode.label}
+                      </button>
+                    ))}
                   </div>
-                ) : null}
 
-                <div className="grid gap-5 border-t border-petrol-800/10 pt-4 xl:grid-cols-3">
-                  <section className="min-w-0">
-                    <h4 className="font-display text-lg font-black tracking-[-0.04em] text-petrol-800">Volume hebdomadaire</h4>
-                    <div className="mt-3">
-                      {sessionTrendReady && hasValue(weekSeries, "volume") ? (
+                  <div className="mt-4 min-w-0">
+                    {sportSessionChart === "volume" ? (
+                      sessionTrendReady && hasValue(weekSeries, "volume") ? (
                         <MetricBarChart
                           data={weekSeries}
                           xKey="week"
@@ -613,14 +634,11 @@ export default function StatsPage() {
                           to="/sessions"
                           actionLabel="Ajouter une séance"
                         />
-                      )}
-                    </div>
-                  </section>
+                      )
+                    ) : null}
 
-                  <section className="min-w-0">
-                    <h4 className="font-display text-lg font-black tracking-[-0.04em] text-petrol-800">Calories sport</h4>
-                    <div className="mt-3">
-                      {sportCaloriesReady && hasValue(weekSeries, "calories") ? (
+                    {sportSessionChart === "calories" ? (
+                      sportCaloriesReady && hasValue(weekSeries, "calories") ? (
                         <MetricBarChart
                           data={weekSeries}
                           xKey="week"
@@ -637,14 +655,11 @@ export default function StatsPage() {
                           to="/sessions"
                           actionLabel="Compléter une séance"
                         />
-                      )}
-                    </div>
-                  </section>
+                      )
+                    ) : null}
 
-                  <section className="min-w-0">
-                    <h4 className="font-display text-lg font-black tracking-[-0.04em] text-petrol-800">Prévu / réalisé</h4>
-                    <div className="mt-3">
-                      {executionTrendReady ? (
+                    {sportSessionChart === "execution" ? (
+                      executionTrendReady ? (
                         <ComparisonBarChart
                           data={weekSeries}
                           xKey="week"
@@ -662,9 +677,9 @@ export default function StatsPage() {
                           to="/planning"
                           actionLabel="Voir le programme"
                         />
-                      )}
-                    </div>
-                  </section>
+                      )
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </StatsBlock>
