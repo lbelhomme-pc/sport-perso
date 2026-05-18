@@ -6,8 +6,8 @@ import { useSettings } from "../../hooks/useSettings";
 import { ScrollToTarget } from "./ScrollToTarget";
 
 function navClass(isActive: boolean) {
-  return `inline-flex items-center gap-2 px-3 py-2 text-sm font-black uppercase tracking-[0.06em] transition ${
-    isActive ? "bg-petrol-800 text-white" : "text-petrol-800 hover:bg-mist"
+  return `inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[0.74rem] font-black uppercase tracking-[0.08em] transition duration-200 ${
+    isActive ? "bg-petrol-800 text-white shadow-soft" : "text-petrol-800 hover:bg-white/70"
   }`;
 }
 
@@ -47,11 +47,11 @@ export function AppLayout() {
         </div>
       ) : null}
 
-      <header className="sticky top-0 z-40 border-b border-white/70 bg-cream/90 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-40 border-b border-white/60 bg-cream/75 backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-3 py-2.5 sm:px-6 lg:px-8">
           <NavLink
             to="/"
-            className="grid h-12 w-12 shrink-0 place-items-center rounded-[1.15rem] shadow-soft transition hover:-translate-y-0.5 sm:h-14 sm:w-14"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-[1.15rem] shadow-soft ring-1 ring-white/80 transition hover:-translate-y-0.5 hover:shadow-lift sm:h-12 sm:w-12"
             aria-label={APP_NAME}
           >
             <img className="h-full w-full rounded-[1.15rem]" src={appIconUrl} alt="" aria-hidden="true" />
@@ -84,8 +84,8 @@ export function AppLayout() {
         <Outlet />
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-petrol-800/10 bg-white/95 px-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl lg:hidden" aria-label="Navigation mobile">
-        <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${primaryRoutes.length}, minmax(0, 1fr))` }}>
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-petrol-800/10 bg-white/[0.88] px-2 pb-[calc(0.55rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur-2xl lg:hidden" aria-label="Navigation mobile">
+        <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${primaryRoutes.length}, minmax(0, 1fr))` }}>
           {primaryRoutes.map((route) => (
             (() => {
               const meta = getRouteMeta(route);
@@ -96,8 +96,8 @@ export function AppLayout() {
                   to={route.path}
                   end={route.path === "/"}
                   className={({ isActive }) =>
-                    `grid min-h-[3.75rem] place-items-center gap-1 px-1 py-2 text-[0.68rem] font-black uppercase leading-none tracking-[0.02em] ${
-                      isActive || (!isOnPrimaryRoute && route.moduleId === "profile") ? "bg-petrol-800 text-white" : "text-muted"
+                    `grid min-h-[3.35rem] place-items-center gap-1 rounded-[1.15rem] px-1 py-2 text-[0.62rem] font-black uppercase leading-none tracking-[0.06em] transition ${
+                      isActive || (!isOnPrimaryRoute && route.moduleId === "profile") ? "bg-petrol-800 text-white shadow-soft" : "text-muted"
                     }`
                   }
                 >

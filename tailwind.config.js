@@ -17,15 +17,17 @@ export default {
         muted: "#6F8188"
       },
       boxShadow: {
-        panel: "0 24px 70px rgba(0, 40, 58, 0.12)",
-        soft: "0 14px 36px rgba(0, 40, 58, 0.08)"
+        panel: "0 28px 90px rgba(0, 40, 58, 0.14)",
+        soft: "0 18px 46px rgba(0, 40, 58, 0.09)",
+        lift: "0 18px 50px rgba(0, 40, 58, 0.16)"
       },
       fontFamily: {
         display: ["Space Grotesk", "Aptos Display", "Segoe UI", "sans-serif"],
         body: ["Aptos", "Segoe UI", "Helvetica Neue", "sans-serif"]
       },
       borderRadius: {
-        panel: "1.75rem"
+        panel: "2rem",
+        card: "1.35rem"
       }
     }
   },

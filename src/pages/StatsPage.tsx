@@ -1,6 +1,6 @@
 import { addDays, differenceInCalendarDays, subDays } from "date-fns";
 import { Link } from "react-router-dom";
-import { BarChart3, CalendarCheck, Dumbbell, Footprints, Scale, Utensils } from "lucide-react";
+import { BarChart3, CalendarCheck, Dumbbell, Flame, Footprints, HeartPulse, Scale, Utensils } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { ComparisonBarChart } from "../components/charts/ComparisonBarChart";
 import { MetricBarChart } from "../components/charts/MetricBarChart";
@@ -103,7 +103,7 @@ function ProgressOverviewCard({
   const completion = volumeGoalMin > 0 ? Math.round((volumeMin / volumeGoalMin) * 100) : 0;
 
   return (
-    <section className="overflow-hidden border border-petrol-800 bg-[#030909] p-5 text-white shadow-soft sm:p-6">
+    <section className="overflow-hidden rounded-panel border border-white/10 bg-[#030909] p-5 text-white shadow-panel sm:p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-black uppercase tracking-[0.18em] text-white/70">Progression</p>
@@ -138,7 +138,7 @@ function ProgressOverviewCard({
               <div className="relative flex h-full items-end">
                 <span className="absolute left-0 right-0 border-t border-dashed border-limeSoft/80" style={{ bottom: `${goalBottom}%` }} />
                 <div
-                  className={`w-full border border-limeSoft/35 ${day.isToday ? "bg-limeSoft text-petrol-900" : "bg-[#1e8b7d]"}`}
+                  className={`w-full rounded-t-xl border border-limeSoft/35 ${day.isToday ? "bg-limeSoft text-petrol-900" : "bg-[#1e8b7d]"}`}
                   style={{ height: `${barHeight}%` }}
                   title={`${day.value} min`}
                 >
@@ -167,6 +167,58 @@ function ProgressOverviewCard({
           <p className="mt-1 font-display text-xl font-black tracking-[-0.05em] text-limeSoft">{sessions}</p>
         </div>
       </div>
+    </section>
+  );
+}
+
+type CompactSportRow = {
+  id: string;
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  helper: string;
+  color: string;
+  values: number[];
+};
+
+function CompactSportRows({ rows }: { rows: CompactSportRow[] }) {
+  if (!rows.length) return null;
+
+  return (
+    <section className="grid gap-3 sm:hidden">
+      {rows.map((row) => {
+        const Icon = row.icon;
+        const maxValue = Math.max(...row.values, 1);
+
+        return (
+          <article key={row.id} className="grid grid-cols-[minmax(0,1fr)_7.25rem] items-center gap-4 rounded-card border border-white/10 bg-[#030909] p-4 text-white shadow-panel">
+            <div className="min-w-0">
+              <Icon className="h-5 w-5" style={{ color: row.color }} aria-hidden="true" />
+              <p className="mt-2 text-[0.68rem] font-black uppercase tracking-[0.15em] text-white/55">{row.label}</p>
+              <p className="mt-1 truncate font-display text-3xl font-black tracking-[-0.06em] text-white">{row.value}</p>
+              <p className="mt-1 text-xs font-bold leading-5 text-white/55">{row.helper}</p>
+            </div>
+
+            <div className="flex h-24 items-end justify-end gap-2 border-l border-white/10 pl-3" aria-hidden="true">
+              {row.values.map((value, index) => {
+                const height = value > 0 ? clampPercent((value / maxValue) * 100) : 9;
+
+                return (
+                  <span
+                    key={`${row.id}-${index}`}
+                    className="w-2 rounded-full"
+                    style={{
+                      height: `${height}%`,
+                      backgroundColor: row.color,
+                      opacity: value > 0 ? 1 : 0.18
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </article>
+        );
+      })}
     </section>
   );
 }
@@ -229,19 +281,29 @@ export default function StatsPage() {
     const date = addDays(progressStart, index);
     const isoDate = toISODate(date);
     const sessionsForDay = data.sessions.filter((session) => session.completed && session.date === isoDate);
+    const context = data.dailyContexts.find((item) => item.date === isoDate);
+    const heartRates = sessionsForDay
+      .map((session) => session.averageHeartRate)
+      .filter((heartRate): heartRate is number => typeof heartRate === "number" && heartRate > 0);
 
     return {
       label: DAY_LABELS[date.getDay()],
       value: sessionsForDay.reduce((total, session) => total + session.durationMin, 0),
       goal: Math.max(10, Math.round((currentWeekVolumeGoal || 210) / 7)),
       isToday: isoDate === toISODate(new Date()),
-      steps: data.dailyContexts.find((context) => context.date === isoDate)?.steps ?? 0,
+      steps: context?.steps ?? 0,
+      floors: context?.floors ?? 0,
       calories: sessionsForDay.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0),
-      sessions: sessionsForDay.length
+      sessions: sessionsForDay.length,
+      heartRate: averageRounded(
+        heartRates.reduce((total, heartRate) => total + heartRate, 0),
+        heartRates.length
+      )
     };
   });
   const progressVolumeMin = progressDays.reduce((total, day) => total + day.value, 0);
   const progressSteps = progressDays.reduce((total, day) => total + day.steps, 0);
+  const progressFloors = progressDays.reduce((total, day) => total + day.floors, 0);
   const progressCalories = progressDays.reduce((total, day) => total + day.calories, 0);
   const progressSessionCount = progressDays.reduce((total, day) => total + day.sessions, 0);
 
@@ -310,6 +372,69 @@ export default function StatsPage() {
     sessions: data.sessions,
     dailyContexts: data.dailyContexts
   });
+  const progressHeartRateValues = progressDays.map((day) => day.heartRate);
+  const progressHeartRates = progressHeartRateValues.filter((heartRate) => heartRate > 0);
+  const progressHeartRate = averageRounded(
+    progressHeartRates.reduce((total, heartRate) => total + heartRate, 0),
+    progressHeartRates.length
+  );
+  const compactSportRows: CompactSportRow[] = [
+    showSport
+      ? {
+          id: "weekly-sessions",
+          icon: Dumbbell,
+          label: "Séances",
+          value: `${progressSessionCount}`,
+          helper: `${progressVolumeMin} min sur 7 jours`,
+          color: "#DCEFA3",
+          values: progressDays.map((day) => day.value)
+        }
+      : null,
+    showSport
+      ? {
+          id: "sport-calories",
+          icon: Flame,
+          label: "Calories sport",
+          value: `${formatCompactNumber(progressCalories)} kcal`,
+          helper: "Calories saisies dans les séances",
+          color: "#F5A623",
+          values: progressDays.map((day) => day.calories)
+        }
+      : null,
+    showMovement
+      ? {
+          id: "steps",
+          icon: Footprints,
+          label: "Pas",
+          value: formatCompactNumber(progressSteps),
+          helper: "Total des 7 derniers jours",
+          color: "#24D9D2",
+          values: progressDays.map((day) => day.steps)
+        }
+      : null,
+    showMovement && progressFloors > 0
+      ? {
+          id: "floors",
+          icon: Footprints,
+          label: "Étages",
+          value: formatCompactNumber(progressFloors),
+          helper: "Étages saisis cette semaine",
+          color: "#7EE6A4",
+          values: progressDays.map((day) => day.floors)
+        }
+      : null,
+    showSport && progressHeartRate > 0
+      ? {
+          id: "heart-rate",
+          icon: HeartPulse,
+          label: "FC moyenne",
+          value: `${progressHeartRate} bpm`,
+          helper: "Moyenne des séances avec FC",
+          color: "#F06AD8",
+          values: progressHeartRateValues
+        }
+      : null
+  ].filter((row): row is CompactSportRow => Boolean(row));
   const hasUsefulStats =
     (showSport && Boolean(currentWeekProgram?.planned)) ||
     (showSport && sessionTrendReady) ||
@@ -405,7 +530,9 @@ export default function StatsPage() {
         sessions={progressSessionCount}
       />
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <CompactSportRows rows={compactSportRows} />
+
+      <section className="hidden gap-3 sm:grid sm:grid-cols-2 xl:grid-cols-4">
         {showSport && currentWeekProgram?.planned ? (
           <MetricCard
             label="Programme"

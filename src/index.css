@@ -28,9 +28,9 @@ body {
   margin: 0;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at 18% 4%, rgba(220, 239, 163, 0.72), transparent 26rem),
-    radial-gradient(circle at 92% 14%, rgba(227, 233, 233, 0.86), transparent 24rem),
-    linear-gradient(135deg, #f4f4ee 0%, #eff1eb 45%, #e1e7e6 100%);
+    radial-gradient(circle at 18% 2%, rgba(220, 239, 163, 0.52), transparent 24rem),
+    radial-gradient(circle at 94% 12%, rgba(10, 75, 97, 0.10), transparent 28rem),
+    linear-gradient(135deg, #f4f4ee 0%, #eff1eb 48%, #e4e9e7 100%);
   font-family: Aptos, "Segoe UI", "Helvetica Neue", sans-serif;
 }
 
@@ -67,50 +67,53 @@ a {
 
 @layer components {
   .page-shell {
-    @apply mx-auto flex w-full max-w-7xl flex-col gap-4 overflow-x-hidden px-4 pb-28 pt-4 sm:px-6 lg:px-8;
+    @apply mx-auto flex w-full max-w-7xl flex-col gap-4 overflow-x-hidden px-3 pb-28 pt-4 sm:gap-5 sm:px-6 lg:px-8;
   }
 
   .panel {
-    @apply min-w-0 overflow-hidden border border-white/70 bg-white/80 shadow-soft backdrop-blur;
+    @apply min-w-0 overflow-hidden rounded-panel border border-white/75 bg-white/[0.82] shadow-soft backdrop-blur-xl;
   }
 
   .panel-dark {
-    @apply bg-petrol-800 text-white shadow-panel;
+    @apply min-w-0 overflow-hidden rounded-panel border border-white/10 bg-petrol-800 text-white shadow-panel;
+    background:
+      radial-gradient(circle at 88% 0%, rgba(220, 239, 163, 0.20), transparent 18rem),
+      linear-gradient(145deg, #00354a 0%, #00283a 64%, #051b25 100%);
   }
 
   .eyebrow {
-    @apply text-[0.82rem] font-black uppercase tracking-[0.12em] text-petrol-700;
+    @apply text-[0.68rem] font-black uppercase tracking-[0.16em] text-petrol-700;
   }
 
   .title-xl {
-    @apply font-display text-3xl font-black leading-[0.98] tracking-[-0.06em] text-petrol-800 sm:text-5xl lg:text-6xl;
+    @apply font-display text-[2.35rem] font-black leading-[0.94] tracking-[-0.07em] text-petrol-800 sm:text-5xl lg:text-[3.8rem];
   }
 
   .title-lg {
-    @apply font-display text-2xl font-black leading-tight tracking-[-0.05em] text-petrol-800 sm:text-3xl;
+    @apply font-display text-2xl font-black leading-[1.02] tracking-[-0.055em] text-petrol-800 sm:text-3xl;
   }
 
   .action-button {
-    @apply inline-flex min-h-12 w-full max-w-full items-center justify-center gap-2 whitespace-normal bg-petrol-800 px-5 py-3 text-center text-[0.82rem] font-black uppercase leading-tight tracking-[0.04em] text-white transition hover:bg-petrol-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto;
+    @apply inline-flex min-h-11 w-full max-w-full items-center justify-center gap-2 whitespace-normal rounded-full bg-petrol-800 px-5 py-3 text-center text-[0.74rem] font-black uppercase leading-tight tracking-[0.08em] text-white shadow-soft transition duration-200 hover:-translate-y-0.5 hover:bg-petrol-900 hover:shadow-lift active:translate-y-0 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto;
   }
 
   .ghost-button {
-    @apply inline-flex min-h-12 max-w-full items-center justify-center gap-2 whitespace-normal border border-petrol-800/15 bg-white px-5 py-3 text-center text-[0.82rem] font-black uppercase leading-tight tracking-[0.04em] text-petrol-800 transition hover:border-petrol-800/35 hover:bg-mist/60 active:scale-[0.99];
+    @apply inline-flex min-h-11 max-w-full items-center justify-center gap-2 whitespace-normal rounded-full border border-petrol-800/10 bg-white/[0.85] px-5 py-3 text-center text-[0.74rem] font-black uppercase leading-tight tracking-[0.08em] text-petrol-800 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-petrol-800/25 hover:bg-white hover:shadow-soft active:translate-y-0 active:scale-[0.99];
   }
 
   .chip {
-    @apply inline-flex max-w-full items-center gap-1 break-words bg-sage px-3 py-1.5 text-[0.82rem] font-black uppercase tracking-[0.04em] text-petrol-800;
+    @apply inline-flex max-w-full items-center gap-1 break-words rounded-full bg-sage px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.12em] text-petrol-800;
   }
 
   .field-label {
-    @apply grid min-w-0 gap-2 text-[0.82rem] font-black uppercase tracking-[0.08em] text-petrol-800;
+    @apply grid min-w-0 gap-2 text-[0.68rem] font-black uppercase tracking-[0.13em] text-petrol-800;
   }
 
   .field {
-    @apply min-h-12 w-full min-w-0 max-w-full border border-petrol-800/15 bg-white px-3 text-base font-bold text-ink outline-none transition focus:border-petrol-800;
+    @apply min-h-12 w-full min-w-0 max-w-full rounded-card border border-petrol-800/10 bg-white/90 px-4 text-sm font-bold text-ink outline-none shadow-sm transition focus:border-petrol-800 focus:bg-white focus:shadow-soft;
   }
 
   .textarea-field {
-    @apply min-h-24 w-full min-w-0 max-w-full border border-petrol-800/15 bg-white px-3 py-3 text-base font-bold text-ink outline-none transition focus:border-petrol-800;
+    @apply min-h-24 w-full min-w-0 max-w-full rounded-card border border-petrol-800/10 bg-white/90 px-4 py-3 text-sm font-bold text-ink outline-none shadow-sm transition focus:border-petrol-800 focus:bg-white focus:shadow-soft;
   }
 }

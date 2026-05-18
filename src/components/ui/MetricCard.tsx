@@ -16,12 +16,12 @@ export function MetricCard({ label, value, hint, tone = "default" }: MetricCardP
         : "bg-white text-ink";
 
   return (
-    <article className={`${toneClass} border border-petrol-800/10 p-4 shadow-soft`}>
-      <p className={`text-[0.82rem] font-black uppercase tracking-[0.08em] ${tone === "dark" ? "text-white/75" : "text-muted"}`}>
+    <article className={`${toneClass} rounded-card border border-petrol-800/10 p-4 shadow-soft transition duration-200 hover:-translate-y-0.5 hover:shadow-lift`}>
+      <p className={`text-[0.68rem] font-black uppercase tracking-[0.14em] ${tone === "dark" ? "text-white/70" : "text-muted"}`}>
         {label}
       </p>
-      <div className="mt-2 font-display text-3xl font-black tracking-[-0.06em]">{value}</div>
-      {hint ? <div className={`mt-2 text-sm font-semibold ${tone === "dark" ? "text-white/70" : "text-muted"}`}>{hint}</div> : null}
+      <div className="mt-2 font-display text-2xl font-black tracking-[-0.06em] sm:text-3xl">{value}</div>
+      {hint ? <div className={`mt-2 text-xs font-bold leading-5 ${tone === "dark" ? "text-white/65" : "text-muted"}`}>{hint}</div> : null}
     </article>
   );
 }

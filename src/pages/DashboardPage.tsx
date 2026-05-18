@@ -249,7 +249,7 @@ export default function DashboardPage() {
       ) : null}
 
       {showSport ? (
-        <SectionCard className="border-l-4 border-limeSoft p-4 sm:p-6">
+        <SectionCard className="p-4 ring-1 ring-limeSoft/35 sm:p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="eyebrow">Aujourd'hui</p>
@@ -264,7 +264,7 @@ export default function DashboardPage() {
             <span className="chip bg-limeSoft text-petrol-900">Semaine {dashboard.currentWeek}</span>
           </div>
 
-          <p className="mt-4 border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
+          <p className="mt-4 rounded-card bg-mist/60 p-3 text-sm font-bold leading-6 text-ink ring-1 ring-petrol-800/5">
             {coachMessage}
           </p>
 
@@ -320,89 +320,21 @@ export default function DashboardPage() {
           </div>
 
           {weekProgramCompletion.planned ? (
-            <div className="mt-4 border border-petrol-800/10 bg-white p-3">
+            <div className="mt-4 rounded-card border border-petrol-800/10 bg-white/[0.85] p-3 shadow-sm">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Programme semaine</p>
                 <p className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
                   {weekProgramCompletion.completed}/{weekProgramCompletion.planned} · {weekProgramCompletion.ratio} %
                 </p>
               </div>
-              <div className="mt-3 h-2 overflow-hidden bg-mist">
-                <div className="h-full bg-limeSoft" style={{ width: `${weekProgramCompletion.ratio}%` }} />
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-mist">
+                <div className="h-full rounded-full bg-limeSoft" style={{ width: `${weekProgramCompletion.ratio}%` }} />
               </div>
             </div>
           ) : null}
 
-          {showRecovery || showCalendar ? (
-            <div className="mt-5 border-t border-petrol-800/10 pt-4">
-              <p className="eyebrow">Le quotidien</p>
-              {showRecovery ? (
-                <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                  <label className="field-label">
-                    Fatigue /10
-                    <input
-                      className="field"
-                      type="number"
-                      min="0"
-                      max="10"
-                      inputMode="numeric"
-                      value={dailyContext.fatigueMorning ?? 5}
-                      onChange={(event) =>
-                        saveDailyContext({
-                          ...dailyContext,
-                          date: dashboard.today,
-                          fatigueMorning: updateScoreInput(event.target.value)
-                        })
-                      }
-                    />
-                  </label>
-                  <label className="field-label">
-                    Douleur /10
-                    <input
-                      className="field"
-                      type="number"
-                      min="0"
-                      max="10"
-                      inputMode="numeric"
-                      value={dailyContext.painMorning ?? 0}
-                      onChange={(event) =>
-                        saveDailyContext({
-                          ...dailyContext,
-                          date: dashboard.today,
-                          painMorning: updateScoreInput(event.target.value)
-                        })
-                      }
-                    />
-                  </label>
-                  <label className="field-label">
-                    Sommeil
-                    <select
-                      className="field"
-                      value={dailyContext.sleepQuality ?? "medium"}
-                      onChange={(event) =>
-                        saveDailyContext({
-                          ...dailyContext,
-                          date: dashboard.today,
-                          sleepQuality: event.target.value as SleepQuality
-                        })
-                      }
-                    >
-                      {sleepOptions.map((option) => (
-                        <option key={option.id} value={option.id}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-              ) : null}
-
-              {movementInputs}
-            </div>
-          ) : null}
-
           {todayPlanned ? (
-            <details className="mt-4 border border-petrol-800/10 bg-white p-3">
+            <details className="mt-4 rounded-card border border-petrol-800/10 bg-white/[0.85] p-3 shadow-sm">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-800">
                 Voir la version du jour
                 <ChevronDown className="h-4 w-4" aria-hidden="true" />
@@ -414,10 +346,10 @@ export default function DashboardPage() {
           ) : null}
 
           {todayLoggedSessions.length ? (
-            <div className="mt-4 grid gap-2 border border-petrol-800/10 bg-white p-3">
+            <div className="mt-4 grid gap-2 rounded-card border border-petrol-800/10 bg-white/[0.85] p-3 shadow-sm">
               <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Séances enregistrées aujourd'hui</p>
               {todayLoggedSessions.map((session) => (
-                <div key={session.id} className="flex flex-col gap-2 border-l-4 border-limeSoft bg-mist/45 p-3 sm:flex-row sm:items-center sm:justify-between">
+                <div key={session.id} className="flex flex-col gap-2 rounded-card bg-mist/45 p-3 ring-1 ring-petrol-800/5 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="font-black text-petrol-800">{session.title}</p>
                     <p className="text-sm font-bold text-muted">
@@ -441,7 +373,7 @@ export default function DashboardPage() {
 
         </SectionCard>
       ) : (
-        <SectionCard className="border-l-4 border-limeSoft p-4 sm:p-6">
+        <SectionCard className="p-4 ring-1 ring-limeSoft/35 sm:p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="eyebrow">Aujourd'hui</p>
@@ -462,7 +394,7 @@ export default function DashboardPage() {
             <span className="chip bg-limeSoft text-petrol-900">Menu personnalisé</span>
           </div>
 
-          <p className="mt-4 border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
+          <p className="mt-4 rounded-card bg-mist/60 p-3 text-sm font-bold leading-6 text-ink ring-1 ring-petrol-800/5">
             {showNutritionNumbers
               ? "Priorité : noter un repas simple, le poids si utile, et tes pas. Les séances et le programme restent cachés tant que le sport n'est pas choisi dans les réglages."
               : showNutrition
@@ -579,6 +511,73 @@ export default function DashboardPage() {
         </SectionCard>
       ) : null}
 
+      {showRecovery || showCalendar ? (
+        <CollapsibleSectionCard eyebrow="Détail quotidien" title="Le quotidien" defaultOpen>
+          {showRecovery ? (
+            <div className="grid gap-2 sm:grid-cols-3">
+              <label className="field-label">
+                Fatigue /10
+                <input
+                  className="field"
+                  type="number"
+                  min="0"
+                  max="10"
+                  inputMode="numeric"
+                  value={dailyContext.fatigueMorning ?? 5}
+                  onChange={(event) =>
+                    saveDailyContext({
+                      ...dailyContext,
+                      date: dashboard.today,
+                      fatigueMorning: updateScoreInput(event.target.value)
+                    })
+                  }
+                />
+              </label>
+              <label className="field-label">
+                Douleur /10
+                <input
+                  className="field"
+                  type="number"
+                  min="0"
+                  max="10"
+                  inputMode="numeric"
+                  value={dailyContext.painMorning ?? 0}
+                  onChange={(event) =>
+                    saveDailyContext({
+                      ...dailyContext,
+                      date: dashboard.today,
+                      painMorning: updateScoreInput(event.target.value)
+                    })
+                  }
+                />
+              </label>
+              <label className="field-label">
+                Sommeil
+                <select
+                  className="field"
+                  value={dailyContext.sleepQuality ?? "medium"}
+                  onChange={(event) =>
+                    saveDailyContext({
+                      ...dailyContext,
+                      date: dashboard.today,
+                      sleepQuality: event.target.value as SleepQuality
+                    })
+                  }
+                >
+                  {sleepOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          ) : null}
+
+          {movementInputs}
+        </CollapsibleSectionCard>
+      ) : null}
+
       {showSport ? (
         <CollapsibleSectionCard
           eyebrow="Détail progression"
@@ -606,19 +605,19 @@ export default function DashboardPage() {
 
           {showNutritionNumbers ? (
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <div className="border border-petrol-800/10 bg-white p-4">
+            <div className="rounded-card border border-petrol-800/10 bg-white/[0.85] p-4 shadow-sm">
               <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Protéines</p>
-              <p className="mt-1 font-display text-3xl font-black tracking-[-0.05em] text-petrol-800">
+              <p className="mt-1 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800 sm:text-3xl">
                 {Math.round(dashboard.todayMealTotals.protein)} / {proteinTarget} g
               </p>
             </div>
-            <div className="border-l-4 border-limeSoft bg-mist/50 p-4">
+            <div className="rounded-card bg-mist/50 p-4 ring-1 ring-limeSoft/45">
               <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Conseil</p>
-              <p className="mt-2 text-base font-semibold leading-7 text-ink">{mealAdvice}</p>
+              <p className="mt-2 text-sm font-semibold leading-6 text-ink">{mealAdvice}</p>
             </div>
           </div>
           ) : (
-            <p className="mt-4 border-l-4 border-limeSoft bg-mist/50 p-4 text-sm font-semibold leading-6 text-ink">
+            <p className="mt-4 rounded-card bg-mist/50 p-4 text-sm font-semibold leading-6 text-ink ring-1 ring-limeSoft/45">
               Note ce que tu as mangé et les sensations utiles. Si tu veux les calories/macros, active le mode complet dans Profil.
             </p>
           )}
