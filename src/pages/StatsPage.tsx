@@ -18,7 +18,7 @@ import { useUserModules } from "../hooks/useUserModules";
 import { getSportProgressionSummary } from "../services/progressionService";
 import type { CompletedSession, PlannedSession, WeightEntry } from "../types";
 import { estimateNeatCalories } from "../utils/calories";
-import { formatShortDate, getCurrentWeekIndex, getMonday, getTotalWeeks, getWeekStart, parseDate, toISODate } from "../utils/dates";
+import { getCurrentWeekIndex, getMonday, getTotalWeeks, getWeekStart, parseDate, toISODate } from "../utils/dates";
 import { getMealTotals } from "../utils/nutrition";
 import { tracksNutritionNumbers } from "../utils/nutritionMode";
 import { getAverageHeartRate, getAverageRpe, getPlannedCompletion, summarizeWeek } from "../utils/training";
@@ -75,6 +75,7 @@ function getWeekProgramStats(plannedWeek: PlannedSession[], sessions: CompletedS
 }
 
 const DAY_LABELS = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
+const WEEKDAY_INITIALS = ["D", "L", "M", "M", "J", "V", "S"];
 type SportSessionChart = "volume" | "calories" | "execution";
 const SPORT_SESSION_CHARTS: Array<{ id: SportSessionChart; label: string }> = [
   { id: "volume", label: "Volume" },
@@ -84,6 +85,11 @@ const SPORT_SESSION_CHARTS: Array<{ id: SportSessionChart; label: string }> = [
 
 function formatCompactNumber(value: number) {
   return value.toLocaleString("fr-FR");
+}
+
+function formatChartDay(date: string | Date) {
+  const parsed = typeof date === "string" ? parseDate(date) : date;
+  return `${WEEKDAY_INITIALS[parsed.getDay()]} ${parsed.getDate()}/${parsed.getMonth() + 1}`;
 }
 
 function clampPercent(value: number) {
@@ -346,7 +352,7 @@ export default function StatsPage() {
     const neat = estimateNeatCalories(steps, floors, bodyWeight);
 
     return {
-      date: formatShortDate(date),
+      date: formatChartDay(date),
       calories: Math.round(totals.calories),
       steps,
       floors,
@@ -356,7 +362,7 @@ export default function StatsPage() {
   });
 
   const weightSeries = data.weights.map((entry) => ({
-    date: formatShortDate(entry.date),
+    date: formatChartDay(entry.date),
     weight: entry.weight
   }));
 
