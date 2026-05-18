@@ -153,7 +153,7 @@ export default function DashboardPage() {
     : waitingForSessionChoice
       ? "Choisir une séance"
       : showSessions
-        ? "Ajouter activité"
+        ? "Démarrer l'activité"
         : "Personnaliser";
   const nutritionSessionLabel = completedTodaySession
     ? getCompletedTypeLabel(completedTodaySession.type, dashboard.settings)

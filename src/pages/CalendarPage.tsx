@@ -12,20 +12,17 @@ import {
   subMonths
 } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Dumbbell, Footprints, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { MealForm } from "../components/forms/MealForm";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
 import { MEAL_TYPE_LABELS } from "../data/defaults";
 import { getPlannedWeek } from "../data/trainingPlan";
-import { useDailyContext } from "../hooks/useDailyContext";
-import { DAILY_HABIT_LABELS } from "../hooks/useDailyHabits";
 import { useMeals } from "../hooks/useMeals";
 import { useSettings } from "../hooks/useSettings";
 import { useStoredData } from "../hooks/useStoredData";
 import { useUserModules } from "../hooks/useUserModules";
-import type { CompletedSessionType, DailyHabitType, PlannedSessionType } from "../types";
+import type { CompletedSessionType, PlannedSessionType } from "../types";
 import { getTotalWeeks, getWeekIndexForDate, toISODate } from "../utils/dates";
 import { tracksNutritionNumbers } from "../utils/nutritionMode";
 import { getCompletedTypeLabel, getPlannedTypeLabel, isHyroxCompetitionMode, personalizePlannedSession } from "../utils/sportLabels";
@@ -39,13 +36,6 @@ const CALENDAR_VIEWS: Array<{ id: CalendarViewMode; label: string; hint: string 
   { id: "grid", label: "Détaillé", hint: "grille large" }
 ];
 
-const habitOrder: DailyHabitType[] = ["allergies", "duolingo", "omega3", "creatine"];
-const HABIT_SHORT_LABELS: Record<DailyHabitType, string> = {
-  allergies: "A",
-  duolingo: "D",
-  omega3: "O3",
-  creatine: "C"
-};
 const PLANNED_SHORT_LABELS: Record<PlannedSessionType, string> = {
   rest: "Repos",
   badminton: "Bad",
@@ -99,7 +89,6 @@ export default function CalendarPage() {
   const today = toISODate(new Date());
   const [month, setMonth] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(today);
-  const { dailyContext, saveDailyContext } = useDailyContext(selectedDate);
   const [showMealForm, setShowMealForm] = useState(false);
   const [viewMode, setViewMode] = useState<CalendarViewMode>(readInitialCalendarView);
   const mealFormRef = useRef<HTMLDivElement>(null);
@@ -125,7 +114,6 @@ export default function CalendarPage() {
   const plannedSessions = weekIndexes.flatMap((week) =>
     getPlannedWeek(settings, week, settings.badmintonVariant).map((session) => personalizePlannedSession(session, settings))
   );
-  const selectedHabits = data.dailyHabits.filter((habit) => habit.date === selectedDate && habit.completed);
   const selectedCompletedSessions = showSport ? data.sessions.filter((session) => session.date === selectedDate && session.completed) : [];
   const selectedPlannedSessions = showSport ? plannedSessions.filter((session) => session.date === selectedDate && session.type !== "rest") : [];
   const selectedMeals = showNutrition ? data.meals.filter((meal) => meal.date === selectedDate) : [];
@@ -144,18 +132,16 @@ export default function CalendarPage() {
 
   const getDayInfo = (day: Date) => {
     const isoDate = toISODate(day);
-    const dayHabits = data.dailyHabits.filter((habit) => habit.date === isoDate && habit.completed);
     const completedSessions = showSport ? data.sessions.filter((session) => session.date === isoDate && session.completed) : [];
     const plannedForDay = showSport ? plannedSessions.filter((session) => session.date === isoDate && session.type !== "rest") : [];
     const mealsForDay = showNutrition ? data.meals.filter((meal) => meal.date === isoDate) : [];
     const movementForDay = data.dailyContexts.find((context) => context.date === isoDate);
     const hasMovement = Boolean((movementForDay?.steps ?? 0) > 0 || (movementForDay?.floors ?? 0) > 0);
     const selected = isoDate === selectedDate;
-    const hasContent = dayHabits.length || plannedForDay.length || completedSessions.length || mealsForDay.length || hasMovement;
+    const hasContent = plannedForDay.length || completedSessions.length || mealsForDay.length || hasMovement;
 
     return {
       isoDate,
-      dayHabits,
       completedSessions,
       plannedForDay,
       mealsForDay,
@@ -181,15 +167,15 @@ export default function CalendarPage() {
     <>
       <PageHeader
         eyebrow="Agenda"
-        title={showSport ? "Jours, habitudes et séances" : showNutrition ? "Jours, repas et mouvement" : "Jours et habitudes"}
+        title={showSport ? "Jours et séances" : showNutrition ? "Jours, repas et mouvement" : "Jours et mouvement"}
         description={
           showSport && showNutrition
-            ? "Une vue simple pour voir les jours cochés, les séances prévues, les repas et ce que tu as réellement fait."
+            ? "Une vue simple pour voir les séances prévues, les repas et ce que tu as réellement fait."
             : showSport
-              ? "Une vue simple pour voir les jours cochés, les séances prévues et ce que tu as réellement fait."
+              ? "Une vue simple pour voir les séances prévues et ce que tu as réellement fait."
               : showNutrition
-                ? "Une vue simple pour voir les jours cochés, les repas et ton mouvement quotidien."
-                : "Une vue simple pour voir les jours cochés et ton mouvement quotidien."
+                ? "Une vue simple pour voir les repas et ton mouvement quotidien."
+                : "Une vue simple pour voir ton mouvement quotidien."
         }
       />
 
@@ -220,7 +206,7 @@ export default function CalendarPage() {
           </div>
         </div>
 
-        <div className="mt-5 grid gap-3 rounded-none border border-petrol-800/10 bg-mist/45 p-4 lg:grid-cols-[0.85fr_1.15fr]">
+        <div className={`mt-5 grid gap-3 rounded-none border border-petrol-800/10 bg-mist/45 p-4 ${showSport || showNutrition ? "lg:grid-cols-[0.85fr_1.15fr]" : ""}`}>
           <div className="bg-petrol-800 p-4 text-white">
             <p className="text-[0.68rem] font-black uppercase tracking-[0.18em] text-limeSoft">Jour sélectionné</p>
             <h2 className="mt-2 font-display text-3xl font-black capitalize tracking-[-0.06em]">
@@ -238,7 +224,8 @@ export default function CalendarPage() {
             ) : null}
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {showSport || showNutrition ? (
+          <div className="grid gap-3 sm:grid-cols-2">
             {showSport ? (
             <div className="border border-petrol-800/10 bg-white p-3">
               <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Sport</p>
@@ -257,82 +244,28 @@ export default function CalendarPage() {
                     Fait : {sessionLabel(session.type)} · {session.durationMin} min
                   </p>
                 ))}
-                <Link to={`/sessions?date=${selectedDate}&add=1`} className="action-button mt-2 justify-center">
-                  <Dumbbell className="h-4 w-4" /> Ajouter une séance ce jour
-                </Link>
               </div>
             </div>
             ) : null}
 
-            <div className="border border-petrol-800/10 bg-white p-3">
-              <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">
-                {showNutrition ? "Repas & habitudes" : "Habitudes"}
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {selectedHabits.length ? (
-                  selectedHabits.map((habit) => (
-                    <span key={`${habit.date}-${habit.type}`} className="chip bg-limeSoft">
-                      {DAILY_HABIT_LABELS[habit.type]}
-                    </span>
-                  ))
-                ) : (
-                  <span className="chip">Aucune habitude cochée</span>
-                )}
-                {showNutrition
-                  ? selectedMeals.map((meal) => (
+            {showNutrition ? (
+              <div className="border border-petrol-800/10 bg-white p-3">
+                <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Repas</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {selectedMeals.length ? (
+                    selectedMeals.map((meal) => (
                       <span key={meal.id} className="chip">
                         {MEAL_TYPE_LABELS[meal.mealType]}{showNutritionNumbers ? ` · ${meal.calories} kcal` : ""}
                       </span>
                     ))
-                  : null}
+                  ) : (
+                    <span className="chip">Aucun repas saisi</span>
+                  )}
+                </div>
               </div>
-            </div>
-
-            <div className="border border-petrol-800/10 bg-white p-3 sm:col-span-2 xl:col-span-1">
-              <p className="flex items-center gap-2 text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">
-                <Footprints className="h-4 w-4" /> Pas du jour
-              </p>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <label className="grid gap-1">
-                  <span className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Pas</span>
-                  <input
-                    className="field"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={dailyContext.steps ? String(dailyContext.steps) : ""}
-                    onChange={(event) =>
-                      saveDailyContext({
-                        ...dailyContext,
-                        date: selectedDate,
-                        steps: Number(event.target.value.replace(/\D/g, ""))
-                      })
-                    }
-                    placeholder="Ex : 8500"
-                  />
-                </label>
-                <label className="grid gap-1">
-                  <span className="text-[0.62rem] font-black uppercase tracking-[0.12em] text-muted">Étages</span>
-                  <input
-                    className="field"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={dailyContext.floors ? String(dailyContext.floors) : ""}
-                    onChange={(event) =>
-                      saveDailyContext({
-                        ...dailyContext,
-                        date: selectedDate,
-                        floors: Number(event.target.value.replace(/\D/g, ""))
-                      })
-                    }
-                    placeholder="Ex : 8"
-                  />
-                </label>
-              </div>
-              <p className="mt-2 text-xs font-bold leading-5 text-muted">
-                Sélectionne un ancien jour dans le calendrier, puis saisis les pas réels de cette date.
-              </p>
-            </div>
+            ) : null}
           </div>
+          ) : null}
         </div>
 
         {showNutrition && showMealForm ? (
@@ -394,7 +327,7 @@ export default function CalendarPage() {
           {calendarDays
             .filter((day) => isSameMonth(day, month))
             .map((day) => {
-              const { isoDate, dayHabits, completedSessions, plannedForDay, mealsForDay, movementForDay, selected, hasContent } = getDayInfo(day);
+              const { isoDate, completedSessions, plannedForDay, mealsForDay, movementForDay, selected, hasContent } = getDayInfo(day);
 
               return (
                 <button
@@ -418,11 +351,6 @@ export default function CalendarPage() {
                     <div className="min-w-0 flex-1">
                       <div className="flex min-w-0 flex-wrap items-center gap-1.5">
                         {isoDate === today ? <span className="chip bg-petrol-800 text-limeSoft">Aujourd'hui</span> : null}
-                        {dayHabits.map((habit) => (
-                          <span key={`${isoDate}-${habit.type}`} className="chip bg-limeSoft">
-                            {HABIT_SHORT_LABELS[habit.type]}
-                          </span>
-                        ))}
                         {plannedForDay.map((session) => (
                           <span key={session.id} className="chip bg-mist">
                             Prévu {plannedShortLabel(session.type)} · {session.durationMin} min
@@ -460,7 +388,7 @@ export default function CalendarPage() {
             </div>
             <div className="mt-2 grid grid-cols-7 gap-1">
               {calendarDays.map((day) => {
-                const { isoDate, dayHabits, completedSessions, plannedForDay, mealsForDay, movementForDay, selected, hasContent } = getDayInfo(day);
+                const { isoDate, completedSessions, plannedForDay, mealsForDay, movementForDay, selected, hasContent } = getDayInfo(day);
                 const muted = !isSameMonth(day, month);
 
                 return (
@@ -486,7 +414,6 @@ export default function CalendarPage() {
                       {plannedForDay.length ? <span className="truncate bg-mist px-1 py-1 text-petrol-800">P {plannedForDay.length}</span> : null}
                       {completedSessions.length ? <span className="truncate bg-petrol-800 px-1 py-1 text-white">F {completedSessions.length}</span> : null}
                       {mealsForDay.length ? <span className="truncate bg-white px-1 py-1 text-petrol-800">R {mealsForDay.length}</span> : null}
-                      {dayHabits.length ? <span className="truncate bg-limeSoft px-1 py-1 text-petrol-900">H {dayHabits.length}</span> : null}
                       {(movementForDay?.steps ?? 0) > 0 ? <span className="truncate bg-white px-1 py-1 text-petrol-800">P {movementForDay?.steps}</span> : null}
                       {!hasContent ? <span className="text-muted/70">-</span> : null}
                     </div>
@@ -508,7 +435,7 @@ export default function CalendarPage() {
 
         <div className="mt-2 grid grid-cols-7 gap-1 sm:gap-2">
           {calendarDays.map((day) => {
-            const { isoDate, dayHabits, completedSessions, plannedForDay, selected } = getDayInfo(day);
+            const { isoDate, completedSessions, plannedForDay, selected } = getDayInfo(day);
 
             return (
               <button
@@ -530,17 +457,6 @@ export default function CalendarPage() {
                       Aujourd'hui
                     </span>
                   ) : null}
-                </div>
-
-                <div className="mt-1 flex min-w-0 flex-wrap gap-1 sm:mt-2 sm:grid">
-                  {habitOrder.map((habit) =>
-                    dayHabits.some((item) => item.type === habit) ? (
-                      <span key={habit} className="inline-flex h-5 min-w-5 max-w-full items-center justify-center overflow-hidden rounded-none bg-limeSoft px-1 text-[0.5rem] font-black uppercase tracking-[0.04em] text-petrol-900 sm:h-auto sm:min-w-0 sm:justify-start sm:px-2 sm:py-1 sm:text-[0.62rem]">
-                        <span className="sm:hidden">{HABIT_SHORT_LABELS[habit]}</span>
-                        <span className="hidden truncate sm:inline">{DAILY_HABIT_LABELS[habit]}</span>
-                      </span>
-                    ) : null
-                  )}
                 </div>
 
                 <div className="mt-1 flex min-w-0 flex-wrap gap-1 sm:mt-2 sm:grid">

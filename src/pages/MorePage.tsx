@@ -9,7 +9,7 @@ const moreHints: Record<string, string> = {
   "/planning": "Programme et séances prévues quand tu veux préparer ton entraînement.",
   "/sessions": "Historique sport, séance libre et saisie rapide d'un entraînement.",
   "/meals": "Journal repas, calories, macros et estimation nutrition.",
-  "/calendar": "Voir les habitudes, repas, pas et séances jour par jour.",
+  "/calendar": "Voir les repas, pas et séances jour par jour.",
   "/weight": "Saisir une pesée et suivre la tendance.",
   "/stats": "Graphiques et tendances quand tu veux prendre du recul.",
   "/settings": "Objectifs, onglets favoris, export/import et paramètres."

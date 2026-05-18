@@ -74,7 +74,7 @@ export const modulesConfig: Record<AppModuleId, AppModuleConfig> = {
     id: "calendar",
     label: "Calendrier",
     shortLabel: "Cal.",
-    description: "Vue jour par jour : sport, habitudes, repas si actifs.",
+    description: "Vue jour par jour : sport, repas et mouvement si actifs.",
     route: "/calendar",
     defaultEnabled: true,
     canBeMainTab: true,

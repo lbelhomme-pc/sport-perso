@@ -563,86 +563,111 @@ export default function StatsPage() {
               <ProgressionSnapshot summary={progressionSummary} />
             </StatsBlock>
 
-            {hasSportAverageCards ? (
-              <StatsBlock title="Moyennes calories sport">
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                  {averageSportCaloriesPerSession ? (
+            <StatsBlock title="Séances">
+              <div className="grid gap-4">
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                  {currentWeekProgram?.planned ? (
                     <MetricCard
-                      label="Calories / séance"
-                      value={`${averageSportCaloriesPerSession} kcal`}
-                      hint={`${sessionsWithCalories.length} séance${sessionsWithCalories.length > 1 ? "s" : ""} avec calories`}
+                      label="Programme"
+                      value={`${currentWeekProgram.completed}/${currentWeekProgram.planned}`}
+                      hint={`${currentWeekProgram.completionRate} % validé`}
+                      tone="lime"
                     />
                   ) : null}
-                  {averageSportCaloriesPerWeek ? <MetricCard label="Calories / semaine" value={`${averageSportCaloriesPerWeek} kcal`} hint="Semaines avec sport renseigné" /> : null}
-                  {averageSportCaloriesPerMonth ? <MetricCard label="Calories / mois" value={`${averageSportCaloriesPerMonth} kcal`} hint="Mois avec sport renseigné" /> : null}
+                  {data.sessions.length ? <MetricCard label="Séances totales" value={data.sessions.length} /> : null}
+                  {averageRpe ? <MetricCard label="RPE moyen" value={averageRpe} /> : null}
+                  {averageHeartRate ? <MetricCard label="FC moyenne" value={averageHeartRate} /> : null}
                 </div>
-              </StatsBlock>
-            ) : null}
 
-            <div className="grid gap-4 xl:grid-cols-2">
-              <StatsBlock title="Volume hebdomadaire">
-                {sessionTrendReady && hasValue(weekSeries, "volume") ? (
-                  <MetricBarChart
-                    data={weekSeries}
-                    xKey="week"
-                    yKey="volume"
-                    suffix=" min"
-                    summary={`${totalVolumeMinutes} min enregistrées sur le programme affiché.`}
-                  />
-                ) : (
-                  <ChartEmptyState
-                    icon={Dumbbell}
-                    title="Ajoute 2 séances pour voir ton volume"
-                    message="Le volume devient lisible quand tu as au moins deux séances enregistrées avec une durée."
-                    to="/sessions"
-                    actionLabel="Ajouter une séance"
-                  />
-                )}
-              </StatsBlock>
+                {hasSportAverageCards ? (
+                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    {averageSportCaloriesPerSession ? (
+                      <MetricCard
+                        label="Calories / séance"
+                        value={`${averageSportCaloriesPerSession} kcal`}
+                        hint={`${sessionsWithCalories.length} séance${sessionsWithCalories.length > 1 ? "s" : ""} avec calories`}
+                      />
+                    ) : null}
+                    {averageSportCaloriesPerWeek ? <MetricCard label="Calories / semaine" value={`${averageSportCaloriesPerWeek} kcal`} hint="Semaines avec sport renseigné" /> : null}
+                    {averageSportCaloriesPerMonth ? <MetricCard label="Calories / mois" value={`${averageSportCaloriesPerMonth} kcal`} hint="Mois avec sport renseigné" /> : null}
+                  </div>
+                ) : null}
 
-              <StatsBlock title="Calories sport">
-                {sportCaloriesReady && hasValue(weekSeries, "calories") ? (
-                  <MetricBarChart
-                    data={weekSeries}
-                    xKey="week"
-                    yKey="calories"
-                    color="#DCEFA3"
-                    suffix=" kcal"
-                    summary={`${totalSportCalories} kcal sport enregistrées au total.`}
-                  />
-                ) : (
-                  <ChartEmptyState
-                    icon={Dumbbell}
-                    title="Calories sport en attente"
-                    message="Ajoute les calories sur 2 séances pour voir une dépense hebdomadaire utile."
-                    to="/sessions"
-                    actionLabel="Compléter une séance"
-                  />
-                )}
-              </StatsBlock>
+                <div className="grid gap-5 border-t border-petrol-800/10 pt-4 xl:grid-cols-3">
+                  <section className="min-w-0">
+                    <h4 className="font-display text-lg font-black tracking-[-0.04em] text-petrol-800">Volume hebdomadaire</h4>
+                    <div className="mt-3">
+                      {sessionTrendReady && hasValue(weekSeries, "volume") ? (
+                        <MetricBarChart
+                          data={weekSeries}
+                          xKey="week"
+                          yKey="volume"
+                          suffix=" min"
+                          summary={`${totalVolumeMinutes} min enregistrées sur le programme affiché.`}
+                        />
+                      ) : (
+                        <ChartEmptyState
+                          icon={Dumbbell}
+                          title="Ajoute 2 séances pour voir ton volume"
+                          message="Le volume devient lisible quand tu as au moins deux séances enregistrées avec une durée."
+                          to="/sessions"
+                          actionLabel="Ajouter une séance"
+                        />
+                      )}
+                    </div>
+                  </section>
 
-              <StatsBlock title="Programme prévu / réalisé">
-                {executionTrendReady ? (
-                  <ComparisonBarChart
-                    data={weekSeries}
-                    xKey="week"
-                    firstKey="planned"
-                    secondKey="completed"
-                    firstName="Prévues"
-                    secondName="Réalisées"
-                    summary={`${totalCompletedSessions} séances prévues validées / ${totalPlannedSessions} prévues. Une séance compte même si tu la fais un autre jour.`}
-                  />
-                ) : (
-                  <ChartEmptyState
-                    icon={CalendarCheck}
-                    title="Aucune séance enregistrée cette semaine"
-                    message="Valide une séance du planning pour comparer ce qui était prévu avec ce qui a été fait."
-                    to="/planning"
-                    actionLabel="Voir le programme"
-                  />
-                )}
-              </StatsBlock>
-            </div>
+                  <section className="min-w-0">
+                    <h4 className="font-display text-lg font-black tracking-[-0.04em] text-petrol-800">Calories sport</h4>
+                    <div className="mt-3">
+                      {sportCaloriesReady && hasValue(weekSeries, "calories") ? (
+                        <MetricBarChart
+                          data={weekSeries}
+                          xKey="week"
+                          yKey="calories"
+                          color="#DCEFA3"
+                          suffix=" kcal"
+                          summary={`${totalSportCalories} kcal sport enregistrées au total.`}
+                        />
+                      ) : (
+                        <ChartEmptyState
+                          icon={Dumbbell}
+                          title="Calories sport en attente"
+                          message="Ajoute les calories sur 2 séances pour voir une dépense hebdomadaire utile."
+                          to="/sessions"
+                          actionLabel="Compléter une séance"
+                        />
+                      )}
+                    </div>
+                  </section>
+
+                  <section className="min-w-0">
+                    <h4 className="font-display text-lg font-black tracking-[-0.04em] text-petrol-800">Prévu / réalisé</h4>
+                    <div className="mt-3">
+                      {executionTrendReady ? (
+                        <ComparisonBarChart
+                          data={weekSeries}
+                          xKey="week"
+                          firstKey="planned"
+                          secondKey="completed"
+                          firstName="Prévues"
+                          secondName="Réalisées"
+                          summary={`${totalCompletedSessions} séances prévues validées / ${totalPlannedSessions} prévues. Une séance compte même si tu la fais un autre jour.`}
+                        />
+                      ) : (
+                        <ChartEmptyState
+                          icon={CalendarCheck}
+                          title="Aucune séance enregistrée cette semaine"
+                          message="Valide une séance du planning pour comparer ce qui était prévu avec ce qui a été fait."
+                          to="/planning"
+                          actionLabel="Voir le programme"
+                        />
+                      )}
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </StatsBlock>
           </div>
         </CollapsibleSectionCard>
       ) : null}
