@@ -1,20 +1,22 @@
 import { addDays, differenceInCalendarDays, subDays } from "date-fns";
 import { Link } from "react-router-dom";
-import { Award, BarChart3, CalendarCheck, Dumbbell, Flame, Footprints, Gauge, HeartPulse, Scale, TrendingUp, Utensils } from "lucide-react";
+import { Award, BarChart3, CalendarCheck, Dumbbell, Flame, Footprints, Gauge, HeartPulse, Lightbulb, Scale, TrendingUp, Utensils } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { ComparisonBarChart } from "../components/charts/ComparisonBarChart";
 import { MetricBarChart } from "../components/charts/MetricBarChart";
 import { MetricLineChart } from "../components/charts/MetricLineChart";
+import { ChartCard } from "../components/ui/ChartCard";
 import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
 import { EmptyState } from "../components/ui/EmptyState";
-import { MetricCard } from "../components/ui/MetricCard";
+import { MetricTile } from "../components/ui/MetricTile";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
+import { StatusBadge } from "../components/ui/StatusBadge";
 import { getPlannedWeek } from "../data/trainingPlan";
 import { useStoredData } from "../hooks/useStoredData";
 import { useUserModules } from "../hooks/useUserModules";
-import { getSportProgressionSummary } from "../services/progressionService";
+import { getSportProgressionSummary, type MotivationTone } from "../services/progressionService";
 import type { CompletedSession, PlannedSession, WeightEntry } from "../types";
 import { estimateNeatCalories } from "../utils/calories";
 import { getCurrentWeekIndex, getMonday, getTotalWeeks, getWeekStart, parseDate, toISODate } from "../utils/dates";
@@ -117,20 +119,20 @@ function ProgressOverviewCard({
     <section className="theme-stat-card overflow-hidden rounded-panel border p-5 shadow-panel sm:p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="stat-muted text-sm font-black uppercase tracking-[0.18em]">Progression</p>
+          <p className="stat-muted text-xs font-black uppercase tracking-[0.14em]">Progression</p>
           <p className="mt-3 font-display text-5xl font-black tracking-[-0.08em] sm:text-6xl">
             {formatCompactNumber(volumeMin)}
             <span className="stat-muted ml-2 text-2xl">min</span>
           </p>
         </div>
         <div className="text-right">
-          <p className="stat-muted text-[0.65rem] font-black uppercase tracking-[0.16em]">Objectif semaine</p>
+          <p className="stat-muted text-xs font-black uppercase tracking-[0.1em]">Objectif semaine</p>
           <p className="stat-accent mt-1 font-display text-2xl font-black tracking-[-0.05em]">{formatCompactNumber(volumeGoalMin)} min</p>
           <p className="stat-soft text-sm font-black">{completion} %</p>
         </div>
       </div>
 
-      <div className="stat-muted mt-5 flex items-center gap-5 text-[0.68rem] font-black uppercase tracking-[0.16em]">
+      <div className="stat-muted mt-5 flex items-center gap-5 text-xs font-black uppercase tracking-[0.1em]">
         <span className="inline-flex items-center gap-2">
           <span className="stat-bar h-2 w-5 rounded-full" /> Réel
         </span>
@@ -154,11 +156,11 @@ function ProgressOverviewCard({
                   title={`${day.value} min`}
                 >
                   {day.isToday && day.value > 0 ? (
-                    <span className="mx-auto mt-1 block w-fit bg-limeSoft px-1 text-[0.62rem] font-black text-petrol-900">{day.value}</span>
+                    <span className="mx-auto mt-1 block w-fit bg-limeSoft px-1 text-xs font-black text-petrol-900">{day.value}</span>
                   ) : null}
                 </div>
               </div>
-              <p className="stat-soft truncate text-center text-[0.65rem] font-black uppercase tracking-[0.08em]">{day.label}</p>
+              <p className="stat-soft truncate text-center text-xs font-black uppercase tracking-[0.04em]">{day.label}</p>
             </div>
           );
         })}
@@ -166,15 +168,15 @@ function ProgressOverviewCard({
 
       <div className="stat-divider grid grid-cols-3 divide-x border-b text-center">
         <div className="p-3">
-          <p className="stat-soft text-[0.65rem] font-black uppercase tracking-[0.14em]">Pas</p>
+          <p className="stat-soft text-xs font-black uppercase tracking-[0.08em]">Pas</p>
           <p className="stat-accent mt-1 font-display text-xl font-black tracking-[-0.05em]">{formatCompactNumber(steps)}</p>
         </div>
         <div className="p-3">
-          <p className="stat-soft text-[0.65rem] font-black uppercase tracking-[0.14em]">Calories</p>
+          <p className="stat-soft text-xs font-black uppercase tracking-[0.08em]">Calories</p>
           <p className="stat-accent mt-1 font-display text-xl font-black tracking-[-0.05em]">{formatCompactNumber(calories)}</p>
         </div>
         <div className="p-3">
-          <p className="stat-soft text-[0.65rem] font-black uppercase tracking-[0.14em]">Séances</p>
+          <p className="stat-soft text-xs font-black uppercase tracking-[0.08em]">Séances</p>
           <p className="stat-accent mt-1 font-display text-xl font-black tracking-[-0.05em]">{sessions}</p>
         </div>
       </div>
@@ -206,7 +208,7 @@ function CompactSportRows({ rows }: { rows: CompactSportRow[] }) {
           <article key={row.id} className="theme-stat-card grid grid-cols-[minmax(0,1fr)_7.5rem] items-center gap-4 rounded-card border p-4 shadow-panel">
             <div className="min-w-0">
               <Icon className="h-5 w-5" style={{ color: row.color }} aria-hidden="true" />
-              <p className="stat-soft mt-2 text-[0.68rem] font-black uppercase tracking-[0.15em]">{row.label}</p>
+              <p className="stat-soft mt-2 text-xs font-black uppercase tracking-[0.08em]">{row.label}</p>
               <p className="mt-1 truncate font-display text-3xl font-black tracking-[-0.06em]">{row.value}</p>
               <p className="stat-soft mt-1 text-xs font-bold leading-5">{row.helper}</p>
             </div>
@@ -229,7 +231,7 @@ function CompactSportRows({ rows }: { rows: CompactSportRow[] }) {
                   );
                 })}
               </div>
-              <div className="stat-soft mt-1 grid grid-cols-7 gap-1 text-center text-[0.5rem] font-black uppercase leading-none tracking-[0.02em]">
+              <div className="stat-soft mt-1 grid grid-cols-7 gap-1 text-center text-xs font-black uppercase leading-none tracking-[0.02em]">
                 {row.dayLabels.map((label, index) => (
                   <span key={`${row.id}-label-${index}`}>{label}</span>
                 ))}
@@ -256,22 +258,21 @@ function ChartEmptyState({
   actionLabel: string;
 }) {
   return (
-    <div>
-      <EmptyState icon={icon} title={title} message={message} />
-      <Link to={to} className="mt-3 inline-flex w-full items-center justify-center gap-2 border border-petrol-800/15 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-800">
-        {actionLabel}
-      </Link>
-    </div>
+    <EmptyState
+      icon={icon}
+      title={title}
+      message={message}
+      action={
+        <Link to={to} className="ghost-button w-full justify-center">
+          {actionLabel}
+        </Link>
+      }
+    />
   );
 }
 
 function StatsBlock({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="panel p-4 shadow-sm">
-      <h3 className="font-display text-xl font-black tracking-[-0.05em] text-petrol-800">{title}</h3>
-      <div className="mt-4">{children}</div>
-    </section>
-  );
+  return <ChartCard title={title} variant="plain">{children}</ChartCard>;
 }
 
 function formatTrendPercent(value: number) {
@@ -294,26 +295,53 @@ function SportSummaryTile({
   hint,
   tone = "default"
 }: SportSummaryTileData) {
-  const toneClass =
-    tone === "lime"
-      ? "bg-limeSoft/80 text-petrol-900"
-      : tone === "warm"
-        ? "bg-[#F5A623]/15 text-petrol-800"
-        : tone === "cool"
-          ? "bg-[#24D9D2]/12 text-petrol-800"
-          : "bg-white/75 text-ink";
+  const metricTone = tone === "lime" ? "lime" : tone === "warm" ? "warning" : tone === "cool" ? "info" : "default";
+  return <MetricTile icon={Icon} label={label} value={value} hint={hint} tone={metricTone} />;
+}
 
+type DecisionCardTone = "lime" | "warning" | "danger" | "info";
+
+type DecisionCardData = {
+  icon: LucideIcon;
+  question: string;
+  answer: string;
+  hint: string;
+  tone: DecisionCardTone;
+};
+
+const decisionToneClasses: Record<DecisionCardTone, string> = {
+  lime: "border-limeSoft/70 bg-limeSoft/45",
+  warning: "border-[#F5A623]/30 bg-[#F5A623]/12",
+  danger: "border-red-900/10 bg-red-50",
+  info: "border-[#24D9D2]/20 bg-[#24D9D2]/10"
+};
+
+const motivationToneClasses: Record<MotivationTone, string> = {
+  positive: "border-limeSoft/60 bg-limeSoft/35",
+  care: "border-red-900/10 bg-red-50",
+  neutral: "border-petrol-800/10 bg-white/75"
+};
+
+const motivationIconClasses: Record<MotivationTone, string> = {
+  positive: "bg-limeSoft text-petrol-900",
+  care: "bg-red-900/10 text-red-950",
+  neutral: "bg-mist text-petrol-800"
+};
+
+function DecisionCard({ icon: Icon, question, answer, hint, tone }: DecisionCardData) {
   return (
-    <div className={`min-w-0 rounded-card p-3 shadow-sm ${toneClass}`}>
-      <div className="flex min-w-0 items-center gap-2">
-        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/70 text-petrol-800">
-          <Icon className="h-4 w-4" aria-hidden="true" />
+    <article className={`rounded-card border p-4 shadow-sm ${decisionToneClasses[tone]}`}>
+      <div className="flex items-start gap-3">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/75 text-petrol-800">
+          <Icon className="h-5 w-5" aria-hidden="true" />
         </span>
-        <p className="truncate text-[0.58rem] font-black uppercase tracking-[0.09em] text-muted">{label}</p>
+        <div className="min-w-0">
+          <p className="text-xs font-black uppercase tracking-[0.08em] text-muted">{question}</p>
+          <p className="mt-1 font-display text-2xl font-black tracking-[-0.055em] text-petrol-800">{answer}</p>
+          <p className="mt-1 text-sm font-bold leading-5 text-muted">{hint}</p>
+        </div>
       </div>
-      <div className="mt-2 truncate font-display text-xl font-black tracking-[-0.05em] sm:text-2xl">{value}</div>
-      {hint ? <p className="mt-1 truncate text-[0.66rem] font-bold text-muted">{hint}</p> : null}
-    </div>
+    </article>
   );
 }
 
@@ -349,6 +377,7 @@ export default function StatsPage() {
   });
   const currentWeekProgram = weekSeries[currentWeek - 1];
   const progressStart = subDays(new Date(), 6);
+  const progressStartIso = toISODate(progressStart);
   const progressDays = Array.from({ length: 7 }, (_, index) => {
     const date = addDays(progressStart, index);
     const isoDate = toISODate(date);
@@ -361,6 +390,7 @@ export default function StatsPage() {
     return {
       label: DAY_LABELS[date.getDay()],
       shortLabel: WEEKDAY_INITIALS[date.getDay()],
+      date: isoDate,
       value: sessionsForDay.reduce((total, session) => total + session.durationMin, 0),
       goal: Math.max(10, Math.round((currentWeekVolumeGoal || 210) / 7)),
       isToday: isoDate === toISODate(new Date()),
@@ -409,7 +439,7 @@ export default function StatsPage() {
   const totalSportCalories = sessionsWithCalories.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
   const stepContexts = data.dailyContexts.filter((context) => (context.steps ?? 0) > 0);
   const floorContexts = data.dailyContexts.filter((context) => (context.floors ?? 0) > 0);
-  const showMovement = calendarEnabled || stepContexts.length > 0 || floorContexts.length > 0;
+  const showMovement = calendarEnabled;
   const totalRecordedSteps = stepContexts.reduce((total, context) => total + (context.steps ?? 0), 0);
   const totalRecordedFloors = floorContexts.reduce((total, context) => total + (context.floors ?? 0), 0);
   const averageSportCaloriesPerSession = averageRounded(totalSportCalories, sessionsWithCalories.length);
@@ -443,6 +473,61 @@ export default function StatsPage() {
     sessions: data.sessions,
     dailyContexts: data.dailyContexts
   });
+  const recentDailyContexts = data.dailyContexts.filter((context) => context.date >= progressStartIso);
+  const highFatigueDays = recentDailyContexts.filter((context) => (context.fatigueMorning ?? 0) >= 7).length;
+  const painDays = recentDailyContexts.filter((context) => (context.painMorning ?? 0) >= 4 || context.pain).length;
+  const hardSessions7d = data.sessions.filter((session) => session.completed && session.date >= progressStartIso && (session.rpe ?? 0) >= 8).length;
+  const recoveryNeedsCare = highFatigueDays >= 2 || painDays > 0 || hardSessions7d >= 3 || progressionSummary.averageRpe7d >= 8;
+  const regularityAnswer = currentWeekProgram?.planned
+    ? `${currentWeekProgram.completed}/${currentWeekProgram.planned}`
+    : `${progressionSummary.activeDays7d}/7 j`;
+  const regularityTone: DecisionCardTone =
+    progressionSummary.activeDays7d >= 3 || (currentWeekProgram?.completionRate ?? 0) >= 60
+      ? "lime"
+      : progressionSummary.activeDays7d >= 1 || (currentWeekProgram?.completed ?? 0) > 0
+        ? "warning"
+        : "info";
+  const progressionTone: DecisionCardTone =
+    progressionSummary.volumeTrendPercent > 10
+      ? "lime"
+      : progressionSummary.volumeTrendPercent < -25
+        ? "warning"
+        : "info";
+  const recoveryTone: DecisionCardTone = recoveryNeedsCare ? "danger" : progressionSummary.averageRpe7d >= 7 ? "warning" : "lime";
+  const decisionCards: DecisionCardData[] = [
+    {
+      icon: CalendarCheck,
+      question: "Régularité",
+      answer: regularityAnswer,
+      hint: currentWeekProgram?.planned
+        ? `${currentWeekProgram.completionRate} % du programme validé cette semaine.`
+        : `${progressionSummary.sessions7d} séance${progressionSummary.sessions7d > 1 ? "s" : ""} sur 7 jours.`,
+      tone: regularityTone
+    },
+    {
+      icon: TrendingUp,
+      question: "Progression",
+      answer: formatTrendPercent(progressionSummary.volumeTrendPercent),
+      hint:
+        progressionSummary.volumeTrendPercent > 10
+          ? "Le volume monte. Garde de la marge."
+          : progressionSummary.volumeTrendPercent < -25
+            ? "Volume en baisse : normal si semaine chargée ou récupération."
+            : "Stable : bon signe si tu te sens frais.",
+      tone: progressionTone
+    },
+    {
+      icon: HeartPulse,
+      question: "Lever le pied ?",
+      answer: recoveryNeedsCare ? "Oui" : "Pas forcément",
+      hint: recoveryNeedsCare
+        ? "Fatigue, douleur ou RPE haut : privilégie une version courte."
+        : "Signaux corrects. Reste propre, pas besoin de forcer.",
+      tone: recoveryTone
+    }
+  ];
+  const usefulBadges = progressionSummary.badges.filter((badge) => badge.earned).slice(0, 3);
+  const quickMotivationMessages = progressionSummary.motivationMessages.slice(0, 2);
   const progressHeartRateValues = progressDays.map((day) => day.heartRate);
   const progressHeartRates = progressHeartRateValues.filter((heartRate) => heartRate > 0);
   const progressHeartRate = averageRounded(
@@ -643,48 +728,140 @@ export default function StatsPage() {
     <>
       <PageHeader title="Tendances" />
 
-      {showSport || showMovement ? (
-        <CollapsibleSectionCard title="Vue rapide">
-          <div className="grid gap-4">
-            <ProgressOverviewCard
-              days={progressDays}
-              volumeMin={progressVolumeMin}
-              volumeGoalMin={currentWeekVolumeGoal || progressDays.reduce((total, day) => total + day.goal, 0)}
-              steps={progressSteps}
-              calories={progressCalories}
-              sessions={progressSessionCount}
-            />
-
-            <CompactSportRows rows={compactSportRows} />
-
-            {showSport ? (
-              <section className="hidden gap-3 sm:grid sm:grid-cols-2 xl:grid-cols-4">
-                {currentWeekProgram?.planned ? (
-                  <MetricCard
-                    label="Programme"
-                    value={`${currentWeekProgram.completed}/${currentWeekProgram.planned}`}
-                    hint={`${currentWeekProgram.completionRate} % validé`}
-                    tone="lime"
-                  />
-                ) : null}
-                {data.sessions.length ? <MetricCard label="Séances totales" value={data.sessions.length} /> : null}
-                {averageRpe ? <MetricCard label="RPE moyen" value={averageRpe} /> : null}
-                {averageHeartRate ? <MetricCard label="FC moyenne" value={averageHeartRate} /> : null}
-              </section>
-            ) : null}
+      {showSport ? (
+        <SectionCard className="p-4 sm:p-6">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="title-lg">Réponse rapide</h2>
+              <p className="mt-2 text-sm font-semibold leading-6 text-muted">
+                Trois signaux pour décider quoi faire, pas un audit de laboratoire.
+              </p>
+            </div>
+            <StatusBadge tone={recoveryNeedsCare ? "danger" : "lime"}>{recoveryNeedsCare ? "Alléger aujourd'hui" : "Feu vert prudent"}</StatusBadge>
           </div>
-        </CollapsibleSectionCard>
+
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            {decisionCards.map((card) => (
+              <DecisionCard key={card.question} {...card} />
+            ))}
+          </div>
+
+          {quickMotivationMessages.length ? (
+            <div className="mt-4 grid gap-2 md:grid-cols-2">
+              {quickMotivationMessages.map((message) => (
+                <article key={message.id} className={`rounded-card border p-3 shadow-sm ${motivationToneClasses[message.tone]}`}>
+                  <div className="flex items-start gap-3">
+                    <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${motivationIconClasses[message.tone]}`}>
+                      <Lightbulb className="h-4 w-4" aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-black text-petrol-800">{message.title}</p>
+                      <p className="mt-1 text-sm font-semibold leading-5 text-muted">{message.message}</p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : null}
+        </SectionCard>
       ) : null}
 
       {showSport ? (
-        <CollapsibleSectionCard title="Sport">
+        <SectionCard className="p-4 sm:p-5">
+          <ChartCard
+            title="Graphique principal"
+            subtitle="Un seul graphique à la fois : tu choisis l'angle utile."
+            variant="plain"
+            action={
+              <div className="tab-control grid min-w-full grid-cols-3 gap-1 sm:min-w-[22rem]">
+                {SPORT_SESSION_CHARTS.map((mode) => (
+                  <button
+                    key={mode.id}
+                    type="button"
+                    className={`tab-button ${sportSessionChart === mode.id ? "tab-button-active" : "tab-button-idle"}`}
+                    onClick={() => setSportSessionChart(mode.id)}
+                  >
+                    {mode.label}
+                  </button>
+                ))}
+              </div>
+            }
+          >
+            {sportSessionChart === "volume" ? (
+              sessionTrendReady && hasValue(weekSeries, "volume") ? (
+                <MetricBarChart
+                  data={weekSeries}
+                  xKey="week"
+                  yKey="volume"
+                  suffix=" min"
+                  summary={`${totalVolumeMinutes} min enregistrées sur le programme affiché.`}
+                />
+              ) : (
+                <ChartEmptyState
+                  icon={Dumbbell}
+                  title="Ajoute 2 séances pour voir ton volume"
+                  message="Le volume devient lisible quand tu as au moins deux séances enregistrées avec une durée."
+                  to="/sessions"
+                  actionLabel="Ajouter une séance"
+                />
+              )
+            ) : null}
+
+            {sportSessionChart === "calories" ? (
+              sportCaloriesReady && hasValue(weekSeries, "calories") ? (
+                <MetricBarChart
+                  data={weekSeries}
+                  xKey="week"
+                  yKey="calories"
+                  color="#DCEFA3"
+                  suffix=" kcal"
+                  summary={`${totalSportCalories} kcal sport enregistrées au total.`}
+                />
+              ) : (
+                <ChartEmptyState
+                  icon={Dumbbell}
+                  title="Calories sport en attente"
+                  message="Ajoute les calories sur 2 séances pour voir une dépense hebdomadaire utile."
+                  to="/sessions"
+                  actionLabel="Compléter une séance"
+                />
+              )
+            ) : null}
+
+            {sportSessionChart === "execution" ? (
+              executionTrendReady ? (
+                <ComparisonBarChart
+                  data={weekSeries}
+                  xKey="week"
+                  firstKey="planned"
+                  secondKey="completed"
+                  firstName="Prévues"
+                  secondName="Réalisées"
+                  summary={`${totalCompletedSessions} séances prévues validées / ${totalPlannedSessions} prévues. Une séance compte même si tu la fais un autre jour.`}
+                />
+              ) : (
+                <ChartEmptyState
+                  icon={CalendarCheck}
+                  title="Aucune séance du programme validée"
+                  message="Valide une séance du planning pour comparer ce qui était prévu avec ce qui a été fait."
+                  to="/planning"
+                  actionLabel="Voir le programme"
+                />
+              )
+            ) : null}
+          </ChartCard>
+        </SectionCard>
+      ) : null}
+
+      {showSport ? (
+        <CollapsibleSectionCard title="Détails sport" summary="Records utiles, tendance 7 jours et badges gagnés.">
           <section className="theme-stat-card overflow-hidden rounded-panel border p-4 shadow-panel sm:p-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <span className="grid h-12 w-12 place-items-center rounded-full bg-petrol-800 text-limeSoft">
                   <Dumbbell className="h-6 w-6" aria-hidden="true" />
                 </span>
-                <p className="stat-muted mt-4 text-[0.68rem] font-black uppercase tracking-[0.16em]">Synthèse sport</p>
+                <p className="stat-muted mt-4 text-xs font-black uppercase tracking-[0.1em]">Synthèse sport</p>
                 <h2 className="mt-1 font-display text-4xl font-black tracking-[-0.07em] sm:text-5xl">
                   {formatCompactNumber(progressionSummary.volume7d)}
                   <span className="stat-muted ml-2 text-2xl">min</span>
@@ -696,13 +873,13 @@ export default function StatsPage() {
 
               <div className="grid grid-cols-2 gap-2 text-center sm:min-w-64">
                 <div className="rounded-card bg-white/70 px-3 py-2">
-                  <p className="stat-soft text-[0.58rem] font-black uppercase tracking-[0.12em]">Tendance 7 j</p>
+                  <p className="stat-soft text-xs font-black uppercase tracking-[0.06em]">Tendance 7 j</p>
                   <p className="stat-accent mt-1 font-display text-2xl font-black tracking-[-0.05em]">
                     {formatTrendPercent(progressionSummary.volumeTrendPercent)}
                   </p>
                 </div>
                 <div className="rounded-card bg-white/70 px-3 py-2">
-                  <p className="stat-soft text-[0.58rem] font-black uppercase tracking-[0.12em]">RPE 7 j</p>
+                  <p className="stat-soft text-xs font-black uppercase tracking-[0.06em]">RPE 7 j</p>
                   <p className="stat-accent mt-1 font-display text-2xl font-black tracking-[-0.05em]">
                     {progressionSummary.averageRpe7d || "n/a"}
                   </p>
@@ -716,7 +893,7 @@ export default function StatsPage() {
               ))}
             </div>
 
-            <div className="mt-4 grid gap-3 xl:grid-cols-[minmax(0,0.86fr)_minmax(0,1.34fr)]">
+            <div className="mt-4 grid gap-3">
               <div className="grid gap-3 rounded-card bg-white/70 p-3">
                 <div className="flex items-start gap-3">
                   <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-petrol-800 text-limeSoft">
@@ -729,7 +906,7 @@ export default function StatsPage() {
                   <div className="grid gap-2 sm:grid-cols-3 xl:grid-cols-1">
                     {progressionSummary.records.slice(0, 3).map((record) => (
                       <div key={`${record.label}-${record.value}`} className="rounded-card bg-mist/55 p-3">
-                        <p className="flex items-center gap-2 text-[0.62rem] font-black uppercase tracking-[0.08em] text-muted">
+                        <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.06em] text-muted">
                           <TrendingUp className="h-4 w-4" aria-hidden="true" /> {record.label}
                         </p>
                         <p className="mt-1 font-display text-xl font-black tracking-[-0.05em] text-petrol-800">{record.value}</p>
@@ -739,104 +916,18 @@ export default function StatsPage() {
                   </div>
                 ) : null}
 
-                <div className="flex flex-wrap gap-2">
-                  {progressionSummary.badges.map((badge) => (
-                    <span
-                      key={badge.id}
-                      className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-[0.6rem] font-black uppercase tracking-[0.05em] ${
-                        badge.earned ? "bg-limeSoft text-petrol-900" : "bg-mist text-muted"
-                      }`}
-                      title={badge.hint}
-                    >
-                      <Award className="h-4 w-4" aria-hidden="true" />
-                      {badge.label}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="rounded-card bg-white/70 p-3">
-                <div className="grid grid-cols-3 gap-1 rounded-full bg-mist/70 p-1">
-                  {SPORT_SESSION_CHARTS.map((mode) => (
-                    <button
-                      key={mode.id}
-                      type="button"
-                      className={`min-h-10 rounded-full px-2 text-center text-[0.62rem] font-black uppercase tracking-[0.06em] transition ${
-                        sportSessionChart === mode.id ? "bg-petrol-800 text-white shadow-soft" : "text-petrol-800 hover:bg-white/70"
-                      }`}
-                      onClick={() => setSportSessionChart(mode.id)}
-                    >
-                      {mode.label}
-                    </button>
-                  ))}
-                </div>
-
-                  <div className="mt-4 min-w-0">
-                    {sportSessionChart === "volume" ? (
-                      sessionTrendReady && hasValue(weekSeries, "volume") ? (
-                        <MetricBarChart
-                          data={weekSeries}
-                          xKey="week"
-                          yKey="volume"
-                          suffix=" min"
-                          summary={`${totalVolumeMinutes} min enregistrées sur le programme affiché.`}
-                        />
-                      ) : (
-                        <ChartEmptyState
-                          icon={Dumbbell}
-                          title="Ajoute 2 séances pour voir ton volume"
-                          message="Le volume devient lisible quand tu as au moins deux séances enregistrées avec une durée."
-                          to="/sessions"
-                          actionLabel="Ajouter une séance"
-                        />
-                      )
-                    ) : null}
-
-                    {sportSessionChart === "calories" ? (
-                      sportCaloriesReady && hasValue(weekSeries, "calories") ? (
-                        <MetricBarChart
-                          data={weekSeries}
-                          xKey="week"
-                          yKey="calories"
-                          color="#DCEFA3"
-                          suffix=" kcal"
-                          summary={`${totalSportCalories} kcal sport enregistrées au total.`}
-                        />
-                      ) : (
-                        <ChartEmptyState
-                          icon={Dumbbell}
-                          title="Calories sport en attente"
-                          message="Ajoute les calories sur 2 séances pour voir une dépense hebdomadaire utile."
-                          to="/sessions"
-                          actionLabel="Compléter une séance"
-                        />
-                      )
-                    ) : null}
-
-                    {sportSessionChart === "execution" ? (
-                      executionTrendReady ? (
-                        <ComparisonBarChart
-                          data={weekSeries}
-                          xKey="week"
-                          firstKey="planned"
-                          secondKey="completed"
-                          firstName="Prévues"
-                          secondName="Réalisées"
-                          summary={`${totalCompletedSessions} séances prévues validées / ${totalPlannedSessions} prévues. Une séance compte même si tu la fais un autre jour.`}
-                        />
-                      ) : (
-                        <ChartEmptyState
-                          icon={CalendarCheck}
-                          title="Aucune séance enregistrée cette semaine"
-                          message="Valide une séance du planning pour comparer ce qui était prévu avec ce qui a été fait."
-                          to="/planning"
-                          actionLabel="Voir le programme"
-                        />
-                      )
-                    ) : null}
+                {usefulBadges.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {usefulBadges.map((badge) => (
+                      <StatusBadge key={badge.id} icon={Award} tone="lime" title={badge.hint}>
+                        {badge.label}
+                      </StatusBadge>
+                    ))}
                   </div>
-                </div>
+                ) : null}
               </div>
+            </div>
+
           </section>
         </CollapsibleSectionCard>
       ) : null}
@@ -848,15 +939,15 @@ export default function StatsPage() {
               <StatsBlock title="Moyennes pas et étages">
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                   {averageStepsPerDay ? (
-                    <MetricCard label="Pas / jour" value={averageStepsPerDay.toLocaleString("fr-FR")} hint={`${stepContexts.length} jour${stepContexts.length > 1 ? "s" : ""} renseigné${stepContexts.length > 1 ? "s" : ""}`} tone="lime" />
+                    <MetricTile label="Pas / jour" value={averageStepsPerDay.toLocaleString("fr-FR")} hint={`${stepContexts.length} jour${stepContexts.length > 1 ? "s" : ""} renseigné${stepContexts.length > 1 ? "s" : ""}`} tone="lime" />
                   ) : null}
-                  {averageStepsPerWeek ? <MetricCard label="Pas / semaine" value={averageStepsPerWeek.toLocaleString("fr-FR")} hint="Semaines avec pas renseignés" /> : null}
-                  {averageStepsPerMonth ? <MetricCard label="Pas / mois" value={averageStepsPerMonth.toLocaleString("fr-FR")} hint="Mois avec pas renseignés" /> : null}
+                  {averageStepsPerWeek ? <MetricTile label="Pas / semaine" value={averageStepsPerWeek.toLocaleString("fr-FR")} hint="Semaines avec pas renseignés" /> : null}
+                  {averageStepsPerMonth ? <MetricTile label="Pas / mois" value={averageStepsPerMonth.toLocaleString("fr-FR")} hint="Mois avec pas renseignés" /> : null}
                   {averageFloorsPerDay ? (
-                    <MetricCard label="Étages / jour" value={averageFloorsPerDay.toLocaleString("fr-FR")} hint={`${floorContexts.length} jour${floorContexts.length > 1 ? "s" : ""} renseigné${floorContexts.length > 1 ? "s" : ""}`} tone="lime" />
+                    <MetricTile label="Étages / jour" value={averageFloorsPerDay.toLocaleString("fr-FR")} hint={`${floorContexts.length} jour${floorContexts.length > 1 ? "s" : ""} renseigné${floorContexts.length > 1 ? "s" : ""}`} tone="lime" />
                   ) : null}
-                  {averageFloorsPerWeek ? <MetricCard label="Étages / semaine" value={averageFloorsPerWeek.toLocaleString("fr-FR")} hint="Semaines avec étages renseignés" /> : null}
-                  {averageFloorsPerMonth ? <MetricCard label="Étages / mois" value={averageFloorsPerMonth.toLocaleString("fr-FR")} hint="Mois avec étages renseignés" /> : null}
+                  {averageFloorsPerWeek ? <MetricTile label="Étages / semaine" value={averageFloorsPerWeek.toLocaleString("fr-FR")} hint="Semaines avec étages renseignés" /> : null}
+                  {averageFloorsPerMonth ? <MetricTile label="Étages / mois" value={averageFloorsPerMonth.toLocaleString("fr-FR")} hint="Mois avec étages renseignés" /> : null}
                 </div>
               </StatsBlock>
             ) : null}

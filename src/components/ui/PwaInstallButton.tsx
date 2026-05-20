@@ -66,7 +66,7 @@ export function PwaInstallButton() {
       </button>
 
       {showHelp ? (
-        <div className="absolute right-0 top-full mt-2 w-72 border border-petrol-800/10 bg-white p-4 text-sm font-bold leading-6 text-ink shadow-soft">
+        <div className="absolute right-0 top-full mt-2 w-72 rounded-card border border-petrol-800/10 bg-white p-4 text-sm font-bold leading-6 text-ink shadow-sm">
           {isIosDevice()
             ? "Sur iPhone : ouvre le partage Safari, puis choisis “Sur l'écran d'accueil”."
             : "Si le bouton navigateur n'apparaît pas encore, ouvre le menu du navigateur puis “Installer l'application” ou “Ajouter à l'écran d'accueil”."}

@@ -29,7 +29,7 @@ export function WeightForm({ initial, onSubmit, onCancel }: WeightFormProps) {
   };
 
   return (
-    <form onSubmit={submit} className="grid gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft">
+    <form onSubmit={submit} className="grid gap-4 rounded-card border border-petrol-800/10 bg-white p-4 shadow-sm">
       <div className="grid gap-3 sm:grid-cols-[1fr_1fr_2fr]">
         <label className="field-label">
           Date

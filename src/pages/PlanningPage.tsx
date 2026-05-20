@@ -111,7 +111,7 @@ function SessionChecklistPanel({
       <div className="mt-4 grid gap-4">
         {groupChecklistItems(items).map((group) => (
           <div key={group.group} className="border-l-4 border-limeSoft bg-mist/45 p-3">
-            <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-petrol-800">{group.group}</p>
+            <p className="text-xs font-black uppercase tracking-[0.08em] text-petrol-800">{group.group}</p>
             <div className="mt-3 grid gap-2">
               {group.items.map((item) => (
                 <label key={item.id} className="flex items-start gap-3 bg-white p-3 text-sm font-bold leading-5 text-ink">
@@ -176,7 +176,7 @@ function ExercisePrescriptionPanel({
 
       {guidanceExercises.length ? (
         <div className="mt-4 border-l-4 border-limeSoft bg-mist/45 p-4">
-          <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-petrol-800">Prépa / consignes</p>
+          <p className="text-xs font-black uppercase tracking-[0.08em] text-petrol-800">Prépa / consignes</p>
           <div className="mt-3 grid gap-2">
             {guidanceExercises.map((exercise) => (
               <div key={exercise.id} className="bg-white p-3">
@@ -208,7 +208,7 @@ function ExercisePrescriptionPanel({
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-muted">{exercise.block}</p>
+                      <p className="text-xs font-black uppercase tracking-[0.08em] text-muted">{exercise.block}</p>
                       <h3 className={`font-display text-xl font-black tracking-[-0.04em] ${checked ? "text-muted line-through" : "text-petrol-800"}`}>
                         {getExerciseDisplayTitle(exercise)}
                       </h3>
@@ -465,7 +465,7 @@ export default function PlanningPage() {
             </p>
           </div>
           <div className="bg-limeSoft p-4 text-petrol-900">
-            <p className="text-[0.68rem] font-black uppercase tracking-[0.18em]">Vacances</p>
+            <p className="text-xs font-black uppercase tracking-[0.1em]">Vacances</p>
             <h2 className="mt-2 font-display text-2xl font-black tracking-[-0.05em]">
               {context.vacation ? "Mode maintenance" : "Semaine normale"}
             </h2>
@@ -567,7 +567,7 @@ export default function PlanningPage() {
                       #{index + 1}
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-[0.68rem] font-black uppercase tracking-[0.14em] text-muted">
+                      <span className="block text-xs font-black uppercase tracking-[0.08em] text-muted">
                         {getPlannedTypeLabel(session.type, settings)} · repère initial {session.day} {formatShortDate(session.date)}
                       </span>
                       <span className="mt-1 block truncate font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
@@ -609,21 +609,22 @@ export default function PlanningPage() {
                 {isOpen ? (
                   <div className="border-t border-petrol-800/10 p-4 sm:p-5">
                   <div className="border-l-4 border-limeSoft bg-mist/45 p-4">
-                    <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-petrol-800">Objectif</p>
+                    <p className="text-xs font-black uppercase tracking-[0.08em] text-petrol-800">Objectif</p>
                     <p className="mt-2 text-sm font-semibold leading-6 text-ink">{session.objective}</p>
                   </div>
 
                   {!hasStructuredExercises || energy !== "normal" ? (
                     <p className="mt-4 bg-white p-4 text-sm font-semibold leading-6 text-ink">{content}</p>
-                  ) : (
-                    <p className="mt-4 border border-petrol-800/10 bg-white p-3 text-xs font-bold leading-5 text-muted">
-                      La prescription est structurée ci-dessous pour éviter les doublons : tu coches uniquement les blocs utiles et tu notes charge, ressenti ou adaptation.
-                    </p>
-                  )}
-                  {session.type !== "rest" ? (
-                    <p className="mt-3 border border-petrol-800/10 bg-white p-3 text-xs font-bold leading-5 text-muted">
-                      Après la séance, utilise “Saisir temps / FC / calories” : durée, FC, calories et RPE alimentent directement les stats.
-                    </p>
+                  ) : null}
+                  {hasStructuredExercises && energy === "normal" && session.type !== "rest" ? (
+                    <details className="mt-4 rounded-card border border-petrol-800/10 bg-white p-3">
+                      <summary className="cursor-pointer list-none text-sm font-black uppercase tracking-[0.06em] text-petrol-800">
+                        Notes utiles
+                      </summary>
+                      <p className="mt-3 text-sm font-semibold leading-6 text-muted">
+                        Les blocs ci-dessous remplacent le texte long pour éviter les doublons. Après la séance, saisis durée, FC, calories et RPE pour alimenter les stats.
+                      </p>
+                    </details>
                   ) : null}
 
                   <ExercisePrescriptionPanel
@@ -662,20 +663,10 @@ export default function PlanningPage() {
                         </span>
                       ))}
                     </div>
-                    {session.type !== "rest" ? (
-                      <div className="flex flex-wrap gap-2">
-                        <button className="action-button" onClick={() => setSessionMode(session)}>
-                          <PlayCircle className="h-4 w-4" /> Démarrer
-                        </button>
-                        <button className="ghost-button" onClick={() => setEditingSession(session)}>
-                          <Pencil className="h-4 w-4" /> Modifier
-                        </button>
-                        {completed ? (
-                          <button className="ghost-button" onClick={() => deletePlannedSessionCompletion(session.id)}>
-                            <RotateCcw className="h-4 w-4" /> Annuler réalisé
-                          </button>
-                        ) : null}
-                      </div>
+                    {session.type !== "rest" && completed ? (
+                      <button className="ghost-button" onClick={() => deletePlannedSessionCompletion(session.id)}>
+                        <RotateCcw className="h-4 w-4" /> Annuler réalisé
+                      </button>
                     ) : null}
                   </div>
                   </div>

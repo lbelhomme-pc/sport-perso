@@ -32,9 +32,9 @@ export const MAX_PRIMARY_TABS = 5;
 export const modulesConfig: Record<AppModuleId, AppModuleConfig> = {
   home: {
     id: "home",
-    label: "Accueil",
+    label: "Jour",
     shortLabel: "Jour",
-    description: "Synthèse du jour, action principale et rappels utiles.",
+    description: "Aujourd'hui, action principale et rappels utiles.",
     route: "/",
     defaultEnabled: true,
     canBeMainTab: true,
@@ -42,9 +42,9 @@ export const modulesConfig: Record<AppModuleId, AppModuleConfig> = {
   },
   training: {
     id: "training",
-    label: "Entraînement",
-    shortLabel: "Plan",
-    description: "Programme, séances prévues et mode séance.",
+    label: "Programme",
+    shortLabel: "Prog.",
+    description: "Choisir et préparer les séances de la semaine.",
     route: "/planning",
     defaultEnabled: true,
     canBeMainTab: true,
@@ -62,9 +62,9 @@ export const modulesConfig: Record<AppModuleId, AppModuleConfig> = {
   },
   nutrition: {
     id: "nutrition",
-    label: "Nutrition",
+    label: "Repas",
     shortLabel: "Repas",
-    description: "Repas, calories, protéines et favoris alimentaires.",
+    description: "Repas, protéines, favoris et suivi alimentaire si activé.",
     route: "/meals",
     defaultEnabled: false,
     canBeMainTab: true,
@@ -82,9 +82,9 @@ export const modulesConfig: Record<AppModuleId, AppModuleConfig> = {
   },
   progress: {
     id: "progress",
-    label: "Progression",
+    label: "Stats",
     shortLabel: "Stats",
-    description: "Tendances, graphiques et décisions à partir des données.",
+    description: "Tendances utiles pour décider quoi ajuster.",
     route: "/stats",
     defaultEnabled: true,
     canBeMainTab: true,
@@ -167,11 +167,11 @@ function uniqueModules(modules: AppModuleId[]) {
   return moduleOrder.filter((moduleId) => modules.includes(moduleId));
 }
 
-function uniqueModulesInUserOrder(modules: AppModuleId[]) {
+function uniqueModulesInOrder(modules: AppModuleId[]) {
   const seen = new Set<AppModuleId>();
 
   return modules.filter((moduleId) => {
-    if (!moduleOrder.includes(moduleId) || seen.has(moduleId)) return false;
+    if (seen.has(moduleId) || !modulesConfig[moduleId]) return false;
     seen.add(moduleId);
     return true;
   });
@@ -193,6 +193,7 @@ function fallbackModulesFromFocus(focus: NavigationFocus = "both") {
 
 export const DEFAULT_MODULES_ENABLED = ["home", "training", "sessions", "calendar", "progress", "recovery", "profile"] as AppModuleId[];
 export const DEFAULT_PRIMARY_TABS = ["home", "training", "sessions", "progress", "profile"] as AppModuleId[];
+export const MAIN_NAVIGATION_ORDER = ["home", "training", "sessions", "progress", "profile"] as AppModuleId[];
 
 function applyModuleGuards(settings: AppSettings, modules: AppModuleId[]) {
   const nutritionMode = settings.nutritionMode ?? "calories-macros";
@@ -208,13 +209,12 @@ export function resolveModulePreferences(settings: AppSettings): ModulePreferenc
   const fallback = fallbackModulesFromFocus(settings.navigationFocus);
   const enabled = uniqueModules(applyModuleGuards(settings, settings.enabledModules?.length ? settings.enabledModules : fallback.enabled));
   const normalizedEnabled = uniqueModules(["home" as AppModuleId, ...enabled, "profile" as AppModuleId]);
-  const primaryFromSettings = settings.primaryModuleTabs?.length ? settings.primaryModuleTabs : fallback.tabs;
-  const primaryTabs = uniqueModulesInUserOrder(applyModuleGuards(settings, primaryFromSettings))
+  const requestedTabs = settings.primaryModuleTabs?.length ? settings.primaryModuleTabs : fallback.tabs;
+  const middleTabs = uniqueModulesInOrder(requestedTabs)
+    .filter((moduleId) => moduleId !== "home" && moduleId !== "profile")
     .filter((moduleId) => normalizedEnabled.includes(moduleId) && modulesConfig[moduleId].canBeMainTab)
-    .slice(0, MAX_PRIMARY_TABS);
-  const tabsWithHome = primaryTabs.includes("home") ? primaryTabs : (["home" as AppModuleId, ...primaryTabs] as AppModuleId[]);
-  const tabsWithoutProfile = tabsWithHome.filter((moduleId) => moduleId !== "profile").slice(0, MAX_PRIMARY_TABS - 1);
-  const resolvedPrimaryTabs: AppModuleId[] = [...tabsWithoutProfile, "profile" as AppModuleId];
+    .slice(0, MAX_PRIMARY_TABS - 2);
+  const resolvedPrimaryTabs = ["home" as AppModuleId, ...middleTabs, "profile" as AppModuleId];
 
   return {
     enabledModules: normalizedEnabled,

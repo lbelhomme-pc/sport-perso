@@ -7,8 +7,10 @@ import { useSettings } from "../../hooks/useSettings";
 import { ScrollToTarget } from "./ScrollToTarget";
 
 function navClass(isActive: boolean) {
-  return `inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[0.74rem] font-black uppercase tracking-[0.08em] transition duration-200 ${
-    isActive ? "bg-petrol-800 text-white shadow-soft" : "text-petrol-800 hover:bg-white/70"
+  return `inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[0.74rem] font-black uppercase tracking-[0.08em] transition duration-200 ease-out ${
+    isActive
+      ? "bg-petrol-800 text-white shadow-sm ring-1 ring-petrol-800/15"
+      : "text-petrol-800 hover:bg-white/70 hover:text-petrol-900 active:scale-[0.99]"
   }`;
 }
 
@@ -57,7 +59,7 @@ export function AppLayout() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-3 py-2.5 sm:px-6 lg:px-8">
           <NavLink
             to="/"
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-[1.15rem] shadow-soft ring-1 ring-white/80 transition hover:-translate-y-0.5 hover:shadow-lift sm:h-12 sm:w-12"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-[1.15rem] shadow-sm ring-1 ring-white/80 transition duration-200 ease-out hover:-translate-y-px hover:shadow-soft active:translate-y-0 sm:h-12 sm:w-12"
             aria-label={APP_NAME}
           >
             <img className="h-full w-full rounded-[1.15rem]" src={appIconUrl} alt="" aria-hidden="true" />
@@ -102,8 +104,10 @@ export function AppLayout() {
                   to={route.path}
                   end={route.path === "/"}
                   className={({ isActive }) =>
-                    `grid min-h-[3.35rem] place-items-center gap-1 rounded-[1.15rem] px-1 py-2 text-[0.62rem] font-black uppercase leading-none tracking-[0.06em] transition ${
-                      isActive || (!isOnPrimaryRoute && route.moduleId === "profile") ? "bg-petrol-800 text-white shadow-soft" : "text-muted"
+                    `grid min-h-[3.35rem] place-items-center gap-1 rounded-[1.15rem] px-1 py-2 text-[0.62rem] font-black uppercase leading-none tracking-[0.06em] transition duration-200 ease-out ${
+                      isActive || (!isOnPrimaryRoute && route.moduleId === "profile")
+                        ? "bg-petrol-800 text-white shadow-sm ring-1 ring-limeSoft/25"
+                        : "text-muted hover:bg-white/70 hover:text-petrol-800 active:scale-[0.99]"
                     }`
                   }
                 >

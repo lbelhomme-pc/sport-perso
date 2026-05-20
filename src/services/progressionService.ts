@@ -15,6 +15,15 @@ export type HealthyBadge = {
   earned: boolean;
 };
 
+export type MotivationTone = "positive" | "care" | "neutral";
+
+export type MotivationMessage = {
+  id: string;
+  title: string;
+  message: string;
+  tone: MotivationTone;
+};
+
 export type SportProgressionSummary = {
   sessions7d: number;
   volume7d: number;
@@ -27,6 +36,7 @@ export type SportProgressionSummary = {
   deloadRecommended: boolean;
   deloadReason: string;
   coachingMessage: string;
+  motivationMessages: MotivationMessage[];
   badges: HealthyBadge[];
 };
 
@@ -86,6 +96,7 @@ export function getSportProgressionSummary({
   const sessions7d = completed.filter((session) => inRange(session.date, last7Start, today));
   const previousSessions7d = completed.filter((session) => inRange(session.date, previous7Start, previous7End));
   const sessions30d = completed.filter((session) => inRange(session.date, last30Start, today));
+  const olderCompleted = completed.filter((session) => session.date < last7Start);
   const volume7d = sessions7d.reduce((total, session) => total + session.durationMin, 0);
   const previousVolume7d = previousSessions7d.reduce((total, session) => total + session.durationMin, 0);
   const volumeTrendPercent = previousVolume7d > 0 ? ((volume7d - previousVolume7d) / previousVolume7d) * 100 : 0;
@@ -98,6 +109,17 @@ export function getSportProgressionSummary({
   const highPainDays = dailyContexts.filter((context) => inRange(context.date, last7Start, today) && (context.painMorning ?? 0) >= 4).length;
   const highPainSessions = sessions7d.filter((session) => (session.painDuring ?? 0) >= 7 || session.pain).length;
   const typeVariety = new Set(sessions7d.map((session) => session.type)).size;
+  const resumedAfterPause = sessions7d.length > 0 && previousSessions7d.length === 0 && olderCompleted.length > 0;
+  const firstWeekStarted = sessions7d.length > 0 && previousSessions7d.length === 0 && olderCompleted.length === 0;
+  const balancedWeek = typeVariety >= 2 && restDays7d >= 1 && averageRpe7d > 0 && averageRpe7d <= 7;
+  const stableVolume = volume7d > 0 && previousVolume7d > 0 && Math.abs(volumeTrendPercent) <= 15;
+  const controlledProgression =
+    volume7d > 0 &&
+    (previousVolume7d === 0 || (volumeTrendPercent >= 0 && volumeTrendPercent <= 30)) &&
+    (averageRpe7d === 0 || averageRpe7d <= 7.5) &&
+    highPainDays === 0 &&
+    highPainSessions === 0 &&
+    highFatigueDays <= 2;
 
   const longest = getMaxBy(completed, (session) => session.durationMin);
   const calories = getMaxBy(completed, (session) => session.caloriesBurned ?? 0);
@@ -146,31 +168,116 @@ export function getSportProgressionSummary({
           : "Progression cohérente : garde de la marge.";
 
   const coachingMessage = !completed.length
-    ? "Saisis 2 séances pour obtenir une vraie lecture de progression."
+    ? "Commence simple : une séance courte suffit pour lancer la tendance."
     : deloadRecommended
       ? `À alléger : ${deloadReason}`
       : activeDays7d >= 3
         ? `Bonne régularité : ${activeDays7d} jours actifs, volume ${formatSignedPercent(volumeTrendPercent)}.`
         : "Objectif simple : vise 2 à 3 jours actifs cette semaine avant de chercher plus compliqué.";
 
+  const motivationMessages: MotivationMessage[] = [
+    !completed.length
+      ? {
+          id: "no-data",
+          title: "Point de départ",
+          message: "Ajoute une séance courte quand tu peux. Le but est de revenir, pas de tout réussir d'un coup.",
+          tone: "neutral" as const
+        }
+      : undefined,
+    highPainDays > 0 || highPainSessions > 0
+      ? {
+          id: "pain-watch",
+          title: "Douleur à surveiller",
+          message: "Note où ça gêne et garde léger aujourd'hui. Une séance courte suffit.",
+          tone: "care" as const
+        }
+      : undefined,
+    highFatigueDays >= 2 || averageRpe7d >= 8
+      ? {
+          id: "high-fatigue",
+          title: "Fatigue haute",
+          message: "Réduis l'intensité, privilégie mobilité ou zone facile. Le repos compte aussi.",
+          tone: "care" as const
+        }
+      : undefined,
+    resumedAfterPause
+      ? {
+          id: "restart",
+          title: "Reprise réussie",
+          message: "Tu as relancé la routine. Garde court et régulier avant d'ajouter du volume.",
+          tone: "positive" as const
+        }
+      : undefined,
+    firstWeekStarted
+      ? {
+          id: "first-step",
+          title: "Départ lancé",
+          message: "Première trace enregistrée. Le prochain objectif, c'est simplement de revenir.",
+          tone: "positive" as const
+        }
+      : undefined,
+    balancedWeek
+      ? {
+          id: "balanced-week-message",
+          title: "Semaine équilibrée",
+          message: "Tu combines variété, repos et intensité maîtrisée. Continue comme ça.",
+          tone: "positive" as const
+        }
+      : undefined,
+    activeDays7d >= 3 && !deloadRecommended
+      ? {
+          id: "good-regularity",
+          title: "Bonne régularité",
+          message: "Trois jours actifs ou plus : base solide. Inutile d'en rajouter pour cocher plus.",
+          tone: "positive" as const
+        }
+      : undefined,
+    stableVolume
+      ? {
+          id: "stable-volume-message",
+          title: "Volume stable",
+          message: "La charge est régulière. Si les sensations sont bonnes, garde ce rythme.",
+          tone: "neutral" as const
+        }
+      : undefined
+  ].filter((item): item is MotivationMessage => Boolean(item)).slice(0, 3);
+
   const badges: HealthyBadge[] = [
     {
-      id: "regularity",
-      label: "Régularité utile",
+      id: "active-3-days",
+      label: "3 jours actifs",
       hint: "Au moins 3 jours actifs sur 7.",
       earned: activeDays7d >= 3
     },
     {
-      id: "balanced-week",
-      label: "Semaine équilibrée",
-      hint: "Au moins 2 types de séances, RPE moyen maîtrisé.",
-      earned: typeVariety >= 2 && averageRpe7d > 0 && averageRpe7d <= 7
-    },
-    {
       id: "rest-respected",
-      label: "Repos respecté",
+      label: "Récupération respectée",
       hint: "Au moins 1 jour sans séance sur 7.",
       earned: restDays7d >= 1
+    },
+    {
+      id: "stable-volume",
+      label: "Volume stable",
+      hint: "Volume proche de la semaine précédente.",
+      earned: stableVolume
+    },
+    {
+      id: "restart-success",
+      label: "Reprise réussie",
+      hint: "Retour à l'entraînement après une pause ou premier pas lancé.",
+      earned: resumedAfterPause || firstWeekStarted
+    },
+    {
+      id: "balanced-week",
+      label: "Semaine équilibrée",
+      hint: "Variété, repos et RPE moyen maîtrisé.",
+      earned: balancedWeek
+    },
+    {
+      id: "controlled-progression",
+      label: "Progression maîtrisée",
+      hint: "Volume en hausse raisonnable sans douleur marquée.",
+      earned: controlledProgression
     }
   ];
 
@@ -186,6 +293,7 @@ export function getSportProgressionSummary({
     deloadRecommended,
     deloadReason,
     coachingMessage,
+    motivationMessages,
     badges
   };
 }

@@ -17,9 +17,9 @@ export default {
         muted: "rgb(var(--color-muted) / <alpha-value>)"
       },
       boxShadow: {
-        panel: "0 28px 90px rgba(0, 40, 58, 0.14)",
-        soft: "0 18px 46px rgba(0, 40, 58, 0.09)",
-        lift: "0 18px 50px rgba(0, 40, 58, 0.16)"
+        panel: "0 18px 58px rgba(0, 40, 58, 0.10)",
+        soft: "0 10px 30px rgba(0, 40, 58, 0.07)",
+        lift: "0 14px 34px rgba(0, 40, 58, 0.11)"
       },
       fontFamily: {
         display: ["Space Grotesk", "Aptos Display", "Segoe UI", "sans-serif"],

@@ -8,7 +8,11 @@ export function ScrollToTarget() {
     if (location.hash) {
       const targetId = decodeURIComponent(location.hash.slice(1));
       window.setTimeout(() => {
-        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        const target = document.getElementById(targetId);
+        if (target instanceof HTMLDetailsElement) {
+          target.open = true;
+        }
+        target?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 80);
       return;
     }

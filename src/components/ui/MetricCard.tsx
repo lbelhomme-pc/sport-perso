@@ -16,8 +16,8 @@ export function MetricCard({ label, value, hint, tone = "default" }: MetricCardP
         : "bg-white text-ink";
 
   return (
-    <article className={`${toneClass} rounded-card border border-petrol-800/10 p-4 shadow-soft transition duration-200 hover:-translate-y-0.5 hover:shadow-lift`}>
-      <p className={`text-[0.68rem] font-black uppercase tracking-[0.14em] ${tone === "dark" ? "text-white/70" : "text-muted"}`}>
+    <article className={`${toneClass} rounded-card border border-petrol-800/10 p-4 shadow-sm transition duration-200 ease-out hover:-translate-y-px hover:shadow-soft`}>
+      <p className={`text-xs font-black uppercase tracking-[0.08em] ${tone === "dark" ? "text-white/70" : "text-muted"}`}>
         {label}
       </p>
       <div className="mt-2 font-display text-2xl font-black tracking-[-0.06em] sm:text-3xl">{value}</div>

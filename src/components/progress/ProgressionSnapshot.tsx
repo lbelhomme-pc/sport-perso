@@ -1,7 +1,22 @@
-import { Award, Gauge, TrendingUp } from "lucide-react";
-import type { SportProgressionSummary } from "../../services/progressionService";
+import { Award, Gauge, Lightbulb, TrendingUp } from "lucide-react";
+import type { MotivationTone, SportProgressionSummary } from "../../services/progressionService";
+
+const motivationToneClasses: Record<MotivationTone, string> = {
+  positive: "border-limeSoft/60 bg-limeSoft/35",
+  care: "border-red-900/10 bg-red-50",
+  neutral: "border-petrol-800/10 bg-white/75"
+};
+
+const motivationIconClasses: Record<MotivationTone, string> = {
+  positive: "bg-limeSoft text-petrol-900",
+  care: "bg-red-900/10 text-red-950",
+  neutral: "bg-mist text-petrol-800"
+};
 
 export function ProgressionSnapshot({ summary, compact = false }: { summary: SportProgressionSummary; compact?: boolean }) {
+  const visibleMessages = summary.motivationMessages.slice(0, compact ? 1 : 3);
+  const earnedBadges = summary.badges.filter((badge) => badge.earned).slice(0, compact ? 3 : 6);
+
   return (
     <div className="grid gap-4">
       <div className={`grid gap-3 ${compact ? "sm:grid-cols-2" : "md:grid-cols-2"}`}>
@@ -28,6 +43,24 @@ export function ProgressionSnapshot({ summary, compact = false }: { summary: Spo
         </div>
       </div>
 
+      {visibleMessages.length ? (
+        <div className={`grid gap-2 ${compact ? "" : "md:grid-cols-3"}`}>
+          {visibleMessages.map((message) => (
+            <article key={message.id} className={`rounded-card border p-3 shadow-sm ${motivationToneClasses[message.tone]}`}>
+              <div className="flex items-start gap-3">
+                <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${motivationIconClasses[message.tone]}`}>
+                  <Lightbulb className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-black text-petrol-800">{message.title}</p>
+                  <p className="mt-1 text-sm font-semibold leading-5 text-muted">{message.message}</p>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : null}
+
       {summary.records.length ? (
         <div className="grid gap-2 sm:grid-cols-2">
           {summary.records.slice(0, compact ? 2 : 4).map((record) => (
@@ -42,20 +75,20 @@ export function ProgressionSnapshot({ summary, compact = false }: { summary: Spo
         </div>
       ) : null}
 
-      <div className="flex flex-wrap gap-2">
-        {summary.badges.map((badge) => (
-          <span
-            key={badge.id}
-            className={`inline-flex items-center gap-2 px-3 py-2 text-xs font-black uppercase tracking-[0.06em] ${
-              badge.earned ? "bg-limeSoft text-petrol-900" : "bg-mist text-muted"
-            }`}
-            title={badge.hint}
-          >
-            <Award className="h-4 w-4" aria-hidden="true" />
-            {badge.label}
-          </span>
-        ))}
-      </div>
+      {earnedBadges.length ? (
+        <div className="flex flex-wrap gap-2">
+          {earnedBadges.map((badge) => (
+            <span
+              key={badge.id}
+              className="inline-flex items-center gap-2 rounded-full bg-limeSoft px-3 py-2 text-xs font-black uppercase tracking-[0.06em] text-petrol-900"
+              title={badge.hint}
+            >
+              <Award className="h-4 w-4" aria-hidden="true" />
+              {badge.label}
+            </span>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

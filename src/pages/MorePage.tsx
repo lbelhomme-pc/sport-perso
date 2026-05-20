@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { Settings } from "lucide-react";
+import { Download, Settings, SlidersHorizontal, Smartphone } from "lucide-react";
 import { getMoreRoutes, getRouteMeta } from "../app/routes";
+import { ExperiencePanel } from "../components/profile/ExperiencePanel";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
 import { useSettings } from "../hooks/useSettings";
@@ -12,37 +13,75 @@ const moreHints: Record<string, string> = {
   "/calendar": "Voir les repas, pas et séances jour par jour.",
   "/weight": "Saisir une pesée et suivre la tendance.",
   "/stats": "Graphiques et tendances quand tu veux prendre du recul.",
-  "/settings": "Objectifs, onglets favoris, export/import et paramètres."
+  "/settings": "Objectifs, modules, export/import et paramètres."
 };
 
+const settingsShortcuts = [
+  {
+    to: "/settings#modules",
+    label: "Modules",
+    description: "Choisir ce qui apparaît dans l'app.",
+    icon: SlidersHorizontal
+  },
+  {
+    to: "/settings#data",
+    label: "Sauvegarde",
+    description: "Export, import et fusion JSON.",
+    icon: Download
+  },
+  {
+    to: "/settings#install",
+    label: "Installer",
+    description: "Ajouter la PWA au téléphone.",
+    icon: Smartphone
+  }
+];
+
 export default function MorePage() {
-  const { settings } = useSettings();
+  const { settings, saveSettings } = useSettings();
   const moreLinks = getMoreRoutes(settings);
 
   return (
     <>
-      <PageHeader
-        eyebrow="Plus"
-        title="Le reste, sans encombrer"
-        description="Les onglets principaux suivent ton choix de départ. Les outils qui ne t'intéressent pas sont retirés au lieu d'être cachés ici."
-      />
+      <PageHeader title="Plus" />
+
+      <ExperiencePanel settings={settings} onSave={saveSettings} />
 
       <SectionCard className="p-4 sm:p-6">
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <Link
             to="/settings"
-            className="group flex min-h-24 items-center gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft transition hover:-translate-y-0.5 hover:border-petrol-800/25"
+            className="interactive-card group flex min-h-16 items-center gap-3 rounded-card border border-petrol-800/10 bg-white p-3 shadow-sm sm:min-h-24 sm:gap-4 sm:p-4"
           >
-            <span className="grid h-12 w-12 shrink-0 place-items-center bg-petrol-800 text-limeSoft">
+            <span className="grid h-11 w-11 shrink-0 place-items-center bg-petrol-800 text-limeSoft sm:h-12 sm:w-12">
               <Settings className="h-5 w-5" aria-hidden="true" />
             </span>
             <span>
               <span className="block text-base font-black text-petrol-800">Réglages</span>
-              <span className="mt-1 block text-sm font-semibold leading-5 text-muted">
+              <span className="mt-1 hidden text-sm font-semibold leading-5 text-muted sm:block">
                 Modules visibles, profil sportif, sauvegarde, import/export et installation.
               </span>
             </span>
           </Link>
+          {settingsShortcuts.map((shortcut) => {
+            const Icon = shortcut.icon;
+
+            return (
+              <Link
+                key={shortcut.to}
+                to={shortcut.to}
+                className="interactive-card group flex min-h-16 items-center gap-3 rounded-card border border-petrol-800/10 bg-white p-3 shadow-sm sm:min-h-24 sm:gap-4 sm:p-4"
+              >
+                <span className="grid h-11 w-11 shrink-0 place-items-center bg-petrol-800 text-limeSoft sm:h-12 sm:w-12">
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <span>
+                  <span className="block text-base font-black text-petrol-800">{shortcut.label}</span>
+                  <span className="mt-1 hidden text-sm font-semibold leading-5 text-muted sm:block">{shortcut.description}</span>
+                </span>
+              </Link>
+            );
+          })}
           {moreLinks.map((item) => (
             (() => {
               const meta = getRouteMeta(item);
@@ -51,14 +90,14 @@ export default function MorePage() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className="group flex min-h-24 items-center gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft transition hover:-translate-y-0.5 hover:border-petrol-800/25"
+                  className="interactive-card group flex min-h-16 items-center gap-3 rounded-card border border-petrol-800/10 bg-white p-3 shadow-sm sm:min-h-24 sm:gap-4 sm:p-4"
                 >
-                  <span className="grid h-12 w-12 shrink-0 place-items-center bg-petrol-800 text-limeSoft">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center bg-petrol-800 text-limeSoft sm:h-12 sm:w-12">
                     <meta.icon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <span>
                     <span className="block text-base font-black text-petrol-800">{meta.label}</span>
-                    <span className="mt-1 block text-sm font-semibold leading-5 text-muted">{moreHints[item.path] ?? meta.description}</span>
+                    <span className="mt-1 hidden text-sm font-semibold leading-5 text-muted sm:block">{moreHints[item.path] ?? meta.description}</span>
                   </span>
                 </Link>
               );

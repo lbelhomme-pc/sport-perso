@@ -223,7 +223,7 @@ a {
   }
 
   .eyebrow {
-    @apply text-[0.68rem] font-black uppercase tracking-[0.16em] text-petrol-700;
+    @apply text-xs font-black uppercase tracking-[0.14em] text-petrol-700;
   }
 
   .title-xl {
@@ -235,7 +235,7 @@ a {
   }
 
   .action-button {
-    @apply inline-flex min-h-11 w-full max-w-full items-center justify-center gap-2 whitespace-normal rounded-full bg-petrol-800 px-5 py-3 text-center text-[0.74rem] font-black uppercase leading-tight tracking-[0.08em] text-white shadow-soft transition duration-200 hover:-translate-y-0.5 hover:bg-petrol-900 hover:shadow-lift active:translate-y-0 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto;
+    @apply inline-flex min-h-11 w-full max-w-full items-center justify-center gap-2 whitespace-normal rounded-full bg-petrol-800 px-5 py-3 text-center text-xs font-black uppercase leading-tight tracking-[0.08em] text-white shadow-sm transition duration-200 ease-out hover:-translate-y-px hover:bg-petrol-900 hover:shadow-soft active:translate-y-0 active:scale-[0.99] disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none sm:w-auto;
     background: var(--theme-primary-button-bg);
     color: var(--theme-primary-button-text);
   }
@@ -245,26 +245,46 @@ a {
   }
 
   .ghost-button {
-    @apply inline-flex min-h-11 max-w-full items-center justify-center gap-2 whitespace-normal rounded-full border border-petrol-800/10 bg-white/[0.85] px-5 py-3 text-center text-[0.74rem] font-black uppercase leading-tight tracking-[0.08em] text-petrol-800 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-petrol-800/25 hover:bg-white hover:shadow-soft active:translate-y-0 active:scale-[0.99];
+    @apply inline-flex min-h-11 max-w-full items-center justify-center gap-2 whitespace-normal rounded-full border border-petrol-800/10 bg-white/[0.85] px-5 py-3 text-center text-xs font-black uppercase leading-tight tracking-[0.08em] text-petrol-800 shadow-none transition duration-200 ease-out hover:-translate-y-px hover:border-petrol-800/25 hover:bg-white hover:shadow-sm active:translate-y-0 active:scale-[0.99] disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none;
     background: var(--theme-ghost-bg);
   }
 
   .chip {
-    @apply inline-flex max-w-full items-center gap-1 break-words rounded-full bg-sage px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.12em] text-petrol-800;
+    @apply inline-flex max-w-full items-center gap-1 break-words rounded-full bg-sage px-3 py-1.5 text-xs font-black uppercase leading-tight tracking-[0.07em] text-petrol-800 ring-1 ring-petrol-800/5;
   }
 
   .field-label {
-    @apply grid min-w-0 gap-2 text-[0.68rem] font-black uppercase tracking-[0.13em] text-petrol-800;
+    @apply grid min-w-0 gap-2 text-xs font-black uppercase tracking-[0.1em] text-petrol-800;
   }
 
   .field {
-    @apply min-h-12 w-full min-w-0 max-w-full rounded-card border border-petrol-800/10 bg-white/90 px-4 text-sm font-bold text-ink outline-none shadow-sm transition focus:border-petrol-800 focus:bg-white focus:shadow-soft;
+    @apply min-h-12 w-full min-w-0 max-w-full rounded-card border border-petrol-800/10 bg-white/90 px-4 text-sm font-bold text-ink outline-none shadow-none transition duration-200 ease-out focus:border-petrol-800 focus:bg-white focus:shadow-sm focus:ring-2 focus:ring-limeSoft/60;
     background: var(--theme-field-bg);
   }
 
   .textarea-field {
-    @apply min-h-24 w-full min-w-0 max-w-full rounded-card border border-petrol-800/10 bg-white/90 px-4 py-3 text-sm font-bold text-ink outline-none shadow-sm transition focus:border-petrol-800 focus:bg-white focus:shadow-soft;
+    @apply min-h-24 w-full min-w-0 max-w-full rounded-card border border-petrol-800/10 bg-white/90 px-4 py-3 text-sm font-bold text-ink outline-none shadow-none transition duration-200 ease-out focus:border-petrol-800 focus:bg-white focus:shadow-sm focus:ring-2 focus:ring-limeSoft/60;
     background: var(--theme-field-bg);
+  }
+
+  .tab-control {
+    @apply rounded-full bg-mist/70 p-1 ring-1 ring-petrol-800/5;
+  }
+
+  .tab-button {
+    @apply min-h-11 rounded-full px-3 text-center text-xs font-black uppercase tracking-[0.05em] transition duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-limeSoft/70;
+  }
+
+  .tab-button-active {
+    @apply bg-petrol-800 text-white shadow-sm ring-1 ring-petrol-800/15;
+  }
+
+  .tab-button-idle {
+    @apply text-petrol-800 hover:bg-white/75 active:scale-[0.99];
+  }
+
+  .interactive-card {
+    @apply transition duration-200 ease-out hover:border-petrol-800/20 hover:bg-white/90 hover:shadow-sm active:scale-[0.997];
   }
 }
 
@@ -292,5 +312,5 @@ html[data-theme="dark"] .text-petrol-700 {
 
 html[data-theme="dark"] .shadow-soft,
 html[data-theme="dark"] .shadow-panel {
-  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.34);
+  box-shadow: 0 14px 42px rgba(0, 0, 0, 0.28);
 }

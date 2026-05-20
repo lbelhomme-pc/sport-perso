@@ -82,7 +82,7 @@ function QuickMealForm({
   };
 
   return (
-    <div className="grid gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft">
+    <div className="grid gap-4 rounded-card border border-petrol-800/10 bg-white p-4 shadow-sm">
       <div className="border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
         {showNumbers
           ? "Saisie rapide : une estimation suivie bat un repas oublié. Calories + protéines suffisent pour commencer."
@@ -693,17 +693,17 @@ export default function MealsPage() {
         </div>
       </section>
 
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="tab-control grid gap-1 sm:grid-cols-2">
         <button
           type="button"
-          className={activeTab === "journal" ? "action-button justify-center" : "ghost-button justify-center"}
+          className={`tab-button inline-flex items-center justify-center gap-2 ${activeTab === "journal" ? "tab-button-active" : "tab-button-idle"}`}
           onClick={() => setActiveTab("journal")}
         >
           <Utensils className="h-4 w-4" /> Journal du jour
         </button>
         <button
           type="button"
-          className={activeTab === "favorites" ? "action-button justify-center" : "ghost-button justify-center"}
+          className={`tab-button inline-flex items-center justify-center gap-2 ${activeTab === "favorites" ? "tab-button-active" : "tab-button-idle"}`}
           onClick={() => setActiveTab("favorites")}
         >
           <Star className="h-4 w-4" /> Repas favoris ({favoriteMeals.length})
@@ -724,7 +724,7 @@ export default function MealsPage() {
                 const isOpen = openFavoriteMealId === favorite.id;
 
                 return (
-                <article key={favorite.id} className="border border-petrol-800/10 bg-white p-4 shadow-soft">
+                <article key={favorite.id} className="interactive-card rounded-card border border-petrol-800/10 bg-white p-4 shadow-sm">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <button
                       type="button"
@@ -835,7 +835,7 @@ export default function MealsPage() {
               const isOpen = openMealId === meal.id;
 
               return (
-              <article key={meal.id} className="border border-petrol-800/10 bg-white p-4 shadow-soft">
+              <article key={meal.id} className="interactive-card rounded-card border border-petrol-800/10 bg-white p-4 shadow-sm">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <button type="button" className="min-w-0 flex-1 text-left" onClick={() => setOpenMealId(isOpen ? null : meal.id)}>
                     <h3 className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{MEAL_TYPE_LABELS[meal.mealType]}</h3>

@@ -4,8 +4,11 @@ import { CalendarCheck2, ChevronDown, PlayCircle, Scale, Trash2, Utensils } from
 import { SessionForm } from "../components/forms/SessionForm";
 import { ProgressionSnapshot } from "../components/progress/ProgressionSnapshot";
 import { SessionMode } from "../components/session/SessionMode";
+import { ActionPanel } from "../components/ui/ActionPanel";
 import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
+import { MetricTile } from "../components/ui/MetricTile";
 import { SectionCard } from "../components/ui/SectionCard";
+import { StatusBadge } from "../components/ui/StatusBadge";
 import { getDisplayedVersion } from "../data/trainingPlan";
 import { useDailyContext } from "../hooks/useDailyContext";
 import { useDashboard } from "../hooks/useDashboard";
@@ -261,7 +264,7 @@ export default function DashboardPage() {
                 {todayPlanned?.title ?? (waitingForSessionChoice ? "Choisis ta séance du jour" : "Activité libre aujourd'hui")}
               </h1>
             </div>
-            <span className="chip bg-limeSoft text-petrol-900">Semaine {dashboard.currentWeek}</span>
+            <StatusBadge tone="lime">Semaine {dashboard.currentWeek}</StatusBadge>
           </div>
 
           <p className="mt-4 rounded-card bg-mist/60 p-3 text-sm font-bold leading-6 text-ink ring-1 ring-petrol-800/5">
@@ -321,12 +324,13 @@ export default function DashboardPage() {
 
           {weekProgramCompletion.planned ? (
             <div className="mt-4 rounded-card border border-petrol-800/10 bg-white/[0.85] p-3 shadow-sm">
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Programme semaine</p>
-                <p className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
-                  {weekProgramCompletion.completed}/{weekProgramCompletion.planned} · {weekProgramCompletion.ratio} %
-                </p>
-              </div>
+              <MetricTile
+                label="Programme semaine"
+                value={`${weekProgramCompletion.completed}/${weekProgramCompletion.planned}`}
+                hint={`${weekProgramCompletion.ratio} % validé`}
+                tone="lime"
+                className="bg-transparent shadow-none ring-0"
+              />
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-mist">
                 <div className="h-full rounded-full bg-limeSoft" style={{ width: `${weekProgramCompletion.ratio}%` }} />
               </div>
@@ -347,7 +351,7 @@ export default function DashboardPage() {
 
           {todayLoggedSessions.length ? (
             <div className="mt-4 grid gap-2 rounded-card border border-petrol-800/10 bg-white/[0.85] p-3 shadow-sm">
-              <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Séances enregistrées aujourd'hui</p>
+              <p className="text-xs font-black uppercase tracking-[0.08em] text-muted">Séances enregistrées aujourd'hui</p>
               {todayLoggedSessions.map((session) => (
                 <div key={session.id} className="flex flex-col gap-2 rounded-card bg-mist/45 p-3 ring-1 ring-petrol-800/5 sm:flex-row sm:items-center sm:justify-between">
                   <div>
@@ -391,7 +395,7 @@ export default function DashboardPage() {
                     : "Choisis une action rapide ou ajuste tes modules dans le profil."}
               </p>
             </div>
-            <span className="chip bg-limeSoft text-petrol-900">Menu personnalisé</span>
+            <StatusBadge tone="lime">Menu personnalisé</StatusBadge>
           </div>
 
           <p className="mt-4 rounded-card bg-mist/60 p-3 text-sm font-bold leading-6 text-ink ring-1 ring-petrol-800/5">
@@ -491,13 +495,12 @@ export default function DashboardPage() {
       )}
 
       {showTraining && loggingSession ? (
-        <SectionCard className="p-4 sm:p-6">
-          <p className="eyebrow">Fin de séance</p>
-          <h2 className="title-lg mt-2">Saisir le réel</h2>
-          <p className="mt-2 text-sm font-semibold leading-6 text-muted">
-            Garde juste l'essentiel si tu es cuit : durée, RPE, douleur, puis enregistrer.
-          </p>
-          <div className="mt-5">
+        <ActionPanel
+          eyebrow="Fin de séance"
+          title="Saisir le réel"
+          description="Garde juste l'essentiel si tu es cuit : durée, RPE, douleur, puis enregistrer."
+        >
+          <div>
             <SessionForm
               planned={loggingSession}
               initial={getCompletedForPlan(sessions, loggingSession.id) ?? { date: dashboard.today }}
@@ -508,11 +511,11 @@ export default function DashboardPage() {
               }}
             />
           </div>
-        </SectionCard>
+        </ActionPanel>
       ) : null}
 
-      {showRecovery || showCalendar ? (
-        <CollapsibleSectionCard eyebrow="Détail quotidien" title="Le quotidien" defaultOpen>
+      {showSport && (showRecovery || showCalendar) ? (
+        <CollapsibleSectionCard title="Quotidien" summary="Fatigue, douleur, sommeil, pas et étages.">
           {showRecovery ? (
             <div className="grid gap-2 sm:grid-cols-3">
               <label className="field-label">
@@ -580,7 +583,6 @@ export default function DashboardPage() {
 
       {showSport ? (
         <CollapsibleSectionCard
-          eyebrow="Détail progression"
           title="Progression"
         >
           <ProgressionSnapshot summary={progressionSummary} compact />
@@ -589,7 +591,6 @@ export default function DashboardPage() {
 
       {showNutrition ? (
         <CollapsibleSectionCard
-          eyebrow="Détail nutrition"
           title={showNutritionNumbers ? `Reste environ : ${remainingLabel(dashboard.remainingCalories)}` : "Journal repas sans calories"}
         >
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -605,12 +606,10 @@ export default function DashboardPage() {
 
           {showNutritionNumbers ? (
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-card border border-petrol-800/10 bg-white/[0.85] p-4 shadow-sm">
-              <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Protéines</p>
-              <p className="mt-1 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800 sm:text-3xl">
-                {Math.round(dashboard.todayMealTotals.protein)} / {proteinTarget} g
-              </p>
-            </div>
+            <MetricTile
+              label="Protéines"
+              value={`${Math.round(dashboard.todayMealTotals.protein)} / ${proteinTarget} g`}
+            />
             <div className="rounded-card bg-mist/50 p-4 ring-1 ring-limeSoft/45">
               <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Conseil</p>
               <p className="mt-2 text-sm font-semibold leading-6 text-ink">{mealAdvice}</p>
@@ -625,9 +624,9 @@ export default function DashboardPage() {
           {nutritionReminders.length ? (
             <div className="mt-4 flex flex-wrap gap-2">
               {nutritionReminders.map((reminder) => (
-                <span key={reminder} className="chip bg-red-50 text-red-950">
+                <StatusBadge key={reminder} tone="danger">
                   {reminder}
-                </span>
+                </StatusBadge>
               ))}
             </div>
           ) : null}

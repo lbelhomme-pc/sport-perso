@@ -589,7 +589,7 @@ export function MealForm({ initial, onSubmit, onCancel, pinInitialDate = false }
   };
 
   return (
-    <form onSubmit={submit} className="grid w-full max-w-full gap-4 overflow-hidden border border-petrol-800/10 bg-white p-3 shadow-soft sm:p-4">
+    <form onSubmit={submit} className="grid w-full max-w-full gap-4 overflow-hidden rounded-card border border-petrol-800/10 bg-white p-3 shadow-sm sm:p-4">
       <div className="min-w-0 overflow-hidden border border-petrol-800/10 bg-mist/45 p-3 sm:p-4">
         <div className="mb-4 min-w-0 overflow-hidden border border-petrol-800/10 bg-white p-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">

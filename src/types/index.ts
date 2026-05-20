@@ -30,8 +30,6 @@ export type CompletedSessionType =
 
 export type SessionDifficulty = "easy" | "ok" | "hard";
 
-export type SessionDetailValue = string | number | boolean;
-
 export type SportType = Exclude<PlannedSessionType, "rest">;
 
 export type MealType = "breakfast" | "lunch" | "snack" | "dinner" | "other";
@@ -282,7 +280,6 @@ export type CompletedSession = {
   painDuring?: number;
   fatigueDuring?: number;
   energyAfter?: EnergyLevel;
-  sessionDetails?: Record<string, SessionDetailValue>;
   notes?: string;
   completed: boolean;
   exercises?: CompletedExerciseEntry[];

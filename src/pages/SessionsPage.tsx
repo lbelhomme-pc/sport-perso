@@ -3,9 +3,10 @@ import { useSearchParams } from "react-router-dom";
 import { ChevronDown, Edit3, Plus, Trash2, Dumbbell } from "lucide-react";
 import { SessionForm } from "../components/forms/SessionForm";
 import { EmptyState } from "../components/ui/EmptyState";
-import { MetricCard } from "../components/ui/MetricCard";
+import { MetricTile } from "../components/ui/MetricTile";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
+import { StatusBadge } from "../components/ui/StatusBadge";
 import { useSessions } from "../hooks/useSessions";
 import { useSettings } from "../hooks/useSettings";
 import { makeId } from "../services/storageService";
@@ -13,7 +14,6 @@ import type { CompletedSession, CompletedSessionType, SportType } from "../types
 import { estimateCaloriesFromSession } from "../utils/calories";
 import { formatLongDate, toISODate } from "../utils/dates";
 import { energyFromFatigueScore, hasMeaningfulPain } from "../utils/readiness";
-import { formatSessionDetails } from "../utils/sessionDetails";
 import { getCompletedTypeLabel, isHyroxCompetitionMode } from "../utils/sportLabels";
 import { getAverageHeartRate, getAverageRpe } from "../utils/training";
 
@@ -45,6 +45,9 @@ function buildVisibleSessionTypes(enabledSports: SportType[] | undefined, sessio
   return Array.from(new Set<CompletedSessionType>([...baseTypes, ...normalizedSports, ...alreadyUsed]));
 }
 
+type QuickSessionDraft = Partial<CompletedSession> &
+  Pick<CompletedSession, "id" | "date" | "type" | "title" | "durationMin" | "completed">;
+
 function QuickSessionForm({
   date,
   typeOptions,
@@ -55,7 +58,7 @@ function QuickSessionForm({
   date: string;
   typeOptions: CompletedSessionType[];
   onSubmit: (session: CompletedSession) => void;
-  onDetailed: () => void;
+  onDetailed: (draft: QuickSessionDraft) => void;
   getTypeLabel: (type: CompletedSessionType) => string;
 }) {
   const defaultType = typeOptions.includes("strength") ? "strength" : typeOptions[0] ?? "free";
@@ -70,31 +73,44 @@ function QuickSessionForm({
   });
   const update = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }));
 
-  const save = () => {
+  const buildQuickDraft = (): QuickSessionDraft => {
     const durationMin = Math.max(0, Number(form.durationMin || 0));
     const rpe = form.rpe ? Number(form.rpe) : undefined;
     const fatigueDuring = form.fatigueDuring ? Number(form.fatigueDuring) : undefined;
     const painDuring = form.painDuring ? Number(form.painDuring) : undefined;
-    onSubmit({
+
+    return {
       id: makeId("session"),
       date: form.date,
       type: form.type,
       title: getTypeLabel(form.type),
       durationMin,
-      caloriesBurned: estimateCaloriesFromSession(form.type, durationMin),
       rpe,
       difficulty: rpe !== undefined && rpe >= 8 ? "hard" : rpe !== undefined && rpe <= 4 ? "easy" : "ok",
       pain: hasMeaningfulPain(painDuring),
       painDuring,
       fatigueDuring,
       energyAfter: fatigueDuring !== undefined ? energyFromFatigueScore(fatigueDuring) : "normal",
-      notes: form.notes || undefined,
+      notes: form.notes.trim() || undefined,
       completed: true
-    });
+    };
+  };
+
+  const buildQuickSession = (): CompletedSession => {
+    const draft = buildQuickDraft();
+
+    return {
+      ...draft,
+      caloriesBurned: estimateCaloriesFromSession(draft.type, draft.durationMin)
+    };
+  };
+
+  const save = () => {
+    onSubmit(buildQuickSession());
   };
 
   return (
-    <div className="grid gap-4 border border-petrol-800/10 bg-white p-4 shadow-soft">
+    <div className="grid gap-4 rounded-card border border-petrol-800/10 bg-white p-4 shadow-sm">
       <div className="border-l-4 border-limeSoft bg-mist/60 p-3 text-sm font-bold leading-6 text-ink">
         Saisie rapide : type, durée, RPE et douleur suffisent. Tu pourras corriger plus tard si besoin.
       </div>
@@ -137,7 +153,7 @@ function QuickSessionForm({
         </label>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-        <button type="button" className="ghost-button" onClick={onDetailed}>
+        <button type="button" className="ghost-button" onClick={() => onDetailed(buildQuickDraft())}>
           Saisie détaillée
         </button>
         <button type="button" className="action-button" onClick={save}>
@@ -161,7 +177,7 @@ function CompletedExercisesList({ session }: { session: CompletedSession }) {
               {session.exercises.length} blocs liés au planning
             </p>
           </div>
-          <span className="chip">Détails</span>
+          <StatusBadge tone="muted">Détails</StatusBadge>
         </div>
       </summary>
 
@@ -173,7 +189,7 @@ function CompletedExercisesList({ session }: { session: CompletedSession }) {
                 <p className="text-sm font-black text-petrol-800">{exercise.name}</p>
                 {exercise.notes ? <p className="mt-1 text-xs font-bold leading-5 text-muted">{exercise.notes}</p> : null}
               </div>
-              <span className="chip">{exercise.completed ? "validé" : "prévu"}</span>
+              <StatusBadge tone={exercise.completed ? "lime" : "muted"}>{exercise.completed ? "validé" : "prévu"}</StatusBadge>
             </div>
           </div>
         ))}
@@ -195,6 +211,7 @@ export default function SessionsPage() {
   const [editing, setEditing] = useState<CompletedSession | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [detailedForm, setDetailedForm] = useState(false);
+  const [draftSession, setDraftSession] = useState<Partial<CompletedSession> | null>(null);
   const [openSessionId, setOpenSessionId] = useState<string | null>(null);
   const [saveMessage, setSaveMessage] = useState("");
   const formRef = useRef<HTMLDivElement>(null);
@@ -222,8 +239,9 @@ export default function SessionsPage() {
     if (shouldOpenFromQuery) {
       setShowForm(true);
       setDetailedForm(false);
+      setDraftSession({ date: initialSessionDate });
     }
-  }, [shouldOpenFromQuery]);
+  }, [initialSessionDate, shouldOpenFromQuery]);
 
   useEffect(() => {
     if (!filters.includes(filter)) {
@@ -243,6 +261,7 @@ export default function SessionsPage() {
     setEditing(null);
     setShowForm(false);
     setDetailedForm(false);
+    setDraftSession(null);
     if (searchParams.has("add")) {
       const next = new URLSearchParams(searchParams);
       next.delete("add");
@@ -253,14 +272,13 @@ export default function SessionsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Historique"
         title="Séances"
-        description="Historique complet, ajout rapide et modification directe."
         action={
           <button
             className="action-button"
             onClick={() => {
               setEditing(null);
+              setDraftSession(null);
               setShowForm(true);
               setDetailedForm(false);
             }}
@@ -271,13 +289,9 @@ export default function SessionsPage() {
       />
 
       <section className="rounded-panel border border-petrol-800/10 bg-white/90 p-2 shadow-soft">
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {summaryStats.map((stat) => (
-            <div key={stat.label} className="min-w-0 rounded-card bg-mist/55 px-2 py-2">
-              <p className="truncate text-[0.52rem] font-black uppercase tracking-[0.07em] text-muted sm:text-[0.6rem]">{stat.label}</p>
-              <p className="mt-1 truncate font-display text-xl font-black tracking-[-0.05em] text-petrol-800 sm:text-2xl">{stat.value}</p>
-              <p className="mt-0.5 truncate text-[0.55rem] font-bold text-muted sm:text-[0.65rem]">{stat.hint}</p>
-            </div>
+            <MetricTile key={stat.label} label={stat.label} value={stat.value} hint={stat.hint} tone="muted" />
           ))}
         </div>
       </section>
@@ -290,7 +304,7 @@ export default function SessionsPage() {
           <div className="mt-5">
             {detailedForm ? (
               <SessionForm
-                initial={{ date: initialSessionDate }}
+                initial={draftSession ?? { date: initialSessionDate }}
                 typeOptions={sessionTypeOptions}
                 getTypeLabel={getTypeLabel}
                 onCancel={closeForm}
@@ -306,7 +320,10 @@ export default function SessionsPage() {
                 date={initialSessionDate}
                 typeOptions={sessionTypeOptions}
                 getTypeLabel={getTypeLabel}
-                onDetailed={() => setDetailedForm(true)}
+                onDetailed={(draft) => {
+                  setDraftSession(draft);
+                  setDetailedForm(true);
+                }}
                 onSubmit={(session) => {
                   saveSession(session);
                   setSaveMessage("Séance enregistrée. Prochaine décision : récupération ou séance suivante.");
@@ -342,10 +359,9 @@ export default function SessionsPage() {
             displayedSessions.map((session) => {
               const isOpen = openSessionId === session.id;
               const isEditing = editing?.id === session.id;
-              const detailRows = formatSessionDetails(session.type, session.sessionDetails);
 
               return (
-              <article key={session.id} className="border border-petrol-800/10 bg-white p-4 shadow-soft">
+              <article key={session.id} className="interactive-card rounded-card border border-petrol-800/10 bg-white p-4 shadow-sm">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <button
                     type="button"
@@ -355,13 +371,13 @@ export default function SessionsPage() {
                     <p className="eyebrow">{formatLongDate(session.date)}</p>
                     <h2 className="mt-1 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{session.title}</h2>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <span className="chip">{getTypeLabel(session.type)}</span>
-                      <span className="chip">{session.durationMin} min</span>
-                      {session.caloriesBurned ? <span className="chip">{session.caloriesBurned} kcal</span> : null}
-                      {session.rpe ? <span className="chip">RPE {session.rpe}</span> : null}
-                      {session.fatigueDuring !== undefined ? <span className="chip">Fatigue {session.fatigueDuring}/10</span> : null}
-                      {session.painDuring !== undefined ? <span className="chip">Douleur {session.painDuring}/10</span> : null}
-                      <span className="chip bg-white">{isOpen ? "Détails ouverts" : "Voir détails"}</span>
+                      <StatusBadge>{getTypeLabel(session.type)}</StatusBadge>
+                      <StatusBadge tone="muted">{session.durationMin} min</StatusBadge>
+                      {session.caloriesBurned ? <StatusBadge tone="muted">{session.caloriesBurned} kcal</StatusBadge> : null}
+                      {session.rpe ? <StatusBadge tone="info">RPE {session.rpe}</StatusBadge> : null}
+                      {session.fatigueDuring !== undefined ? <StatusBadge tone={session.fatigueDuring >= 7 ? "warning" : "muted"}>Fatigue {session.fatigueDuring}/10</StatusBadge> : null}
+                      {session.painDuring !== undefined ? <StatusBadge tone={session.painDuring >= 4 ? "danger" : "muted"}>Douleur {session.painDuring}/10</StatusBadge> : null}
+                      <StatusBadge tone="muted">{isOpen ? "Détails ouverts" : "Voir détails"}</StatusBadge>
                     </div>
                   </button>
                   <div className="flex flex-wrap gap-2">
@@ -409,21 +425,10 @@ export default function SessionsPage() {
                 ) : isOpen ? (
                 <div className="mt-4 border-t border-petrol-800/10 pt-4">
                 <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                  <MetricCard label="FC moyenne" value={session.averageHeartRate ?? "—"} />
-                  <MetricCard label="FC max" value={session.maxHeartRate ?? "—"} />
-                  <MetricCard label="FC moy. filtre" value={getAverageHeartRate([session]) || "—"} />
+                  <MetricTile label="FC moyenne" value={session.averageHeartRate ?? "—"} />
+                  <MetricTile label="FC max" value={session.maxHeartRate ?? "—"} />
+                  <MetricTile label="FC moy. filtre" value={getAverageHeartRate([session]) || "—"} />
                 </div>
-
-                {detailRows.length ? (
-                  <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                    {detailRows.map((detail) => (
-                      <div key={detail.label} className="rounded-card border border-petrol-800/10 bg-mist/45 p-3">
-                        <p className="text-[0.65rem] font-black uppercase tracking-[0.08em] text-muted">{detail.label}</p>
-                        <p className="mt-1 text-sm font-black text-petrol-800">{detail.value}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
 
                 {session.notes ? (
                   <p className="mt-4 whitespace-pre-line border-l-4 border-limeSoft bg-mist/50 p-4 text-sm font-semibold text-ink">

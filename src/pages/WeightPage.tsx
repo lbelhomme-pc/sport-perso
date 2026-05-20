@@ -194,7 +194,7 @@ export default function WeightPage() {
               const isOpen = openWeightId === entry.id;
 
               return (
-              <article key={entry.id} className="border border-petrol-800/10 bg-white p-4 shadow-soft">
+              <article key={entry.id} className="interactive-card rounded-card border border-petrol-800/10 bg-white p-4 shadow-sm">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <button type="button" className="min-w-0 flex-1 text-left" onClick={() => setOpenWeightId(isOpen ? null : entry.id)}>
                   <p className="font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{entry.weight} kg</p>
