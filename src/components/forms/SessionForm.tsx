@@ -49,7 +49,7 @@ export function SessionForm({ initial, planned, typeOptions, getTypeLabel, onSub
   }>({
     id: initial?.id ?? makeId("session"),
     plannedSessionId: initial?.plannedSessionId ?? planned?.id ?? "",
-    date: initial?.date ?? planned?.date ?? toISODate(new Date()),
+    date: initial?.date ?? toISODate(new Date()),
     type: initial?.type ?? plannedType ?? availableTypeOptions[0] ?? "strength",
     title: initial?.title ?? planned?.title ?? "",
     durationMin: String(initial?.durationMin ?? planned?.durationMin ?? 60),
@@ -109,11 +109,13 @@ export function SessionForm({ initial, planned, typeOptions, getTypeLabel, onSub
         </div>
       ) : null}
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="field-label">
-          Date
-          <input className="field" type="date" value={form.date} onChange={(event) => update("date", event.target.value)} />
-        </label>
+      <div className={`grid gap-3 ${planned ? "" : "sm:grid-cols-2"}`}>
+        {!planned ? (
+          <label className="field-label">
+            Date
+            <input className="field" type="date" value={form.date} onChange={(event) => update("date", event.target.value)} />
+          </label>
+        ) : null}
         <label className="field-label">
           Type
           <select className="field" value={form.type} onChange={(event) => update("type", event.target.value as CompletedSession["type"])}>

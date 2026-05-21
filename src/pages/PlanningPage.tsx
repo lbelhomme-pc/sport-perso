@@ -14,7 +14,7 @@ import { useSessionChecklists } from "../hooks/useSessionChecklists";
 import { useSessions } from "../hooks/useSessions";
 import { useSettings } from "../hooks/useSettings";
 import type { EnergyLevel, ExercisePrescription, PlannedSession, SessionChecklistItem } from "../types";
-import { formatShortDate, getCurrentWeekIndex, getTotalWeeks, getWeekEnd, getWeekStart } from "../utils/dates";
+import { getCurrentWeekIndex, getTotalWeeks } from "../utils/dates";
 import {
   getActionableExercises,
   getExerciseCheckId,
@@ -310,8 +310,7 @@ export default function PlanningPage() {
             <select className="field" value={week} onChange={(event) => setWeek(Number(event.target.value))}>
               {Array.from({ length: totalWeeks }, (_, index) => index + 1).map((weekNumber) => (
                 <option key={weekNumber} value={weekNumber}>
-                  Semaine {weekNumber} - {formatShortDate(getWeekStart(settings.startDate, weekNumber))} au{" "}
-                  {formatShortDate(getWeekEnd(settings.startDate, weekNumber))}
+                  Semaine {weekNumber}
                 </option>
               ))}
             </select>
@@ -361,7 +360,7 @@ export default function PlanningPage() {
           <div className="bg-white p-4">
             <p className="eyebrow">Période</p>
             <h2 className="mt-2 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
-              {formatShortDate(getWeekStart(settings.startDate, week))} - {formatShortDate(getWeekEnd(settings.startDate, week))}
+              Semaine {week}
             </h2>
             <p className="mt-2 text-sm font-semibold text-muted">
               Organisation flexible.

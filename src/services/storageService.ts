@@ -326,7 +326,7 @@ const exerciseCalibrationSchema = z.object({
 
 const plannedSessionOverrideSchema = z.object({
   plannedSessionId: z.string(),
-  date: z.string(),
+  date: z.string().optional(),
   title: z.string().optional(),
   type: z
     .enum([

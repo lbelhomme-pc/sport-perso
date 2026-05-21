@@ -233,7 +233,7 @@ export type ExerciseCalibration = {
 
 export type PlannedSessionOverride = {
   plannedSessionId: string;
-  date: string;
+  date?: string;
   title?: string;
   type?: PlannedSessionType;
   durationMin?: number;

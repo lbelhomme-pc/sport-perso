@@ -40,7 +40,6 @@ export function usePlanningOverrides() {
       upsertPlannedSessionOverride({
         ...(data.plannedSessionOverrides.find((item) => item.plannedSessionId === session.id) ?? {
           plannedSessionId: session.id,
-          date: session.date,
           updatedAt: ""
         }),
         notes
