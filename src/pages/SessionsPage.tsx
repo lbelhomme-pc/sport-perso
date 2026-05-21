@@ -20,12 +20,28 @@ import { getAverageHeartRate, getAverageRpe } from "../utils/training";
 const fallbackSessionTypes: CompletedSessionType[] = [
   "strength",
   "run",
+  "walk",
+  "hiking",
+  "trail",
   "badminton",
   "racket",
   "hybrid",
   "bike",
   "swim",
+  "rowing",
+  "elliptical",
   "mobility",
+  "yoga",
+  "pilates",
+  "tennis",
+  "padel",
+  "football",
+  "basketball",
+  "boxing",
+  "martial",
+  "climbing",
+  "ski",
+  "dance",
   "hyrox",
   "recovery",
   "test",
@@ -269,6 +285,23 @@ export default function SessionsPage() {
     }
   };
 
+  const focusSessionDetails = (sessionId: string) => {
+    window.setTimeout(() => {
+      document.getElementById(`session-details-${sessionId}`)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }, 0);
+  };
+
+  const toggleSessionDetails = (sessionId: string, isOpen: boolean) => {
+    if (showForm) {
+      closeForm();
+    }
+    setEditing(null);
+    setOpenSessionId(isOpen ? null : sessionId);
+    if (!isOpen) {
+      focusSessionDetails(sessionId);
+    }
+  };
+
   return (
     <>
       <PageHeader
@@ -361,12 +394,12 @@ export default function SessionsPage() {
               const isEditing = editing?.id === session.id;
 
               return (
-              <article key={session.id} className="interactive-card rounded-card border border-petrol-800/10 bg-white p-4 shadow-sm">
+              <article key={session.id} id={`session-${session.id}`} className="interactive-card rounded-card border border-petrol-800/10 bg-white p-4 shadow-sm">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <button
                     type="button"
                     className="min-w-0 flex-1 text-left"
-                    onClick={() => setOpenSessionId(isOpen ? null : session.id)}
+                    onClick={() => toggleSessionDetails(session.id, isOpen)}
                   >
                     <p className="eyebrow">{formatLongDate(session.date)}</p>
                     <h2 className="mt-1 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{session.title}</h2>
@@ -381,15 +414,21 @@ export default function SessionsPage() {
                     </div>
                   </button>
                   <div className="flex flex-wrap gap-2">
-                    <button className="ghost-button" onClick={() => setOpenSessionId(isOpen ? null : session.id)} aria-label={isOpen ? "Replier la séance" : "Développer la séance"}>
+                    <button className="ghost-button" onClick={() => toggleSessionDetails(session.id, isOpen)} aria-label={isOpen ? "Replier la séance" : "Développer la séance"}>
                       <ChevronDown className={`h-4 w-4 transition ${isOpen ? "rotate-180" : ""}`} />
                     </button>
                     <button
                       className="ghost-button"
                       onClick={() => {
+                        if (showForm) {
+                          closeForm();
+                        }
                         setEditing(isEditing ? null : session);
                         setOpenSessionId(session.id);
                         setShowForm(false);
+                        if (!isEditing) {
+                          focusSessionDetails(session.id);
+                        }
                       }}
                       aria-label="Modifier la séance"
                     >
@@ -408,7 +447,7 @@ export default function SessionsPage() {
                 </div>
 
                 {isEditing ? (
-                <div className="mt-4 border-t border-petrol-800/10 pt-4">
+                <div id={`session-details-${session.id}`} className="scroll-mt-24 mt-4 border-t border-petrol-800/10 pt-4">
                   <SessionForm
                     initial={session}
                     typeOptions={sessionTypeOptions}
@@ -423,7 +462,7 @@ export default function SessionsPage() {
                   />
                 </div>
                 ) : isOpen ? (
-                <div className="mt-4 border-t border-petrol-800/10 pt-4">
+                <div id={`session-details-${session.id}`} className="scroll-mt-24 mt-4 border-t border-petrol-800/10 pt-4">
                 <div className="mt-4 grid gap-3 sm:grid-cols-3">
                   <MetricTile label="FC moyenne" value={session.averageHeartRate ?? "—"} />
                   <MetricTile label="FC max" value={session.maxHeartRate ?? "—"} />

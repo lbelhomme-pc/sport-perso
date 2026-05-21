@@ -1,33 +1,26 @@
-import { Check, RotateCcw } from "lucide-react";
+import { Check } from "lucide-react";
+import type { ReactNode } from "react";
 import { GENERAL_SPORT_MODES, SESSION_TYPE_LABELS } from "../../data/defaults";
-import {
-  deriveNavigationFocusFromModules,
-  MAX_PRIMARY_TABS,
-  moduleOrder,
-  modulesConfig,
-  recommendedModulesByGoal,
-  resolveModulePreferences
-} from "../../data/modules";
-import type { AppExperienceMode, AppModuleId, NutritionTrackingMode, Settings, SportType, UserSportLevel } from "../../types";
+import { deriveNavigationFocusFromModules, MAX_PRIMARY_TABS, moduleOrder, modulesConfig, resolveModulePreferences } from "../../data/modules";
+import type { AppExperienceMode, AppModuleId, NutritionTrackingMode, Settings, SportType } from "../../types";
 import { applyNutritionModeToModules } from "../../utils/nutritionMode";
-import { StatusBadge } from "../ui/StatusBadge";
 
 type ExperiencePanelProps = {
   settings: Settings;
   onSave: (settings: Settings) => void;
 };
 
-const sportOptions: SportType[] = ["strength", "run", "badminton", "racket", "hybrid", "bike", "swim", "mobility", "recovery", "free", "hyrox"];
-
-const levelOptions: Array<{ id: UserSportLevel; label: string }> = [
-  { id: "beginner", label: "Débutant" },
-  { id: "intermediate", label: "Intermédiaire" },
-  { id: "advanced", label: "Confirmé" }
+const sportGroups: Array<{ title: string; sports: SportType[] }> = [
+  { title: "Base", sports: ["strength", "run", "walk", "mobility", "recovery", "free"] },
+  { title: "Endurance", sports: ["bike", "swim", "rowing", "elliptical", "hiking", "trail"] },
+  { title: "Raquette", sports: ["badminton", "racket", "tennis", "padel"] },
+  { title: "Collectif", sports: ["football", "basketball"] },
+  { title: "Force / combat", sports: ["boxing", "martial", "hybrid", "hyrox"] },
+  { title: "Bien-être", sports: ["yoga", "pilates", "dance", "climbing", "ski", "test"] }
 ];
 
 const quickModuleIds: AppModuleId[] = ["training", "sessions", "nutrition", "progress", "recovery", "calendar", "weight"];
 const fixedTabs = new Set<AppModuleId>(["home", "profile"]);
-const fallbackSports: SportType[] = ["strength", "run", "recovery"];
 
 function cleanTabs(enabledModules: AppModuleId[], tabs: AppModuleId[]) {
   const enabledSet = new Set(enabledModules);
@@ -42,12 +35,8 @@ function cleanTabs(enabledModules: AppModuleId[], tabs: AppModuleId[]) {
 
 function normalizePreferences(settings: Settings, enabledModules: AppModuleId[], primaryTabs: AppModuleId[]) {
   const uniqueEnabled = moduleOrder.filter((moduleId) => enabledModules.includes(moduleId) || fixedTabs.has(moduleId));
-  const noSensitiveWeight = settings.eatingDisorderHistory
-    ? uniqueEnabled.filter((moduleId) => moduleId !== "weight")
-    : uniqueEnabled;
-  const safeTabs = settings.eatingDisorderHistory
-    ? primaryTabs.filter((moduleId) => moduleId !== "weight")
-    : primaryTabs;
+  const noSensitiveWeight = settings.eatingDisorderHistory ? uniqueEnabled.filter((moduleId) => moduleId !== "weight") : uniqueEnabled;
+  const safeTabs = settings.eatingDisorderHistory ? primaryTabs.filter((moduleId) => moduleId !== "weight") : primaryTabs;
 
   return {
     enabledModules: noSensitiveWeight,
@@ -67,11 +56,8 @@ export function ExperiencePanel({ settings, onSave }: ExperiencePanelProps) {
   const preferences = resolveModulePreferences(settings);
   const primaryTabs = preferences.primaryModuleTabs;
   const enabledSet = new Set(preferences.enabledModules);
-  const selectedSports: SportType[] = settings.enabledSports?.length ? settings.enabledSports : fallbackSports;
+  const selectedSports: SportType[] = settings.enabledSports ?? [];
   const activeGoal = settings.appMode ?? "fitness";
-  const recommended = recommendedModulesByGoal[activeGoal];
-  const recommendedVisible = recommended.tabs.filter((moduleId) => preferences.enabledModules.includes(moduleId) || moduleId === "nutrition");
-  const remainingTabs = Math.max(0, MAX_PRIMARY_TABS - primaryTabs.length);
 
   const saveExperience = (patch: Partial<Settings>) => {
     onSave({ ...settings, ...patch, updatedAt: new Date().toISOString() });
@@ -99,9 +85,7 @@ export function ExperiencePanel({ settings, onSave }: ExperiencePanelProps) {
     const enabledModules = enabledSet.has(moduleId)
       ? preferences.enabledModules.filter((item) => item !== moduleId)
       : [...preferences.enabledModules, moduleId];
-    const primaryModuleTabs = enabledSet.has(moduleId)
-      ? primaryTabs.filter((item) => item !== moduleId)
-      : primaryTabs;
+    const primaryModuleTabs = enabledSet.has(moduleId) ? primaryTabs.filter((item) => item !== moduleId) : primaryTabs;
 
     saveModules(enabledModules, primaryModuleTabs);
   };
@@ -110,7 +94,10 @@ export function ExperiencePanel({ settings, onSave }: ExperiencePanelProps) {
     if (fixedTabs.has(moduleId) || !enabledSet.has(moduleId)) return;
 
     if (primaryTabs.includes(moduleId)) {
-      saveModules(preferences.enabledModules, primaryTabs.filter((item) => item !== moduleId));
+      saveModules(
+        preferences.enabledModules,
+        primaryTabs.filter((item) => item !== moduleId)
+      );
       return;
     }
 
@@ -123,28 +110,11 @@ export function ExperiencePanel({ settings, onSave }: ExperiencePanelProps) {
       ? selectedSports.filter((item) => item !== sport)
       : [...selectedSports, sport];
 
-    saveExperience({ enabledSports: nextSports.length ? nextSports : (["free"] as SportType[]) });
+    saveExperience({ enabledSports: nextSports });
   };
 
   const setGoal = (goal: AppExperienceMode) => {
     saveExperience({ appMode: goal });
-  };
-
-  const applyRecommended = () => {
-    const nutritionMode: NutritionTrackingMode = recommended.enabled.includes("nutrition")
-      ? settings.eatingDisorderHistory
-        ? "no-calories"
-        : getRecommendedNutritionMode(activeGoal, settings.nutritionMode)
-      : "disabled";
-    const guarded = applyNutritionModeToModules(nutritionMode, recommended.enabled, recommended.tabs);
-    const normalized = normalizePreferences(settings, guarded.enabledModules, guarded.primaryModuleTabs);
-
-    saveExperience({
-      enabledModules: normalized.enabledModules,
-      primaryModuleTabs: normalized.primaryModuleTabs,
-      nutritionMode,
-      navigationFocus: deriveNavigationFocusFromModules(normalized.enabledModules)
-    });
   };
 
   const setNutritionEnabled = (enabled: boolean) => {
@@ -174,128 +144,83 @@ export function ExperiencePanel({ settings, onSave }: ExperiencePanelProps) {
 
   return (
     <section className="panel p-4 sm:p-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 className="title-lg">Mon expérience</h2>
-          <p className="mt-2 text-sm font-semibold leading-6 text-muted">
-            Ajuste ce que l'app affiche. Rien n'est supprimé, les modules masqués restent réactivables.
-          </p>
-        </div>
-        <button type="button" className="ghost-button justify-center sm:w-fit" onClick={applyRecommended}>
-          <RotateCcw className="h-4 w-4" aria-hidden="true" />
-          Recommandé
-        </button>
+      <div>
+        <h2 className="title-lg">Mon expérience</h2>
+        <p className="mt-2 text-sm font-semibold leading-6 text-muted">
+          Choisis seulement ce qui te sert. Tout reste réactivable plus tard.
+        </p>
       </div>
 
-      <div className="mt-5 grid gap-4">
-        <label className="field-label">
-          Objectif principal
-          <select className="field" value={activeGoal} onChange={(event) => setGoal(event.target.value as AppExperienceMode)}>
-            {GENERAL_SPORT_MODES.map((mode) => (
-              <option key={mode.id} value={mode.id}>
-                {mode.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <div className="rounded-card border border-petrol-800/10 bg-mist/45 p-3">
-          <p className="text-xs font-black uppercase tracking-[0.08em] text-muted">Aperçu des onglets</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {primaryTabs.map((moduleId, index) => {
-              const module = modulesConfig[moduleId];
-
-              return (
-                <StatusBadge key={`${moduleId}-${index}`} icon={module.icon} tone={moduleId === "home" || moduleId === "profile" ? "dark" : "lime"}>
-                  {index + 1}. {module.shortLabel}
-                </StatusBadge>
-              );
-            })}
-          </div>
-          <p className="mt-2 text-xs font-bold text-muted">
-            {primaryTabs.length}/{MAX_PRIMARY_TABS} onglets visibles. {remainingTabs > 0 ? `${remainingTabs} place(s) disponible(s).` : "Menu plein."}
-          </p>
-        </div>
-
-        <div className="grid gap-3 lg:grid-cols-2">
+      <div className="mt-5 grid gap-3">
+        <ExperienceSection title="Objectif principal" summary={GENERAL_SPORT_MODES.find((mode) => mode.id === activeGoal)?.label ?? "Libre"}>
           <label className="field-label">
-            Niveau
-            <select
-              className="field"
-              value={settings.sportLevel ?? "intermediate"}
-              onChange={(event) => saveExperience({ sportLevel: event.target.value as UserSportLevel })}
-            >
-              {levelOptions.map((level) => (
-                <option key={level.id} value={level.id}>
-                  {level.label}
+            Objectif
+            <select className="field" value={activeGoal} onChange={(event) => setGoal(event.target.value as AppExperienceMode)}>
+              {GENERAL_SPORT_MODES.map((mode) => (
+                <option key={mode.id} value={mode.id}>
+                  {mode.label}
                 </option>
               ))}
             </select>
           </label>
+        </ExperienceSection>
 
-          <div className="rounded-card border border-petrol-800/10 bg-white/70 p-3">
-            <p className="text-xs font-black uppercase tracking-[0.08em] text-muted">Configuration recommandée</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {recommendedVisible.slice(0, MAX_PRIMARY_TABS).map((moduleId) => {
-                const module = modulesConfig[moduleId];
+        <ExperienceSection title="Sports pratiqués" summary={`${selectedSports.length} sélectionné${selectedSports.length > 1 ? "s" : ""}`}>
+          <div className="grid gap-4">
+            {sportGroups.map((group) => (
+              <div key={group.title}>
+                <p className="text-xs font-black uppercase tracking-[0.08em] text-muted">{group.title}</p>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                  {group.sports.map((sport) => {
+                    const active = selectedSports.includes(sport);
 
-                return (
-                  <StatusBadge key={moduleId} icon={module.icon} tone="muted">
-                    {module.shortLabel}
-                  </StatusBadge>
-                );
-              })}
-            </div>
+                    return (
+                      <label
+                        key={sport}
+                        className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-card border px-3 py-2 text-sm font-black transition ${
+                          active
+                            ? "border-petrol-800/20 bg-limeSoft/45 text-petrol-900"
+                            : "border-petrol-800/10 bg-white/75 text-muted hover:bg-white hover:text-petrol-800"
+                        }`}
+                      >
+                        <input
+                          className="h-4 w-4 accent-petrol-800"
+                          type="checkbox"
+                          checked={active}
+                          onChange={() => toggleSport(sport)}
+                        />
+                        {SESSION_TYPE_LABELS[sport]}
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        </ExperienceSection>
 
-        <div>
-          <p className="field-label">Sports pratiqués</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {sportOptions.map((sport) => {
-              const active = selectedSports.includes(sport);
-
-              return (
-                <button
-                  key={sport}
-                  type="button"
-                  className={`chip transition duration-200 ease-out ${
-                    active ? "bg-petrol-800 text-white ring-petrol-800/20" : "bg-white/75 text-muted hover:bg-white hover:text-petrol-800"
-                  }`}
-                  onClick={() => toggleSport(sport)}
-                >
-                  {active ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : null}
-                  {SESSION_TYPE_LABELS[sport]}
-                </button>
-              );
-            })}
+        <ExperienceSection title="Options rapides" summary="Nutrition, stats, récupération">
+          <div className="grid gap-3 lg:grid-cols-3">
+            <ExperienceSwitch
+              label="Nutrition"
+              enabled={enabledSet.has("nutrition") && settings.nutritionMode !== "disabled"}
+              onToggle={(enabled) => setNutritionEnabled(enabled)}
+            />
+            <ExperienceSwitch
+              label="Stats détaillées"
+              enabled={enabledSet.has("progress")}
+              onToggle={(enabled) => setModuleEnabled("progress", enabled)}
+            />
+            <ExperienceSwitch
+              label="Récupération"
+              enabled={enabledSet.has("recovery")}
+              onToggle={(enabled) => setModuleEnabled("recovery", enabled)}
+            />
           </div>
-        </div>
+        </ExperienceSection>
 
-        <div className="grid gap-3 lg:grid-cols-3">
-          <ExperienceSwitch
-            label="Nutrition"
-            description="Repas, protéines et suivi alimentaire."
-            enabled={enabledSet.has("nutrition") && settings.nutritionMode !== "disabled"}
-            onToggle={(enabled) => setNutritionEnabled(enabled)}
-          />
-          <ExperienceSwitch
-            label="Stats détaillées"
-            description="Tendances, graphiques et progression."
-            enabled={enabledSet.has("progress")}
-            onToggle={(enabled) => setModuleEnabled("progress", enabled)}
-          />
-          <ExperienceSwitch
-            label="Récupération"
-            description="Fatigue, sommeil, douleur et signaux utiles."
-            enabled={enabledSet.has("recovery")}
-            onToggle={(enabled) => setModuleEnabled("recovery", enabled)}
-          />
-        </div>
-
-        <div>
-          <p className="field-label">Modules actifs</p>
-          <div className="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+        <ExperienceSection title="Modules visibles" summary={`${preferences.enabledModules.length} actifs`}>
+          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
             {quickModuleIds.map((moduleId) => {
               const module = modulesConfig[moduleId];
               const enabled = enabledSet.has(moduleId);
@@ -322,11 +247,10 @@ export function ExperiencePanel({ settings, onSave }: ExperiencePanelProps) {
               );
             })}
           </div>
-        </div>
+        </ExperienceSection>
 
-        <div>
-          <p className="field-label">Onglets principaux</p>
-          <div className="mt-2 flex flex-wrap gap-2">
+        <ExperienceSection title="Onglets principaux" summary={`${primaryTabs.length}/${MAX_PRIMARY_TABS}`}>
+          <div className="flex flex-wrap gap-2">
             {preferences.enabledModules
               .filter((moduleId) => modulesConfig[moduleId].canBeMainTab)
               .map((moduleId) => {
@@ -352,23 +276,26 @@ export function ExperiencePanel({ settings, onSave }: ExperiencePanelProps) {
                 );
               })}
           </div>
-        </div>
+        </ExperienceSection>
       </div>
     </section>
   );
 }
 
-function ExperienceSwitch({
-  label,
-  description,
-  enabled,
-  onToggle
-}: {
-  label: string;
-  description: string;
-  enabled: boolean;
-  onToggle: (enabled: boolean) => void;
-}) {
+function ExperienceSection({ title, summary, children }: { title: string; summary: string; children: ReactNode }) {
+  return (
+    <details className="group rounded-card border border-petrol-800/10 bg-white/70 p-3 shadow-sm">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3">
+        <span className="text-sm font-black text-petrol-800">{title}</span>
+        <span className="text-right text-xs font-black uppercase tracking-[0.08em] text-muted group-open:hidden">{summary}</span>
+        <span className="hidden text-xs font-black uppercase tracking-[0.08em] text-muted group-open:inline">Fermer</span>
+      </summary>
+      <div className="mt-3 border-t border-petrol-800/10 pt-3">{children}</div>
+    </details>
+  );
+}
+
+function ExperienceSwitch({ label, enabled, onToggle }: { label: string; enabled: boolean; onToggle: (enabled: boolean) => void }) {
   return (
     <button
       type="button"
@@ -378,12 +305,9 @@ function ExperienceSwitch({
       aria-pressed={enabled}
       onClick={() => onToggle(!enabled)}
     >
-      <span className="flex items-start justify-between gap-3">
-        <span>
-          <span className="block text-sm font-black text-petrol-800">{label}</span>
-          <span className="mt-1 block text-xs font-bold leading-5 text-muted">{description}</span>
-        </span>
-        <span className={`mt-0.5 h-6 w-11 rounded-full p-1 transition ${enabled ? "bg-petrol-800" : "bg-mist"}`}>
+      <span className="flex items-center justify-between gap-3">
+        <span className="block text-sm font-black text-petrol-800">{label}</span>
+        <span className={`h-6 w-11 rounded-full p-1 transition ${enabled ? "bg-petrol-800" : "bg-mist"}`}>
           <span className={`block h-4 w-4 rounded-full bg-white transition ${enabled ? "translate-x-5" : ""}`} />
         </span>
       </span>

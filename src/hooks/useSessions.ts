@@ -2,6 +2,7 @@ import type { CompletedSession, CompletedSessionType, PlannedSession } from "../
 import { deleteSession, makeId, upsertSession } from "../services/storageService";
 import { estimateCaloriesFromSession } from "../utils/calories";
 import { buildCompletedExercises, mergeSessionNotesWithPlannedExercises } from "../utils/sessionExercises";
+import { getCompletedForPlan, getPlannedSessionIds } from "../utils/training";
 import { useStoredData } from "./useStoredData";
 
 function plannedTypeToCompleted(type: PlannedSession["type"]): CompletedSessionType {
@@ -12,8 +13,12 @@ function plannedTypeToCompleted(type: PlannedSession["type"]): CompletedSessionT
 export function useSessions() {
   const data = useStoredData();
   const sessions = [...data.sessions].sort((a, b) => b.date.localeCompare(a.date));
-  const deletePlannedSessionCompletion = (plannedSessionId: string) => {
-    const completed = sessions.find((session) => session.plannedSessionId === plannedSessionId);
+  const deletePlannedSessionCompletion = (plannedSession: PlannedSession | string) => {
+    const plannedIds = getPlannedSessionIds(plannedSession);
+    const completed =
+      typeof plannedSession === "string"
+        ? sessions.find((session) => session.plannedSessionId && plannedIds.includes(session.plannedSessionId))
+        : getCompletedForPlan(sessions, plannedSession);
     if (completed) deleteSession(completed.id);
   };
 

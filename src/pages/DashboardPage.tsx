@@ -141,7 +141,7 @@ export default function DashboardPage() {
   const proteinTarget = getProteinTarget(dashboard.calculationWeight, dashboard.settings.proteinPerKg);
   const proteinRatio = proteinTarget > 0 ? dashboard.todayMealTotals.protein / proteinTarget : 1;
   const completedTodaySession = dashboard.todaySessions.find((session) => session.completed);
-  const completedPlannedSession = todayPlanned ? getCompletedForPlan(sessions, todayPlanned.id) : undefined;
+  const completedPlannedSession = todayPlanned ? getCompletedForPlan(sessions, todayPlanned) : undefined;
   const todayTypeLabel = todayPlanned
     ? getPlannedTypeLabel(todayPlanned.type, dashboard.settings)
     : waitingForSessionChoice
@@ -230,6 +230,10 @@ export default function DashboardPage() {
           placeholder="Ex : 8"
         />
       </label>
+
+      <Link to={`/calendar?date=${dashboard.yesterday}#mouvement`} className="ghost-button justify-center sm:col-span-2">
+        Compléter hier
+      </Link>
     </div>
   ) : null;
 
@@ -240,14 +244,14 @@ export default function DashboardPage() {
           session={sessionMode}
           energy={dailyContext.energyLevel}
           checkedItemIds={getCheckedItemIds(sessionMode.id)}
-          completed={Boolean(getCompletedForPlan(sessions, sessionMode.id))}
+          completed={Boolean(getCompletedForPlan(sessions, sessionMode))}
           onToggle={(itemId, checked) => toggleChecklistItem(sessionMode.id, itemId, checked)}
           onClose={() => setSessionMode(null)}
           onFinish={() => {
             setLoggingSession(sessionMode);
             setSessionMode(null);
           }}
-          onUndo={() => deletePlannedSessionCompletion(sessionMode.id)}
+          onUndo={() => deletePlannedSessionCompletion(sessionMode)}
         />
       ) : null}
 
@@ -402,7 +406,7 @@ export default function DashboardPage() {
             {showNutritionNumbers
               ? "Priorité : noter un repas simple, le poids si utile, et tes pas. Les séances et le programme restent cachés tant que le sport n'est pas choisi dans les réglages."
               : showNutrition
-                ? "Mode nutrition sans calories : l'objectif est la régularité des repas et les notes utiles, pas les chiffres."
+                ? "Mode nutrition sans calories : l'objectif est la régularité des repas, pas les chiffres."
               : "Les blocs désactivés ne sont pas affichés ici. Tu peux les réactiver plus tard dans Profil sans perdre tes données."}
           </p>
 
@@ -503,7 +507,7 @@ export default function DashboardPage() {
           <div>
             <SessionForm
               planned={loggingSession}
-              initial={getCompletedForPlan(sessions, loggingSession.id) ?? { date: dashboard.today }}
+              initial={getCompletedForPlan(sessions, loggingSession) ?? { date: dashboard.today }}
               onCancel={() => setLoggingSession(null)}
               onSubmit={(session) => {
                 saveSession(session);

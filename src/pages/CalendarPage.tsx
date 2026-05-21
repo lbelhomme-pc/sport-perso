@@ -13,11 +13,13 @@ import {
 } from "date-fns";
 import { fr } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { MealForm } from "../components/forms/MealForm";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
 import { MEAL_TYPE_LABELS } from "../data/defaults";
 import { getPlannedWeek } from "../data/trainingPlan";
+import { useDailyContext } from "../hooks/useDailyContext";
 import { useMeals } from "../hooks/useMeals";
 import { useSettings } from "../hooks/useSettings";
 import { useStoredData } from "../hooks/useStoredData";
@@ -42,12 +44,28 @@ const PLANNED_SHORT_LABELS: Record<PlannedSessionType, string> = {
   racket: "Raq",
   strength: "Salle",
   run: "Card.",
+  walk: "Mar.",
+  hiking: "Rand.",
+  trail: "Trail",
   bike: "Vélo",
   swim: "Nage",
+  rowing: "Ram.",
+  elliptical: "Ell.",
   hybrid: "Hybr",
   hyrox: "HY",
   mobility: "Mob",
   recovery: "Rec",
+  yoga: "Yoga",
+  pilates: "Pil.",
+  tennis: "Ten.",
+  padel: "Pad.",
+  football: "Foot",
+  basketball: "Bask.",
+  boxing: "Boxe",
+  martial: "Arts",
+  climbing: "Esc.",
+  ski: "Ski",
+  dance: "Danse",
   test: "Test",
   free: "Libre"
 };
@@ -56,12 +74,28 @@ const SESSION_SHORT_LABELS: Record<CompletedSessionType, string> = {
   racket: "Raq",
   strength: "Salle",
   run: "Card.",
+  walk: "Mar.",
+  hiking: "Rand.",
+  trail: "Trail",
   bike: "Vélo",
   swim: "Nage",
+  rowing: "Ram.",
+  elliptical: "Ell.",
   hybrid: "Hybr",
   hyrox: "HY",
   mobility: "Mob",
   recovery: "Rec",
+  yoga: "Yoga",
+  pilates: "Pil.",
+  tennis: "Ten.",
+  padel: "Pad.",
+  football: "Foot",
+  basketball: "Bask.",
+  boxing: "Boxe",
+  martial: "Arts",
+  climbing: "Esc.",
+  ski: "Ski",
+  dance: "Danse",
   test: "Test",
   free: "Libre",
   other: "Autre"
@@ -71,6 +105,14 @@ function readInitialCalendarView(): CalendarViewMode {
   if (typeof window === "undefined") return "agenda";
   const saved = window.localStorage.getItem(CALENDAR_VIEW_KEY);
   return saved === "agenda" || saved === "compact" || saved === "grid" ? saved : "agenda";
+}
+
+function isIsoDate(value: string | null): value is string {
+  return Boolean(value && /^\d{4}-\d{2}-\d{2}$/.test(value));
+}
+
+function updateNumberInput(value: string) {
+  return Number(value.replace(/\D/g, ""));
 }
 
 export default function CalendarPage() {
@@ -87,8 +129,11 @@ export default function CalendarPage() {
   const { saveMeal } = useMeals();
   const data = useStoredData();
   const today = toISODate(new Date());
-  const [month, setMonth] = useState(() => new Date());
-  const [selectedDate, setSelectedDate] = useState(today);
+  const [searchParams] = useSearchParams();
+  const requestedDate = searchParams.get("date");
+  const initialSelectedDate = isIsoDate(requestedDate) ? requestedDate : today;
+  const [month, setMonth] = useState(() => parseISO(initialSelectedDate));
+  const [selectedDate, setSelectedDate] = useState(initialSelectedDate);
   const [showMealForm, setShowMealForm] = useState(false);
   const [viewMode, setViewMode] = useState<CalendarViewMode>(readInitialCalendarView);
   const mealFormRef = useRef<HTMLDivElement>(null);
@@ -117,10 +162,13 @@ export default function CalendarPage() {
   const selectedCompletedSessions = showSport ? data.sessions.filter((session) => session.date === selectedDate && session.completed) : [];
   const selectedPlannedSessions = showSport ? plannedSessions.filter((session) => session.date === selectedDate && session.type !== "rest") : [];
   const selectedMeals = showNutrition ? data.meals.filter((meal) => meal.date === selectedDate) : [];
+  const { dailyContext: selectedDailyContext, saveDailyContext: saveSelectedDailyContext } = useDailyContext(selectedDate);
   const selectedSummary = [
     showSport ? `${selectedPlannedSessions.length} prévu` : null,
     showSport ? `${selectedCompletedSessions.length} fait` : null,
-    showNutrition ? `${selectedMeals.length} repas` : null
+    showNutrition ? `${selectedMeals.length} repas` : null,
+    selectedDailyContext.steps ? `${selectedDailyContext.steps.toLocaleString("fr-FR")} pas` : null,
+    selectedDailyContext.floors ? `${selectedDailyContext.floors} étages` : null
   ]
     .filter((item): item is string => Boolean(item))
     .join(" · ");
@@ -162,6 +210,20 @@ export default function CalendarPage() {
   useEffect(() => {
     window.localStorage.setItem(CALENDAR_VIEW_KEY, viewMode);
   }, [viewMode]);
+
+  useEffect(() => {
+    if (!isIsoDate(requestedDate) || requestedDate === selectedDate) return;
+    setSelectedDate(requestedDate);
+    setMonth(parseISO(requestedDate));
+  }, [requestedDate, selectedDate]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || window.location.hash !== "#mouvement") return;
+    const timeout = window.setTimeout(() => {
+      document.getElementById("mouvement")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+    return () => window.clearTimeout(timeout);
+  }, [selectedDate]);
 
   return (
     <>
@@ -268,6 +330,54 @@ export default function CalendarPage() {
           ) : null}
         </div>
 
+        <div id="mouvement" className="mt-4 scroll-mt-24 border border-petrol-800/10 bg-white p-3 sm:p-4">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="eyebrow">Quotidien</p>
+              <h3 className="mt-1 text-lg font-black text-petrol-800">Pas et étages</h3>
+            </div>
+            <p className="text-sm font-bold text-muted">{format(parseISO(selectedDate), "d MMMM yyyy", { locale: fr })}</p>
+          </div>
+
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            <label className="field-label">
+              Pas
+              <input
+                className="field"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={selectedDailyContext.steps ? String(selectedDailyContext.steps) : ""}
+                onChange={(event) =>
+                  saveSelectedDailyContext({
+                    ...selectedDailyContext,
+                    date: selectedDate,
+                    steps: updateNumberInput(event.target.value)
+                  })
+                }
+                placeholder="Ex : 8500"
+              />
+            </label>
+
+            <label className="field-label">
+              Étages
+              <input
+                className="field"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={selectedDailyContext.floors ? String(selectedDailyContext.floors) : ""}
+                onChange={(event) =>
+                  saveSelectedDailyContext({
+                    ...selectedDailyContext,
+                    date: selectedDate,
+                    floors: updateNumberInput(event.target.value)
+                  })
+                }
+                placeholder="Ex : 8"
+              />
+            </label>
+          </div>
+        </div>
+
         {showNutrition && showMealForm ? (
           <div ref={mealFormRef} className="mt-5 border border-petrol-800/10 bg-white p-3 sm:p-4">
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -369,6 +479,9 @@ export default function CalendarPage() {
                         {(movementForDay?.steps ?? 0) > 0 ? (
                           <span className="chip bg-white">{movementForDay?.steps?.toLocaleString("fr-FR")} pas</span>
                         ) : null}
+                        {(movementForDay?.floors ?? 0) > 0 ? (
+                          <span className="chip bg-white">{movementForDay?.floors} étages</span>
+                        ) : null}
                         {!hasContent ? <span className="chip bg-white text-muted">Libre</span> : null}
                       </div>
                     </div>
@@ -414,7 +527,8 @@ export default function CalendarPage() {
                       {plannedForDay.length ? <span className="truncate bg-mist px-1 py-1 text-petrol-800">P {plannedForDay.length}</span> : null}
                       {completedSessions.length ? <span className="truncate bg-petrol-800 px-1 py-1 text-white">F {completedSessions.length}</span> : null}
                       {mealsForDay.length ? <span className="truncate bg-white px-1 py-1 text-petrol-800">R {mealsForDay.length}</span> : null}
-                      {(movementForDay?.steps ?? 0) > 0 ? <span className="truncate bg-white px-1 py-1 text-petrol-800">P {movementForDay?.steps}</span> : null}
+                      {(movementForDay?.steps ?? 0) > 0 ? <span className="truncate bg-white px-1 py-1 text-petrol-800">Pas {movementForDay?.steps}</span> : null}
+                      {(movementForDay?.floors ?? 0) > 0 ? <span className="truncate bg-white px-1 py-1 text-petrol-800">Étg {movementForDay?.floors}</span> : null}
                       {!hasContent ? <span className="text-muted/70">-</span> : null}
                     </div>
                   </button>

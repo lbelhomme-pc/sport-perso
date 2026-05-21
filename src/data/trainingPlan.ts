@@ -30,6 +30,23 @@ function isPreciseSessionSlot(slot: DayTemplate["slot"]): slot is PreciseSession
   return preciseSessionSlots.includes(slot as PreciseSessionSlot);
 }
 
+function normalizeIdPart(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function plannedSessionId(week: number, day: string, slot: string) {
+  return `week-${week}-${normalizeIdPart(day)}-${slot}`;
+}
+
+function legacyDateSessionId(week: number, date: string, slot: string) {
+  return `week-${week}-${date}-${slot}`;
+}
+
 function exercise(input: Omit<ExercisePrescription, "order"> & { order?: number }): ExercisePrescription {
   return {
     ...input,
@@ -370,41 +387,7 @@ function getHyroxExercises(week: number): ExercisePrescription[] {
 }
 
 function getBadmintonExercises(): ExercisePrescription[] {
-  return [
-    exercise({
-      id: "badminton-warmup",
-      block: "Échauffement",
-      name: "Activation jambes + appuis",
-      order: 1,
-      repsText: "8-10 min",
-      targetLoadText: "progressif",
-      restText: "-",
-      rpeTarget: "RPE 3-5",
-      techniqueNotes: ["Squats", "Fentes", "Mollets", "Pas chassés", "Accélérations progressives"]
-    }),
-    exercise({
-      id: "badminton-session",
-      block: "Jeu",
-      name: "Badminton",
-      order: 2,
-      repsText: "60-90 min",
-      targetLoadText: "technique / match selon fatigue",
-      restText: "hydratation entre matchs",
-      rpeTarget: "RPE 6-8",
-      fatigueAdjustment: "Jeu technique, peu de matchs intenses, stop si douleur.",
-      strongAdjustment: "Séance normale à intense, sans dépasser 90 min de haute intensité."
-    }),
-    exercise({
-      id: "badminton-cooldown",
-      block: "Retour au calme",
-      name: "Marche + mobilité mollets/adducteurs",
-      order: 3,
-      repsText: "5-8 min",
-      targetLoadText: "facile",
-      restText: "-",
-      rpeTarget: "RPE 2"
-    })
-  ];
+  return [];
 }
 
 export const weekTemplates: Record<BadmintonVariant, DayTemplate[]> = {
@@ -690,7 +673,8 @@ function getSimulationDose(week: number) {
 
 function getVacationSession(slot: DayTemplate["slot"], week: number, date: string, day: string): PlannedSession {
   const base = {
-    id: `week-${week}-${date}-${slot}`,
+    id: plannedSessionId(week, day, slot),
+    legacyIds: [legacyDateSessionId(week, date, slot)],
     week,
     day,
     date,
@@ -703,13 +687,13 @@ function getVacationSession(slot: DayTemplate["slot"], week: number, date: strin
     return {
       ...base,
       type: "badminton",
-      title: "Badminton — séance libre, suivi RPE",
-      objective: "Garder le plaisir et le rythme sans transformer la semaine en dette de fatigue.",
-      fatigueVersion: "45 min technique, mobilité avant/après, aucun match à haute intensité.",
-      normalVersion: "60 à 75 min, priorité au jeu propre et à la qualité des appuis.",
-      strongVersion: "Séance normale possible, mais stop avant la fatigue nerveuse.",
+      title: "Badminton",
+      objective: "Séance libre. Note seulement durée, RPE et douleur si besoin.",
+      fatigueVersion: "Séance courte et facile.",
+      normalVersion: "Séance libre.",
+      strongVersion: "Séance libre.",
       durationMin: 60,
-      tags: ["Badminton", "Vacances", "Technique"]
+      tags: ["Badminton"]
     };
   }
 
@@ -752,8 +736,30 @@ function buildPreciseSession(
 ): PlannedSession {
   const type = getPlannedTypeForSlot(slot);
 
+  if (type === "badminton") {
+    return {
+      id: plannedSessionId(week, day, slot),
+      legacyIds: [legacyDateSessionId(week, date, slot)],
+      week,
+      day,
+      date,
+      type,
+      title: "Badminton",
+      objective: "Séance libre. Note seulement durée, RPE et douleur si besoin.",
+      durationMin: plan.durationMin,
+      rpeTarget: plan.rpeTarget,
+      fatigueVersion: "Séance courte et facile.",
+      normalVersion: "Séance libre.",
+      strongVersion: "Séance libre.",
+      tags: ["Badminton"],
+      exercises: [],
+      isEditable: true
+    };
+  }
+
   return {
-    id: `week-${week}-${date}-${slot}`,
+    id: plannedSessionId(week, day, slot),
+    legacyIds: [legacyDateSessionId(week, date, slot)],
     week,
     day,
     date,
@@ -773,7 +779,8 @@ function buildPreciseSession(
 
 function buildRaceSession(week: number, date: string, day: string): PlannedSession {
   return {
-    id: `week-${week}-${date}-race`,
+    id: plannedSessionId(week, day, "race"),
+    legacyIds: [legacyDateSessionId(week, date, "race")],
     week,
     day,
     date,
@@ -836,7 +843,8 @@ function buildRaceSession(week: number, date: string, day: string): PlannedSessi
 
 function buildPostRaceRecoverySession(week: number, date: string, day: string): PlannedSession {
   return {
-    id: `week-${week}-${date}-post-race-recovery`,
+    id: plannedSessionId(week, day, "post-race-recovery"),
+    legacyIds: [legacyDateSessionId(week, date, "post-race-recovery")],
     week,
     day,
     date,
@@ -877,7 +885,8 @@ function buildPostRaceRecoverySession(week: number, date: string, day: string): 
 
 function buildRestSession(week: number, date: string, day: string, vacation = false): PlannedSession {
   return {
-    id: `week-${week}-${date}-rest`,
+    id: plannedSessionId(week, day, "rest"),
+    legacyIds: [legacyDateSessionId(week, date, "rest")],
     week,
     day,
     date,
@@ -895,7 +904,8 @@ function buildRestSession(week: number, date: string, day: string, vacation = fa
 
 function buildRecoverySession(week: number, date: string, day: string, vacation = false): PlannedSession {
   return {
-    id: `week-${week}-${date}-recovery`,
+    id: plannedSessionId(week, day, "recovery"),
+    legacyIds: [legacyDateSessionId(week, date, "recovery")],
     week,
     day,
     date,
@@ -913,22 +923,20 @@ function buildRecoverySession(week: number, date: string, day: string, vacation 
 
 function buildBadmintonSession(week: number, date: string, day: string): PlannedSession {
   return {
-    id: `week-${week}-${date}-badminton`,
+    id: plannedSessionId(week, day, "badminton"),
+    legacyIds: [legacyDateSessionId(week, date, "badminton")],
     week,
     day,
     date,
     type: "badminton",
-    title: "Badminton — intensité contrôlée + appuis",
-    objective: "Travailler les appuis, le cardio intermittent et le plaisir sans saboter la récupération.",
+    title: "Badminton",
+    objective: "Séance libre. Note seulement durée, RPE et douleur si besoin.",
     durationMin: 75,
     rpeTarget: "RPE 6-8",
-    fatigueVersion:
-      "Échauffement long, jeu technique, peu de matchs à haute intensité. Stop si douleur mollet, tendon ou genou.",
-    normalVersion:
-      "Séance normale. 8 à 10 min d’échauffement : squats, fentes, mollets, pas chassés, accélérations.",
-    strongVersion:
-      "Séance normale à intense, sans dépasser 90 min de haute intensité. Hydratation + protéines après.",
-    tags: ["Badminton", "Appuis", "Intermittent"],
+    fatigueVersion: "Séance courte et facile.",
+    normalVersion: "Séance libre.",
+    strongVersion: "Séance libre.",
+    tags: ["Badminton"],
     exercises: getBadmintonExercises(),
     isEditable: true
   };
@@ -938,7 +946,8 @@ function buildStrengthSession(week: number, date: string, day: string): PlannedS
   const strength = getStrengthProgression(week);
 
   return {
-    id: `week-${week}-${date}-strength`,
+    id: plannedSessionId(week, day, "strength"),
+    legacyIds: [legacyDateSessionId(week, date, "strength")],
     week,
     day,
     date,
@@ -960,7 +969,8 @@ function buildRunSession(week: number, date: string, day: string): PlannedSessio
   const run = getRunSession(week);
 
   return {
-    id: `week-${week}-${date}-run`,
+    id: plannedSessionId(week, day, "run"),
+    legacyIds: [legacyDateSessionId(week, date, "run")],
     week,
     day,
     date,
@@ -984,7 +994,8 @@ function buildHyroxSession(week: number, date: string, day: string): PlannedSess
   const phaseTags = isDeloadWeek(week) ? ["Deload"] : [`${simulation.blocks} blocs`, simulation.intensity];
 
   return {
-    id: `week-${week}-${date}-hyrox`,
+    id: plannedSessionId(week, day, "hyrox"),
+    legacyIds: [legacyDateSessionId(week, date, "hyrox")],
     week,
     day,
     date,
@@ -1035,6 +1046,7 @@ function capSessionForUser(session: PlannedSession, settings: Settings): Planned
     return {
       ...buildRestSession(session.week, session.date, session.day),
       id: session.id,
+      legacyIds: session.legacyIds,
       title: "Repos - jour indisponible",
       objective: `Jour non disponible dans ton profil. Séance prévue initialement : ${session.title}.`,
       normalVersion: "Repos ou mobilité 8-12 min si tu veux garder le rythme sans forcer.",

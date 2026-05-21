@@ -23,20 +23,9 @@ const afterSession = [
 ];
 
 const badmintonChecklist = [
-  item("Badminton", "bad-start-time", "Heure de début renseignée"),
-  item("Badminton", "bad-duration", "Durée renseignée"),
-  item("Badminton", "bad-intensity", "Intensité choisie : loisir / technique / match / tournoi / courte"),
-  item("Échauffement badminton", "bad-warmup-walk", "Marche rapide ou corde très douce - 3 min"),
-  item("Échauffement badminton", "bad-warmup-squats", "Squats poids du corps - 2 x 10"),
-  item("Échauffement badminton", "bad-warmup-lunges", "Fentes arrière - 2 x 8/jambe"),
-  item("Échauffement badminton", "bad-warmup-calves", "Montées mollets - 2 x 15"),
-  item("Échauffement badminton", "bad-warmup-side-steps", "Pas chassés - 3 x 20 s"),
-  item("Échauffement badminton", "bad-warmup-accels", "Accélérations progressives - 3 x 15 s"),
-  item("Séance", "bad-session", "Séance réalisée"),
-  item("Retour au calme", "bad-cooldown-walk", "Marche lente - 3 à 5 min"),
-  item("Retour au calme", "bad-cooldown-calves", "Mollets doux - 2 x 30 s/côté"),
-  item("Retour au calme", "bad-cooldown-adductors", "Adducteurs doux - 2 x 30 s/côté"),
-  item("Retour au calme", "bad-cooldown-breath", "Respiration lente - 2 min")
+  item("Suivi", "bad-duration", "Durée"),
+  item("Suivi", "bad-rpe", "RPE"),
+  item("Suivi", "bad-pain", "Douleur si besoin")
 ];
 
 const strengthWarmup = [
@@ -157,7 +146,7 @@ export function getSessionChecklist(session: PlannedSession, energy: EnergyLevel
   }
 
   if (session.type === "badminton") {
-    return [...beforeSession, ...badmintonChecklist, ...afterSession];
+    return badmintonChecklist;
   }
 
   if (session.type === "strength") {

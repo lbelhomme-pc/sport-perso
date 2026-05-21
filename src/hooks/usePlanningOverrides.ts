@@ -1,19 +1,9 @@
 import type { PlannedSession, PlannedSessionOverride } from "../types";
 import { deletePlannedSessionOverride, upsertPlannedSessionOverride } from "../services/storageService";
+import { getPlannedSessionIds } from "../utils/training";
 import { useStoredData } from "./useStoredData";
 
-function normalizePlanningTitle(session: PlannedSession, title: string) {
-  const isPlaceholder =
-    title.trim() === "Badminton" ||
-    title.toLowerCase().includes("séance modifiable") ||
-    title.toLowerCase().includes("seance modifiable") ||
-    title.toLowerCase().includes("modifiable dans l'app") ||
-    title.toLowerCase().includes("modifiable dans l’app");
-
-  if (session.type === "badminton" && isPlaceholder) {
-    return "Badminton — intensité contrôlée + appuis";
-  }
-
+function normalizePlanningTitle(title: string) {
   return title;
 }
 
@@ -21,11 +11,11 @@ export function applyPlannedSessionOverride(session: PlannedSession, override?: 
   if (!override) {
     return {
       ...session,
-      title: normalizePlanningTitle(session, session.title)
+      title: normalizePlanningTitle(session.title)
     };
   }
 
-  const title = normalizePlanningTitle(session, override.title ?? session.title);
+  const title = normalizePlanningTitle(override.title ?? session.title);
 
   return {
     ...session,
@@ -42,8 +32,10 @@ export function usePlanningOverrides() {
 
   return {
     plannedSessionOverrides: data.plannedSessionOverrides,
-    getOverride: (plannedSessionId: string) =>
-      data.plannedSessionOverrides.find((item) => item.plannedSessionId === plannedSessionId),
+    getOverride: (plannedSession: PlannedSession | string) => {
+      const plannedIds = getPlannedSessionIds(plannedSession);
+      return data.plannedSessionOverrides.find((item) => plannedIds.includes(item.plannedSessionId));
+    },
     saveNotes: (session: PlannedSession, notes: string) =>
       upsertPlannedSessionOverride({
         ...(data.plannedSessionOverrides.find((item) => item.plannedSessionId === session.id) ?? {

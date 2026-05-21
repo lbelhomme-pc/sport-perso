@@ -4,12 +4,28 @@ export type PlannedSessionType =
   | "racket"
   | "strength"
   | "run"
+  | "walk"
+  | "hiking"
+  | "trail"
   | "bike"
   | "swim"
+  | "rowing"
+  | "elliptical"
   | "hybrid"
   | "hyrox"
   | "mobility"
   | "recovery"
+  | "yoga"
+  | "pilates"
+  | "tennis"
+  | "padel"
+  | "football"
+  | "basketball"
+  | "boxing"
+  | "martial"
+  | "climbing"
+  | "ski"
+  | "dance"
   | "test"
   | "free";
 
@@ -18,12 +34,28 @@ export type CompletedSessionType =
   | "racket"
   | "strength"
   | "run"
+  | "walk"
+  | "hiking"
+  | "trail"
   | "bike"
   | "swim"
+  | "rowing"
+  | "elliptical"
   | "hybrid"
   | "hyrox"
   | "mobility"
   | "recovery"
+  | "yoga"
+  | "pilates"
+  | "tennis"
+  | "padel"
+  | "football"
+  | "basketball"
+  | "boxing"
+  | "martial"
+  | "climbing"
+  | "ski"
+  | "dance"
   | "test"
   | "free"
   | "other";
@@ -248,6 +280,7 @@ export type Settings = {
 
 export type PlannedSession = {
   id: string;
+  legacyIds?: string[];
   week: number;
   day: string;
   date: string;

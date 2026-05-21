@@ -60,6 +60,7 @@ export function SessionMode({
   const checkedSet = new Set(checkedItemIds);
   const checkedCount = exercises.filter((exercise) => checkedSet.has(getExerciseCheckId(exercise))).length;
   const progress = exercises.length ? Math.round((checkedCount / exercises.length) * 100) : 0;
+  const isBadminton = session.type === "badminton";
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [timerRunning, setTimerRunning] = useState(false);
 
@@ -112,9 +113,9 @@ export function SessionMode({
         <section className="panel p-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="eyebrow">Progression séance</p>
+              <p className="eyebrow">{isBadminton ? "Suivi simple" : "Progression séance"}</p>
               <p className="mt-1 font-display text-3xl font-black tracking-[-0.06em] text-petrol-800">
-                {exercises.length ? `${checkedCount}/${exercises.length} blocs utiles cochés` : "Séance guidée"}
+                {isBadminton ? "Durée, RPE, douleur si besoin" : exercises.length ? `${checkedCount}/${exercises.length} blocs utiles cochés` : "Séance guidée"}
               </p>
             </div>
             <div className="grid gap-2 sm:min-w-56">
@@ -133,9 +134,11 @@ export function SessionMode({
               </div>
             </div>
           </div>
-          <div className="mt-4 h-3 bg-mist">
-            <div className="h-full bg-limeSoft" style={{ width: `${progress}%` }} />
-          </div>
+          {exercises.length ? (
+            <div className="mt-4 h-3 bg-mist">
+              <div className="h-full bg-limeSoft" style={{ width: `${progress}%` }} />
+            </div>
+          ) : null}
         </section>
 
         {guidanceExercises.length ? (

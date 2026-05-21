@@ -6,18 +6,54 @@ export function getSessionsForDate(sessions: CompletedSession[], date: string): 
   return sessions.filter((session) => session.date === date);
 }
 
-export function getCompletedForPlan(sessions: CompletedSession[], plannedSessionId: string): CompletedSession | undefined {
-  return sessions.find((session) => session.plannedSessionId === plannedSessionId && session.completed);
+const weekdayLabels = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+
+function getWeekdayLabel(date: string) {
+  return weekdayLabels[new Date(`${date}T00:00:00`).getDay()];
+}
+
+export function getPlannedSessionIds(plannedSession: PlannedSession | string): string[] {
+  if (typeof plannedSession === "string") return [plannedSession];
+  return [plannedSession.id, ...(plannedSession.legacyIds ?? [])];
+}
+
+function getPlannedSlot(plannedSession: PlannedSession) {
+  const parts = plannedSession.id.split("-");
+  return parts.length > 3 ? parts.slice(3).join("-") : plannedSession.type;
+}
+
+function isCompletedForPlannedSession(session: CompletedSession, plannedSession: PlannedSession | string) {
+  if (!session.completed || !session.plannedSessionId) return false;
+  const plannedIds = getPlannedSessionIds(plannedSession);
+  if (plannedIds.includes(session.plannedSessionId)) return true;
+  if (typeof plannedSession === "string") return false;
+
+  const legacyMatch = session.plannedSessionId.match(/^week-(\d+)-(\d{4}-\d{2}-\d{2})-(.+)$/);
+  if (!legacyMatch) return false;
+
+  const [, legacyWeek, legacyDate, legacySlot] = legacyMatch;
+  return (
+    Number(legacyWeek) === plannedSession.week &&
+    legacySlot === getPlannedSlot(plannedSession) &&
+    getWeekdayLabel(legacyDate) === plannedSession.day
+  );
+}
+
+export function getCompletedForPlan(sessions: CompletedSession[], plannedSession: PlannedSession | string): CompletedSession | undefined {
+  return sessions.find((session) => isCompletedForPlannedSession(session, plannedSession));
 }
 
 export function getPlannedCompletion(plannedSessions: PlannedSession[], completedSessions: CompletedSession[]) {
   const plannedTrainings = plannedSessions.filter((session) => session.type !== "rest");
-  const plannedIds = new Set(plannedTrainings.map((session) => session.id));
-  const completedIds = new Set(
-    completedSessions
-      .filter((session) => session.completed && session.plannedSessionId && plannedIds.has(session.plannedSessionId))
-      .map((session) => session.plannedSessionId!)
-  );
+  const completedIds = new Set<string>();
+
+  completedSessions.forEach((completedSession) => {
+    const plannedSession = plannedTrainings.find((session) => isCompletedForPlannedSession(completedSession, session));
+    if (plannedSession) {
+      completedIds.add(plannedSession.id);
+    }
+  });
+
   const planned = plannedTrainings.length;
   const completed = completedIds.size;
 
