@@ -1,8 +1,11 @@
 import type { CompletedSession, CompletedSessionType, PlannedSession } from "../types";
+import { getPlannedWeek } from "../data/trainingPlan";
+import { applyPlannedSessionOverride } from "./usePlanningOverrides";
 import { deleteSession, makeId, upsertSession } from "../services/storageService";
 import { estimateCaloriesFromSession } from "../utils/calories";
+import { getWeekIndexForDate } from "../utils/dates";
 import { buildCompletedExercises, mergeSessionNotesWithPlannedExercises } from "../utils/sessionExercises";
-import { getCompletedForPlan, getPlannedSessionIds } from "../utils/training";
+import { findMatchingPlannedSessionForCompleted, getCompletedForPlan, getPlannedSessionIds } from "../utils/training";
 import { useStoredData } from "./useStoredData";
 
 function plannedTypeToCompleted(type: PlannedSession["type"]): CompletedSessionType {
@@ -13,6 +16,20 @@ function plannedTypeToCompleted(type: PlannedSession["type"]): CompletedSessionT
 export function useSessions() {
   const data = useStoredData();
   const sessions = [...data.sessions].sort((a, b) => b.date.localeCompare(a.date));
+  const inferPlannedSession = (session: CompletedSession) => {
+    if (session.plannedSessionId || !session.completed) return session;
+    if (session.date < data.settings.startDate || session.date > data.settings.targetDate) return session;
+
+    const week = getWeekIndexForDate(data.settings.startDate, data.settings.targetDate, session.date);
+    const plannedWeek = getPlannedWeek(data.settings, week, data.settings.badmintonVariant).map((plannedSession) => {
+      const plannedIds = getPlannedSessionIds(plannedSession);
+      const override = data.plannedSessionOverrides.find((item) => plannedIds.includes(item.plannedSessionId));
+      return applyPlannedSessionOverride(plannedSession, override);
+    });
+    const matchedPlannedSession = findMatchingPlannedSessionForCompleted(session, plannedWeek, data.sessions);
+
+    return matchedPlannedSession ? { ...session, plannedSessionId: matchedPlannedSession.id } : session;
+  };
   const deletePlannedSessionCompletion = (plannedSession: PlannedSession | string) => {
     const plannedIds = getPlannedSessionIds(plannedSession);
     const completed =
@@ -24,7 +41,7 @@ export function useSessions() {
 
   return {
     sessions,
-    saveSession: (session: CompletedSession) => upsertSession(session),
+    saveSession: (session: CompletedSession) => upsertSession(inferPlannedSession(session)),
     deleteSession,
     deletePlannedSessionCompletion,
     markPlannedSessionCompleted: (planned: PlannedSession) =>

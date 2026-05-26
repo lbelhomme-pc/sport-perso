@@ -783,6 +783,19 @@ export default function MealsPage() {
                 icon={Star}
                 title="Aucun repas favori"
                 message="Crée un repas dans le formulaire, donne-lui un nom, puis sauvegarde-le en favori."
+                action={
+                  <button
+                    type="button"
+                    className="action-button mx-auto"
+                    onClick={() => {
+                      setActiveTab("journal");
+                      setShowForm(true);
+                      setDetailedForm(true);
+                    }}
+                  >
+                    <Plus className="h-4 w-4" /> Créer un favori
+                  </button>
+                }
               />
             )}
           </div>
@@ -907,7 +920,23 @@ export default function MealsPage() {
               );
             })
           ) : (
-            <EmptyState icon={Utensils} title="Aucun repas ce jour" message="Ajoute un repas en un tap, même approximatif. L'approximation suivie bat le parfait oublié." />
+            <EmptyState
+              icon={Utensils}
+              title="Aucun repas ce jour"
+              message="Ajoute un repas en un tap, même approximatif. L'approximation suivie bat le parfait oublié."
+              action={
+                <button
+                  type="button"
+                  className="action-button mx-auto"
+                  onClick={() => {
+                    setShowForm(true);
+                    setDetailedForm(false);
+                  }}
+                >
+                  <Plus className="h-4 w-4" /> Ajouter repas
+                </button>
+              }
+            />
           )}
         </div>
       </SectionCard>

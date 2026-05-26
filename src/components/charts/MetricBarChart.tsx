@@ -17,8 +17,15 @@ export function MetricBarChart<T extends Record<string, string | number>>({
   suffix = "",
   summary
 }: MetricBarChartProps<T>) {
-  if (!data.length) {
-    return <p className="rounded-card border border-petrol-800/10 bg-mist/50 p-4 text-sm font-semibold text-muted">Pas encore assez de donnees pour afficher ce graphique.</p>;
+  const hasUsefulData = data.some((item) => Number(item[yKey]) > 0);
+  const animate = typeof window !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!data.length || !hasUsefulData) {
+    return (
+      <p className="animate-[premiumIn_180ms_ease-out] rounded-card border border-petrol-800/10 bg-mist/50 p-4 text-sm font-semibold text-muted motion-reduce:animate-none">
+        Pas encore assez de données utiles pour afficher ce graphique.
+      </p>
+    );
   }
 
   return (
@@ -34,7 +41,7 @@ export function MetricBarChart<T extends Record<string, string | number>>({
               contentStyle={{ border: "1px solid rgba(0,53,74,.10)", borderRadius: "18px", boxShadow: "0 18px 42px rgba(0,40,58,.14)", fontWeight: 800 }}
               formatter={(value) => [`${value}${suffix}`, ""]}
             />
-            <Bar dataKey={String(yKey)} fill={color} radius={[12, 12, 6, 6]} />
+            <Bar dataKey={String(yKey)} fill={color} radius={[12, 12, 6, 6]} isAnimationActive={animate} animationDuration={220} />
           </BarChart>
         </ResponsiveContainer>
       </div>

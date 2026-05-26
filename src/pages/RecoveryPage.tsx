@@ -1,13 +1,23 @@
 import { useDailyContext } from "../hooks/useDailyContext";
 import { PageHeader } from "../components/ui/PageHeader";
+import { GaugeBar } from "../components/ui/GaugeBar";
 import { SectionCard } from "../components/ui/SectionCard";
 import type { SleepQuality } from "../types";
 import { toISODate } from "../utils/dates";
 import { parseOptionalReadinessScore, readinessLabel } from "../utils/readiness";
 
+const sleepOptions: Array<{ id: SleepQuality; label: string }> = [
+  { id: "good", label: "Bon" },
+  { id: "medium", label: "Moyen" },
+  { id: "bad", label: "Mauvais" }
+];
+
 export default function RecoveryPage() {
   const today = toISODate(new Date());
   const { dailyContext, saveDailyContext } = useDailyContext(today);
+  const fatigue = dailyContext.fatigueMorning ?? 0;
+  const pain = dailyContext.painMorning ?? 0;
+  const recovery = Math.max(0, Math.min(100, 100 - fatigue * 7 - pain * 8 - (dailyContext.sleepQuality === "bad" ? 20 : dailyContext.sleepQuality === "medium" ? 8 : 0)));
 
   return (
     <>
@@ -36,20 +46,28 @@ export default function RecoveryPage() {
               {readinessLabel(dailyContext.fatigueMorning)} - 0 reposé, 10 vidé.
             </span>
           </label>
-          <label className="field-label">
+          <div className="field-label">
             Sommeil
-            <select
-              className="field"
-              value={dailyContext.sleepQuality ?? "medium"}
-              onChange={(event) =>
-                saveDailyContext({ ...dailyContext, date: today, sleepQuality: event.target.value as SleepQuality })
-              }
-            >
-              <option value="good">Bon</option>
-              <option value="medium">Moyen</option>
-              <option value="bad">Mauvais</option>
-            </select>
-          </label>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {sleepOptions.map((option) => {
+                const selected = (dailyContext.sleepQuality ?? "medium") === option.id;
+
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    className={`min-h-11 rounded-card border px-3 py-2 text-sm font-black transition ${
+                      selected ? "border-petrol-800 bg-petrol-800 text-white" : "border-petrol-800/10 bg-white text-petrol-800 hover:bg-white"
+                    }`}
+                    aria-pressed={selected}
+                    onClick={() => saveDailyContext({ ...dailyContext, date: today, sleepQuality: option.id })}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           <label className="field-label">
             Douleur au réveil / 10
             <input
@@ -65,6 +83,12 @@ export default function RecoveryPage() {
               {readinessLabel(dailyContext.painMorning)} - 0 aucune, 10 bloquante.
             </span>
           </label>
+        </div>
+
+        <div className="mt-5 grid gap-3 rounded-card bg-white/70 p-3 ring-1 ring-petrol-800/5 sm:grid-cols-3">
+          <GaugeBar label="Fatigue" value={fatigue} max={10} valueLabel={fatigue ? `${fatigue}/10` : "non notée"} tone={fatigue >= 8 ? "danger" : fatigue >= 6 ? "warning" : "lime"} compact />
+          <GaugeBar label="Douleur" value={pain} max={10} valueLabel={pain ? `${pain}/10` : "OK"} tone={pain >= 7 ? "danger" : pain >= 4 ? "warning" : "lime"} compact />
+          <GaugeBar label="Récupération" value={recovery} valueLabel={recovery < 45 ? "allège" : recovery < 70 ? "modéré" : "OK"} tone={recovery < 45 ? "danger" : recovery < 70 ? "warning" : "lime"} compact />
         </div>
 
         <p className="mt-5 border-l-4 border-limeSoft bg-mist/60 p-4 text-sm font-bold leading-6 text-ink">

@@ -190,13 +190,15 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
   };
 
   return (
-    <div className="fixed inset-0 z-[80] overflow-y-auto bg-petrol-900/70 px-4 py-5 backdrop-blur-sm">
-      <div className="mx-auto max-w-5xl border border-white/20 bg-cream shadow-soft">
+    <div className="fixed inset-0 z-[80] overflow-x-hidden overflow-y-auto bg-petrol-900/70 px-3 py-5 backdrop-blur-sm sm:px-4">
+      <div className="mx-auto w-full max-w-full overflow-hidden border border-white/20 bg-cream shadow-soft sm:max-w-5xl">
         <div className="grid gap-0 lg:grid-cols-[0.75fr_1.25fr]">
-          <aside className="bg-petrol-800 p-5 text-white sm:p-7">
+          <aside className="w-full max-w-[23rem] min-w-0 bg-petrol-800 p-5 text-white sm:max-w-none sm:p-7">
             <p className="text-[0.68rem] font-black uppercase tracking-[0.18em] text-limeSoft">Première ouverture</p>
-            <h1 className="mt-3 font-display text-4xl font-black leading-tight tracking-[-0.07em] sm:text-5xl">
-              Ton coach doit d'abord te comprendre.
+            <h1 className="mt-3 break-words font-display text-3xl font-black leading-tight tracking-normal sm:text-5xl">
+              Ton coach doit d'abord
+              <br />
+              te comprendre.
             </h1>
             <p className="mt-4 text-sm font-semibold leading-6 text-white/75">
               Choisis ce qui t'intéresse vraiment. Un module désactivé disparaît de l'expérience visible, mais reste réactivable plus tard.
@@ -217,7 +219,7 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
             </div>
           </aside>
 
-          <div className="grid gap-5 p-5 sm:p-7">
+          <div className="grid w-full max-w-[23rem] min-w-0 gap-5 p-5 sm:max-w-none sm:p-7">
             <section>
               <p className="eyebrow">Objectif principal</p>
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -292,27 +294,43 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
             </section>
 
             <section className="grid gap-4 lg:grid-cols-2">
-              <label className="field-label">
+              <div className="field-label">
                 Niveau
-                <select className="field" value={level} onChange={(event) => setLevel(event.target.value as UserSportLevel)}>
+                <div className="mt-2 grid gap-2 sm:grid-cols-3 lg:grid-cols-1">
                   {levelOptions.map((option) => (
-                    <option key={option.id} value={option.id}>
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={`min-h-11 rounded-card border px-3 py-2 text-left text-sm font-black transition ${
+                        level === option.id ? "border-petrol-800 bg-petrol-800 text-white" : "border-petrol-800/10 bg-white text-petrol-800 hover:bg-white"
+                      }`}
+                      aria-pressed={level === option.id}
+                      onClick={() => setLevel(option.id)}
+                    >
                       {option.label}
-                    </option>
+                    </button>
                   ))}
-                </select>
-              </label>
+                </div>
+              </div>
 
-              <label className="field-label">
+              <div className="field-label">
                 Durée max par séance
-                <select className="field" value={maxDuration} onChange={(event) => setMaxDuration(Number(event.target.value))}>
+                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-5 lg:grid-cols-2">
                   {[30, 45, 60, 75, 90].map((duration) => (
-                    <option key={duration} value={duration}>
+                    <button
+                      key={duration}
+                      type="button"
+                      className={`min-h-11 rounded-card border px-3 py-2 text-sm font-black transition ${
+                        maxDuration === duration ? "border-petrol-800 bg-petrol-800 text-white" : "border-petrol-800/10 bg-white text-petrol-800 hover:bg-white"
+                      }`}
+                      aria-pressed={maxDuration === duration}
+                      onClick={() => setMaxDuration(duration)}
+                    >
                       {duration} min
-                    </option>
+                    </button>
                   ))}
-                </select>
-              </label>
+                </div>
+              </div>
             </section>
 
             <section className="border border-petrol-800/10 bg-white p-4">
@@ -370,24 +388,48 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
             </section>
 
             <section className="grid gap-4 lg:grid-cols-2">
-              <label className="field-label">
+              <div className="field-label">
                 Échéance
-                <select className="field" value={targetEventType} onChange={(event) => setTargetEventType(event.target.value as TargetEventType)}>
-                  <option value="hyrox">HYROX ou compétition datée</option>
-                  <option value="other">Autre événement</option>
-                  <option value="none">Pas d'événement</option>
-                </select>
-              </label>
+                <div className="mt-2 grid gap-2">
+                  {[
+                    { id: "hyrox" as TargetEventType, label: "HYROX ou compétition datée" },
+                    { id: "other" as TargetEventType, label: "Autre événement" },
+                    { id: "none" as TargetEventType, label: "Pas d'événement" }
+                  ].map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={`min-h-11 rounded-card border px-3 py-2 text-left text-sm font-black transition ${
+                        targetEventType === option.id ? "border-petrol-800 bg-petrol-800 text-white" : "border-petrol-800/10 bg-white text-petrol-800 hover:bg-white"
+                      }`}
+                      aria-pressed={targetEventType === option.id}
+                      onClick={() => setTargetEventType(option.id)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               {targetEventType === "none" ? (
-                <label className="field-label">
+                <div className="field-label">
                   Programme
-                  <select className="field" value={programLengthWeeks} onChange={(event) => setProgramLengthWeeks(Number(event.target.value) as 4 | 8 | 12)}>
-                    <option value={4}>4 semaines</option>
-                    <option value={8}>8 semaines</option>
-                    <option value={12}>12 semaines</option>
-                  </select>
-                </label>
+                  <div className="mt-2 grid grid-cols-3 gap-2">
+                    {[4, 8, 12].map((weeks) => (
+                      <button
+                        key={weeks}
+                        type="button"
+                        className={`min-h-11 rounded-card border px-3 py-2 text-sm font-black transition ${
+                          programLengthWeeks === weeks ? "border-petrol-800 bg-petrol-800 text-white" : "border-petrol-800/10 bg-white text-petrol-800 hover:bg-white"
+                        }`}
+                        aria-pressed={programLengthWeeks === weeks}
+                        onClick={() => setProgramLengthWeeks(weeks as 4 | 8 | 12)}
+                      >
+                        {weeks} sem.
+                      </button>
+                    ))}
+                  </div>
+                </div>
               ) : (
                 <label className="field-label">
                   Date cible

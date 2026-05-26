@@ -143,7 +143,7 @@ export function ExperiencePanel({ settings, onSave }: ExperiencePanelProps) {
   };
 
   return (
-    <section className="panel p-4 sm:p-5">
+    <section id="experience" className="panel scroll-mt-24 p-4 sm:p-5">
       <div>
         <h2 className="title-lg">Mon expérience</h2>
         <p className="mt-2 text-sm font-semibold leading-6 text-muted">
@@ -153,16 +153,27 @@ export function ExperiencePanel({ settings, onSave }: ExperiencePanelProps) {
 
       <div className="mt-5 grid gap-3">
         <ExperienceSection title="Objectif principal" summary={GENERAL_SPORT_MODES.find((mode) => mode.id === activeGoal)?.label ?? "Libre"}>
-          <label className="field-label">
-            Objectif
-            <select className="field" value={activeGoal} onChange={(event) => setGoal(event.target.value as AppExperienceMode)}>
-              {GENERAL_SPORT_MODES.map((mode) => (
-                <option key={mode.id} value={mode.id}>
+          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+            {GENERAL_SPORT_MODES.map((mode) => {
+              const selected = activeGoal === mode.id;
+
+              return (
+                <button
+                  key={mode.id}
+                  type="button"
+                  className={`interactive-card min-h-11 rounded-card border p-3 text-left text-sm font-black transition ${
+                    selected
+                      ? "border-petrol-800 bg-petrol-800 text-white shadow-sm"
+                      : "border-petrol-800/10 bg-white/75 text-petrol-800 hover:bg-white"
+                  }`}
+                  aria-pressed={selected}
+                  onClick={() => setGoal(mode.id)}
+                >
                   {mode.label}
-                </option>
-              ))}
-            </select>
-          </label>
+                </button>
+              );
+            })}
+          </div>
         </ExperienceSection>
 
         <ExperienceSection title="Sports pratiqués" summary={`${selectedSports.length} sélectionné${selectedSports.length > 1 ? "s" : ""}`}>

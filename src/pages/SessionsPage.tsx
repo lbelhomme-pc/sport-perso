@@ -205,7 +205,7 @@ function CompletedExercisesList({ session }: { session: CompletedSession }) {
                 <p className="text-sm font-black text-petrol-800">{exercise.name}</p>
                 {exercise.notes ? <p className="mt-1 text-xs font-bold leading-5 text-muted">{exercise.notes}</p> : null}
               </div>
-              <StatusBadge tone={exercise.completed ? "lime" : "muted"}>{exercise.completed ? "validé" : "prévu"}</StatusBadge>
+              <StatusBadge tone={exercise.completed ? "lime" : "muted"}>{exercise.completed ? "Fait" : "À faire"}</StatusBadge>
             </div>
           </div>
         ))}
@@ -376,16 +376,24 @@ export default function SessionsPage() {
       ) : null}
 
       <SectionCard className="p-5 sm:p-6">
-        <label className="field-label max-w-md">
+        <div className="field-label max-w-full">
           Filtre
-          <select className="field" value={filter} onChange={(event) => setFilter(event.target.value as CompletedSessionType | "all")}>
+          <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
             {filters.map((item) => (
-              <option key={item} value={item}>
+              <button
+                key={item}
+                type="button"
+                className={`chip min-h-11 shrink-0 transition ${
+                  filter === item ? "bg-petrol-800 text-white ring-petrol-800" : "bg-white/80 text-petrol-800 hover:bg-white"
+                }`}
+                aria-pressed={filter === item}
+                onClick={() => setFilter(item)}
+              >
                 {item === "all" ? "Toutes les séances" : getTypeLabel(item)}
-              </option>
+              </button>
             ))}
-          </select>
-        </label>
+          </div>
+        </div>
 
         <div className="mt-5 grid gap-3">
           {displayedSessions.length ? (
@@ -408,7 +416,11 @@ export default function SessionsPage() {
                       <StatusBadge tone="muted">{session.durationMin} min</StatusBadge>
                       {session.caloriesBurned ? <StatusBadge tone="muted">{session.caloriesBurned} kcal</StatusBadge> : null}
                       {session.rpe ? <StatusBadge tone="info">RPE {session.rpe}</StatusBadge> : null}
-                      {session.fatigueDuring !== undefined ? <StatusBadge tone={session.fatigueDuring >= 7 ? "warning" : "muted"}>Fatigue {session.fatigueDuring}/10</StatusBadge> : null}
+                      {session.fatigueDuring !== undefined ? (
+                        <StatusBadge tone={session.fatigueDuring >= 7 ? "warning" : "muted"}>
+                          {session.fatigueDuring >= 7 ? "Fatigue haute" : "Fatigue"} {session.fatigueDuring}/10
+                        </StatusBadge>
+                      ) : null}
                       {session.painDuring !== undefined ? <StatusBadge tone={session.painDuring >= 4 ? "danger" : "muted"}>Douleur {session.painDuring}/10</StatusBadge> : null}
                       <StatusBadge tone="muted">{isOpen ? "Détails ouverts" : "Voir détails"}</StatusBadge>
                     </div>
@@ -481,7 +493,24 @@ export default function SessionsPage() {
               );
             })
           ) : (
-            <EmptyState icon={Dumbbell} title="Aucune séance" message="Ajoute une séance ou change le filtre." />
+            <EmptyState
+              icon={Dumbbell}
+              title="Aucune séance"
+              message="Ajoute une séance ou change le filtre."
+              action={
+                <button
+                  type="button"
+                  className="action-button mx-auto"
+                  onClick={() => {
+                    setFilter("all");
+                    setShowForm(true);
+                    setDetailedForm(false);
+                  }}
+                >
+                  <Plus className="h-4 w-4" /> Ajouter une séance
+                </button>
+              }
+            />
           )}
         </div>
       </SectionCard>

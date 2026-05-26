@@ -19,8 +19,15 @@ export function ComparisonBarChart<T extends Record<string, string | number>>({
   secondName,
   summary
 }: ComparisonBarChartProps<T>) {
-  if (!data.length) {
-    return <p className="border border-petrol-800/10 bg-mist/50 p-4 text-sm font-semibold text-muted">Pas encore assez de données pour afficher ce graphique.</p>;
+  const hasUsefulData = data.some((item) => Number(item[firstKey]) > 0 || Number(item[secondKey]) > 0);
+  const animate = typeof window !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!data.length || !hasUsefulData) {
+    return (
+      <p className="animate-[premiumIn_180ms_ease-out] rounded-card border border-petrol-800/10 bg-mist/50 p-4 text-sm font-semibold text-muted motion-reduce:animate-none">
+        Pas encore assez de données utiles pour afficher ce graphique.
+      </p>
+    );
   }
 
   return (
@@ -33,8 +40,8 @@ export function ComparisonBarChart<T extends Record<string, string | number>>({
             <YAxis tick={{ fontSize: 13, fill: "#6F8188", fontWeight: 700 }} axisLine={false} tickLine={false} />
             <Tooltip contentStyle={{ border: "1px solid rgba(0,53,74,.12)", boxShadow: "0 12px 30px rgba(0,40,58,.12)" }} />
             <Legend />
-            <Bar dataKey={String(firstKey)} name={firstName} fill="#DCEFA3" />
-            <Bar dataKey={String(secondKey)} name={secondName} fill="#00354A" />
+            <Bar dataKey={String(firstKey)} name={firstName} fill="#DCEFA3" isAnimationActive={animate} animationDuration={220} />
+            <Bar dataKey={String(secondKey)} name={secondName} fill="#00354A" isAnimationActive={animate} animationDuration={220} />
           </BarChart>
         </ResponsiveContainer>
       </div>

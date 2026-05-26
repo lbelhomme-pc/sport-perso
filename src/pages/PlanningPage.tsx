@@ -23,7 +23,7 @@ import {
   getExerciseInstruction,
   getGuidanceExercises
 } from "../utils/exerciseDisplay";
-import { getCompletedForPlan, getPlannedCompletion } from "../utils/training";
+import { getCompletedForPlan, getPlannedCompletionMap } from "../utils/training";
 import { getPlannedTypeLabel, getProgramLabel, hideHyroxWhenGeneral, isHyroxCompetitionMode, personalizePlannedSession } from "../utils/sportLabels";
 
 function groupChecklistItems(items: SessionChecklistItem[]) {
@@ -226,7 +226,7 @@ export default function PlanningPage() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const { settings, saveSettings } = useSettings();
-  const { sessions, saveSession, deletePlannedSessionCompletion } = useSessions();
+  const { sessions, saveSession, deleteSession, deletePlannedSessionCompletion } = useSessions();
   const { getCheckedItemIds, saveChecklist, toggleChecklistItem } = useSessionChecklists();
   const { getOverride } = usePlanningOverrides();
   const totalWeeks = getTotalWeeks(settings.startDate, settings.targetDate);
@@ -243,7 +243,12 @@ export default function PlanningPage() {
     personalizePlannedSession(applyPlannedSessionOverride(session, getOverride(session)), settings)
   );
   const plannedTrainingWeek = plannedWeek.filter((session) => session.type !== "rest");
-  const weekProgramCompletion = getPlannedCompletion(plannedTrainingWeek, sessions);
+  const completedByPlannedId = getPlannedCompletionMap(plannedTrainingWeek, sessions);
+  const weekProgramCompletion = {
+    planned: plannedTrainingWeek.length,
+    completed: completedByPlannedId.size,
+    ratio: plannedTrainingWeek.length > 0 ? Math.round((completedByPlannedId.size / plannedTrainingWeek.length) * 100) : 0
+  };
   const plannedWeekIds = plannedTrainingWeek.map((session) => session.id).join("|");
   const context = getTrainingContext(settings, week);
   const phases = buildPhases(totalWeeks);
@@ -281,7 +286,7 @@ export default function PlanningPage() {
           session={sessionMode}
           energy={energy}
           checkedItemIds={getCheckedItemIds(sessionMode.id)}
-          completed={Boolean(getCompletedForPlan(sessions, sessionMode))}
+          completed={Boolean(completedByPlannedId.get(sessionMode.id) ?? getCompletedForPlan(sessions, sessionMode))}
           onToggle={(itemId, checked) => toggleChecklistItem(sessionMode.id, itemId, checked)}
           onClose={() => setSessionMode(null)}
           onFinish={() => {
@@ -296,15 +301,11 @@ export default function PlanningPage() {
       <PageHeader
         eyebrow="Programmes"
         title={getProgramLabel(settings)}
-        description={
-          hyroxMode
-            ? "Mode compétition spécialisé : la semaine devient une liste de séances à choisir selon tes contraintes, pas un agenda rigide."
-            : "Mode général : prépare tes séances de la semaine, puis choisis chaque jour celle qui colle à ta vraie vie."
-        }
+        description="Choisis une séance, lance-la, ajuste seulement si nécessaire."
       />
 
-      <SectionCard className="p-5 sm:p-6">
-        <div className={`grid gap-3 ${hyroxMode ? "lg:grid-cols-1" : "lg:grid-cols-[0.8fr_1.45fr]"}`}>
+      <SectionCard className="p-4 sm:p-5">
+        <div className="grid gap-3 lg:grid-cols-[0.85fr_1.15fr]">
           <label className="field-label">
             Semaine
             <select className="field" value={week} onChange={(event) => setWeek(Number(event.target.value))}>
@@ -316,32 +317,29 @@ export default function PlanningPage() {
             </select>
           </label>
 
-          {!hyroxMode ? (
-            <div className="field-label">
-              Organisation
-              <div className="field flex items-center text-sm font-black text-muted">Planning adapté aux modules et au niveau choisis.</div>
+          <div className="rounded-card border border-petrol-800/10 bg-white/80 p-3">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="eyebrow">Semaine {week}</p>
+                <p className="mt-1 text-sm font-bold text-muted">
+                  {weekProgramCompletion.completed}/{weekProgramCompletion.planned} séance{weekProgramCompletion.planned > 1 ? "s" : ""} validée{weekProgramCompletion.completed > 1 ? "s" : ""}
+                </p>
+              </div>
+              <p className="font-display text-3xl font-black tracking-[-0.05em] text-petrol-800">{weekProgramCompletion.ratio} %</p>
             </div>
-          ) : null}
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-mist">
+              <div className="h-full rounded-full bg-limeSoft" style={{ width: `${weekProgramCompletion.ratio}%` }} />
+            </div>
+          </div>
         </div>
 
-        <div className="mt-5 border border-petrol-800/10 bg-white p-4">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="eyebrow">Séances de la semaine</p>
-              <p className="mt-1 text-sm font-semibold leading-6 text-muted">
-                Elles ne sont pas verrouillées par jour : tu choisis la séance du moment depuis l'accueil.
-              </p>
-            </div>
-            <div className="text-left sm:text-right">
-              <p className="font-display text-3xl font-black tracking-[-0.05em] text-petrol-800">
-                {weekProgramCompletion.completed}/{weekProgramCompletion.planned} · {weekProgramCompletion.ratio} %
-              </p>
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">validées</p>
-            </div>
-          </div>
-          <div className="mt-3 h-2 overflow-hidden bg-mist">
-            <div className="h-full bg-limeSoft" style={{ width: `${weekProgramCompletion.ratio}%` }} />
-          </div>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+          <p className="text-xs font-bold text-muted">
+            Les détails restent repliés pour garder la liste lisible.
+          </p>
+          <button type="button" className="ghost-button" onClick={() => setShowProgression((current) => !current)}>
+            <ListChecks className="h-4 w-4" /> {showProgression ? "Masquer phases" : "Voir phases"}
+          </button>
         </div>
 
         {hyroxMode ? (
@@ -350,40 +348,6 @@ export default function PlanningPage() {
             onChange={(nextVariant) => saveSettings({ ...settings, badmintonVariant: nextVariant })}
           />
         ) : null}
-
-        <div className="mt-5 grid gap-3 sm:grid-cols-3">
-          <div className="bg-mist/70 p-4">
-            <p className="eyebrow">Phase</p>
-            <h2 className="mt-2 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">{hideHyroxWhenGeneral(context.phase.title, settings)}</h2>
-            <p className="mt-2 text-sm font-semibold leading-6 text-muted">{hideHyroxWhenGeneral(context.phase.summary, settings)}</p>
-          </div>
-          <div className="bg-white p-4">
-            <p className="eyebrow">Période</p>
-            <h2 className="mt-2 font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
-              Semaine {week}
-            </h2>
-            <p className="mt-2 text-sm font-semibold text-muted">
-              Organisation flexible.
-            </p>
-          </div>
-          <div className="bg-limeSoft p-4 text-petrol-900">
-            <p className="text-xs font-black uppercase tracking-[0.1em]">Vacances</p>
-            <h2 className="mt-2 font-display text-2xl font-black tracking-[-0.05em]">
-              {context.vacation ? "Mode maintenance" : "Semaine normale"}
-            </h2>
-            <p className="mt-2 text-sm font-bold opacity-75">
-              Configure les semaines de vacances dans Réglages pour réduire automatiquement la charge.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-petrol-800/10 pt-4">
-          <p className="text-xs font-bold text-muted">
-            La progression par phases est optionnelle : garde-la cachée pour un planning plus lisible.
-          </p>
-          <button type="button" className="ghost-button" onClick={() => setShowProgression((current) => !current)}>
-            <ListChecks className="h-4 w-4" /> {showProgression ? "Masquer progression" : "Afficher progression"}
-          </button>
-        </div>
       </SectionCard>
 
       {editingSession ? (
@@ -393,7 +357,7 @@ export default function PlanningPage() {
           <div className="mt-5">
             <SessionForm
               planned={editingSession}
-              initial={getCompletedForPlan(sessions, editingSession)}
+              initial={completedByPlannedId.get(editingSession.id) ?? getCompletedForPlan(sessions, editingSession)}
               onCancel={() => setEditingSession(null)}
               onSubmit={(session) => {
                 saveSession(session);
@@ -439,7 +403,10 @@ export default function PlanningPage() {
 
         <div className="grid gap-3">
           {plannedTrainingWeek.map((session, index) => {
-            const completed = getCompletedForPlan(sessions, session);
+            const completed = completedByPlannedId.get(session.id) ?? getCompletedForPlan(sessions, session);
+            const inferredCompletion = Boolean(completed && !completed.plannedSessionId);
+            const adapted = Boolean(getOverride(session));
+            const statusLabel = completed ? (inferredCompletion ? "Reconnu" : "Fait") : adapted ? "Adaptée" : "À faire";
             const content = getDisplayedVersion(session, energy);
             const checklistItems = getSessionChecklist(session, energy).map((item) => ({
               ...item,
@@ -459,50 +426,58 @@ export default function PlanningPage() {
                     className="flex min-w-0 flex-1 items-center gap-3 text-left"
                     onClick={() => setOpenSessionId(isOpen ? null : session.id)}
                   >
-                    <span className={`flex min-w-[4.75rem] shrink-0 items-center justify-center px-3 py-2 text-center font-display text-lg font-black leading-none ${isOpen ? "bg-petrol-800 text-limeSoft" : "bg-mist text-petrol-800"}`}>
+                    <span className={`flex min-w-[3.75rem] shrink-0 items-center justify-center rounded-card px-3 py-2 text-center font-display text-lg font-black leading-none ${isOpen ? "bg-petrol-800 text-limeSoft" : "bg-mist text-petrol-800"}`}>
                       #{index + 1}
                     </span>
                     <span className="min-w-0">
                       <span className="block text-xs font-black uppercase tracking-[0.08em] text-muted">
-                        {getPlannedTypeLabel(session.type, settings)} · repère initial {session.day}
+                        {getPlannedTypeLabel(session.type, settings)} · {session.durationMin} min
                       </span>
-                      <span className="mt-1 block truncate font-display text-2xl font-black tracking-[-0.05em] text-petrol-800">
+                      <span className="mt-1 block truncate font-display text-xl font-black tracking-[-0.045em] text-petrol-800 sm:text-2xl">
                         {session.title}
                       </span>
                       {session.type !== "rest" && !isBadminton ? (
-                        <span className="mt-2 block text-xs font-black text-muted">
-                          Version courte disponible si besoin
-                        </span>
+                        <span className="mt-1 block text-xs font-black text-muted">Version courte disponible</span>
                       ) : null}
                     </span>
                   </button>
 
                   <div className="flex flex-wrap items-center gap-2 lg:justify-end">
-                    <span className="chip">{session.durationMin} min</span>
+                    <span className={completed ? "chip bg-limeSoft text-petrol-900" : adapted ? "chip bg-[#24D9D2]/12 text-petrol-800" : "chip bg-white text-muted"}>
+                      {statusLabel}
+                    </span>
                     <span className="chip">{session.rpeTarget}</span>
                     {session.type !== "rest" ? (
                       <>
                         <button className="action-button" onClick={() => setSessionMode(session)}>
                           <PlayCircle className="h-4 w-4" /> Démarrer
                         </button>
-                        <button className="ghost-button" onClick={() => setEditingSession(session)}>
-                          <Pencil className="h-4 w-4" /> Modifier
-                        </button>
+                        {isOpen ? (
+                          <button className="ghost-button" onClick={() => setEditingSession(session)}>
+                            <Pencil className="h-4 w-4" /> Modifier
+                          </button>
+                        ) : (
+                          <button className="ghost-button" onClick={() => setOpenSessionId(session.id)}>
+                            <ChevronDown className="h-4 w-4" /> Détails
+                          </button>
+                        )}
                       </>
                     ) : null}
-                    <button
-                      type="button"
-                      className="ghost-button px-3"
-                      onClick={() => setOpenSessionId(isOpen ? null : session.id)}
-                      aria-label={isOpen ? "Replier la séance" : "Développer la séance"}
-                    >
-                      <ChevronDown className={`h-5 w-5 transition ${isOpen ? "rotate-180" : ""}`} />
-                    </button>
                   </div>
                 </div>
 
                 {isOpen ? (
                   <div id={`${session.id}-details`} className="scroll-mt-24 border-t border-petrol-800/10 p-4 sm:p-5">
+                  {completed ? (
+                    <div className="mb-4 border-l-4 border-limeSoft bg-limeSoft/20 p-4">
+                      <p className="text-xs font-black uppercase tracking-[0.08em] text-petrol-800">
+                        Séance faite{inferredCompletion ? " · reconnue depuis une saisie libre" : ""}
+                      </p>
+                      <p className="mt-1 text-sm font-semibold leading-6 text-ink">
+                        {completed.title} · {completed.durationMin} min{completed.rpe ? ` · RPE ${completed.rpe}` : ""}
+                      </p>
+                    </div>
+                  ) : null}
                   <div className="border-l-4 border-limeSoft bg-mist/45 p-4">
                     <p className="text-xs font-black uppercase tracking-[0.08em] text-petrol-800">{isBadminton ? "Suivi" : "Objectif"}</p>
                     <p className="mt-2 text-sm font-semibold leading-6 text-ink">{session.objective}</p>
@@ -550,7 +525,16 @@ export default function PlanningPage() {
                       <span />
                     )}
                     {session.type !== "rest" && completed ? (
-                      <button className="ghost-button" onClick={() => deletePlannedSessionCompletion(session)}>
+                      <button
+                        className="ghost-button"
+                        onClick={() => {
+                          if (completed.plannedSessionId) {
+                            deletePlannedSessionCompletion(session);
+                          } else {
+                            deleteSession(completed.id);
+                          }
+                        }}
+                      >
                         <RotateCcw className="h-4 w-4" /> Annuler réalisé
                       </button>
                     ) : null}

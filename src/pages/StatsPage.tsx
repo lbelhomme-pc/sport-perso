@@ -9,6 +9,7 @@ import { MetricLineChart } from "../components/charts/MetricLineChart";
 import { ChartCard } from "../components/ui/ChartCard";
 import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
 import { EmptyState } from "../components/ui/EmptyState";
+import { GaugeBar } from "../components/ui/GaugeBar";
 import { MetricTile } from "../components/ui/MetricTile";
 import { PageHeader } from "../components/ui/PageHeader";
 import { SectionCard } from "../components/ui/SectionCard";
@@ -101,34 +102,37 @@ function ProgressOverviewCard({
   days,
   volumeMin,
   volumeGoalMin,
-  steps,
-  calories,
-  sessions
+  sessions,
+  completed,
+  planned,
+  status
 }: {
   days: Array<{ label: string; value: number; goal: number; isToday: boolean }>;
   volumeMin: number;
   volumeGoalMin: number;
-  steps: number;
-  calories: number;
   sessions: number;
+  completed: number;
+  planned: number;
+  status: "léger" | "stable" | "chargé";
 }) {
   const maxValue = Math.max(...days.map((day) => day.value), ...days.map((day) => day.goal), 1);
   const completion = volumeGoalMin > 0 ? Math.round((volumeMin / volumeGoalMin) * 100) : 0;
+  const statusTone = status === "chargé" ? "warning" : status === "léger" ? "info" : "lime";
 
   return (
-    <section className="theme-stat-card overflow-hidden rounded-panel border p-5 shadow-panel sm:p-6">
+    <section className="theme-stat-card animate-[premiumIn_180ms_ease-out] overflow-hidden rounded-panel border p-5 shadow-panel motion-reduce:animate-none sm:p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="stat-muted text-xs font-black uppercase tracking-[0.14em]">Progression</p>
+          <p className="stat-muted text-xs font-black uppercase tracking-[0.14em]">Semaine sport</p>
           <p className="mt-3 font-display text-5xl font-black tracking-[-0.08em] sm:text-6xl">
             {formatCompactNumber(volumeMin)}
             <span className="stat-muted ml-2 text-2xl">min</span>
           </p>
         </div>
         <div className="text-right">
-          <p className="stat-muted text-xs font-black uppercase tracking-[0.1em]">Objectif semaine</p>
-          <p className="stat-accent mt-1 font-display text-2xl font-black tracking-[-0.05em]">{formatCompactNumber(volumeGoalMin)} min</p>
-          <p className="stat-soft text-sm font-black">{completion} %</p>
+          <StatusBadge tone={statusTone}>{status}</StatusBadge>
+          <p className="stat-accent mt-2 font-display text-2xl font-black tracking-[-0.05em]">{completed}/{planned || "—"}</p>
+          <p className="stat-soft text-sm font-black">fait/prévu</p>
         </div>
       </div>
 
@@ -168,12 +172,12 @@ function ProgressOverviewCard({
 
       <div className="stat-divider grid grid-cols-3 divide-x border-b text-center">
         <div className="p-3">
-          <p className="stat-soft text-xs font-black uppercase tracking-[0.08em]">Pas</p>
-          <p className="stat-accent mt-1 font-display text-xl font-black tracking-[-0.05em]">{formatCompactNumber(steps)}</p>
+          <p className="stat-soft text-xs font-black uppercase tracking-[0.08em]">Actifs</p>
+          <p className="stat-accent mt-1 font-display text-xl font-black tracking-[-0.05em]">{days.filter((day) => day.value > 0).length}</p>
         </div>
         <div className="p-3">
-          <p className="stat-soft text-xs font-black uppercase tracking-[0.08em]">Calories</p>
-          <p className="stat-accent mt-1 font-display text-xl font-black tracking-[-0.05em]">{formatCompactNumber(calories)}</p>
+          <p className="stat-soft text-xs font-black uppercase tracking-[0.08em]">Plan</p>
+          <p className="stat-accent mt-1 font-display text-xl font-black tracking-[-0.05em]">{completion}%</p>
         </div>
         <div className="p-3">
           <p className="stat-soft text-xs font-black uppercase tracking-[0.08em]">Séances</p>
@@ -307,6 +311,8 @@ type DecisionCardData = {
   answer: string;
   hint: string;
   tone: DecisionCardTone;
+  gaugeValue: number;
+  gaugeLabel: string;
 };
 
 const decisionToneClasses: Record<DecisionCardTone, string> = {
@@ -328,7 +334,7 @@ const motivationIconClasses: Record<MotivationTone, string> = {
   neutral: "bg-mist text-petrol-800"
 };
 
-function DecisionCard({ icon: Icon, question, answer, hint, tone }: DecisionCardData) {
+function DecisionCard({ icon: Icon, question, answer, hint, tone, gaugeValue, gaugeLabel }: DecisionCardData) {
   return (
     <article className={`rounded-card border p-4 shadow-sm ${decisionToneClasses[tone]}`}>
       <div className="flex items-start gap-3">
@@ -339,6 +345,15 @@ function DecisionCard({ icon: Icon, question, answer, hint, tone }: DecisionCard
           <p className="text-xs font-black uppercase tracking-[0.08em] text-muted">{question}</p>
           <p className="mt-1 font-display text-2xl font-black tracking-[-0.055em] text-petrol-800">{answer}</p>
           <p className="mt-1 text-sm font-bold leading-5 text-muted">{hint}</p>
+          <div className="mt-3">
+            <GaugeBar
+              label={question}
+              value={gaugeValue}
+              valueLabel={gaugeLabel}
+              tone={tone === "danger" ? "danger" : tone === "warning" ? "warning" : tone === "info" ? "info" : "lime"}
+              compact
+            />
+          </div>
         </div>
       </div>
     </article>
@@ -409,6 +424,12 @@ export default function StatsPage() {
   const progressFloors = progressDays.reduce((total, day) => total + day.floors, 0);
   const progressCalories = progressDays.reduce((total, day) => total + day.calories, 0);
   const progressSessionCount = progressDays.reduce((total, day) => total + day.sessions, 0);
+  const currentWeekStatus: "léger" | "stable" | "chargé" =
+    currentWeekVolumeGoal > 0 && progressVolumeMin > currentWeekVolumeGoal * 1.1
+      ? "chargé"
+      : (currentWeekProgram?.completionRate ?? 0) < 45
+        ? "léger"
+        : "stable";
 
   const startDaily = subDays(new Date(), 20);
   const dailySeries = Array.from({ length: 21 }, (_, index) => {
@@ -436,6 +457,8 @@ export default function StatsPage() {
   }));
 
   const sessionsWithCalories = data.sessions.filter((session) => session.completed && (session.caloriesBurned ?? 0) > 0);
+  const completedSportSessions = data.sessions.filter((session) => session.completed);
+  const hasCompletedSportSession = completedSportSessions.length > 0;
   const totalSportCalories = sessionsWithCalories.reduce((total, session) => total + (session.caloriesBurned ?? 0), 0);
   const stepContexts = data.dailyContexts.filter((context) => (context.steps ?? 0) > 0);
   const floorContexts = data.dailyContexts.filter((context) => (context.floors ?? 0) > 0);
@@ -461,7 +484,7 @@ export default function StatsPage() {
   const movementDaysCount = countUniqueDates(data.dailyContexts.filter((context) => (context.steps ?? 0) > 0 || (context.floors ?? 0) > 0));
   const floorDaysCount = countUniqueDates(data.dailyContexts.filter((context) => (context.floors ?? 0) > 0));
   const weightTrendReady = hasWeightTrend(data.weights);
-  const sessionTrendReady = data.sessions.length >= 2;
+  const sessionTrendReady = completedSportSessions.length >= 2;
   const sportCaloriesReady = sessionsWithCalories.length >= 2;
   const foodTrendReady = mealDaysCount >= 3;
   const movementTrendReady = movementDaysCount >= 3;
@@ -478,9 +501,11 @@ export default function StatsPage() {
   const painDays = recentDailyContexts.filter((context) => (context.painMorning ?? 0) >= 4 || context.pain).length;
   const hardSessions7d = data.sessions.filter((session) => session.completed && session.date >= progressStartIso && (session.rpe ?? 0) >= 8).length;
   const recoveryNeedsCare = highFatigueDays >= 2 || painDays > 0 || hardSessions7d >= 3 || progressionSummary.averageRpe7d >= 8;
-  const regularityAnswer = currentWeekProgram?.planned
-    ? `${currentWeekProgram.completed}/${currentWeekProgram.planned}`
-    : `${progressionSummary.activeDays7d}/7 j`;
+  const regularityAnswer = hasCompletedSportSession
+    ? currentWeekProgram?.planned
+      ? `${currentWeekProgram.completed}/${currentWeekProgram.planned}`
+      : `${progressionSummary.activeDays7d}/7 j`
+    : "À lancer";
   const regularityTone: DecisionCardTone =
     progressionSummary.activeDays7d >= 3 || (currentWeekProgram?.completionRate ?? 0) >= 60
       ? "lime"
@@ -494,36 +519,49 @@ export default function StatsPage() {
         ? "warning"
         : "info";
   const recoveryTone: DecisionCardTone = recoveryNeedsCare ? "danger" : progressionSummary.averageRpe7d >= 7 ? "warning" : "lime";
+  const recoveryGaugeValue = recoveryNeedsCare ? 38 : progressionSummary.averageRpe7d >= 7 ? 62 : 84;
   const decisionCards: DecisionCardData[] = [
     {
       icon: CalendarCheck,
       question: "Régularité",
       answer: regularityAnswer,
-      hint: currentWeekProgram?.planned
-        ? `${currentWeekProgram.completionRate} % du programme validé cette semaine.`
-        : `${progressionSummary.sessions7d} séance${progressionSummary.sessions7d > 1 ? "s" : ""} sur 7 jours.`,
-      tone: regularityTone
+      hint: hasCompletedSportSession
+        ? currentWeekProgram?.planned
+          ? `${currentWeekProgram.completionRate} % du programme validé cette semaine.`
+          : `${progressionSummary.sessions7d} séance${progressionSummary.sessions7d > 1 ? "s" : ""} sur 7 jours.`
+        : "Valide une première séance pour créer un repère.",
+      tone: regularityTone,
+      gaugeValue: currentWeekProgram?.planned ? currentWeekProgram.completionRate : Math.min(100, (progressionSummary.activeDays7d / 7) * 100),
+      gaugeLabel: currentWeekProgram?.planned ? `${currentWeekProgram.completed}/${currentWeekProgram.planned}` : `${progressionSummary.activeDays7d}/7`
     },
     {
       icon: TrendingUp,
       question: "Progression",
-      answer: formatTrendPercent(progressionSummary.volumeTrendPercent),
+      answer: hasCompletedSportSession ? formatTrendPercent(progressionSummary.volumeTrendPercent) : "En attente",
       hint:
-        progressionSummary.volumeTrendPercent > 10
+        !hasCompletedSportSession
+          ? "La progression apparaîtra après tes premières séances."
+          : progressionSummary.volumeTrendPercent > 10
           ? "Le volume monte. Garde de la marge."
           : progressionSummary.volumeTrendPercent < -25
             ? "Volume en baisse : normal si semaine chargée ou récupération."
             : "Stable : bon signe si tu te sens frais.",
-      tone: progressionTone
+      tone: progressionTone,
+      gaugeValue: Math.min(100, Math.max(0, progressionSummary.volumeTrendPercent + 50)),
+      gaugeLabel: progressionSummary.volumeTrendPercent ? `${Math.round(progressionSummary.volumeTrendPercent)} %` : "stable"
     },
     {
       icon: HeartPulse,
       question: "Lever le pied ?",
-      answer: recoveryNeedsCare ? "Oui" : "Pas forcément",
-      hint: recoveryNeedsCare
-        ? "Fatigue, douleur ou RPE haut : privilégie une version courte."
-        : "Signaux corrects. Reste propre, pas besoin de forcer.",
-      tone: recoveryTone
+      answer: recentDailyContexts.length || hasCompletedSportSession ? (recoveryNeedsCare ? "Oui" : "Pas forcément") : "À noter",
+      hint: recentDailyContexts.length || hasCompletedSportSession
+        ? recoveryNeedsCare
+          ? "Fatigue, douleur ou RPE haut : privilégie une version courte."
+          : "Signaux corrects. Reste propre, pas besoin de forcer."
+        : "Renseigne fatigue, douleur ou RPE pour fiabiliser ce signal.",
+      tone: recoveryTone,
+      gaugeValue: recoveryGaugeValue,
+      gaugeLabel: recoveryNeedsCare ? "allège" : progressionSummary.averageRpe7d >= 7 ? "modéré" : "OK"
     }
   ];
   const usefulBadges = progressionSummary.badges.filter((badge) => badge.earned).slice(0, 3);
@@ -653,6 +691,16 @@ export default function StatsPage() {
       : null
   ];
   const sportSummaryTiles = sportSummaryTileCandidates.filter((item): item is SportSummaryTileData => Boolean(item));
+  const sportChartModes = SPORT_SESSION_CHARTS.filter((mode) => {
+    if (mode.id === "volume") return sessionTrendReady && hasValue(weekSeries, "volume");
+    if (mode.id === "calories") return sportCaloriesReady && hasValue(weekSeries, "calories");
+    return executionTrendReady;
+  });
+  const selectedSportSessionChart = sportChartModes.some((mode) => mode.id === sportSessionChart)
+    ? sportSessionChart
+    : sportChartModes[0]?.id ?? "volume";
+  const hasSportCharts = sportChartModes.length > 0;
+  const hasSportDetails = hasCompletedSportSession;
   const hasUsefulStats =
     (showSport && Boolean(currentWeekProgram?.planned)) ||
     (showSport && sessionTrendReady) ||
@@ -680,6 +728,11 @@ export default function StatsPage() {
             icon={BarChart3}
             title="Pas encore assez de données"
             message="Commence par une ou deux actions simples. L'app affichera les tendances dès que les données deviennent utiles."
+            action={
+              <Link to={showSport ? "/sessions" : "/settings"} className="action-button mx-auto">
+                {showSport ? "Ajouter une séance" : "Choisir mes modules"}
+              </Link>
+            }
           />
           <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {showSport ? (
@@ -746,114 +799,95 @@ export default function StatsPage() {
             ))}
           </div>
 
-          {quickMotivationMessages.length ? (
-            <div className="mt-4 grid gap-2 md:grid-cols-2">
-              {quickMotivationMessages.map((message) => (
-                <article key={message.id} className={`rounded-card border p-3 shadow-sm ${motivationToneClasses[message.tone]}`}>
-                  <div className="flex items-start gap-3">
-                    <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${motivationIconClasses[message.tone]}`}>
-                      <Lightbulb className="h-4 w-4" aria-hidden="true" />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-black text-petrol-800">{message.title}</p>
-                      <p className="mt-1 text-sm font-semibold leading-5 text-muted">{message.message}</p>
-                    </div>
-                  </div>
-                </article>
-              ))}
+          {hasCompletedSportSession || currentWeekProgram?.planned ? (
+            <div className="mt-4">
+              <ProgressOverviewCard
+                days={progressDays}
+                volumeMin={progressVolumeMin}
+                volumeGoalMin={currentWeekVolumeGoal || 210}
+                sessions={progressSessionCount}
+                completed={currentWeekProgram?.completed ?? progressSessionCount}
+                planned={currentWeekProgram?.planned ?? 0}
+                status={currentWeekStatus}
+              />
             </div>
           ) : null}
+
         </SectionCard>
       ) : null}
 
-      {showSport ? (
+      {showSport && hasSportCharts ? (
         <SectionCard className="p-4 sm:p-5">
           <ChartCard
             title="Graphique principal"
-            subtitle="Un seul graphique à la fois : tu choisis l'angle utile."
+            subtitle="Affiché seulement quand les données deviennent parlantes."
             variant="plain"
             action={
-              <div className="tab-control grid min-w-full grid-cols-3 gap-1 sm:min-w-[22rem]">
-                {SPORT_SESSION_CHARTS.map((mode) => (
-                  <button
-                    key={mode.id}
-                    type="button"
-                    className={`tab-button ${sportSessionChart === mode.id ? "tab-button-active" : "tab-button-idle"}`}
-                    onClick={() => setSportSessionChart(mode.id)}
-                  >
-                    {mode.label}
-                  </button>
-                ))}
-              </div>
+              sportChartModes.length > 1 ? (
+                <div className="tab-control grid min-w-full gap-1 sm:min-w-[22rem]" style={{ gridTemplateColumns: `repeat(${sportChartModes.length}, minmax(0, 1fr))` }}>
+                  {sportChartModes.map((mode) => (
+                    <button
+                      key={mode.id}
+                      type="button"
+                      className={`tab-button ${selectedSportSessionChart === mode.id ? "tab-button-active" : "tab-button-idle"}`}
+                      onClick={() => setSportSessionChart(mode.id)}
+                    >
+                      {mode.label}
+                    </button>
+                  ))}
+                </div>
+              ) : undefined
             }
           >
-            {sportSessionChart === "volume" ? (
-              sessionTrendReady && hasValue(weekSeries, "volume") ? (
-                <MetricBarChart
-                  data={weekSeries}
-                  xKey="week"
-                  yKey="volume"
-                  suffix=" min"
-                  summary={`${totalVolumeMinutes} min enregistrées sur le programme affiché.`}
-                />
-              ) : (
-                <ChartEmptyState
-                  icon={Dumbbell}
-                  title="Ajoute 2 séances pour voir ton volume"
-                  message="Le volume devient lisible quand tu as au moins deux séances enregistrées avec une durée."
-                  to="/sessions"
-                  actionLabel="Ajouter une séance"
-                />
-              )
+            {selectedSportSessionChart === "volume" ? (
+              <MetricBarChart
+                data={weekSeries}
+                xKey="week"
+                yKey="volume"
+                suffix=" min"
+                summary={`Cette semaine : ${progressSessionCount} séance${progressSessionCount > 1 ? "s" : ""}, ${progressVolumeMin} min.`}
+              />
             ) : null}
 
-            {sportSessionChart === "calories" ? (
-              sportCaloriesReady && hasValue(weekSeries, "calories") ? (
-                <MetricBarChart
-                  data={weekSeries}
-                  xKey="week"
-                  yKey="calories"
-                  color="#DCEFA3"
-                  suffix=" kcal"
-                  summary={`${totalSportCalories} kcal sport enregistrées au total.`}
-                />
-              ) : (
-                <ChartEmptyState
-                  icon={Dumbbell}
-                  title="Calories sport en attente"
-                  message="Ajoute les calories sur 2 séances pour voir une dépense hebdomadaire utile."
-                  to="/sessions"
-                  actionLabel="Compléter une séance"
-                />
-              )
+            {selectedSportSessionChart === "calories" ? (
+              <MetricBarChart
+                data={weekSeries}
+                xKey="week"
+                yKey="calories"
+                color="#DCEFA3"
+                suffix=" kcal"
+                summary={`Cette semaine : ${progressCalories} kcal sport. Total enregistré : ${totalSportCalories} kcal.`}
+              />
             ) : null}
 
-            {sportSessionChart === "execution" ? (
-              executionTrendReady ? (
-                <ComparisonBarChart
-                  data={weekSeries}
-                  xKey="week"
-                  firstKey="planned"
-                  secondKey="completed"
-                  firstName="Prévues"
-                  secondName="Réalisées"
-                  summary={`${totalCompletedSessions} séances prévues validées / ${totalPlannedSessions} prévues. Une séance compte même si tu la fais un autre jour.`}
-                />
-              ) : (
-                <ChartEmptyState
-                  icon={CalendarCheck}
-                  title="Aucune séance du programme validée"
-                  message="Valide une séance du planning pour comparer ce qui était prévu avec ce qui a été fait."
-                  to="/planning"
-                  actionLabel="Voir le programme"
-                />
-              )
+            {selectedSportSessionChart === "execution" ? (
+              <ComparisonBarChart
+                data={weekSeries}
+                xKey="week"
+                firstKey="planned"
+                secondKey="completed"
+                firstName="Prévues"
+                secondName="Réalisées"
+                summary={`Cette semaine : ${currentWeekProgram?.completed ?? 0}/${currentWeekProgram?.planned ?? 0} séances. Régularité ${currentWeekStatus}.`}
+              />
             ) : null}
           </ChartCard>
         </SectionCard>
       ) : null}
 
-      {showSport ? (
+      {showSport && !hasSportCharts ? (
+        <SectionCard className="p-4 sm:p-5">
+          <ChartEmptyState
+            icon={Dumbbell}
+            title="Graphiques masqués pour l'instant"
+            message="Ajoute deux séances validées pour afficher des tendances utiles plutôt qu'une page de zéros."
+            to="/sessions"
+            actionLabel="Ajouter une séance"
+          />
+        </SectionCard>
+      ) : null}
+
+      {showSport && hasSportDetails ? (
         <CollapsibleSectionCard title="Détails sport" summary="Records utiles, tendance 7 jours et badges gagnés.">
           <section className="theme-stat-card overflow-hidden rounded-panel border p-4 shadow-panel sm:p-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -922,6 +956,24 @@ export default function StatsPage() {
                       <StatusBadge key={badge.id} icon={Award} tone="lime" title={badge.hint}>
                         {badge.label}
                       </StatusBadge>
+                    ))}
+                  </div>
+                ) : null}
+
+                {quickMotivationMessages.length ? (
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {quickMotivationMessages.map((message) => (
+                      <article key={message.id} className={`rounded-card border p-3 shadow-sm ${motivationToneClasses[message.tone]}`}>
+                        <div className="flex items-start gap-3">
+                          <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${motivationIconClasses[message.tone]}`}>
+                            <Lightbulb className="h-4 w-4" aria-hidden="true" />
+                          </span>
+                          <div className="min-w-0">
+                            <p className="text-sm font-black text-petrol-800">{message.title}</p>
+                            <p className="mt-1 text-sm font-semibold leading-5 text-muted">{message.message}</p>
+                          </div>
+                        </div>
+                      </article>
                     ))}
                   </div>
                 ) : null}

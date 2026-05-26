@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Download, Palette, RefreshCcw, Save, Upload } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { CollapsibleSectionCard } from "../components/ui/CollapsibleSectionCard";
@@ -52,6 +52,60 @@ const themeOptions: Array<{ id: AppTheme; label: string; description: string }> 
   { id: "dark", label: "Sombre", description: "Premium, moins lumineux le soir." },
   { id: "soft-blue", label: "Bleu léger", description: "Plus frais, doux et sportif." }
 ];
+
+type ChoiceValue = string | number | boolean;
+
+type ChoiceCardOption<T extends ChoiceValue> = {
+  id: T;
+  label: string;
+  description?: ReactNode;
+};
+
+function ChoiceCardGroup<T extends ChoiceValue>({
+  label,
+  value,
+  options,
+  onChange,
+  columns = "sm:grid-cols-2 xl:grid-cols-4"
+}: {
+  label: string;
+  value: T;
+  options: Array<ChoiceCardOption<T>>;
+  onChange: (value: T) => void;
+  columns?: string;
+}) {
+  return (
+    <div className="field-label">
+      {label}
+      <div className={`mt-2 grid gap-2 ${columns}`}>
+        {options.map((option) => {
+          const selected = value === option.id;
+
+          return (
+            <button
+              key={String(option.id)}
+              type="button"
+              className={`interactive-card min-h-11 rounded-card border p-3 text-left transition ${
+                selected
+                  ? "border-petrol-800 bg-petrol-800 text-white shadow-sm"
+                  : "border-petrol-800/10 bg-white/80 text-petrol-800 hover:bg-white"
+              }`}
+              aria-pressed={selected}
+              onClick={() => onChange(option.id)}
+            >
+              <span className="block text-sm font-black">{option.label}</span>
+              {option.description ? (
+                <span className={`mt-1 block text-xs font-bold leading-5 normal-case tracking-normal ${selected ? "text-white/75" : "text-muted"}`}>
+                  {option.description}
+                </span>
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function SettingsPage() {
   const { settings, saveSettings } = useSettings();
@@ -170,7 +224,7 @@ export default function SettingsPage() {
 
   return (
     <>
-      <PageHeader title="Réglages" description="Modules, profil, nutrition, santé, apparence et sauvegarde locale." />
+      <PageHeader title="Réglages" description="Modules, profil, apparence et données locales." />
 
       {status ? (
         <div className="rounded-card border border-limeSoft/70 bg-limeSoft/35 p-3 text-sm font-black text-petrol-800">
@@ -182,7 +236,7 @@ export default function SettingsPage() {
         id="modules"
         title="Modules visibles"
         className="scroll-mt-24"
-        summary="Active uniquement ce que tu veux voir dans l'app."
+        summary="Ce qui apparaît dans l'app."
       >
         <ModulePreferencesEditor
           enabledModules={modulePrefs.enabledModules}
@@ -193,7 +247,7 @@ export default function SettingsPage() {
 
       <CollapsibleSectionCard
         title="Onglets principaux"
-        summary={`Menu mobile : ${primaryTabs.length}/${MAX_PRIMARY_TABS}. Les autres modules restent dans Plus.`}
+        summary={`Menu mobile : ${primaryTabs.length}/${MAX_PRIMARY_TABS}`}
       >
         <div className="grid gap-4">
           <div className="rounded-card border border-petrol-800/10 bg-mist/45 p-3">
@@ -227,7 +281,7 @@ export default function SettingsPage() {
         </div>
       </CollapsibleSectionCard>
 
-      <CollapsibleSectionCard title="Profil sportif" summary="Objectif, disponibilité, durée et contraintes.">
+      <CollapsibleSectionCard title="Profil sportif" summary="Objectif et contraintes.">
         <form
           className="grid gap-5"
           onSubmit={(event) => {
@@ -236,16 +290,14 @@ export default function SettingsPage() {
           }}
         >
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <label className="field-label">
-              Mode principal
-              <select className="field" value={form.appMode ?? "competition"} onChange={(event) => update("appMode", event.target.value)}>
-                {GENERAL_SPORT_MODES.map((mode) => (
-                  <option key={mode.id} value={mode.id}>
-                    {mode.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <div className="sm:col-span-2 xl:col-span-4">
+              <ChoiceCardGroup
+                label="Mode principal"
+                value={form.appMode ?? "competition"}
+                options={GENERAL_SPORT_MODES.map((mode) => ({ id: mode.id, label: mode.label }))}
+                onChange={(value) => update("appMode", value)}
+              />
+            </div>
 
             {showSportSettings ? (
               <>
@@ -257,24 +309,24 @@ export default function SettingsPage() {
                   Début préparation
                   <input className="field" type="date" value={form.startDate} onChange={(event) => update("startDate", event.target.value)} />
                 </label>
-                <label className="field-label">
-                  Niveau sportif
-                  <select className="field" value={form.sportLevel ?? "intermediate"} onChange={(event) => update("sportLevel", event.target.value)}>
-                    <option value="beginner">Débutant</option>
-                    <option value="intermediate">Intermédiaire</option>
-                    <option value="advanced">Confirmé</option>
-                  </select>
-                </label>
-                <label className="field-label">
-                  Durée max par séance
-                  <select className="field" value={form.maxSessionDurationMin ?? 75} onChange={(event) => update("maxSessionDurationMin", event.target.value)}>
-                    {[30, 45, 60, 75, 90].map((duration) => (
-                      <option key={duration} value={duration}>
-                        {duration} min
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <ChoiceCardGroup
+                  label="Niveau sportif"
+                  value={form.sportLevel ?? "intermediate"}
+                  options={[
+                    { id: "beginner", label: "Débutant" },
+                    { id: "intermediate", label: "Intermédiaire" },
+                    { id: "advanced", label: "Confirmé" }
+                  ]}
+                  onChange={(value) => update("sportLevel", value)}
+                  columns="grid-cols-1"
+                />
+                <ChoiceCardGroup
+                  label="Durée max par séance"
+                  value={form.maxSessionDurationMin ?? 75}
+                  options={[30, 45, 60, 75, 90].map((duration) => ({ id: duration, label: `${duration} min` }))}
+                  onChange={(value) => update("maxSessionDurationMin", value)}
+                  columns="grid-cols-2"
+                />
                 {hyroxMode ? (
                   <div className="sm:col-span-2 xl:col-span-4">
                     <BadmintonVariantSelector
@@ -331,7 +383,7 @@ export default function SettingsPage() {
         </form>
       </CollapsibleSectionCard>
 
-      <CollapsibleSectionCard title="Nutrition" summary="Mode de suivi, protéines, poids et calculs énergie.">
+      <CollapsibleSectionCard title="Nutrition" summary="Mode et repères.">
         <form
           className="grid gap-5"
           onSubmit={(event) => {
@@ -340,13 +392,16 @@ export default function SettingsPage() {
           }}
         >
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <label className="field-label sm:col-span-2">
-              Mode nutrition
-              <select
-                className="field"
+            <div className="sm:col-span-2 xl:col-span-4">
+              <ChoiceCardGroup
+                label="Mode nutrition"
                 value={form.nutritionMode ?? "calories-macros"}
-                onChange={(event) => {
-                  const mode = event.target.value as NutritionTrackingMode;
+                options={nutritionModeOptions.map((mode) => ({
+                  id: mode,
+                  label: getNutritionModeLabel(mode),
+                  description: getNutritionModeGuidance(mode)
+                }))}
+                onChange={(mode) => {
                   const guarded = applyNutritionModeToModules(mode, modulePrefs.enabledModules, modulePrefs.primaryModuleTabs);
                   persistForm(
                     {
@@ -359,17 +414,9 @@ export default function SettingsPage() {
                     mode === "disabled" ? "Nutrition désactivée." : "Mode nutrition mis à jour."
                   );
                 }}
-              >
-                {nutritionModeOptions.map((mode) => (
-                  <option key={mode} value={mode}>
-                    {getNutritionModeLabel(mode)}
-                  </option>
-                ))}
-              </select>
-              <span className="text-xs font-bold normal-case tracking-normal text-muted">
-                {getNutritionModeGuidance(form.nutritionMode ?? "calories-macros")}
-              </span>
-            </label>
+                columns="sm:grid-cols-2 xl:grid-cols-4"
+              />
+            </div>
 
             {showWeightSettings ? (
               <>
@@ -397,24 +444,26 @@ export default function SettingsPage() {
                   Âge
                   <input className="field" type="number" value={form.age} onChange={(event) => update("age", event.target.value)} />
                 </label>
-                <label className="field-label">
-                  Sexe pour le calcul
-                  <select className="field" value={form.sex} onChange={(event) => update("sex", event.target.value)}>
-                    <option value="male">Homme</option>
-                    <option value="female">Femme</option>
-                  </select>
-                </label>
-                <label className="field-label">
-                  Calcul auto métabolisme
-                  <select
-                    className="field"
-                    value={form.useCalculatedBmr ? "yes" : "no"}
-                    onChange={(event) => update("useCalculatedBmr", event.target.value === "yes")}
-                  >
-                    <option value="yes">Oui</option>
-                    <option value="no">Valeur manuelle</option>
-                  </select>
-                </label>
+                <ChoiceCardGroup
+                  label="Sexe pour le calcul"
+                  value={form.sex}
+                  options={[
+                    { id: "male", label: "Homme" },
+                    { id: "female", label: "Femme" }
+                  ]}
+                  onChange={(value) => update("sex", value)}
+                  columns="grid-cols-2"
+                />
+                <ChoiceCardGroup
+                  label="Calcul auto métabolisme"
+                  value={Boolean(form.useCalculatedBmr)}
+                  options={[
+                    { id: true, label: "Oui" },
+                    { id: false, label: "Manuel" }
+                  ]}
+                  onChange={(value) => update("useCalculatedBmr", value)}
+                  columns="grid-cols-2"
+                />
                 <label className="field-label">
                   Métabolisme utilisé
                   <input
@@ -445,7 +494,7 @@ export default function SettingsPage() {
         </form>
       </CollapsibleSectionCard>
 
-      <CollapsibleSectionCard title="Récupération / santé" summary="Consentement local et garde-fous santé.">
+      <CollapsibleSectionCard title="Récupération / santé" summary="Consentement et prudence.">
         <div className="grid gap-4">
           <label className="flex items-start gap-3 text-sm font-bold leading-6 text-ink">
             <input
@@ -498,7 +547,7 @@ export default function SettingsPage() {
         id="install"
         title="Apparence"
         className="scroll-mt-24"
-        summary="Thème de l'application et installation PWA."
+        summary="Thème et installation."
       >
         <div className="grid gap-5">
           <div className="grid gap-3 sm:grid-cols-3">
@@ -539,7 +588,7 @@ export default function SettingsPage() {
         id="data"
         title="Données locales"
         className="scroll-mt-24"
-        summary="Exporter, fusionner, remplacer ou réinitialiser."
+        summary="Export/import."
       >
         <div className="grid gap-5">
           <div>

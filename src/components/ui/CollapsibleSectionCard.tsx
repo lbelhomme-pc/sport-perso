@@ -53,7 +53,7 @@ export function CollapsibleSectionCard({
         id={contentId}
         aria-hidden={!open}
         inert={open ? undefined : true}
-        className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none ${
+        className={`grid transition-[grid-template-rows,opacity] duration-[220ms] ease-out motion-reduce:transition-none ${
           open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
         }`}
       >

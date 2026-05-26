@@ -1,5 +1,6 @@
 import { Award, Gauge, Lightbulb, TrendingUp } from "lucide-react";
 import type { MotivationTone, SportProgressionSummary } from "../../services/progressionService";
+import { GaugeBar } from "../ui/GaugeBar";
 
 const motivationToneClasses: Record<MotivationTone, string> = {
   positive: "border-limeSoft/60 bg-limeSoft/35",
@@ -16,21 +17,26 @@ const motivationIconClasses: Record<MotivationTone, string> = {
 export function ProgressionSnapshot({ summary, compact = false }: { summary: SportProgressionSummary; compact?: boolean }) {
   const visibleMessages = summary.motivationMessages.slice(0, compact ? 1 : 3);
   const earnedBadges = summary.badges.filter((badge) => badge.earned).slice(0, compact ? 3 : 6);
+  const trendScore = Math.min(100, Math.max(0, summary.volumeTrendPercent + 50));
 
   return (
     <div className="grid gap-4">
       <div className={`grid gap-3 ${compact ? "sm:grid-cols-2" : "md:grid-cols-2"}`}>
-        <div className="border border-petrol-800/10 bg-white p-4">
+        <div className="rounded-card border border-petrol-800/10 bg-white p-4 transition duration-200 ease-out hover:shadow-sm motion-reduce:transition-none">
           <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">Volume 7 j</p>
           <p className="mt-1 font-display text-3xl font-black tracking-[-0.05em] text-petrol-800">{summary.volume7d} min</p>
-          <p className="mt-1 text-sm font-bold text-muted">{summary.activeDays7d} jour(s) actif(s)</p>
+          <div className="mt-3">
+            <GaugeBar label="Jours actifs" value={summary.activeDays7d} max={7} valueLabel={`${summary.activeDays7d}/7`} tone={summary.activeDays7d >= 3 ? "lime" : "info"} compact />
+          </div>
         </div>
-        <div className="border border-petrol-800/10 bg-white p-4">
+        <div className="rounded-card border border-petrol-800/10 bg-white p-4 transition duration-200 ease-out hover:shadow-sm motion-reduce:transition-none">
           <p className="text-xs font-black uppercase tracking-[0.12em] text-muted">RPE moyen</p>
           <p className="mt-1 font-display text-3xl font-black tracking-[-0.05em] text-petrol-800">
             {summary.averageRpe7d || "n/a"}
           </p>
-          <p className="mt-1 text-sm font-bold text-muted">sur les séances notées</p>
+          <div className="mt-3">
+            <GaugeBar label="Tendance" value={trendScore} valueLabel={summary.volumeTrendPercent ? `${Math.round(summary.volumeTrendPercent)} %` : "stable"} tone={summary.volumeTrendPercent > 15 ? "warning" : summary.volumeTrendPercent < -25 ? "info" : "lime"} compact />
+          </div>
         </div>
       </div>
 

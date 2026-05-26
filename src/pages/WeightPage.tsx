@@ -107,10 +107,12 @@ export default function WeightPage() {
               icon={Scale}
               title="Aucune pesée pour l'instant"
               message="Saisis une première valeur pour poser un repère. La tendance ne sera jugée qu'avec plusieurs mesures espacées."
+              action={
+                <button className="action-button mx-auto" onClick={() => setShowForm(true)}>
+                  <Plus className="h-4 w-4" /> Saisir ma première pesée
+                </button>
+              }
             />
-            <button className="mt-5 action-button" onClick={() => setShowForm(true)}>
-              <Plus className="h-4 w-4" /> Saisir ma première pesée
-            </button>
           </SectionCard>
         )}
       </>
@@ -183,7 +185,20 @@ export default function WeightPage() {
       <SectionCard className="p-5 sm:p-6">
         <p className="eyebrow">Graphique poids</p>
         <h2 className="title-lg mt-2">Évolution</h2>
-        {chartData.length ? <MetricLineChart data={chartData} xKey="date" yKey="poids" suffix=" kg" /> : <EmptyState icon={Scale} title="Aucun poids" message="Ajoute une première entrée pour afficher la courbe." />}
+        {chartData.length ? (
+          <MetricLineChart data={chartData} xKey="date" yKey="poids" suffix=" kg" />
+        ) : (
+          <EmptyState
+            icon={Scale}
+            title="Aucun poids"
+            message="Ajoute une première entrée pour afficher la courbe."
+            action={
+              <button className="action-button mx-auto" onClick={() => setShowForm(true)}>
+                <Plus className="h-4 w-4" /> Ajouter poids
+              </button>
+            }
+          />
+        )}
       </SectionCard>
 
       <SectionCard className="p-5 sm:p-6">
@@ -232,7 +247,16 @@ export default function WeightPage() {
               );
             })
           ) : (
-            <EmptyState icon={Scale} title="Aucune entrée" message="La première mesure crée la ligne de départ." />
+            <EmptyState
+              icon={Scale}
+              title="Aucune entrée"
+              message="La première mesure crée la ligne de départ."
+              action={
+                <button className="action-button mx-auto" onClick={() => setShowForm(true)}>
+                  <Plus className="h-4 w-4" /> Ajouter poids
+                </button>
+              }
+            />
           )}
         </div>
       </SectionCard>

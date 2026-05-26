@@ -1,5 +1,5 @@
 import type { CompletedSession, PlannedSession, WeekSummary } from "../types";
-import { isDateInWeek } from "./dates";
+import { getMonday, isDateInWeek, parseDate } from "./dates";
 import { getSportCalories } from "./calories";
 
 export function getSessionsForDate(sessions: CompletedSession[], date: string): CompletedSession[] {
@@ -20,6 +20,33 @@ export function getPlannedSessionIds(plannedSession: PlannedSession | string): s
 function getPlannedSlot(plannedSession: PlannedSession) {
   const parts = plannedSession.id.split("-");
   return parts.length > 3 ? parts.slice(3).join("-") : plannedSession.type;
+}
+
+function isCompletedTypeCompatibleWithPlan(session: CompletedSession, plannedSession: PlannedSession) {
+  if (plannedSession.type === "rest") return false;
+  if (session.type === plannedSession.type) return true;
+  if (plannedSession.type === "hyrox" && session.type === "hybrid") return true;
+  if (plannedSession.type === "racket" && ["badminton", "tennis", "padel"].includes(session.type)) return true;
+  if (plannedSession.type === "run" && session.type === "trail") return true;
+  return false;
+}
+
+function isCompletedInPlannedWeek(session: CompletedSession, plannedSession: PlannedSession) {
+  return isDateInWeek(session.date, getMonday(parseDate(plannedSession.date)));
+}
+
+function getInferredPlannedSession(
+  session: CompletedSession,
+  plannedSessions: PlannedSession[],
+  usedPlannedIds: Set<string>
+): PlannedSession | undefined {
+  if (!session.completed || session.plannedSessionId) return undefined;
+
+  return plannedSessions
+    .filter((plannedSession) => !usedPlannedIds.has(plannedSession.id))
+    .filter((plannedSession) => isCompletedTypeCompatibleWithPlan(session, plannedSession))
+    .filter((plannedSession) => isCompletedInPlannedWeek(session, plannedSession))
+    .sort((left, right) => Math.abs(left.durationMin - session.durationMin) - Math.abs(right.durationMin - session.durationMin))[0];
 }
 
 function isCompletedForPlannedSession(session: CompletedSession, plannedSession: PlannedSession | string) {
@@ -43,19 +70,61 @@ export function getCompletedForPlan(sessions: CompletedSession[], plannedSession
   return sessions.find((session) => isCompletedForPlannedSession(session, plannedSession));
 }
 
-export function getPlannedCompletion(plannedSessions: PlannedSession[], completedSessions: CompletedSession[]) {
+export function findMatchingPlannedSessionForCompleted(
+  completedSession: CompletedSession,
+  plannedSessions: PlannedSession[],
+  completedSessions: CompletedSession[] = []
+): PlannedSession | undefined {
   const plannedTrainings = plannedSessions.filter((session) => session.type !== "rest");
-  const completedIds = new Set<string>();
+
+  if (completedSession.plannedSessionId) {
+    return plannedTrainings.find((plannedSession) => isCompletedForPlannedSession(completedSession, plannedSession));
+  }
+
+  const usedPlannedIds = new Set<string>();
+  completedSessions
+    .filter((session) => session.id !== completedSession.id)
+    .forEach((session) => {
+      const plannedSession = plannedTrainings.find((item) => isCompletedForPlannedSession(session, item));
+      if (plannedSession) usedPlannedIds.add(plannedSession.id);
+    });
+
+  return getInferredPlannedSession(completedSession, plannedTrainings, usedPlannedIds);
+}
+
+export function getPlannedCompletionMap(plannedSessions: PlannedSession[], completedSessions: CompletedSession[]) {
+  const plannedTrainings = plannedSessions.filter((session) => session.type !== "rest");
+  const completedByPlannedId = new Map<string, CompletedSession>();
+  const matchedCompletedIds = new Set<string>();
 
   completedSessions.forEach((completedSession) => {
-    const plannedSession = plannedTrainings.find((session) => isCompletedForPlannedSession(completedSession, session));
+    const plannedSession = plannedTrainings.find(
+      (session) => !completedByPlannedId.has(session.id) && isCompletedForPlannedSession(completedSession, session)
+    );
     if (plannedSession) {
-      completedIds.add(plannedSession.id);
+      completedByPlannedId.set(plannedSession.id, completedSession);
+      matchedCompletedIds.add(completedSession.id);
     }
   });
 
+  completedSessions
+    .filter((completedSession) => !matchedCompletedIds.has(completedSession.id))
+    .forEach((completedSession) => {
+      const plannedSession = getInferredPlannedSession(completedSession, plannedTrainings, new Set(completedByPlannedId.keys()));
+      if (plannedSession) {
+        completedByPlannedId.set(plannedSession.id, completedSession);
+        matchedCompletedIds.add(completedSession.id);
+      }
+    });
+
+  return completedByPlannedId;
+}
+
+export function getPlannedCompletion(plannedSessions: PlannedSession[], completedSessions: CompletedSession[]) {
+  const plannedTrainings = plannedSessions.filter((session) => session.type !== "rest");
+  const completedByPlannedId = getPlannedCompletionMap(plannedTrainings, completedSessions);
   const planned = plannedTrainings.length;
-  const completed = completedIds.size;
+  const completed = completedByPlannedId.size;
 
   return {
     planned,
