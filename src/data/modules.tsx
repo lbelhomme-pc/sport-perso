@@ -27,7 +27,7 @@ export type ModulePreferences = {
   primaryModuleTabs: AppModuleId[];
 };
 
-export const MAX_PRIMARY_TABS = 5;
+export const MAX_PRIMARY_TABS = 6;
 
 export const modulesConfig: Record<AppModuleId, AppModuleConfig> = {
   home: {

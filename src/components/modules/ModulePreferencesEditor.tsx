@@ -25,9 +25,9 @@ export function ModulePreferencesEditor({ enabledModules, primaryModuleTabs, onC
   const enabledSet = new Set(enabledModules);
   const mainTabs = getMainTabs(enabledModules, primaryModuleTabs);
 
-  const save = (nextEnabled: AppModuleId[]) => {
+  const save = (nextEnabled: AppModuleId[], preferredTabs = mainTabs) => {
     const cleanEnabled = moduleOrder.filter((moduleId) => nextEnabled.includes(moduleId) || lockedModules.has(moduleId));
-    const nextTabs = getMainTabs(cleanEnabled, mainTabs);
+    const nextTabs = getMainTabs(cleanEnabled, preferredTabs);
 
     onChange({
       enabledModules: cleanEnabled,
@@ -40,8 +40,12 @@ export function ModulePreferencesEditor({ enabledModules, primaryModuleTabs, onC
     const nextEnabled = enabledSet.has(moduleId)
       ? enabledModules.filter((item) => item !== moduleId)
       : [...enabledModules, moduleId];
+    const nextTabs =
+      !enabledSet.has(moduleId) && modulesConfig[moduleId]?.canBeMainTab && mainTabs.length < MAX_PRIMARY_TABS
+        ? [...mainTabs.filter((item) => item !== "profile"), moduleId, "profile" as AppModuleId]
+        : mainTabs;
 
-    save(nextEnabled);
+    save(nextEnabled, nextTabs);
   };
 
   return (

@@ -214,7 +214,7 @@ export function OnboardingPrompt({ settings, onComplete }: OnboardingPromptProps
               </div>
               <div className="flex gap-3">
                 <HeartPulse className="mt-0.5 h-5 w-5 text-limeSoft" />
-                <span>Modules et 5 onglets principaux maximum.</span>
+                <span>Modules et 6 onglets principaux maximum.</span>
               </div>
             </div>
           </aside>

@@ -31,8 +31,8 @@ function isCompletedTypeCompatibleWithPlan(session: CompletedSession, plannedSes
   return false;
 }
 
-function isCompletedInPlannedWeek(session: CompletedSession, plannedSession: PlannedSession) {
-  return isDateInWeek(session.date, getMonday(parseDate(plannedSession.date)));
+function isCompletedOnPlannedDate(session: CompletedSession, plannedSession: PlannedSession) {
+  return session.date === plannedSession.date;
 }
 
 function getInferredPlannedSession(
@@ -45,7 +45,7 @@ function getInferredPlannedSession(
   return plannedSessions
     .filter((plannedSession) => !usedPlannedIds.has(plannedSession.id))
     .filter((plannedSession) => isCompletedTypeCompatibleWithPlan(session, plannedSession))
-    .filter((plannedSession) => isCompletedInPlannedWeek(session, plannedSession))
+    .filter((plannedSession) => isCompletedOnPlannedDate(session, plannedSession))
     .sort((left, right) => Math.abs(left.durationMin - session.durationMin) - Math.abs(right.durationMin - session.durationMin))[0];
 }
 

@@ -67,7 +67,13 @@ export function SessionForm({ initial, planned, typeOptions, getTypeLabel, onSub
   });
 
   const update = (key: keyof typeof form, value: string | boolean) => {
-    setForm((current) => ({ ...current, [key]: value }));
+    setForm((current) => {
+      const next = { ...current, [key]: value };
+      if (!planned && current.plannedSessionId && (key === "date" || key === "type")) {
+        next.plannedSessionId = "";
+      }
+      return next;
+    });
   };
 
   const submit = (event: FormEvent) => {

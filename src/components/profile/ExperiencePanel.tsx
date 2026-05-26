@@ -85,7 +85,11 @@ export function ExperiencePanel({ settings, onSave }: ExperiencePanelProps) {
     const enabledModules = enabledSet.has(moduleId)
       ? preferences.enabledModules.filter((item) => item !== moduleId)
       : [...preferences.enabledModules, moduleId];
-    const primaryModuleTabs = enabledSet.has(moduleId) ? primaryTabs.filter((item) => item !== moduleId) : primaryTabs;
+    const primaryModuleTabs = enabledSet.has(moduleId)
+      ? primaryTabs.filter((item) => item !== moduleId)
+      : modulesConfig[moduleId]?.canBeMainTab && primaryTabs.length < MAX_PRIMARY_TABS
+        ? [...primaryTabs.filter((item) => item !== "profile"), moduleId, "profile" as AppModuleId]
+        : primaryTabs;
 
     saveModules(enabledModules, primaryModuleTabs);
   };
@@ -279,7 +283,7 @@ export function ExperiencePanel({ settings, onSave }: ExperiencePanelProps) {
                     } ${disabled || locked ? "cursor-not-allowed opacity-75" : ""}`}
                     disabled={locked || disabled}
                     onClick={() => togglePrimaryTab(moduleId)}
-                    title={locked ? "Toujours visible" : disabled ? "Maximum 5 onglets" : undefined}
+                    title={locked ? "Toujours visible" : disabled ? `Maximum ${MAX_PRIMARY_TABS} onglets` : undefined}
                   >
                     {selected ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : null}
                     {module.shortLabel}
