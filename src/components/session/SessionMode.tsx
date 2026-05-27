@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { CheckCircle2, Dumbbell, PauseCircle, PlayCircle, RotateCcw, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Dumbbell, PauseCircle, PlayCircle, RotateCcw, X } from "lucide-react";
 import type { EnergyLevel, ExercisePrescription, PlannedSession, SessionExerciseLog } from "../../types";
 import { useSessionExerciseLogs } from "../../hooks/useSessionExerciseLogs";
 import {
@@ -11,6 +11,7 @@ import {
   getGuidanceExercises
 } from "../../utils/exerciseDisplay";
 import { GaugeBar } from "../ui/GaugeBar";
+import { StatusBadge } from "../ui/StatusBadge";
 
 function getExerciseAdjustment(exercise: ExercisePrescription, energy: EnergyLevel) {
   if (energy === "fatigue") return exercise.fatigueAdjustment;
@@ -36,6 +37,11 @@ function formatElapsedTime(totalSeconds: number) {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
+function clampIndex(index: number, length: number) {
+  if (length <= 0) return 0;
+  return Math.min(Math.max(index, 0), length - 1);
+}
+
 export function SessionMode({
   session,
   energy,
@@ -56,15 +62,38 @@ export function SessionMode({
   onUndo: () => void;
 }) {
   const { getExerciseLog, saveExerciseLog } = useSessionExerciseLogs(session.id);
-  const exercises = getActionableExercises(session.exercises);
-  const guidanceExercises = getGuidanceExercises(session.exercises);
-  const checkedSet = new Set(checkedItemIds);
-  const checkedCount = exercises.filter((exercise) => checkedSet.has(getExerciseCheckId(exercise))).length;
-  const progress = exercises.length ? Math.round((checkedCount / exercises.length) * 100) : 0;
-  const activeExerciseId = exercises.find((exercise) => !checkedSet.has(getExerciseCheckId(exercise)))?.id ?? exercises[0]?.id;
-  const isBadminton = session.type === "badminton";
+  const exercises = useMemo(() => getActionableExercises(session.exercises), [session.exercises]);
+  const guidanceExercises = useMemo(() => getGuidanceExercises(session.exercises), [session.exercises]);
+  const checkedSet = useMemo(() => new Set(checkedItemIds), [checkedItemIds]);
+  const firstOpenIndex = Math.max(
+    0,
+    exercises.findIndex((exercise) => !checkedSet.has(getExerciseCheckId(exercise)))
+  );
+  const [activeIndex, setActiveIndex] = useState(firstOpenIndex);
+  const [skippedItemIds, setSkippedItemIds] = useState<string[]>([]);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [timerRunning, setTimerRunning] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const checkedCount = exercises.filter((exercise) => checkedSet.has(getExerciseCheckId(exercise))).length;
+  const skippedSet = useMemo(() => new Set(skippedItemIds), [skippedItemIds]);
+  const skippedCount = exercises.filter((exercise) => skippedSet.has(getExerciseCheckId(exercise))).length;
+  const progress = exercises.length ? Math.round((checkedCount / exercises.length) * 100) : 0;
+  const activeExercise = exercises[activeIndex];
+  const activeCheckId = activeExercise ? getExerciseCheckId(activeExercise) : undefined;
+  const activeChecked = activeCheckId ? checkedSet.has(activeCheckId) : false;
+  const activeSkipped = activeCheckId ? skippedSet.has(activeCheckId) : false;
+  const isBadminton = session.type === "badminton";
+
+  useEffect(() => {
+    setActiveIndex(firstOpenIndex);
+    setSkippedItemIds([]);
+  }, [session.id]);
+
+  useEffect(() => {
+    setActiveIndex((current) => clampIndex(current, exercises.length));
+  }, [exercises.length]);
 
   useEffect(() => {
     if (!timerRunning) return undefined;
@@ -83,76 +112,127 @@ export function SessionMode({
     });
   };
 
+  const goToBlock = (index: number) => {
+    setActiveIndex(clampIndex(index, exercises.length));
+  };
+
+  const goNextBlock = () => {
+    setActiveIndex((current) => clampIndex(current + 1, exercises.length));
+  };
+
+  const goPreviousBlock = () => {
+    setActiveIndex((current) => clampIndex(current - 1, exercises.length));
+  };
+
+  const handleBlockDecision = (done: boolean) => {
+    if (!activeCheckId) return;
+
+    setSkippedItemIds((current) => {
+      if (done) return current.filter((id) => id !== activeCheckId);
+      return [...new Set([...current, activeCheckId])];
+    });
+    onToggle(activeCheckId, done);
+    if (activeIndex < exercises.length - 1) goNextBlock();
+  };
+
+  const handleTouchStart = (event: TouchEvent<HTMLElement>) => {
+    const touch = event.touches[0];
+    touchStartX.current = touch?.clientX ?? null;
+    touchStartY.current = touch?.clientY ?? null;
+  };
+
+  const handleTouchEnd = (event: TouchEvent<HTMLElement>) => {
+    const touch = event.changedTouches[0];
+    if (!touch || touchStartX.current === null || touchStartY.current === null) return;
+
+    const deltaX = touch.clientX - touchStartX.current;
+    const deltaY = touch.clientY - touchStartY.current;
+    touchStartX.current = null;
+    touchStartY.current = null;
+
+    if (Math.abs(deltaX) < 54 || Math.abs(deltaX) < Math.abs(deltaY) * 1.35) return;
+    if (deltaX < 0) goNextBlock();
+    if (deltaX > 0) goPreviousBlock();
+  };
+
+  const activeStatus = activeChecked ? "Fait" : activeSkipped ? "Passé" : "À faire";
+  const activeStatusTone = activeChecked ? "lime" : activeSkipped ? "muted" : "info";
+  const detailChips = activeExercise ? getExerciseDetailChips(activeExercise) : [];
+  const activeLog = activeExercise ? getExerciseLog(session.id, activeExercise.id) : undefined;
+  const activeAdjustment = activeExercise ? getExerciseAdjustment(activeExercise, energy) : undefined;
+
   return (
-    <div className="fixed inset-0 z-[80] overflow-y-auto bg-cream text-ink">
-      <div className="sticky top-0 z-20 border-b border-petrol-800/10 bg-petrol-800/95 p-4 text-white shadow-panel backdrop-blur-xl">
-        <div className="mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-[0.82rem] font-black uppercase tracking-[0.1em] text-limeSoft">Mode séance</p>
-            <h1 className="mt-1 font-display text-2xl font-black tracking-[-0.055em] sm:text-3xl">{session.title}</h1>
-            <p className="mt-1 text-sm font-bold uppercase tracking-[0.06em] text-white/70">
+    <div className="fixed inset-0 z-[80] flex min-h-svh flex-col overflow-hidden bg-cream text-ink">
+      <header className="shrink-0 border-b border-petrol-800/10 bg-petrol-800/95 p-3 text-white shadow-panel backdrop-blur-xl sm:p-4">
+        <div className="mx-auto flex max-w-3xl items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[0.72rem] font-black uppercase tracking-[0.1em] text-limeSoft">Mode séance</p>
+            <h1 className="mt-1 break-words font-display text-2xl font-black leading-none tracking-[-0.055em] sm:text-3xl">
+              {session.title}
+            </h1>
+            <p className="mt-2 text-xs font-bold uppercase tracking-[0.06em] text-white/70">
               {session.day} - {session.durationMin} min - {session.rpeTarget}
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <button type="button" className="ghost-button border-white/20 bg-white/10 text-white hover:bg-white/20" onClick={onClose}>
-              <X className="h-4 w-4" /> Fermer
-            </button>
-            {completed ? (
-              <button type="button" className="ghost-button border-white/20 bg-white/10 text-white hover:bg-white/20" onClick={onUndo}>
-                <RotateCcw className="h-4 w-4" /> Annuler fait
-              </button>
-            ) : (
-              <button type="button" className="action-button bg-limeSoft text-petrol-900 hover:bg-white" onClick={onFinish}>
-                <CheckCircle2 className="h-4 w-4" /> Saisir les données
-              </button>
-            )}
-          </div>
+          <button
+            type="button"
+            className="ghost-button min-h-11 shrink-0 border-white/20 bg-white/10 px-3 text-white hover:bg-white/20"
+            onClick={onClose}
+            aria-label="Fermer le mode séance"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
-      </div>
+      </header>
 
-      <main className="mx-auto grid max-w-5xl gap-4 p-4 pb-28">
-        <section className="panel animate-[premiumIn_180ms_ease-out] p-4 motion-reduce:animate-none">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="eyebrow">{isBadminton ? "Suivi simple" : "Progression séance"}</p>
-              <p className="mt-1 font-display text-2xl font-black tracking-[-0.055em] text-petrol-800 sm:text-3xl">
-                {isBadminton ? "Durée, RPE, douleur si besoin" : exercises.length ? `${checkedCount}/${exercises.length} blocs utiles cochés` : "Séance guidée"}
+      <main className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-3 overflow-y-auto px-3 py-3 sm:px-4">
+        <section className="panel animate-[premiumIn_180ms_ease-out] p-3 motion-reduce:animate-none sm:p-4">
+          <div className="grid gap-3 sm:grid-cols-[1fr_14rem] sm:items-center">
+            <div className="min-w-0">
+              <p className="eyebrow">{isBadminton ? "Suivi simple" : "Bloc actif"}</p>
+              <p className="mt-1 font-display text-2xl font-black leading-none tracking-[-0.055em] text-petrol-800 sm:text-3xl">
+                {exercises.length ? `${activeIndex + 1}/${exercises.length}` : "Saisie libre"}
+              </p>
+              <p className="mt-2 text-sm font-bold text-muted">
+                {exercises.length ? `${checkedCount} fait${checkedCount > 1 ? "s" : ""}${skippedCount ? `, ${skippedCount} passé${skippedCount > 1 ? "s" : ""}` : ""}` : "Aucun bloc guidé à cocher."}
               </p>
             </div>
-            <div className="grid gap-2 sm:min-w-64">
-              <div className="rounded-card border border-petrol-800/10 bg-white p-4 shadow-sm">
-                <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">Chrono séance</p>
-                <p className="mt-1 font-display text-5xl font-black leading-none tracking-normal text-petrol-800">{formatElapsedTime(elapsedSeconds)}</p>
-                {exercises.length ? (
-                  <div className="mt-3">
-                    <GaugeBar label="Avancement" value={progress} valueLabel={`${progress} %`} tone="lime" compact />
-                  </div>
-                ) : null}
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <button type="button" className="action-button min-h-11 px-3 py-2" onClick={() => setTimerRunning((current) => !current)}>
+            <div className="rounded-card border border-petrol-800/10 bg-white/80 p-3 shadow-sm">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.08em] text-muted">Chrono</p>
+                  <p className="mt-1 font-display text-4xl font-black leading-none tracking-normal text-petrol-800">
+                    {formatElapsedTime(elapsedSeconds)}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="action-button min-h-11 w-auto px-3 py-2"
+                  onClick={() => setTimerRunning((current) => !current)}
+                  aria-label={timerRunning ? "Mettre le chrono en pause" : "Démarrer le chrono"}
+                >
                   {timerRunning ? <PauseCircle className="h-4 w-4" /> : <PlayCircle className="h-4 w-4" />}
-                  {timerRunning ? "Pause" : "Start"}
-                </button>
-                <button type="button" className="ghost-button min-h-11 px-3 py-2" onClick={() => setElapsedSeconds(0)}>
-                  Reset
                 </button>
               </div>
+              {exercises.length ? (
+                <div className="mt-3">
+                  <GaugeBar label="Avancement" value={progress} valueLabel={`${progress} %`} tone="lime" compact />
+                </div>
+              ) : null}
             </div>
           </div>
         </section>
 
         {guidanceExercises.length ? (
-          <details className="panel border-l-4 border-limeSoft bg-mist/60 p-4">
+          <details className="panel border-l-4 border-limeSoft bg-mist/60 p-3 sm:p-4">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-800">
               Échauffement / consignes
-              <span className="chip bg-white/80">Détails</span>
+              <span className="chip bg-white/80">Replié</span>
             </summary>
             <div className="mt-3 grid gap-2">
               {guidanceExercises.map((exercise) => (
-                <div key={exercise.id} className="bg-white p-3">
-                  <p className="text-sm font-black uppercase tracking-[0.06em] text-muted">{exercise.block}</p>
+                <div key={exercise.id} className="rounded-card bg-white/80 p-3">
+                  <p className="text-xs font-black uppercase tracking-[0.06em] text-muted">{exercise.block}</p>
                   <p className="mt-1 text-sm font-black text-petrol-800">{getExerciseDisplayTitle(exercise)}</p>
                   <p className="mt-1 text-sm font-semibold leading-5 text-ink">{getExerciseInstruction(exercise)}</p>
                 </div>
@@ -161,116 +241,165 @@ export function SessionMode({
           </details>
         ) : null}
 
-        {exercises.map((exercise) => {
-          const checkId = getExerciseCheckId(exercise);
-          const checked = checkedSet.has(checkId);
-          const active = !checked && exercise.id === activeExerciseId;
-          const log = getExerciseLog(session.id, exercise.id);
-          const adjustment = getExerciseAdjustment(exercise, energy);
-          const detailChips = getExerciseDetailChips(exercise);
-
-          return (
+        {activeExercise ? (
+          <section className="flex min-h-0 flex-1 flex-col">
             <article
-              key={exercise.id}
-              className={`panel scroll-mt-28 p-3 transition duration-200 ease-out motion-reduce:transition-none sm:p-4 ${
-                checked
-                  ? "bg-limeSoft/30 ring-1 ring-limeSoft/70"
-                  : active
-                    ? "bg-white ring-2 ring-petrol-800/20 shadow-panel"
-                    : "bg-white"
-              }`}
+              key={activeExercise.id}
+              className="panel flex min-h-[calc(100svh-25rem)] flex-1 touch-pan-y flex-col justify-between p-4 shadow-panel animate-[blockSwipeIn_190ms_ease-out] motion-reduce:animate-none sm:p-5"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+              aria-live="polite"
             >
-              <div className="flex items-start gap-3">
-                <input
-                  className="mt-1 h-11 w-11 shrink-0 accent-petrol-800"
-                  type="checkbox"
-                  checked={checked}
-                  onChange={(event) => onToggle(checkId, event.target.checked)}
-                />
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <p className="text-[0.82rem] font-black uppercase tracking-[0.08em] text-muted">{exercise.block}</p>
-                      <h2 className="font-display text-2xl font-black tracking-[-0.055em] text-petrol-800 sm:text-3xl">{getExerciseDisplayTitle(exercise)}</h2>
-                    </div>
-                    <span className={active ? "chip bg-petrol-800 text-white" : "chip"}>{active ? "Bloc actif" : `Bloc ${exercise.order}`}</span>
+              <div className="min-w-0">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-xs font-black uppercase tracking-[0.1em] text-muted">{activeExercise.block}</p>
+                    <h2 className="mt-1 break-words font-display text-3xl font-black leading-[0.92] tracking-[-0.06em] text-petrol-800 sm:text-4xl">
+                      {getExerciseDisplayTitle(activeExercise)}
+                    </h2>
                   </div>
+                  <StatusBadge tone={activeStatusTone}>{activeStatus}</StatusBadge>
+                </div>
 
-                  <p className="mt-3 rounded-card bg-mist/60 p-3 text-sm font-black leading-5 text-ink">{getExerciseInstruction(exercise)}</p>
+                <p className="mt-4 rounded-card bg-mist/60 p-3 text-sm font-black leading-5 text-ink">
+                  {getExerciseInstruction(activeExercise)}
+                </p>
 
-                  {detailChips.length ? (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {detailChips.map((chip) => (
-                        <span key={`${chip.label}-${chip.value}`} className="chip bg-white">
-                          {chip.label} : {chip.value}
-                        </span>
-                      ))}
-                    </div>
-                  ) : null}
-
-                  <div className="mt-3 grid gap-3 sm:grid-cols-[8rem_1fr]">
-                    <label className="field-label">
-                      Charge réelle
-                      <input
-                        className="field"
-                        inputMode="decimal"
-                        value={log?.loadKg ?? ""}
-                        onChange={(event) => updateLog(exercise, { loadKg: parseOptionalNumber(event.target.value) })}
-                        placeholder="kg"
-                      />
-                    </label>
-                    <label className="field-label">
-                      Réalisé
-                      <input
-                        className="field"
-                        value={log?.doneText ?? ""}
-                        onChange={(event) => updateLog(exercise, { doneText: event.target.value })}
-                        placeholder="Ex : 5 x 10 m, 4 x 8, 1000 m en 4:12..."
-                      />
-                    </label>
+                {detailChips.length ? (
+                  <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                    {detailChips.map((chip) => (
+                      <div key={`${chip.label}-${chip.value}`} className="rounded-card bg-white/80 p-3 ring-1 ring-petrol-800/5">
+                        <p className="text-[0.66rem] font-black uppercase tracking-[0.08em] text-muted">{chip.label}</p>
+                        <p className="mt-1 text-sm font-black text-petrol-800">{chip.value}</p>
+                      </div>
+                    ))}
                   </div>
+                ) : null}
 
-                  {(adjustment || exercise.techniqueNotes?.length) ? (
-                    <details className="mt-3 rounded-card border border-petrol-800/10 bg-white/75 p-3">
-                      <summary className="cursor-pointer list-none text-xs font-black uppercase tracking-[0.08em] text-petrol-800">
-                        Explications
-                      </summary>
-                      {adjustment ? <p className="mt-2 border-l-4 border-limeSoft bg-white p-3 text-xs font-bold text-ink">{adjustment}</p> : null}
-                      {exercise.techniqueNotes?.length ? (
-                        <p className="mt-2 text-xs font-bold leading-5 text-muted">{exercise.techniqueNotes.join(" · ")}</p>
-                      ) : null}
-                    </details>
-                  ) : null}
+                <div className="mt-4 grid gap-3 sm:grid-cols-[9rem_1fr]">
+                  <label className="field-label">
+                    Charge
+                    <input
+                      className="field"
+                      inputMode="decimal"
+                      value={activeLog?.loadKg ?? ""}
+                      onChange={(event) => updateLog(activeExercise, { loadKg: parseOptionalNumber(event.target.value) })}
+                      placeholder="kg"
+                    />
+                  </label>
+                  <label className="field-label">
+                    Réalisé
+                    <input
+                      className="field"
+                      value={activeLog?.doneText ?? ""}
+                      onChange={(event) => updateLog(activeExercise, { doneText: event.target.value })}
+                      placeholder="Ex : 4 x 8, 1000 m en 4:12..."
+                    />
+                  </label>
+                </div>
 
+                {(activeAdjustment || activeExercise.techniqueNotes?.length) ? (
                   <details className="mt-3 rounded-card border border-petrol-800/10 bg-white/75 p-3">
                     <summary className="cursor-pointer list-none text-xs font-black uppercase tracking-[0.08em] text-petrol-800">
-                      Note rapide
+                      Explications
                     </summary>
-                    <textarea
-                      className="textarea-field mt-3 min-h-20"
-                      value={log?.notes ?? ""}
-                      onChange={(event) => updateLog(exercise, { notes: event.target.value })}
-                      placeholder="Technique, douleur, trop lourd, garder la charge..."
-                    />
+                    {activeAdjustment ? <p className="mt-2 border-l-4 border-limeSoft bg-white p-3 text-xs font-bold text-ink">{activeAdjustment}</p> : null}
+                    {activeExercise.techniqueNotes?.length ? (
+                      <p className="mt-2 text-xs font-bold leading-5 text-muted">{activeExercise.techniqueNotes.join(" · ")}</p>
+                    ) : null}
                   </details>
+                ) : null}
+
+                <details className="mt-3 rounded-card border border-petrol-800/10 bg-white/75 p-3">
+                  <summary className="cursor-pointer list-none text-xs font-black uppercase tracking-[0.08em] text-petrol-800">
+                    Note rapide
+                  </summary>
+                  <textarea
+                    className="textarea-field mt-3 min-h-20"
+                    value={activeLog?.notes ?? ""}
+                    onChange={(event) => updateLog(activeExercise, { notes: event.target.value })}
+                    placeholder="Technique, douleur, trop lourd, garder la charge..."
+                  />
+                </details>
+              </div>
+
+              <div className="mt-5">
+                <div className="flex items-center justify-center gap-1.5" aria-label={`Bloc ${activeIndex + 1} sur ${exercises.length}`}>
+                  {exercises.map((exercise, index) => {
+                    const checkId = getExerciseCheckId(exercise);
+                    const isDone = checkedSet.has(checkId);
+                    const isSkipped = skippedSet.has(checkId);
+                    const isActive = index === activeIndex;
+
+                    return (
+                      <button
+                        key={exercise.id}
+                        type="button"
+                        className={`h-2.5 rounded-full transition-all duration-200 motion-reduce:transition-none ${
+                          isActive ? "w-8 bg-petrol-800" : isDone ? "w-2.5 bg-limeSoft" : isSkipped ? "w-2.5 bg-petrol-800/35" : "w-2.5 bg-petrol-800/15"
+                        }`}
+                        onClick={() => goToBlock(index)}
+                        aria-label={`Aller au bloc ${index + 1}`}
+                      />
+                    );
+                  })}
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <button type="button" className="ghost-button min-h-14 justify-center" onClick={() => handleBlockDecision(false)}>
+                    Pas fait
+                  </button>
+                  <button type="button" className="action-button min-h-14 justify-center" onClick={() => handleBlockDecision(true)}>
+                    <CheckCircle2 className="h-4 w-4" /> Fait
+                  </button>
                 </div>
               </div>
             </article>
-          );
-        })}
 
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <button type="button" className="ghost-button justify-center" onClick={goPreviousBlock} disabled={activeIndex === 0}>
+                <ArrowLeft className="h-4 w-4" /> Précédent
+              </button>
+              <button type="button" className="ghost-button justify-center" onClick={goNextBlock} disabled={activeIndex >= exercises.length - 1}>
+                Suivant <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </section>
+        ) : (
+          <section className="panel flex min-h-[calc(100svh-24rem)] flex-1 flex-col justify-center p-5 text-center shadow-panel">
+            <p className="eyebrow">Séance libre</p>
+            <h2 className="mt-2 font-display text-3xl font-black leading-none tracking-[-0.06em] text-petrol-800">
+              Aucun bloc guidé
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-sm font-semibold leading-6 text-muted">
+              Tu peux garder le chrono, puis saisir le réel de la séance quand tu as terminé.
+            </p>
+            <button type="button" className="action-button mx-auto mt-5" onClick={onFinish}>
+              Saisir les données
+            </button>
+          </section>
+        )}
       </main>
 
-      <div className="sticky bottom-0 z-20 border-t border-petrol-800/10 bg-cream/95 p-3 shadow-panel backdrop-blur-xl">
-        <div className="mx-auto flex max-w-5xl flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <footer className="shrink-0 border-t border-petrol-800/10 bg-cream/95 p-3 shadow-panel backdrop-blur-xl">
+        <div className="mx-auto grid max-w-3xl gap-2 sm:grid-cols-[1fr_auto_auto] sm:items-center">
           <div className="rounded-card bg-white/75 p-3 text-sm font-black text-petrol-800 ring-1 ring-petrol-800/5">
-            {exercises.length ? `${checkedCount}/${exercises.length} blocs cochés` : "Saisie simple"}
+            {exercises.length ? `${checkedCount}/${exercises.length} blocs faits` : "Saisie simple"}
           </div>
-          <button type="button" className="action-button min-h-14" onClick={completed ? onClose : onFinish}>
-            <Dumbbell className="h-4 w-4" /> {completed ? "Fermer la séance" : "Terminer et saisir temps / FC / calories"}
+          {completed ? (
+            <button type="button" className="ghost-button justify-center" onClick={onUndo}>
+              <RotateCcw className="h-4 w-4" /> Annuler fait
+            </button>
+          ) : (
+            <button type="button" className="ghost-button justify-center" onClick={() => setElapsedSeconds(0)}>
+              Reset chrono
+            </button>
+          )}
+          <button type="button" className="action-button min-h-14 justify-center" onClick={completed ? onClose : onFinish}>
+            <Dumbbell className="h-4 w-4" /> {completed ? "Fermer" : "Terminer"}
           </button>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }

@@ -225,6 +225,146 @@ export default function CalendarPage() {
     return () => window.clearTimeout(timeout);
   }, [selectedDate]);
 
+  const selectedDayPanel = (
+    <div className="mt-3 scroll-mt-24 rounded-card border border-petrol-800/10 bg-white/95 p-3 shadow-soft sm:p-4">
+      <div className={`grid gap-3 rounded-card border border-petrol-800/10 bg-mist/45 p-3 ${showSport || showNutrition ? "lg:grid-cols-[0.85fr_1.15fr]" : ""}`}>
+        <div className="rounded-card bg-petrol-800 p-4 text-white">
+          <p className="text-[0.68rem] font-black uppercase tracking-[0.18em] text-limeSoft">Jour sélectionné</p>
+          <h2 className="mt-2 font-display text-3xl font-black capitalize tracking-[-0.06em]">
+            {format(parseISO(selectedDate), "EEEE d MMMM", { locale: fr })}
+          </h2>
+          <p className="mt-2 text-sm font-bold text-white/70">{selectedSummary || "Rien à afficher pour ce choix"}</p>
+          {showNutrition ? (
+            <button
+              type="button"
+              className="mt-4 w-full action-button bg-limeSoft text-petrol-900 hover:bg-white"
+              onClick={() => setShowMealForm(true)}
+            >
+              <Plus className="h-4 w-4" /> Ajouter un repas ce jour
+            </button>
+          ) : null}
+        </div>
+
+        {showSport || showNutrition ? (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {showSport ? (
+          <div className="rounded-card border border-petrol-800/10 bg-white p-3">
+            <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Sport</p>
+            <div className="mt-2 grid gap-2">
+              {selectedPlannedSessions.length ? (
+                selectedPlannedSessions.map((session) => (
+                  <p key={session.id} className="rounded-card border-l-4 border-petrol-800 bg-mist/60 px-3 py-2 text-sm font-black text-petrol-800">
+                    Prévu : {plannedLabel(session.type)} · {session.durationMin} min
+                  </p>
+                ))
+              ) : (
+                <p className="text-sm font-bold text-muted">Aucune séance prévue.</p>
+              )}
+              {selectedCompletedSessions.map((session) => (
+                <p key={session.id} className="rounded-card border-l-4 border-limeSoft bg-petrol-800 px-3 py-2 text-sm font-black text-white">
+                  Fait : {sessionLabel(session.type)} · {session.durationMin} min
+                </p>
+              ))}
+            </div>
+          </div>
+          ) : null}
+
+          {showNutrition ? (
+            <div className="rounded-card border border-petrol-800/10 bg-white p-3">
+              <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Repas</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {selectedMeals.length ? (
+                  selectedMeals.map((meal) => (
+                    <span key={meal.id} className="chip">
+                      {MEAL_TYPE_LABELS[meal.mealType]}{showNutritionNumbers ? ` · ${meal.calories} kcal` : ""}
+                    </span>
+                  ))
+                ) : (
+                  <span className="chip">Aucun repas saisi</span>
+                )}
+              </div>
+            </div>
+          ) : null}
+        </div>
+        ) : null}
+      </div>
+
+      <div id="mouvement" className="mt-3 scroll-mt-24 rounded-card border border-petrol-800/10 bg-white p-3 sm:p-4">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="eyebrow">Quotidien</p>
+            <h3 className="mt-1 text-lg font-black text-petrol-800">Pas et étages</h3>
+          </div>
+          <p className="text-sm font-bold text-muted">{format(parseISO(selectedDate), "d MMMM yyyy", { locale: fr })}</p>
+        </div>
+
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <label className="field-label">
+            Pas
+            <input
+              className="field"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={selectedDailyContext.steps ? String(selectedDailyContext.steps) : ""}
+              onChange={(event) =>
+                saveSelectedDailyContext({
+                  ...selectedDailyContext,
+                  date: selectedDate,
+                  steps: updateNumberInput(event.target.value)
+                })
+              }
+              placeholder="Ex : 8500"
+            />
+          </label>
+
+          <label className="field-label">
+            Étages
+            <input
+              className="field"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={selectedDailyContext.floors ? String(selectedDailyContext.floors) : ""}
+              onChange={(event) =>
+                saveSelectedDailyContext({
+                  ...selectedDailyContext,
+                  date: selectedDate,
+                  floors: updateNumberInput(event.target.value)
+                })
+              }
+              placeholder="Ex : 8"
+            />
+          </label>
+        </div>
+      </div>
+
+      {showNutrition && showMealForm ? (
+        <div ref={mealFormRef} className="mt-3 rounded-card border border-petrol-800/10 bg-white p-3 sm:p-4">
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="eyebrow">Ajout direct</p>
+              <h2 className="title-lg mt-2">Repas du {format(parseISO(selectedDate), "d MMMM", { locale: fr })}</h2>
+            </div>
+            <button type="button" className="ghost-button" onClick={() => setShowMealForm(false)}>
+              Fermer
+            </button>
+          </div>
+          <MealForm
+            key={`calendar-meal-${selectedDate}`}
+            initial={{ date: selectedDate }}
+            pinInitialDate
+            onCancel={() => setShowMealForm(false)}
+            onSubmit={(meal) => {
+              saveMeal(meal);
+              setSelectedDate(meal.date);
+              setMonth(parseISO(meal.date));
+              setShowMealForm(false);
+            }}
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+
   return (
     <>
       <PageHeader
@@ -268,142 +408,6 @@ export default function CalendarPage() {
           </div>
         </div>
 
-        <div className={`mt-5 grid gap-3 rounded-none border border-petrol-800/10 bg-mist/45 p-4 ${showSport || showNutrition ? "lg:grid-cols-[0.85fr_1.15fr]" : ""}`}>
-          <div className="bg-petrol-800 p-4 text-white">
-            <p className="text-[0.68rem] font-black uppercase tracking-[0.18em] text-limeSoft">Jour sélectionné</p>
-            <h2 className="mt-2 font-display text-3xl font-black capitalize tracking-[-0.06em]">
-              {format(parseISO(selectedDate), "EEEE d MMMM", { locale: fr })}
-            </h2>
-            <p className="mt-2 text-sm font-bold text-white/70">{selectedSummary || "Rien à afficher pour ce choix"}</p>
-            {showNutrition ? (
-              <button
-                type="button"
-                className="mt-4 w-full action-button bg-limeSoft text-petrol-900 hover:bg-white"
-                onClick={() => setShowMealForm(true)}
-              >
-                <Plus className="h-4 w-4" /> Ajouter un repas ce jour
-              </button>
-            ) : null}
-          </div>
-
-          {showSport || showNutrition ? (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {showSport ? (
-            <div className="border border-petrol-800/10 bg-white p-3">
-              <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Sport</p>
-              <div className="mt-2 grid gap-2">
-                {selectedPlannedSessions.length ? (
-                  selectedPlannedSessions.map((session) => (
-                    <p key={session.id} className="border-l-4 border-petrol-800 bg-mist/60 px-3 py-2 text-sm font-black text-petrol-800">
-                      Prévu : {plannedLabel(session.type)} · {session.durationMin} min
-                    </p>
-                  ))
-                ) : (
-                  <p className="text-sm font-bold text-muted">Aucune séance prévue.</p>
-                )}
-                {selectedCompletedSessions.map((session) => (
-                  <p key={session.id} className="border-l-4 border-limeSoft bg-petrol-800 px-3 py-2 text-sm font-black text-white">
-                    Fait : {sessionLabel(session.type)} · {session.durationMin} min
-                  </p>
-                ))}
-              </div>
-            </div>
-            ) : null}
-
-            {showNutrition ? (
-              <div className="border border-petrol-800/10 bg-white p-3">
-                <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-muted">Repas</p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {selectedMeals.length ? (
-                    selectedMeals.map((meal) => (
-                      <span key={meal.id} className="chip">
-                        {MEAL_TYPE_LABELS[meal.mealType]}{showNutritionNumbers ? ` · ${meal.calories} kcal` : ""}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="chip">Aucun repas saisi</span>
-                  )}
-                </div>
-              </div>
-            ) : null}
-          </div>
-          ) : null}
-        </div>
-
-        <div id="mouvement" className="mt-4 scroll-mt-24 border border-petrol-800/10 bg-white p-3 sm:p-4">
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="eyebrow">Quotidien</p>
-              <h3 className="mt-1 text-lg font-black text-petrol-800">Pas et étages</h3>
-            </div>
-            <p className="text-sm font-bold text-muted">{format(parseISO(selectedDate), "d MMMM yyyy", { locale: fr })}</p>
-          </div>
-
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            <label className="field-label">
-              Pas
-              <input
-                className="field"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={selectedDailyContext.steps ? String(selectedDailyContext.steps) : ""}
-                onChange={(event) =>
-                  saveSelectedDailyContext({
-                    ...selectedDailyContext,
-                    date: selectedDate,
-                    steps: updateNumberInput(event.target.value)
-                  })
-                }
-                placeholder="Ex : 8500"
-              />
-            </label>
-
-            <label className="field-label">
-              Étages
-              <input
-                className="field"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={selectedDailyContext.floors ? String(selectedDailyContext.floors) : ""}
-                onChange={(event) =>
-                  saveSelectedDailyContext({
-                    ...selectedDailyContext,
-                    date: selectedDate,
-                    floors: updateNumberInput(event.target.value)
-                  })
-                }
-                placeholder="Ex : 8"
-              />
-            </label>
-          </div>
-        </div>
-
-        {showNutrition && showMealForm ? (
-          <div ref={mealFormRef} className="mt-5 border border-petrol-800/10 bg-white p-3 sm:p-4">
-            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="eyebrow">Ajout direct</p>
-                <h2 className="title-lg mt-2">Repas du {format(parseISO(selectedDate), "d MMMM", { locale: fr })}</h2>
-              </div>
-              <button type="button" className="ghost-button" onClick={() => setShowMealForm(false)}>
-                Fermer
-              </button>
-            </div>
-            <MealForm
-              key={`calendar-meal-${selectedDate}`}
-              initial={{ date: selectedDate }}
-              pinInitialDate
-              onCancel={() => setShowMealForm(false)}
-              onSubmit={(meal) => {
-                saveMeal(meal);
-                setSelectedDate(meal.date);
-                setMonth(parseISO(meal.date));
-                setShowMealForm(false);
-              }}
-            />
-          </div>
-        ) : null}
-
         <div className="mt-5 border border-petrol-800/10 bg-white p-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -440,9 +444,9 @@ export default function CalendarPage() {
               const { isoDate, completedSessions, plannedForDay, mealsForDay, movementForDay, selected, hasContent } = getDayInfo(day);
 
               return (
+                <div key={`mobile-${isoDate}`} className="grid gap-2">
                 <button
                   type="button"
-                  key={`mobile-${isoDate}`}
                   onClick={() => selectDay(day)}
                   className={`w-full border p-3 text-left transition ${
                     selected
@@ -487,6 +491,8 @@ export default function CalendarPage() {
                     </div>
                   </div>
                 </button>
+                {selected ? selectedDayPanel : null}
+                </div>
               );
             })}
         </div>
@@ -601,6 +607,8 @@ export default function CalendarPage() {
             </div>
           </div>
         ) : null}
+
+        {viewMode !== "agenda" ? selectedDayPanel : null}
       </SectionCard>
     </>
   );
