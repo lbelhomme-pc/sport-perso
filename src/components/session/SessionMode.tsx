@@ -241,11 +241,61 @@ export function SessionMode({
           </details>
         ) : null}
 
+        {exercises.length ? (
+          <details className="panel p-3 sm:p-4">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-black uppercase tracking-[0.08em] text-petrol-800">
+              Tous les blocs
+              <span className="chip bg-white/80">{checkedCount}/{exercises.length}</span>
+            </summary>
+            <div className="mt-3 grid gap-2">
+              {exercises.map((exercise, index) => {
+                const checkId = getExerciseCheckId(exercise);
+                const isDone = checkedSet.has(checkId);
+                const isSkipped = skippedSet.has(checkId);
+                const isActive = index === activeIndex;
+
+                return (
+                  <div
+                    key={exercise.id}
+                    className={`grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-card border p-3 transition ${
+                      isActive ? "border-petrol-800/25 bg-limeSoft/25" : "border-petrol-800/10 bg-white/75"
+                    }`}
+                  >
+                    <input
+                      className="h-5 w-5 shrink-0 accent-petrol-800"
+                      type="checkbox"
+                      checked={isDone}
+                      onChange={(event) => {
+                        onToggle(checkId, event.target.checked);
+                        if (event.target.checked) {
+                          setSkippedItemIds((current) => current.filter((id) => id !== checkId));
+                        }
+                      }}
+                      aria-label={`Valider ${getExerciseDisplayTitle(exercise)}`}
+                    />
+                    <button type="button" className="min-w-0 text-left" onClick={() => goToBlock(index)}>
+                      <span className="block truncate text-[0.68rem] font-black uppercase tracking-[0.08em] text-muted">
+                        Bloc {index + 1}
+                      </span>
+                      <span className={`block truncate text-sm font-black ${isDone ? "text-muted line-through" : "text-petrol-800"}`}>
+                        {getExerciseDisplayTitle(exercise)}
+                      </span>
+                    </button>
+                    <StatusBadge tone={isDone ? "lime" : isSkipped ? "muted" : isActive ? "info" : "muted"}>
+                      {isDone ? "Fait" : isSkipped ? "Passé" : isActive ? "Actif" : "À faire"}
+                    </StatusBadge>
+                  </div>
+                );
+              })}
+            </div>
+          </details>
+        ) : null}
+
         {activeExercise ? (
           <section className="flex min-h-0 flex-1 flex-col">
             <article
               key={activeExercise.id}
-              className="panel flex min-h-[calc(100svh-25rem)] flex-1 touch-pan-y flex-col justify-between p-4 shadow-panel animate-[blockSwipeIn_190ms_ease-out] motion-reduce:animate-none sm:p-5"
+              className="panel flex min-h-[min(34rem,calc(100svh-22rem))] flex-1 touch-pan-y flex-col justify-between overflow-visible p-4 shadow-panel animate-[blockSwipeIn_190ms_ease-out] motion-reduce:animate-none sm:p-5"
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
               aria-live="polite"
