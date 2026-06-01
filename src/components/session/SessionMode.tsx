@@ -42,6 +42,11 @@ function clampIndex(index: number, length: number) {
   return Math.min(Math.max(index, 0), length - 1);
 }
 
+function blurFocusedElement() {
+  const activeElement = typeof document !== "undefined" ? document.activeElement : null;
+  if (activeElement instanceof HTMLElement) activeElement.blur();
+}
+
 export function SessionMode({
   session,
   energy,
@@ -84,7 +89,6 @@ export function SessionMode({
   const activeCheckId = activeExercise ? getExerciseCheckId(activeExercise) : undefined;
   const activeChecked = activeCheckId ? checkedSet.has(activeCheckId) : false;
   const activeSkipped = activeCheckId ? skippedSet.has(activeCheckId) : false;
-  const isBadminton = session.type === "badminton";
 
   useEffect(() => {
     setActiveIndex(firstOpenIndex);
@@ -113,20 +117,24 @@ export function SessionMode({
   };
 
   const goToBlock = (index: number) => {
+    blurFocusedElement();
     setActiveIndex(clampIndex(index, exercises.length));
   };
 
   const goNextBlock = () => {
+    blurFocusedElement();
     setActiveIndex((current) => clampIndex(current + 1, exercises.length));
   };
 
   const goPreviousBlock = () => {
+    blurFocusedElement();
     setActiveIndex((current) => clampIndex(current - 1, exercises.length));
   };
 
   const handleBlockDecision = (done: boolean) => {
     if (!activeCheckId) return;
 
+    blurFocusedElement();
     setSkippedItemIds((current) => {
       if (done) return current.filter((id) => id !== activeCheckId);
       return [...new Set([...current, activeCheckId])];
@@ -161,13 +169,39 @@ export function SessionMode({
   const activeLog = activeExercise ? getExerciseLog(session.id, activeExercise.id) : undefined;
   const activeAdjustment = activeExercise ? getExerciseAdjustment(activeExercise, energy) : undefined;
 
+  const sessionControls = (
+    <div className="mt-4 grid gap-2">
+      <div className="grid grid-cols-2 gap-2">
+        <button type="button" className="ghost-button justify-center" onClick={goPreviousBlock} disabled={activeIndex === 0 || !exercises.length}>
+          <ArrowLeft className="h-4 w-4" /> Précédent
+        </button>
+        <button type="button" className="ghost-button justify-center" onClick={goNextBlock} disabled={!exercises.length || activeIndex >= exercises.length - 1}>
+          Suivant <ArrowRight className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <button type="button" className="ghost-button justify-center" onClick={() => setElapsedSeconds(0)}>
+          Reset chrono
+        </button>
+        <button type="button" className="action-button min-h-14 justify-center" onClick={completed ? onClose : onFinish}>
+          <Dumbbell className="h-4 w-4" /> {completed ? "Fermer" : "Terminer"}
+        </button>
+      </div>
+      {completed ? (
+        <button type="button" className="ghost-button justify-center" onClick={onUndo}>
+          <RotateCcw className="h-4 w-4" /> Annuler fait
+        </button>
+      ) : null}
+    </div>
+  );
+
   return (
-    <div className="fixed inset-0 z-[80] flex min-h-svh flex-col overflow-hidden bg-cream text-ink">
-      <header className="shrink-0 border-b border-petrol-800/10 bg-petrol-800/95 p-3 text-white shadow-panel backdrop-blur-xl sm:p-4">
+    <div className="fixed inset-0 z-[80] flex h-dvh flex-col overflow-hidden bg-cream text-ink">
+      <header className="shrink-0 border-b border-petrol-800/10 bg-petrol-800/95 px-3 py-3 text-white shadow-panel backdrop-blur-xl sm:px-4">
         <div className="mx-auto flex max-w-3xl items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[0.72rem] font-black uppercase tracking-[0.1em] text-limeSoft">Mode séance</p>
-            <h1 className="mt-1 break-words font-display text-2xl font-black leading-none tracking-[-0.055em] sm:text-3xl">
+            <p className="text-[0.7rem] font-black uppercase tracking-[0.1em] text-limeSoft">Mode séance</p>
+            <h1 className="mt-1 break-words font-display text-[1.7rem] font-black leading-[0.95] tracking-[-0.055em] sm:text-3xl">
               {session.title}
             </h1>
             <p className="mt-2 text-xs font-bold uppercase tracking-[0.06em] text-white/70">
@@ -186,25 +220,27 @@ export function SessionMode({
       </header>
 
       <main className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-3 overflow-y-auto px-3 py-3 sm:px-4">
-        <section className="panel animate-[premiumIn_180ms_ease-out] p-3 motion-reduce:animate-none sm:p-4">
-          <div className="grid gap-3 sm:grid-cols-[1fr_14rem] sm:items-center">
+        {activeExercise ? (
+          <article
+            key={activeExercise.id}
+            className="panel flex min-h-[calc(100dvh-7.25rem)] touch-pan-y flex-col justify-between overflow-visible p-4 shadow-panel animate-[blockSwipeIn_190ms_ease-out] motion-reduce:animate-none sm:p-5"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            aria-live="polite"
+          >
             <div className="min-w-0">
-              <p className="eyebrow">{isBadminton ? "Suivi simple" : "Bloc actif"}</p>
-              <p className="mt-1 font-display text-2xl font-black leading-none tracking-[-0.055em] text-petrol-800 sm:text-3xl">
-                {exercises.length ? `${activeIndex + 1}/${exercises.length}` : "Saisie libre"}
-              </p>
-              <p className="mt-2 text-sm font-bold text-muted">
-                {exercises.length ? `${checkedCount} fait${checkedCount > 1 ? "s" : ""}${skippedCount ? `, ${skippedCount} passé${skippedCount > 1 ? "s" : ""}` : ""}` : "Aucun bloc guidé à cocher."}
-              </p>
-            </div>
-            <div className="rounded-card border border-petrol-800/10 bg-white/80 p-3 shadow-sm">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.08em] text-muted">Chrono</p>
-                  <p className="mt-1 font-display text-4xl font-black leading-none tracking-normal text-petrol-800">
-                    {formatElapsedTime(elapsedSeconds)}
-                  </p>
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusBadge tone="dark">Bloc {activeIndex + 1}/{exercises.length}</StatusBadge>
+                    <StatusBadge tone={activeStatusTone}>{activeStatus}</StatusBadge>
+                  </div>
+                  <p className="mt-3 text-xs font-black uppercase tracking-[0.1em] text-muted">{activeExercise.block}</p>
+                  <h2 className="mt-1 break-words font-display text-4xl font-black leading-[0.9] tracking-[-0.065em] text-petrol-800 sm:text-5xl">
+                    {getExerciseDisplayTitle(activeExercise)}
+                  </h2>
                 </div>
+
                 <button
                   type="button"
                   className="action-button min-h-11 w-auto px-3 py-2"
@@ -212,16 +248,136 @@ export function SessionMode({
                   aria-label={timerRunning ? "Mettre le chrono en pause" : "Démarrer le chrono"}
                 >
                   {timerRunning ? <PauseCircle className="h-4 w-4" /> : <PlayCircle className="h-4 w-4" />}
+                  <span className="hidden sm:inline">{timerRunning ? "Pause" : "Start"}</span>
                 </button>
               </div>
-              {exercises.length ? (
-                <div className="mt-3">
-                  <GaugeBar label="Avancement" value={progress} valueLabel={`${progress} %`} tone="lime" compact />
+
+              <div className="mt-4 grid gap-3 rounded-card bg-mist/60 p-3">
+                <p className="text-sm font-black leading-5 text-ink">{getExerciseInstruction(activeExercise)}</p>
+                {detailChips.length ? (
+                  <div className="grid gap-2 sm:grid-cols-3">
+                    {detailChips.map((chip) => (
+                      <div key={`${chip.label}-${chip.value}`} className="rounded-card bg-white/80 p-3 ring-1 ring-petrol-800/5">
+                        <p className="text-[0.66rem] font-black uppercase tracking-[0.08em] text-muted">{chip.label}</p>
+                        <p className="mt-1 text-sm font-black text-petrol-800">{chip.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="mt-4 rounded-card bg-white/75 p-3 ring-1 ring-petrol-800/5">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.08em] text-muted">Chrono</p>
+                    <p className="mt-1 font-display text-4xl font-black leading-none tracking-normal text-petrol-800">
+                      {formatElapsedTime(elapsedSeconds)}
+                    </p>
+                  </div>
+                  <div className="min-w-32 flex-1">
+                    <GaugeBar label="Avancement" value={progress} valueLabel={`${progress} %`} tone="lime" compact />
+                  </div>
                 </div>
-              ) : null}
+              </div>
+
+              <details className="mt-4 rounded-card border border-petrol-800/10 bg-white/80 p-3">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-xs font-black uppercase tracking-[0.08em] text-petrol-800">
+                  Saisie du bloc
+                  <span className="chip bg-mist/70">Optionnel</span>
+                </summary>
+
+                <div className="mt-3 grid gap-3 sm:grid-cols-[9rem_1fr]">
+                  <label className="field-label">
+                    Charge
+                    <input
+                      className="field"
+                      inputMode="decimal"
+                      value={activeLog?.loadKg ?? ""}
+                      onChange={(event) => updateLog(activeExercise, { loadKg: parseOptionalNumber(event.target.value) })}
+                      placeholder="kg"
+                    />
+                  </label>
+                  <label className="field-label">
+                    Réalisé
+                    <input
+                      className="field"
+                      value={activeLog?.doneText ?? ""}
+                      onChange={(event) => updateLog(activeExercise, { doneText: event.target.value })}
+                      placeholder="Ex : 4 x 8, 1000 m en 4:12..."
+                    />
+                  </label>
+                </div>
+
+                {(activeAdjustment || activeExercise.techniqueNotes?.length) ? (
+                  <details className="mt-3 rounded-card border border-petrol-800/10 bg-white/75 p-3">
+                    <summary className="cursor-pointer list-none text-xs font-black uppercase tracking-[0.08em] text-petrol-800">
+                      Explications
+                    </summary>
+                    {activeAdjustment ? <p className="mt-2 border-l-4 border-limeSoft bg-white p-3 text-xs font-bold text-ink">{activeAdjustment}</p> : null}
+                    {activeExercise.techniqueNotes?.length ? (
+                      <p className="mt-2 text-xs font-bold leading-5 text-muted">{activeExercise.techniqueNotes.join(" · ")}</p>
+                    ) : null}
+                  </details>
+                ) : null}
+
+                <label className="field-label mt-3">
+                  Note rapide
+                  <textarea
+                    className="textarea-field min-h-20"
+                    value={activeLog?.notes ?? ""}
+                    onChange={(event) => updateLog(activeExercise, { notes: event.target.value })}
+                    placeholder="Technique, douleur, trop lourd, garder la charge..."
+                  />
+                </label>
+              </details>
             </div>
-          </div>
-        </section>
+
+            <div className="mt-5 shrink-0">
+              <div className="flex items-center justify-center gap-1.5" aria-label={`Bloc ${activeIndex + 1} sur ${exercises.length}`}>
+                {exercises.map((exercise, index) => {
+                  const checkId = getExerciseCheckId(exercise);
+                  const isDone = checkedSet.has(checkId);
+                  const isSkipped = skippedSet.has(checkId);
+                  const isActive = index === activeIndex;
+
+                  return (
+                    <button
+                      key={exercise.id}
+                      type="button"
+                      className={`h-2.5 rounded-full transition-all duration-200 motion-reduce:transition-none ${
+                        isActive ? "w-8 bg-petrol-800" : isDone ? "w-2.5 bg-limeSoft" : isSkipped ? "w-2.5 bg-petrol-800/35" : "w-2.5 bg-petrol-800/15"
+                      }`}
+                      onClick={() => goToBlock(index)}
+                      aria-label={`Aller au bloc ${index + 1}`}
+                    />
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <button type="button" className="ghost-button min-h-14 justify-center" onClick={() => handleBlockDecision(false)}>
+                  Pas fait
+                </button>
+                <button type="button" className="action-button min-h-14 justify-center" onClick={() => handleBlockDecision(true)}>
+                  <CheckCircle2 className="h-4 w-4" /> Fait
+                </button>
+              </div>
+
+              {sessionControls}
+            </div>
+          </article>
+        ) : (
+          <section className="panel flex min-h-[calc(100dvh-7.25rem)] flex-col justify-center p-5 text-center shadow-panel">
+            <p className="eyebrow">Séance libre</p>
+            <h2 className="mt-2 font-display text-3xl font-black leading-none tracking-[-0.06em] text-petrol-800">
+              Aucun bloc guidé
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-sm font-semibold leading-6 text-muted">
+              Tu peux garder le chrono, puis saisir le réel de la séance quand tu as terminé.
+            </p>
+            {sessionControls}
+          </section>
+        )}
 
         {guidanceExercises.length ? (
           <details className="panel border-l-4 border-limeSoft bg-mist/60 p-3 sm:p-4">
@@ -290,166 +446,7 @@ export function SessionMode({
             </div>
           </details>
         ) : null}
-
-        {activeExercise ? (
-          <section className="flex min-h-0 flex-1 flex-col">
-            <article
-              key={activeExercise.id}
-              className="panel flex min-h-[min(34rem,calc(100svh-22rem))] flex-1 touch-pan-y flex-col justify-between overflow-visible p-4 shadow-panel animate-[blockSwipeIn_190ms_ease-out] motion-reduce:animate-none sm:p-5"
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
-              aria-live="polite"
-            >
-              <div className="min-w-0">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-xs font-black uppercase tracking-[0.1em] text-muted">{activeExercise.block}</p>
-                    <h2 className="mt-1 break-words font-display text-3xl font-black leading-[0.92] tracking-[-0.06em] text-petrol-800 sm:text-4xl">
-                      {getExerciseDisplayTitle(activeExercise)}
-                    </h2>
-                  </div>
-                  <StatusBadge tone={activeStatusTone}>{activeStatus}</StatusBadge>
-                </div>
-
-                <p className="mt-4 rounded-card bg-mist/60 p-3 text-sm font-black leading-5 text-ink">
-                  {getExerciseInstruction(activeExercise)}
-                </p>
-
-                {detailChips.length ? (
-                  <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                    {detailChips.map((chip) => (
-                      <div key={`${chip.label}-${chip.value}`} className="rounded-card bg-white/80 p-3 ring-1 ring-petrol-800/5">
-                        <p className="text-[0.66rem] font-black uppercase tracking-[0.08em] text-muted">{chip.label}</p>
-                        <p className="mt-1 text-sm font-black text-petrol-800">{chip.value}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
-
-                <div className="mt-4 grid gap-3 sm:grid-cols-[9rem_1fr]">
-                  <label className="field-label">
-                    Charge
-                    <input
-                      className="field"
-                      inputMode="decimal"
-                      value={activeLog?.loadKg ?? ""}
-                      onChange={(event) => updateLog(activeExercise, { loadKg: parseOptionalNumber(event.target.value) })}
-                      placeholder="kg"
-                    />
-                  </label>
-                  <label className="field-label">
-                    Réalisé
-                    <input
-                      className="field"
-                      value={activeLog?.doneText ?? ""}
-                      onChange={(event) => updateLog(activeExercise, { doneText: event.target.value })}
-                      placeholder="Ex : 4 x 8, 1000 m en 4:12..."
-                    />
-                  </label>
-                </div>
-
-                {(activeAdjustment || activeExercise.techniqueNotes?.length) ? (
-                  <details className="mt-3 rounded-card border border-petrol-800/10 bg-white/75 p-3">
-                    <summary className="cursor-pointer list-none text-xs font-black uppercase tracking-[0.08em] text-petrol-800">
-                      Explications
-                    </summary>
-                    {activeAdjustment ? <p className="mt-2 border-l-4 border-limeSoft bg-white p-3 text-xs font-bold text-ink">{activeAdjustment}</p> : null}
-                    {activeExercise.techniqueNotes?.length ? (
-                      <p className="mt-2 text-xs font-bold leading-5 text-muted">{activeExercise.techniqueNotes.join(" · ")}</p>
-                    ) : null}
-                  </details>
-                ) : null}
-
-                <details className="mt-3 rounded-card border border-petrol-800/10 bg-white/75 p-3">
-                  <summary className="cursor-pointer list-none text-xs font-black uppercase tracking-[0.08em] text-petrol-800">
-                    Note rapide
-                  </summary>
-                  <textarea
-                    className="textarea-field mt-3 min-h-20"
-                    value={activeLog?.notes ?? ""}
-                    onChange={(event) => updateLog(activeExercise, { notes: event.target.value })}
-                    placeholder="Technique, douleur, trop lourd, garder la charge..."
-                  />
-                </details>
-              </div>
-
-              <div className="mt-5">
-                <div className="flex items-center justify-center gap-1.5" aria-label={`Bloc ${activeIndex + 1} sur ${exercises.length}`}>
-                  {exercises.map((exercise, index) => {
-                    const checkId = getExerciseCheckId(exercise);
-                    const isDone = checkedSet.has(checkId);
-                    const isSkipped = skippedSet.has(checkId);
-                    const isActive = index === activeIndex;
-
-                    return (
-                      <button
-                        key={exercise.id}
-                        type="button"
-                        className={`h-2.5 rounded-full transition-all duration-200 motion-reduce:transition-none ${
-                          isActive ? "w-8 bg-petrol-800" : isDone ? "w-2.5 bg-limeSoft" : isSkipped ? "w-2.5 bg-petrol-800/35" : "w-2.5 bg-petrol-800/15"
-                        }`}
-                        onClick={() => goToBlock(index)}
-                        aria-label={`Aller au bloc ${index + 1}`}
-                      />
-                    );
-                  })}
-                </div>
-
-                <div className="mt-4 grid grid-cols-2 gap-2">
-                  <button type="button" className="ghost-button min-h-14 justify-center" onClick={() => handleBlockDecision(false)}>
-                    Pas fait
-                  </button>
-                  <button type="button" className="action-button min-h-14 justify-center" onClick={() => handleBlockDecision(true)}>
-                    <CheckCircle2 className="h-4 w-4" /> Fait
-                  </button>
-                </div>
-              </div>
-            </article>
-
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              <button type="button" className="ghost-button justify-center" onClick={goPreviousBlock} disabled={activeIndex === 0}>
-                <ArrowLeft className="h-4 w-4" /> Précédent
-              </button>
-              <button type="button" className="ghost-button justify-center" onClick={goNextBlock} disabled={activeIndex >= exercises.length - 1}>
-                Suivant <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
-          </section>
-        ) : (
-          <section className="panel flex min-h-[calc(100svh-24rem)] flex-1 flex-col justify-center p-5 text-center shadow-panel">
-            <p className="eyebrow">Séance libre</p>
-            <h2 className="mt-2 font-display text-3xl font-black leading-none tracking-[-0.06em] text-petrol-800">
-              Aucun bloc guidé
-            </h2>
-            <p className="mx-auto mt-3 max-w-md text-sm font-semibold leading-6 text-muted">
-              Tu peux garder le chrono, puis saisir le réel de la séance quand tu as terminé.
-            </p>
-            <button type="button" className="action-button mx-auto mt-5" onClick={onFinish}>
-              Saisir les données
-            </button>
-          </section>
-        )}
       </main>
-
-      <footer className="shrink-0 border-t border-petrol-800/10 bg-cream/95 p-3 shadow-panel backdrop-blur-xl">
-        <div className="mx-auto grid max-w-3xl gap-2 sm:grid-cols-[1fr_auto_auto] sm:items-center">
-          <div className="rounded-card bg-white/75 p-3 text-sm font-black text-petrol-800 ring-1 ring-petrol-800/5">
-            {exercises.length ? `${checkedCount}/${exercises.length} blocs faits` : "Saisie simple"}
-          </div>
-          {completed ? (
-            <button type="button" className="ghost-button justify-center" onClick={onUndo}>
-              <RotateCcw className="h-4 w-4" /> Annuler fait
-            </button>
-          ) : (
-            <button type="button" className="ghost-button justify-center" onClick={() => setElapsedSeconds(0)}>
-              Reset chrono
-            </button>
-          )}
-          <button type="button" className="action-button min-h-14 justify-center" onClick={completed ? onClose : onFinish}>
-            <Dumbbell className="h-4 w-4" /> {completed ? "Fermer" : "Terminer"}
-          </button>
-        </div>
-      </footer>
     </div>
   );
 }
