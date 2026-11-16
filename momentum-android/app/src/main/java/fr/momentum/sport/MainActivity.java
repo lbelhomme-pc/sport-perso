@@ -350,7 +350,13 @@ public final class MainActivity extends Activity {
         day.addView(dateLabel,new LinearLayout.LayoutParams(0,-2,1));
         editorDateButton=badge(shortDate(editing.time)+"  ▾",SECOND,WHITE);day.addView(editorDateButton);
         editorDateButton.setOnClickListener(v->chooseDate());content.addView(day);space(content,20);
-        TextView lab=text("3 · RACONTE TA SÉANCE",11,ACCENT,true);lab.setLetterSpacing(.1f);content.addView(lab);space(content,10);
+        LinearLayout noteHeading=row();
+        TextView lab=text("3 · RACONTE TA SÉANCE",11,ACCENT,true);lab.setLetterSpacing(.1f);
+        noteHeading.addView(lab,new LinearLayout.LayoutParams(0,-2,1));
+        TextView addExercise=badge("＋ Exercice",SECOND,ACCENT);
+        noteHeading.addView(addExercise);
+        addExercise.setOnClickListener(v->new ExercisePicker(this,this::insertExerciseTemplate).show());
+        content.addView(noteHeading);space(content,10);
         noteField=new EditText(this);
         noteField.setTextColor(WHITE);noteField.setHintTextColor(MUTED);
         noteField.setHint("Ex. Deadlift 2x4 140 kg RPE 7\nou Badminton 1h10, bonnes sensations…");
@@ -415,6 +421,21 @@ public final class MainActivity extends Activity {
         String insert=(newLine?String.valueOf((char)10):"")+fragment+(fragment.endsWith(" : ")?"":String.valueOf((char)10));
         noteField.getText().insert(cursor,insert);
         noteField.setSelection(cursor+insert.length());
+        noteField.requestFocus();
+    }
+    void insertExerciseTemplate(String name,boolean phases){
+        if(noteField==null)return;
+        int cursor=Math.max(0,Math.min(noteField.getSelectionStart(),noteField.length()));
+        String current=noteField.getText().toString();
+        String lf=String.valueOf((char)10);
+        String prefix=(cursor>0&&current.charAt(cursor-1)!=10)?lf:"";
+        String header="- "+name+" -"+lf;
+        String warmup="-- Montée en charge --"+lf;
+        String charging=lf+"-- En charge --"+lf;
+        String block=prefix+header+(phases?warmup+charging:"");
+        noteField.getText().insert(cursor,block);
+        int newCursor=cursor+prefix.length()+header.length()+(phases?warmup.length():0);
+        noteField.setSelection(newCursor);
         noteField.requestFocus();
     }
     void renderSportChips(){
@@ -483,7 +504,11 @@ public final class MainActivity extends Activity {
     }
     void exportBackup(){
         try{
-            pendingBackup=store.exportJson();
+            JSONObject backup=new JSONObject(store.exportJson());
+            ExerciseLibrary library=new ExerciseLibrary(this);
+            backup.put("custom_exercises",library.exportCustom());
+            backup.put("favorite_exercises",library.exportFavorites());
+            pendingBackup=backup.toString(2);
             Intent i=new Intent(Intent.ACTION_CREATE_DOCUMENT);
             i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("application/json");
             i.putExtra(Intent.EXTRA_TITLE,"momentum-sport-"+new SimpleDateFormat("yyyy-MM-dd",Locale.US).format(new Date())+".json");
@@ -524,7 +549,11 @@ public final class MainActivity extends Activity {
                     .setMessage("Les séances du téléphone seront remplacées par celles de cette sauvegarde. Cette action est irréversible.")
                     .setNegativeButton("Annuler",null)
                     .setPositiveButton("Restaurer",(d,w)->{
-                        try{int count=store.restore(json);showTab(0);toast(count+" séances restaurées ✓");}
+                        try{
+                            int count=store.restore(json);
+                            new ExerciseLibrary(this).restoreFromBackup(j);
+                            showTab(0);toast(count+" séances restaurées ✓");
+                        }
                         catch(Exception e){toast("Import impossible : "+e.getMessage());}
                     }).show();
             }
