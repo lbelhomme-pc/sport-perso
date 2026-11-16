@@ -57,12 +57,10 @@ public final class SportStore extends SQLiteOpenHelper {
                 m=Pattern.compile("(?i)(\\d+(?:\\.\\d+)?)\\s*km\\b").matcher(n);
                 if(m.find())distance=number(m.group(1));
             }
-            m=Pattern.compile("(?i)(\\d{1,2})\\s*x\\s*(\\d{1,3})\\s*(?:@|à|a|de|avec|sur)?\\s*(\\d+(?:\\.\\d+)?)\\s*kg\\b").matcher(n);
-            if(sets==0&&reps==0&&weight==0&&m.find()){
-                sets=limit(integer(m.group(1)),0,100);
-                reps=limit(integer(m.group(2)),0,1000);
-                weight=number(m.group(3));
-            }
+            // Les notes peuvent contenir plusieurs exercices et des charges par main.
+            // Un seul couple séries/répétitions/charge serait trompeur pour une séance entière.
+            // On ne déduit donc jamais ces champs globaux du texte libre.
+
         }
         static int integer(String x){try{return Integer.parseInt(x);}catch(Exception e){return 0;}}
         static double number(String x){try{return Double.parseDouble(x);}catch(Exception e){return 0;}}
