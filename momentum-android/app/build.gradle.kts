@@ -3,11 +3,11 @@ android {
   namespace = "fr.momentum.sport"
   compileSdk = 35
   defaultConfig {
-    applicationId = "fr.momentum.sport.chronos"
+    applicationId = "fr.momentum.sport.exercises"
     minSdk = 26
     targetSdk = 34
-    versionCode = 139
-    versionName = "1.3.9"
+    versionCode = 140
+    versionName = "1.4.0"
   }
   buildTypes { release { isMinifyEnabled = false } }
   compileOptions {
