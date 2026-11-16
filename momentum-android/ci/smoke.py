@@ -78,11 +78,19 @@ def main():
     if "Développé couché aux haltères" not in text_values:
         raise AssertionError("L'exercice sélectionné n'a pas été inséré dans la note")
     print("Insertion exercice validée")
+    # Cas de régression : 20 x 11 kg ne signifie PAS 20 séries x 1 rep x 1 kg.
+    adb("shell","input","text","20x11kg")
     adb("shell","input","keyevent","4")  # clavier
     time.sleep(0.5)
     tap(find_text("Enregistrer la séance"))
     time.sleep(2);confirm_running()
     print("Enregistrement séance validé")
+    cards=" | ".join(n.attrib.get("text","") for n in xml_nodes())
+    if "20×1" in cards or "20x1 · 1 kg" in cards or "Volume saisi" in cards:
+        raise AssertionError("Fausse métrique de musculation toujours affichée : "+cards[:1600])
+    if "20x11kg" not in cards:
+        raise AssertionError("Série saisie absente du journal : "+cards[:1600])
+    print("Régression 20x11kg validée : texte conservé sans fausse série")
     tap(find_text("Chronos"))
     time.sleep(2);confirm_running()
     find_text("Tabata")
