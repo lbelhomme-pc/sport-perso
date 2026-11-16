@@ -142,12 +142,17 @@ public final class MainActivity extends Activity {
     }
     LinearLayout bottomNav(){
         LinearLayout bar=row();pad(bar,13,6,13,10);bar.setBackgroundColor(NAV);
-        String[] labels={"▤  Journal","▥  Progrès","◫  Données"};
+        String[] labels={"▤ Journal","▥ Progrès","◷ Chronos","◫ Données"};
         for(int i=0;i<labels.length;i++){
             final int ix=i;
-            TextView t=text(labels[i],12,i==tab?ACCENT:MUTED,true);
-            t.setGravity(Gravity.CENTER);t.setBackground(shape(i==tab?SECOND:NAV,14));
-            bar.addView(t,new LinearLayout.LayoutParams(0,-1,1));t.setOnClickListener(v->showTab(ix));
+            boolean selected=(i==0&&tab==0)||(i==1&&tab==1)||(i==3&&tab==2);
+            TextView t=text(labels[i],11,selected?ACCENT:MUTED,true);
+            t.setGravity(Gravity.CENTER);t.setBackground(shape(selected?SECOND:NAV,14));
+            bar.addView(t,new LinearLayout.LayoutParams(0,-1,1));
+            t.setOnClickListener(v->{
+                if(ix==2)startActivity(new Intent(this,TimerActivity.class));
+                else showTab(ix==3?2:ix);
+            });
         }
         return bar;
     }
@@ -316,7 +321,7 @@ public final class MainActivity extends Activity {
             .setPositiveButton("Supprimer",(d,w)->{store.clearAll();showTab(2);toast("Données supprimées");}).show());
         clear.addView(cl,lp(-1,45));content.addView(clear);
         space(content,30);
-        TextView v=text("MOMENTUM SPORT  ·  VERSION 1.3.8",11,MUTED,true);v.setGravity(Gravity.CENTER);content.addView(v);
+        TextView v=text("MOMENTUM SPORT  ·  VERSION 1.3.9",11,MUTED,true);v.setGravity(Gravity.CENTER);content.addView(v);
     }
     void toast(String m){Toast.makeText(this,m,Toast.LENGTH_SHORT).show();}
     void showEditor(SportStore.Session session){ showEditor(session,false); }
