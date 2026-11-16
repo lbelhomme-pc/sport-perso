@@ -44,7 +44,8 @@ def find_text(term,exact=False,timeout=16):
             if needle.strip()==label.strip() if exact else needle in label:
                 return n
         time.sleep(1)
-    raise AssertionError("Élément absent : "+term)
+    snapshot=" | ".join(n.attrib.get("text","") for n in xml_nodes() if n.attrib.get("text",""))
+    raise AssertionError("Élément absent : "+term+" ; écran : "+snapshot[:1500])
 
 def confirm_running():
     pid=adb("shell","pidof",PKG,check=False)
@@ -59,7 +60,8 @@ def main():
     print("Installation", adb("install","-r",path))
     print("Démarrage",adb("shell","am","start","-W","-n",COMPONENT))
     time.sleep(3);confirm_running()
-    tap(find_text("SÉANCE"))
+    tap(find_text("＋  SÉANCE",exact=True))
+    find_text("Nouvelle séance")
     print("Éditeur ouvert")
     tap(find_text("Exercice"))
     print("Sélecteur ouvert :",find_text("Choisir un exercice").attrib.get("text"))
