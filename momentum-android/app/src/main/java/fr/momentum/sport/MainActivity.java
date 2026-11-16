@@ -404,8 +404,8 @@ public final class MainActivity extends Activity {
         if(noteField==null)return;
         int cursor=Math.max(0,Math.min(noteField.getSelectionStart(),noteField.length()));
         String current=noteField.getText().toString();
-        boolean newLine=cursor>0&&current.charAt(cursor-1]!='\n';
-        String insert=(newLine?"\n":"")+fragment+(fragment.endsWith(" : ")?"":"\n");
+        boolean newLine=(cursor>0 && current.charAt(cursor-1)!=10);
+        String insert=(newLine?String.valueOf((char)10):"")+fragment+(fragment.endsWith(" : ")?"":String.valueOf((char)10));
         noteField.getText().insert(cursor,insert);
         noteField.setSelection(cursor+insert.length());
         noteField.requestFocus();
