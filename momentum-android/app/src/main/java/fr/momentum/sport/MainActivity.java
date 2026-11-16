@@ -335,6 +335,8 @@ public final class MainActivity extends Activity {
         TextView back=text("‹",34,WHITE,false);back.setGravity(Gravity.CENTER);bar.addView(back,lp(48,43));back.setOnClickListener(v->showTab(0));
         TextView name=text(editing.id<=0?"Nouvelle séance":"Modifier la séance",18,WHITE,true);
         bar.addView(name,new LinearLayout.LayoutParams(0,-2,1));
+        TextView jumpTimers=badge("◷ Chronos",SECOND,ACCENT);
+        bar.addView(jumpTimers);jumpTimers.setOnClickListener(v->startActivity(new Intent(this,TimerActivity.class)));
         if(editing.id>0){TextView del=badge("Supprimer",SECOND,Color.rgb(255,160,170));bar.addView(del);
             del.setOnClickListener(v->new AlertDialog.Builder(this).setTitle("Supprimer cette séance ?")
                 .setNegativeButton("Annuler",null).setPositiveButton("Supprimer",(d,b)->{store.delete(editing.id);showTab(0);toast("Séance supprimée");}).show());}
