@@ -6,6 +6,7 @@
     android:usesCleartextTraffic="false"
     android:theme="@android:style/Theme.Material.NoActionBar"
     android:supportsRtl="true">
+    <activity android:name="fr.momentum.sport.TimerActivity" android:exported="false" android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
     <activity android:name="fr.momentum.sport.MainActivity"
       android:exported="true"
       android:windowSoftInputMode="adjustResize">
