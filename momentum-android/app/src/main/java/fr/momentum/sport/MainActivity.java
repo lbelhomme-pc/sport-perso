@@ -232,7 +232,6 @@ public final class MainActivity extends Activity {
         if(s.hr>0)details.add("♥ "+s.hr+" bpm");
         if(s.distance>0)details.add("↗ "+fnum(s.distance)+" km");
         if(s.rpe>0)details.add("RPE "+s.rpe);
-        if(s.sets>0&&s.reps>0)details.add(s.sets+"×"+s.reps+(s.weight>0?" · "+fnum(s.weight)+" kg":""));
         if(!details.isEmpty()){
             space(card,14);
             TextView tags=text(TextUtils.join("   ·   ",details),12,ACCENT,true);
@@ -244,10 +243,10 @@ public final class MainActivity extends Activity {
     void stats(LinearLayout content){
         titleRow(content,"CHIFFRES UTILES","Progression.","Tes tendances, sans statistiques décoratives.");
         List<SportStore.Session> all=store.all();
-        int min=0,count=all.size(),hrCount=0,hrSum=0,rpeCount=0,rpeSum=0;double volume=0;
+        int min=0,count=all.size(),hrCount=0,hrSum=0,rpeCount=0,rpeSum=0;
         Map<String,Integer> perSport=new HashMap<>();Map<String,Double> records=new HashMap<>();
         for(SportStore.Session s:all){
-            min+=s.duration;volume+=s.volume();
+            min+=s.duration;
             if(s.hr>0){hrCount++;hrSum+=s.hr;}if(s.rpe>0){rpeCount++;rpeSum+=s.rpe;}
             perSport.put(s.sport,perSport.getOrDefault(s.sport,0)+1);
             if(s.weight>0&&!s.exercise.trim().isEmpty()){
@@ -258,8 +257,8 @@ public final class MainActivity extends Activity {
         statBox(two,String.valueOf(count),"Séances");statBox(two,formatDuration(min),"Durée totale");
         content.addView(two);space(content,12);
         LinearLayout two2=row();two2.setGravity(Gravity.TOP);
-        statBox(two2,volume>0?fnum(volume)+" kg":"—","Volume saisi");
         statBox(two2,rpeCount>0?fnum((double)rpeSum/rpeCount):"—","RPE moyen");
+        statBox(two2,hrCount>0?fnum((double)hrSum/hrCount)+" bpm":"—","FC moyenne");
         content.addView(two2);space(content,25);
         section(content,"Rythme des 7 derniers jours");
         LinearLayout plot=panel();plot.addView(new WeekChart(this,all),lp(-1,151));content.addView(plot);
