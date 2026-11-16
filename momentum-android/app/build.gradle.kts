@@ -3,7 +3,7 @@ android {
   namespace = "fr.momentum.sport"
   compileSdk = 35
   defaultConfig {
-    applicationId = "fr.momentum.sport.clean"
+    applicationId = "fr.momentum.sport.chronos"
     minSdk = 26
     targetSdk = 34
     versionCode = 139
