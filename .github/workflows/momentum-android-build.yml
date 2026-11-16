@@ -1,7 +1,7 @@
 name: Momentum Android APK
 on:
   push:
-    branches: [fix/momentum-android-138, feat/momentum-exercises-140]
+    branches: [fix/momentum-android-138, feat/momentum-exercises-140, fix/momentum-false-series-141]
     paths:
       - 'momentum-android/**'
       - '.github/workflows/momentum-android-build.yml'
@@ -24,7 +24,7 @@ jobs:
         run: gradle -p momentum-android :app:assembleDebug --no-daemon --stacktrace
       - uses: actions/upload-artifact@v4
         with:
-          name: MomentumSport-v1.4.0-exercises
+          name: MomentumSport-v1.4.1-clean-metrics
           path: momentum-android/app/build/outputs/apk/debug/app-debug.apk
       - name: Enable KVM for emulator
         run: |
