@@ -1,7 +1,7 @@
 name: Momentum Android APK
 on:
   push:
-    branches: [fix/momentum-android-138]
+    branches: [fix/momentum-android-138, feat/momentum-exercises-140]
     paths:
       - 'momentum-android/**'
       - '.github/workflows/momentum-android-build.yml'
@@ -24,5 +24,5 @@ jobs:
         run: gradle -p momentum-android :app:assembleDebug --no-daemon --stacktrace
       - uses: actions/upload-artifact@v4
         with:
-          name: MomentumSport-v1.3.8-clean
+          name: MomentumSport-v1.4.0-exercises
           path: momentum-android/app/build/outputs/apk/debug/app-debug.apk
