@@ -2,7 +2,7 @@
 """Test smoke UI sur émulateur Android après compilation Gradle."""
 import re, subprocess, time, unicodedata, xml.etree.ElementTree as ET
 
-PKG="fr.momentum.sport.exercises"
+PKG="fr.momentum.sport.metrics"
 COMPONENT=PKG+"/fr.momentum.sport.MainActivity"
 TIMER=PKG+"/fr.momentum.sport.TimerActivity"
 
