@@ -6,8 +6,8 @@ android {
     applicationId = "fr.momentum.sport.clean"
     minSdk = 26
     targetSdk = 34
-    versionCode = 138
-    versionName = "1.3.8"
+    versionCode = 139
+    versionName = "1.3.9"
   }
   buildTypes { release { isMinifyEnabled = false } }
   compileOptions {
