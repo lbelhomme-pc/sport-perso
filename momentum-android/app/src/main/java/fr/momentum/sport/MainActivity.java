@@ -55,6 +55,8 @@ public final class MainActivity extends Activity {
     static final int[] COLORS={Color.rgb(174,166,255),Color.rgb(105,193,255),Color.rgb(255,183,137),
             Color.rgb(255,145,162),Color.rgb(245,210,120),Color.rgb(154,223,201), MUTED};
     SportStore store;
+    ShortcutPresets shortcutPresets;
+    ShortcutUi shortcutUi;
     FrameLayout root;
     int tab=0, maxShown=40;
     String sportFilter="Tous";
@@ -73,6 +75,8 @@ public final class MainActivity extends Activity {
         getWindow().setNavigationBarColor(BG);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         store=new SportStore(this);
+        shortcutPresets=new ShortcutPresets(this);
+        shortcutUi=new ShortcutUi(this,shortcutPresets,this::insertNoteFragment);
         editorSport=getPreferences(MODE_PRIVATE).getString("last_sport","Musculation");
         showTab(0);
     }
@@ -320,7 +324,7 @@ public final class MainActivity extends Activity {
             .setPositiveButton("Supprimer",(d,w)->{store.clearAll();showTab(2);toast("Données supprimées");}).show());
         clear.addView(cl,lp(-1,45));content.addView(clear);
         space(content,30);
-        TextView v=text("MOMENTUM SPORT  ·  VERSION 1.3.9",11,MUTED,true);v.setGravity(Gravity.CENTER);content.addView(v);
+        TextView v=text("MOMENTUM SPORT  ·  VERSION 1.4.2",11,MUTED,true);v.setGravity(Gravity.CENTER);content.addView(v);
     }
     void toast(String m){Toast.makeText(this,m,Toast.LENGTH_SHORT).show();}
     void showEditor(SportStore.Session session){ showEditor(session,false); }
@@ -365,7 +369,8 @@ public final class MainActivity extends Activity {
         pad(noteField,16,16,16,16);noteField.setBackground(outlined(CARD,18,LINE));
         noteField.setText(editing.note);noteField.setSelection(noteField.length());
         content.addView(noteField,lp(-1,-2));space(content,12);
-        addNoteShortcutBars(content);space(content,12);
+        LinearLayout shortcutArea=column();content.addView(shortcutArea);
+        shortcutUi.attach(shortcutArea);space(content,12);
         hint(content,"Une note libre, sans formulaire imposé. Les mesures peuvent être détectées dans le texte.");space(content,18);
         TextView toggle=tap(advancedExpanded?"Masquer les détails  ⌃":"＋  Ajouter des détails facultatifs",13,WHITE,SECOND,()->{
             captureFields();advancedExpanded=!advancedExpanded;rebuildEditor();
@@ -388,30 +393,6 @@ public final class MainActivity extends Activity {
         }
     }
     void rebuildEditor(){SportStore.Session s=editing;showEditor(s,true);}
-    void addNoteShortcutBars(LinearLayout into){
-        into.addView(text("STRUCTURE",11,MUTED,true));space(into,7);
-        addShortcutsRow(into,new String[]{"Échauffement","Exercice principal","Accessoires","Retour au calme"},
-            new String[]{"- Échauffement -","- Exercice principal -","- Accessoires -","- Retour au calme -"});
-        space(into,9);
-        into.addView(text("DÉTAILS",11,MUTED,true));space(into,7);
-        addShortcutsRow(into,new String[]{"Montée en charge","En charge","Série","RPE","Ressenti"},
-            new String[]{"-- Montée en charge --","-- En charge --","--- Série ---","RPE : ","Ressenti : "});
-    }
-    void addShortcutsRow(LinearLayout into,String[] labels,String[] fragments){
-        HorizontalScrollView scroll=new HorizontalScrollView(this);
-        scroll.setHorizontalScrollBarEnabled(false);
-        LinearLayout line=row();pad(line,0,0,4,0);
-        for(int i=0;i<labels.length;i++){
-            final String fragment=fragments[i];
-            TextView chip=text(labels[i],12,WHITE,true);
-            pad(chip,13,0,13,0);chip.setGravity(Gravity.CENTER);
-            chip.setBackground(outlined(SECOND,13,LINE));
-            LinearLayout.LayoutParams pp=lp(-2,40);pp.rightMargin=dp(7);
-            line.addView(chip,pp);
-            chip.setOnClickListener(v->insertNoteFragment(fragment));
-        }
-        scroll.addView(line);into.addView(scroll);
-    }
     void insertNoteFragment(String fragment){
         if(noteField==null)return;
         int cursor=Math.max(0,Math.min(noteField.getSelectionStart(),noteField.length()));
@@ -507,6 +488,8 @@ public final class MainActivity extends Activity {
             ExerciseLibrary library=new ExerciseLibrary(this);
             backup.put("custom_exercises",library.exportCustom());
             backup.put("favorite_exercises",library.exportFavorites());
+            backup.put("custom_shortcuts",shortcutPresets.exportCustom());
+            backup.put("hidden_shortcuts",shortcutPresets.exportHidden());
             pendingBackup=backup.toString(2);
             Intent i=new Intent(Intent.ACTION_CREATE_DOCUMENT);
             i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("application/json");
@@ -551,6 +534,7 @@ public final class MainActivity extends Activity {
                         try{
                             int count=store.restore(json);
                             new ExerciseLibrary(this).restoreFromBackup(j);
+                            shortcutPresets.restoreBackup(j);
                             showTab(0);toast(count+" séances restaurées ✓");
                         }
                         catch(Exception e){toast("Import impossible : "+e.getMessage());}
