@@ -92,6 +92,8 @@ public final class ShortcutPresets {
             if(label.isEmpty()||id.isEmpty()||format<0||format>3)continue;
             all.add(new Preset(id,g,label,format,false,false));
         }
+        // Priorité aux raccourcis personnels pour les afficher sans défilement.
+        all.sort((a,b)->Boolean.compare(a.builtIn,b.builtIn));
         return all;
     }
     public String upsert(String id,String group,String entered,int format){
