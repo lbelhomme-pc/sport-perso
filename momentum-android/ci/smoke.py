@@ -75,6 +75,8 @@ def main():
     if "- Tempo -" not in notes:raise AssertionError("Insertion de structure personnalisée absente")
     print("Insertion du raccourci personnalisé validée")
     adb("shell","input","keyevent","4")
+    if any("Quitter l'édition" in n.attrib.get("text","") for n in xml_nodes()):
+        tap(find_text("CONTINUER",exact=True))
     tap(find_text("Gérer",exact=True))
     find_text("Gérer les structures")
     tap(find_text("Effacer",exact=True))
