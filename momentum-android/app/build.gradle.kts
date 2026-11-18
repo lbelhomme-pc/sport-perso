@@ -3,11 +3,11 @@ android {
   namespace = "fr.momentum.sport"
   compileSdk = 35
   defaultConfig {
-    applicationId = "fr.momentum.sport.metrics"
+    applicationId = "fr.momentum.sport.shortcuts"
     minSdk = 26
     targetSdk = 34
-    versionCode = 141
-    versionName = "1.4.1"
+    versionCode = 142
+    versionName = "1.4.2"
   }
   buildTypes { release { isMinifyEnabled = false } }
   compileOptions {
