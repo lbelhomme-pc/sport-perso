@@ -1,7 +1,7 @@
 name: Momentum Android APK
 on:
   push:
-    branches: [fix/momentum-android-138, feat/momentum-exercises-140, fix/momentum-false-series-141, feat/momentum-shortcuts-142]
+    branches: [fix/momentum-android-138, feat/momentum-exercises-140, fix/momentum-false-series-141, feat/momentum-shortcuts-142, feat/momentum-garmin-health-150]
     paths:
       - 'momentum-android/**'
       - '.github/workflows/momentum-android-build.yml'
@@ -9,6 +9,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        api: [30, 35]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -24,7 +28,7 @@ jobs:
         run: gradle -p momentum-android :app:assembleDebug --no-daemon --stacktrace
       - uses: actions/upload-artifact@v4
         with:
-          name: MomentumSport-v1.4.2-shortcuts
+          name: MomentumSport-v1.5.0-Garmin-${{ matrix.api }}
           path: momentum-android/app/build/outputs/apk/debug/app-debug.apk
       - name: Enable KVM for emulator
         run: |
@@ -34,7 +38,7 @@ jobs:
       - name: Smoke test on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: ${{ matrix.api }}
           arch: x86_64
           profile: pixel_2
           disable-animations: true
