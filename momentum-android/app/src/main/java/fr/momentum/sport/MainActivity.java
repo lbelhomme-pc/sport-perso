@@ -51,10 +51,10 @@ public final class MainActivity extends Activity {
     static final int BG=Color.rgb(12,17,28), CARD=Color.rgb(22,30,44), MUTED=Color.rgb(151,162,182),
             WHITE=Color.rgb(242,246,252), LINE=Color.rgb(42,53,69), ACCENT=Color.rgb(164,240,197),
             NAV=Color.rgb(15,22,34), SECOND=Color.rgb(30,40,57);
-    static final String[] SPORTS={"Musculation","Vélo","Badminton","CrossFit","HYROX","WOD","Autre"};
-    static final String[] ICONS={"◆","↗","✦","⚡","◉","▣","·"};
-    static final int[] COLORS={Color.rgb(174,166,255),Color.rgb(105,193,255),Color.rgb(255,183,137),
-            Color.rgb(255,145,162),Color.rgb(245,210,120),Color.rgb(154,223,201), MUTED};
+    static final String[] SPORTS={"Musculation","HYROX","Vélo","Badminton","CrossFit","WOD","Autre"};
+    static final String[] ICONS={"◆","◉","↗","✦","⚡","▣","·"};
+    static final int[] COLORS={Color.rgb(174,166,255),Color.rgb(245,210,120),Color.rgb(105,193,255),
+            Color.rgb(255,183,137),Color.rgb(255,145,162),Color.rgb(154,223,201), MUTED};
     SportStore store;
     GarminHealthBridge garminBridge;
     ShortcutPresets shortcutPresets;
@@ -186,7 +186,7 @@ public final class MainActivity extends Activity {
         content.addView(heading);space(content,12);
         HorizontalScrollView filterScroll=new HorizontalScrollView(this);filterScroll.setHorizontalScrollBarEnabled(false);
         LinearLayout chips=row();pad(chips,0,0,6,4);
-        String[] filters={"Tous","Musculation","Vélo","Badminton","CrossFit","HYROX","WOD","Autre"};
+        String[] filters={"Tous","Musculation","HYROX","Vélo","Badminton","CrossFit","WOD","Autre"};
         for(String f:filters){
             TextView c=badge(f,f.equals(sportFilter)?ACCENT:SECOND,f.equals(sportFilter)?BG:MUTED);
             LinearLayout.LayoutParams cp=lp(-2,38);cp.rightMargin=dp(7);chips.addView(c,cp);
