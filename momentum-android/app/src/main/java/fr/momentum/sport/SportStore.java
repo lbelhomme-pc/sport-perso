@@ -75,11 +75,7 @@ public final class SportStore extends SQLiteOpenHelper {
         double volume(){return Math.max(0,sets)*Math.max(0,reps)*Math.max(0,weight);}
     }
     static int correctGarminKcal(int amount,String source){
-        // Backups de v1.5.0 : des cal étaient enregistrées comme des kcal.
-        // Un entraînement isolé > 10 000 kcal est manifestement une ancienne unité.
-        if("Garmin Connect".equals(source)&&amount>10000)
-            return (int)Math.round(amount/1000.0);
-        return Math.max(0,amount);
+        return WorkoutMetrics.normalizeStoredKcal(amount,source);
     }
     SportStore(Context c){super(c,"momentum_sport.db",null,3);}
     @Override public void onCreate(SQLiteDatabase db){
