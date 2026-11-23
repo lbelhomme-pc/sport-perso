@@ -205,6 +205,8 @@ public final class GarminHealthBridge {
             case ExerciseSessionType.EXERCISE_SESSION_TYPE_WEIGHTLIFTING:return "Musculation";
             case ExerciseSessionType.EXERCISE_SESSION_TYPE_HIGH_INTENSITY_INTERVAL_TRAINING:
             case ExerciseSessionType.EXERCISE_SESSION_TYPE_BOOT_CAMP:return "WOD";
+            // Garmin classe les entraînements HYROX génériques dans « Other workout ».
+            case ExerciseSessionType.EXERCISE_SESSION_TYPE_OTHER_WORKOUT:return "HYROX";
             default:return "Autre";
         }
     }
@@ -252,7 +254,9 @@ public final class GarminHealthBridge {
                 for(ActiveCaloriesBurnedRecord c:rows){
                     if(!c.getStartTime().isBefore(record.getStartTime()) &&
                        !c.getEndTime().isAfter(record.getEndTime()))
-                        calories+=c.getEnergy().getInCalories();
+                        // API Android : getInCalories() retourne des petites calories (cal).
+                        // Les écrans sportifs affichent des kilocalories (kcal).
+                        calories+=c.getEnergy().getInCalories()/1000.0;
                 }
                 if(calories>0)item.calories=(int)Math.round(calories);
                 next.run();
