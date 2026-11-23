@@ -118,8 +118,19 @@ def main():
     find_text("Minuteur")
     print("Écran Chronos validé via la navigation")
     adb("shell","input","keyevent","4")
-    find_text("Garmin Connect")
-    find_text("Synchroniser Garmin")
-    print("Accès à la synchronisation Garmin validé")
+    sdk=int(adb("shell","getprop","ro.build.version.sdk"))
+    if sdk>=34:
+        find_text("Garmin Connect")
+        find_text("Synchroniser Garmin")
+        print("Bouton Garmin présent sur Android",sdk)
+        tap(find_text("Synchroniser Garmin"))
+        time.sleep(2)
+        confirm_running()
+        print("Demande d'autorisation / diagnostic Santé Connect sans plantage")
+    else:
+        find_text("Garmin Connect")
+        find_text("Android 14")
+        print("Mode compatible ancien Android : carnet utilisable sans Garmin")
+
 
 if __name__=="__main__":main()
