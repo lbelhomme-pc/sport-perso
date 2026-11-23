@@ -2,7 +2,7 @@
 """Test smoke UI sur émulateur Android après compilation Gradle."""
 import re, subprocess, time, unicodedata, xml.etree.ElementTree as ET
 
-PKG="fr.momentum.sport.shortcuts"
+PKG="fr.momentum.sport.garmin"
 COMPONENT=PKG+"/fr.momentum.sport.MainActivity"
 TIMER=PKG+"/fr.momentum.sport.TimerActivity"
 
@@ -117,4 +117,9 @@ def main():
     find_text("Tabata")
     find_text("Minuteur")
     print("Écran Chronos validé via la navigation")
+    adb("shell","input","keyevent","4")
+    find_text("Garmin Connect")
+    find_text("Synchroniser Garmin")
+    print("Accès à la synchronisation Garmin validé")
+
 if __name__=="__main__":main()
