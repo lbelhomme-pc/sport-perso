@@ -3,11 +3,11 @@ android {
   namespace = "fr.momentum.sport"
   compileSdk = 35
   defaultConfig {
-    applicationId = "fr.momentum.sport.shortcuts"
+    applicationId = "fr.momentum.sport.garmin"
     minSdk = 26
     targetSdk = 34
-    versionCode = 142
-    versionName = "1.4.2"
+    versionCode = 150
+    versionName = "1.5.0"
   }
   buildTypes { release { isMinifyEnabled = false } }
   compileOptions {
