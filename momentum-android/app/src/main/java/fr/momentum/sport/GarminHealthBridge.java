@@ -74,10 +74,10 @@ public final class GarminHealthBridge {
             activity.toast("Santé Connect nécessite Android 14 ou plus sur ce téléphone.");
             return;
         }
-        List<String> missing=new ArrayList<>();
-        for(String perm:READ_PERMISSIONS)if(!permission(perm))missing.add(perm);
-        if(!missing.isEmpty()){
-            activity.requestPermissions(missing.toArray(new String[0]),PERMISSION_REQUEST);
+        // Les métriques complémentaires restent facultatives. Ne pas redemander
+        // les mêmes autorisations à chaque synchronisation si elles ont été refusées.
+        if(!permission(HealthPermissions.READ_EXERCISE)){
+            activity.requestPermissions(READ_PERMISSIONS,PERMISSION_REQUEST);
             return;
         }
         sync(false);
