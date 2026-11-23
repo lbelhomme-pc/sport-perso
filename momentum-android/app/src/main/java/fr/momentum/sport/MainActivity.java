@@ -55,6 +55,7 @@ public final class MainActivity extends Activity {
     static final int[] COLORS={Color.rgb(174,166,255),Color.rgb(105,193,255),Color.rgb(255,183,137),
             Color.rgb(255,145,162),Color.rgb(245,210,120),Color.rgb(154,223,201), MUTED};
     SportStore store;
+    GarminHealthBridge garminBridge;
     ShortcutPresets shortcutPresets;
     ShortcutUi shortcutUi;
     FrameLayout root;
@@ -75,6 +76,8 @@ public final class MainActivity extends Activity {
         getWindow().setNavigationBarColor(BG);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         store=new SportStore(this);
+        if(android.os.Build.VERSION.SDK_INT>=34)
+            garminBridge=new GarminHealthBridge(this,store);
         shortcutPresets=new ShortcutPresets(this);
         shortcutUi=new ShortcutUi(this,shortcutPresets,this::insertNoteFragment);
         editorSport=getPreferences(MODE_PRIVATE).getString("last_sport","Musculation");
@@ -174,7 +177,8 @@ public final class MainActivity extends Activity {
         metric(metrics,String.valueOf(recent),"séances");metric(metrics,formatDuration(minutes),"d'activité");
         overview.addView(metrics);space(overview,21);
         overview.addView(new WeekChart(this,all),lp(-1,102));
-        content.addView(overview,lp(-1,-2));space(content,26);
+        content.addView(overview,lp(-1,-2));space(content,16);
+        addGarminCard(content,false);space(content,26);
         LinearLayout heading=row();
         TextView h=text("Historique",19,WHITE,true);heading.addView(h,new LinearLayout.LayoutParams(0,dp(36),1));
         TextView n=text(all.size()+" séances",12,MUTED,false);heading.addView(n);
@@ -206,6 +210,58 @@ public final class MainActivity extends Activity {
         }
         space(content,98);
     }
+    void addGarminCard(LinearLayout content,boolean extended){
+        LinearLayout card=panel();
+        card.addView(text("Garmin Connect",17,WHITE,true));space(card,7);
+        if(android.os.Build.VERSION.SDK_INT<34){
+            hint(card,"La synchronisation directe nécessite Android 14 ou supérieur. Tu peux continuer à saisir tes notes normalement.");
+        }else{
+            hint(card,"Récupère les séances Garmin présentes dans Santé Connect, puis complète tes notes ici.");
+            space(card,12);
+            TextView button=tap("↻  Synchroniser Garmin",13,BG,ACCENT,()->syncGarmin());
+            card.addView(button,lp(-1,47));
+            if(extended){
+                space(card,11);
+                boolean on=garminBridge!=null&&garminBridge.autoEnabled();
+                TextView auto=tap(on?"✓  Actualisation automatique : activée":"○  Actualisation automatique : désactivée",
+                    12,WHITE,SECOND,()->{
+                        if(garminBridge==null)return;
+                        if(!garminBridge.canReadExercise()){
+                            syncGarmin();return;
+                        }
+                        garminBridge.setAutoEnabled(!garminBridge.autoEnabled());
+                        showTab(2);
+                    });
+                card.addView(auto,lp(-1,44));
+                space(card,8);
+                hint(card,"Lecture au premier lancement puis au maximum toutes les 30 minutes, uniquement au premier plan. Aucune donnée envoyée à Garmin.");
+                if(garminBridge!=null&&garminBridge.lastSync()>0){
+                    space(card,5);
+                    hint(card,"Dernier import : "+date(garminBridge.lastSync()));
+                }
+                space(card,8);
+                hint(card,"Les mesures Garmin ne deviennent des séances que si Garmin publie leur enregistrement dans Santé Connect.");
+            }
+        }
+        content.addView(card);
+    }
+    void syncGarmin(){
+        if(garminBridge==null){toast("Santé Connect nécessite Android 14 ou plus.");return;}
+        garminBridge.requestOrSync();
+    }
+    void onGarminSyncFinished(String message){
+        toast(message);
+        if(tab==0||tab==2)showTab(tab);
+    }
+    @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){
+        super.onRequestPermissionsResult(request,permissions,grants);
+        if(request==GarminHealthBridge.PERMISSION_REQUEST&&garminBridge!=null)
+            garminBridge.afterPermissionResponse();
+    }
+    @Override protected void onResume(){
+        super.onResume();
+        if(garminBridge!=null&&tab==0)garminBridge.maybeAutoSync();
+    }
     void metric(LinearLayout parent,String value,String caption){
         LinearLayout block=column();block.addView(text(value,31,WHITE,true));block.addView(text(caption,12,MUTED,false));
         parent.addView(block,new LinearLayout.LayoutParams(0,-2,1));
@@ -232,9 +288,11 @@ public final class MainActivity extends Activity {
             card.addView(body);
         }
         ArrayList<String> details=new ArrayList<>();
+        if(s.source!=null&&!s.source.isEmpty())details.add("Garmin");
         if(s.duration>0)details.add("◷ "+formatDuration(s.duration));
         if(s.hr>0)details.add("♥ "+s.hr+" bpm");
         if(s.distance>0)details.add("↗ "+fnum(s.distance)+" km");
+        if(s.calories>0)details.add(s.calories+" kcal actives");
         if(s.rpe>0)details.add("RPE "+s.rpe);
         if(!details.isEmpty()){
             space(card,14);
@@ -301,8 +359,10 @@ public final class MainActivity extends Activity {
     }
     void dataScreen(LinearLayout content){
         titleRow(content,"100 % HORS LIGNE","Tes données.","Sans compte, sans serveur, sans abonnement.");
+        section(content,"Garmin Connect et Santé Connect");
+        addGarminCard(content,true);space(content,23);
         LinearLayout privacy=panel();privacy.addView(text("✓  Stockage local",18,ACCENT,true));space(privacy,9);
-        hint(privacy,"Les séances sont dans une base SQLite privée sur ce téléphone. L'application ne demande pas d'accès Internet.");
+        hint(privacy,"Les séances sont stockées sur ce téléphone. La connexion Garmin lit les données déjà partagées localement avec Santé Connect.");
         content.addView(privacy);space(content,23);
         section(content,"Sauvegarde et restauration");
         LinearLayout exp=panel();exp.addView(text("Exporter mes séances",17,WHITE,true));space(exp,5);
@@ -324,7 +384,7 @@ public final class MainActivity extends Activity {
             .setPositiveButton("Supprimer",(d,w)->{store.clearAll();showTab(2);toast("Données supprimées");}).show());
         clear.addView(cl,lp(-1,45));content.addView(clear);
         space(content,30);
-        TextView v=text("MOMENTUM SPORT  ·  VERSION 1.4.2",11,MUTED,true);v.setGravity(Gravity.CENTER);content.addView(v);
+        TextView v=text("MOMENTUM SPORT  ·  VERSION 1.5.0",11,MUTED,true);v.setGravity(Gravity.CENTER);content.addView(v);
     }
     void toast(String m){Toast.makeText(this,m,Toast.LENGTH_SHORT).show();}
     void showEditor(SportStore.Session session){ showEditor(session,false); }
