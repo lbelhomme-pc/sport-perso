@@ -106,12 +106,25 @@ def main():
     tap(find_text("Enregistrer la séance"))
     time.sleep(2);confirm_running()
     print("Enregistrement séance validé")
-    cards=" | ".join(n.attrib.get("text","") for n in xml_nodes())
-    if "20×1" in cards or "20x1 · 1 kg" in cards or "Volume saisi" in cards:
-        raise AssertionError("Fausse métrique de musculation toujours affichée : "+cards[:1600])
-    if "20x11kg" not in cards:
-        raise AssertionError("Série saisie absente du journal : "+cards[:1600])
-    print("Régression 20x11kg validée : texte conservé sans fausse série")
+    for attempt in range(5):
+        nodes=xml_nodes()
+        cards=" | ".join(n.attrib.get("text","") for n in nodes)
+        if "20×1" in cards or "20x1 · 1 kg" in cards or "Volume saisi" in cards:
+            raise AssertionError("Fausse métrique de musculation affichée : "+cards[:1600])
+        exercise=next((n for n in nodes if "Développé couché aux haltères" in n.attrib.get("text","")),None)
+        if exercise is not None:
+            tap(exercise)
+            break
+        adb("shell","input","swipe","350","745","350","255","350")
+        time.sleep(0.5)
+    else:
+        raise AssertionError("Aperçu de séance introuvable après défilement")
+    find_text("Modifier la séance")
+    stored=" | ".join(n.attrib.get("text","") for n in xml_nodes())
+    if "20x11kg" not in stored:
+        raise AssertionError("Texte de la séance non conservé : "+stored[:1500])
+    print("Régression 20x11kg validée : note conservée sans fausse série")
+    tap(find_text("Enregistrer les modifications"))
     tap(find_text("Chronos"))
     time.sleep(2);confirm_running()
     find_text("Tabata")
