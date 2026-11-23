@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <uses-permission android:name="android.permission.health.READ_EXERCISE"/>
+  <uses-permission android:name="android.permission.health.READ_HEART_RATE"/>
+  <uses-permission android:name="android.permission.health.READ_DISTANCE"/>
+  <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED"/>
   <application
     android:allowBackup="true"
-    android:label="Momentum Sport 1.4.2"
+    android:label="Momentum Sport Garmin"
     android:usesCleartextTraffic="false"
     android:theme="@android:style/Theme.Material.NoActionBar"
     android:supportsRtl="true">
+    <activity android:name="fr.momentum.sport.HealthRationaleActivity" android:exported="true">
+      <intent-filter>
+        <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>
+      </intent-filter>
+    </activity>
+    <activity-alias android:name="fr.momentum.sport.HealthPermissionUsageActivity"
+      android:targetActivity="fr.momentum.sport.HealthRationaleActivity"
+      android:exported="true"
+      android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
+        <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
+      </intent-filter>
+    </activity-alias>
     <activity android:name="fr.momentum.sport.TimerActivity" android:exported="false" android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
     <activity android:name="fr.momentum.sport.MainActivity"
       android:exported="true"
