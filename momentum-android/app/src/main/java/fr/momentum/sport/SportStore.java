@@ -20,13 +20,16 @@ public final class SportStore extends SQLiteOpenHelper {
         String sport="Musculation", note="", exercise="";
         int duration, hr, rpe, sets, reps;
         double distance, weight;
+        int calories;
+        String source="",sourceKey="";
         Session(){time=System.currentTimeMillis();}
         JSONObject toJson() throws Exception {
             JSONObject j=new JSONObject();
             j.put("id",id);j.put("time",time);j.put("sport",sport);j.put("note",note);
             j.put("duration",duration);j.put("hr",hr);j.put("rpe",rpe);
             j.put("distance",distance);j.put("exercise",exercise);j.put("sets",sets);
-            j.put("reps",reps);j.put("weight",weight);return j;
+            j.put("reps",reps);j.put("weight",weight);
+            j.put("source",source);j.put("sourceKey",sourceKey);j.put("calories",calories);return j;
         }
         static Session fromJson(JSONObject j){
             Session s=new Session();
@@ -35,6 +38,8 @@ public final class SportStore extends SQLiteOpenHelper {
             s.duration=j.optInt("duration",0);s.hr=j.optInt("hr",0);s.rpe=j.optInt("rpe",0);
             s.distance=j.optDouble("distance",0);s.exercise=j.optString("exercise","");
             s.sets=j.optInt("sets",0);s.reps=j.optInt("reps",0);s.weight=j.optDouble("weight",0);
+            s.source=j.optString("source","");s.sourceKey=j.optString("sourceKey","");
+            s.calories=j.optInt("calories",0);
             return s;
         }
         void detectFromNote(){
@@ -67,18 +72,30 @@ public final class SportStore extends SQLiteOpenHelper {
         static int limit(int x,int lo,int hi){return Math.max(lo,Math.min(hi,x));}
         double volume(){return Math.max(0,sets)*Math.max(0,reps)*Math.max(0,weight);}
     }
-    SportStore(Context c){super(c,"momentum_sport.db",null,1);}
+    SportStore(Context c){super(c,"momentum_sport.db",null,2);}
     @Override public void onCreate(SQLiteDatabase db){
-        db.execSQL("CREATE TABLE sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, time INTEGER NOT NULL, sport TEXT NOT NULL, note TEXT NOT NULL DEFAULT '', duration INTEGER NOT NULL DEFAULT 0, hr INTEGER NOT NULL DEFAULT 0, rpe INTEGER NOT NULL DEFAULT 0, distance REAL NOT NULL DEFAULT 0, exercise TEXT NOT NULL DEFAULT '', sets INTEGER NOT NULL DEFAULT 0, reps INTEGER NOT NULL DEFAULT 0, weight REAL NOT NULL DEFAULT 0)");
+        db.execSQL("CREATE TABLE sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, time INTEGER NOT NULL, sport TEXT NOT NULL, note TEXT NOT NULL DEFAULT '', duration INTEGER NOT NULL DEFAULT 0, hr INTEGER NOT NULL DEFAULT 0, rpe INTEGER NOT NULL DEFAULT 0, distance REAL NOT NULL DEFAULT 0, exercise TEXT NOT NULL DEFAULT '', sets INTEGER NOT NULL DEFAULT 0, reps INTEGER NOT NULL DEFAULT 0, weight REAL NOT NULL DEFAULT 0, source TEXT NOT NULL DEFAULT '', source_key TEXT, calories INTEGER NOT NULL DEFAULT 0)");
         db.execSQL("CREATE INDEX ix_sessions_time ON sessions(time DESC)");
+        db.execSQL("CREATE UNIQUE INDEX ix_sessions_source ON sessions(source_key) WHERE source_key IS NOT NULL");
     }
-    @Override public void onUpgrade(SQLiteDatabase db,int oldV,int newV){}
+    @Override public void onUpgrade(SQLiteDatabase db,int oldV,int newV){
+        if(oldV<2){
+            db.execSQL("ALTER TABLE sessions ADD COLUMN source TEXT NOT NULL DEFAULT ''");
+            db.execSQL("ALTER TABLE sessions ADD COLUMN source_key TEXT");
+            db.execSQL("ALTER TABLE sessions ADD COLUMN calories INTEGER NOT NULL DEFAULT 0");
+            db.execSQL("CREATE UNIQUE INDEX ix_sessions_source ON sessions(source_key) WHERE source_key IS NOT NULL");
+        }
+    }
     private ContentValues values(Session s){
         ContentValues v=new ContentValues();
         v.put("time",s.time);v.put("sport",s.sport);v.put("note",s.note);
         v.put("duration",s.duration);v.put("hr",s.hr);v.put("rpe",s.rpe);
         v.put("distance",s.distance);v.put("exercise",s.exercise);
         v.put("sets",s.sets);v.put("reps",s.reps);v.put("weight",s.weight);
+        v.put("source",s.source==null?"":s.source);
+        if(s.sourceKey==null||s.sourceKey.isEmpty())v.putNull("source_key");
+        else v.put("source_key",s.sourceKey);
+        v.put("calories",s.calories);
         return v;
     }
     long save(Session s){
@@ -89,6 +106,27 @@ public final class SportStore extends SQLiteOpenHelper {
         }
         s.id=getWritableDatabase().insertOrThrow(TABLE,null,values(s));
         return s.id;
+    }
+    /** Déduplication par identifiant santé Connect ; les notes et modifications utilisateur sont préservées. */
+    boolean upsertImported(Session incoming){
+        if(incoming.sourceKey==null||incoming.sourceKey.isEmpty())
+            throw new IllegalArgumentException("Séance sans identifiant de provenance");
+        SQLiteDatabase db=getWritableDatabase();
+        try(Cursor c=db.query(TABLE,null,"source_key=?",new String[]{incoming.sourceKey},
+            null,null,null)){
+            if(c.moveToFirst()){
+                Session old=read(c);
+                if(old.duration==0)old.duration=incoming.duration;
+                if(old.hr==0)old.hr=incoming.hr;
+                if(old.distance==0)old.distance=incoming.distance;
+                if(old.calories==0)old.calories=incoming.calories;
+                // Ne pas écraser les notes, le sport corrigé, le RPE ou la date modifiée.
+                db.update(TABLE,values(old),"id=?",new String[]{Long.toString(old.id)});
+                return false;
+            }
+        }
+        db.insertOrThrow(TABLE,null,values(incoming));
+        return true;
     }
     void clearAll(){getWritableDatabase().delete(TABLE,null,null);}
     void delete(long id){getWritableDatabase().delete(TABLE,"id=?",new String[]{Long.toString(id)});}
@@ -107,6 +145,9 @@ public final class SportStore extends SQLiteOpenHelper {
         s.rpe=c.getInt(c.getColumnIndexOrThrow("rpe"));s.distance=c.getDouble(c.getColumnIndexOrThrow("distance"));
         s.exercise=c.getString(c.getColumnIndexOrThrow("exercise"));s.sets=c.getInt(c.getColumnIndexOrThrow("sets"));
         s.reps=c.getInt(c.getColumnIndexOrThrow("reps"));s.weight=c.getDouble(c.getColumnIndexOrThrow("weight"));
+        s.source=c.getString(c.getColumnIndexOrThrow("source"));
+        s.sourceKey=c.isNull(c.getColumnIndexOrThrow("source_key"))?"":c.getString(c.getColumnIndexOrThrow("source_key"));
+        s.calories=c.getInt(c.getColumnIndexOrThrow("calories"));
         return s;
     }
     String exportJson() throws Exception {
