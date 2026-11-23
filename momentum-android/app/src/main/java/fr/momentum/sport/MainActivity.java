@@ -3,6 +3,7 @@ package fr.momentum.sport;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Canvas;
@@ -63,7 +64,7 @@ public final class MainActivity extends Activity {
     String sportFilter="Tous";
     SportStore.Session editing;
     String editorSport="Musculation";
-    TextView editorDateButton;
+    TextView editorDateButton, editorTimeButton;
     LinearLayout sportChipLine;
     EditText noteField, durationField, hrField, rpeField, distanceField, exerciseField, setsField, repsField, weightField;
     boolean advancedExpanded=false;
@@ -216,7 +217,7 @@ public final class MainActivity extends Activity {
         if(android.os.Build.VERSION.SDK_INT<34){
             hint(card,"La synchronisation directe nécessite Android 14 ou supérieur. Tu peux continuer à saisir tes notes normalement.");
         }else{
-            hint(card,"Récupère les séances Garmin présentes dans Santé Connect, puis complète tes notes ici.");
+            hint(card,"Récupère tes séances Garmin dans Santé Connect. Si une séance manque, tu peux la saisir manuellement.");
             space(card,12);
             TextView button=tap("↻  Synchroniser Garmin",13,BG,ACCENT,()->syncGarmin());
             card.addView(button,lp(-1,47));
@@ -243,6 +244,10 @@ public final class MainActivity extends Activity {
                 hint(card,"Les mesures Garmin ne deviennent des séances que si Garmin publie leur enregistrement dans Santé Connect.");
             }
         }
+        space(card,11);
+        TextView manual=tap("＋  Saisir une séance sans synchronisation",13,WHITE,SECOND,
+            ()->showEditor(null));
+        card.addView(manual,lp(-1,45));
         content.addView(card);
     }
     void syncGarmin(){
@@ -384,7 +389,7 @@ public final class MainActivity extends Activity {
             .setPositiveButton("Supprimer",(d,w)->{store.clearAll();showTab(2);toast("Données supprimées");}).show());
         clear.addView(cl,lp(-1,45));content.addView(clear);
         space(content,30);
-        TextView v=text("MOMENTUM SPORT  ·  VERSION 1.5.0",11,MUTED,true);v.setGravity(Gravity.CENTER);content.addView(v);
+        TextView v=text("MOMENTUM SPORT  ·  VERSION 1.5.1",11,MUTED,true);v.setGravity(Gravity.CENTER);content.addView(v);
     }
     void toast(String m){Toast.makeText(this,m,Toast.LENGTH_SHORT).show();}
     void showEditor(SportStore.Session session){ showEditor(session,false); }
@@ -412,7 +417,15 @@ public final class MainActivity extends Activity {
         TextView dateLabel=text("2 · DATE DE LA SÉANCE",11,ACCENT,true);dateLabel.setLetterSpacing(.1f);
         day.addView(dateLabel,new LinearLayout.LayoutParams(0,-2,1));
         editorDateButton=badge(shortDate(editing.time)+"  ▾",SECOND,WHITE);day.addView(editorDateButton);
-        editorDateButton.setOnClickListener(v->chooseDate());content.addView(day);space(content,20);
+        editorDateButton.setOnClickListener(v->chooseDate());content.addView(day);space(content,9);
+        LinearLayout timeRow=row();
+        TextView timeLabel=text("HEURE DE DÉBUT (utile pour retrouver Garmin)",11,MUTED,false);
+        timeRow.addView(timeLabel,new LinearLayout.LayoutParams(0,-2,1));
+        editorTimeButton=badge(new SimpleDateFormat("HH:mm",Locale.FRANCE)
+            .format(new Date(editing.time))+"  ▾",SECOND,WHITE);
+        timeRow.addView(editorTimeButton);
+        editorTimeButton.setOnClickListener(v->chooseTime());
+        content.addView(timeRow);space(content,20);
         LinearLayout noteHeading=row();
         TextView lab=text("3 · RACONTE TA SÉANCE",11,ACCENT,true);lab.setLetterSpacing(.1f);
         noteHeading.addView(lab,new LinearLayout.LayoutParams(0,-2,1));
@@ -487,6 +500,18 @@ public final class MainActivity extends Activity {
             LinearLayout.LayoutParams p=lp(-2,48);p.rightMargin=dp(8);sportChipLine.addView(t,p);
             t.setOnClickListener(v->{editorSport=sport;renderSportChips();});
         }
+    }
+    void chooseTime(){
+        Calendar current=Calendar.getInstance();
+        current.setTimeInMillis(editing.time);
+        new TimePickerDialog(this,(picker,hour,minute)->{
+            Calendar change=Calendar.getInstance();
+            change.setTimeInMillis(editing.time);
+            change.set(Calendar.HOUR_OF_DAY,hour);change.set(Calendar.MINUTE,minute);
+            change.set(Calendar.SECOND,0);change.set(Calendar.MILLISECOND,0);
+            editing.time=change.getTimeInMillis();
+            editorTimeButton.setText(String.format(Locale.FRANCE,"%02d:%02d",hour,minute)+"  ▾");
+        },current.get(Calendar.HOUR_OF_DAY),current.get(Calendar.MINUTE),true).show();
     }
     void chooseDate(){
         Calendar d=Calendar.getInstance();d.setTimeInMillis(editing.time);
