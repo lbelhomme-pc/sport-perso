@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +40,7 @@ public final class SportStore extends SQLiteOpenHelper {
             s.distance=j.optDouble("distance",0);s.exercise=j.optString("exercise","");
             s.sets=j.optInt("sets",0);s.reps=j.optInt("reps",0);s.weight=j.optDouble("weight",0);
             s.source=j.optString("source","");s.sourceKey=j.optString("sourceKey","");
-            s.calories=j.optInt("calories",0);
+            s.calories=correctGarminKcal(j.optInt("calories",0),s.source);
             return s;
         }
         void detectFromNote(){
@@ -72,7 +73,14 @@ public final class SportStore extends SQLiteOpenHelper {
         static int limit(int x,int lo,int hi){return Math.max(lo,Math.min(hi,x));}
         double volume(){return Math.max(0,sets)*Math.max(0,reps)*Math.max(0,weight);}
     }
-    SportStore(Context c){super(c,"momentum_sport.db",null,2);}
+    static int correctGarminKcal(int amount,String source){
+        // Backups de v1.5.0 : des cal étaient enregistrées comme des kcal.
+        // Un entraînement isolé > 10 000 kcal est manifestement une ancienne unité.
+        if("Garmin Connect".equals(source)&&amount>10000)
+            return (int)Math.round(amount/1000.0);
+        return Math.max(0,amount);
+    }
+    SportStore(Context c){super(c,"momentum_sport.db",null,3);}
     @Override public void onCreate(SQLiteDatabase db){
         db.execSQL("CREATE TABLE sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, time INTEGER NOT NULL, sport TEXT NOT NULL, note TEXT NOT NULL DEFAULT '', duration INTEGER NOT NULL DEFAULT 0, hr INTEGER NOT NULL DEFAULT 0, rpe INTEGER NOT NULL DEFAULT 0, distance REAL NOT NULL DEFAULT 0, exercise TEXT NOT NULL DEFAULT '', sets INTEGER NOT NULL DEFAULT 0, reps INTEGER NOT NULL DEFAULT 0, weight REAL NOT NULL DEFAULT 0, source TEXT NOT NULL DEFAULT '', source_key TEXT, calories INTEGER NOT NULL DEFAULT 0)");
         db.execSQL("CREATE INDEX ix_sessions_time ON sessions(time DESC)");
@@ -85,6 +93,12 @@ public final class SportStore extends SQLiteOpenHelper {
             db.execSQL("ALTER TABLE sessions ADD COLUMN calories INTEGER NOT NULL DEFAULT 0");
             db.execSQL("CREATE UNIQUE INDEX ix_sessions_source ON sessions(source_key) WHERE source_key IS NOT NULL");
         }
+        if(oldV<3){
+            db.execSQL("UPDATE sessions SET calories = CAST(ROUND(calories / 1000.0) AS INTEGER) "+
+                "WHERE source='Garmin Connect' AND calories > 10000");
+            db.execSQL("UPDATE sessions SET sport = 'HYROX' "+
+                "WHERE source='Garmin Connect' AND sport='Autre'");
+        }
     }
     private ContentValues values(Session s){
         ContentValues v=new ContentValues();
@@ -95,7 +109,7 @@ public final class SportStore extends SQLiteOpenHelper {
         v.put("source",s.source==null?"":s.source);
         if(s.sourceKey==null||s.sourceKey.isEmpty())v.putNull("source_key");
         else v.put("source_key",s.sourceKey);
-        v.put("calories",s.calories);
+        v.put("calories",correctGarminKcal(s.calories,s.source));
         return v;
     }
     long save(Session s){
@@ -120,13 +134,57 @@ public final class SportStore extends SQLiteOpenHelper {
                 if(old.hr==0)old.hr=incoming.hr;
                 if(old.distance==0)old.distance=incoming.distance;
                 if(old.calories==0)old.calories=incoming.calories;
+                // La v1.5.0 stockait parfois les cal en les affichant comme des kcal.
+                old.calories=correctGarminKcal(old.calories,old.source);
+                if("Autre".equals(old.sport))old.sport="HYROX";
                 // Ne pas écraser les notes, le sport corrigé, le RPE ou la date modifiée.
                 db.update(TABLE,values(old),"id=?",new String[]{Long.toString(old.id)});
                 return false;
             }
         }
+        // Retrouver une séance que l'utilisateur a saisie avant son arrivée depuis Garmin.
+        Session candidate=findManualMatch(db,incoming);
+        if(candidate!=null){
+            if(candidate.duration==0)candidate.duration=incoming.duration;
+            if(candidate.hr==0)candidate.hr=incoming.hr;
+            if(candidate.distance==0)candidate.distance=incoming.distance;
+            if(candidate.calories==0)candidate.calories=incoming.calories;
+            candidate.source=incoming.source;
+            candidate.sourceKey=incoming.sourceKey;
+            db.update(TABLE,values(candidate),"id=?",new String[]{Long.toString(candidate.id)});
+            return false;
+        }
         db.insertOrThrow(TABLE,null,values(incoming));
         return true;
+    }
+    /**
+     * Rapprochement prudent : un seul entraînement manuel du même sport
+     * le même jour ET un horaire proche ou une durée similaire.
+     * En cas d'incertitude, laisser deux séances plutôt qu'écraser une note.
+     */
+    Session findManualMatch(SQLiteDatabase db,Session incoming){
+        Calendar day=Calendar.getInstance();
+        day.setTimeInMillis(incoming.time);
+        day.set(Calendar.HOUR_OF_DAY,0);day.set(Calendar.MINUTE,0);
+        day.set(Calendar.SECOND,0);day.set(Calendar.MILLISECOND,0);
+        long start=day.getTimeInMillis();
+        day.add(Calendar.DATE,1);
+        long stop=day.getTimeInMillis();
+        ArrayList<Session> candidates=new ArrayList<>();
+        try(Cursor c=db.query(TABLE,null,
+                "(source_key IS NULL OR source_key='') AND (source IS NULL OR source='') "+
+                    "AND (sport=? OR (?='HYROX' AND sport='Autre')) AND time>=? AND time<?",
+                new String[]{incoming.sport,incoming.sport,Long.toString(start),Long.toString(stop)},
+                null,null,null)){
+            while(c.moveToNext())candidates.add(read(c));
+        }
+        if(candidates.size()!=1)return null;
+        Session manual=candidates.get(0);
+        long timeDifference=Math.abs(manual.time-incoming.time);
+        boolean closeStart=timeDifference<=90*60*1000L;
+        boolean closeDuration=manual.duration>0 && incoming.duration>0
+            && Math.abs(manual.duration-incoming.duration)<=Math.max(12,incoming.duration/5);
+        return closeStart||closeDuration?manual:null;
     }
     void clearAll(){getWritableDatabase().delete(TABLE,null,null);}
     void delete(long id){getWritableDatabase().delete(TABLE,"id=?",new String[]{Long.toString(id)});}
@@ -147,7 +205,7 @@ public final class SportStore extends SQLiteOpenHelper {
         s.reps=c.getInt(c.getColumnIndexOrThrow("reps"));s.weight=c.getDouble(c.getColumnIndexOrThrow("weight"));
         s.source=c.getString(c.getColumnIndexOrThrow("source"));
         s.sourceKey=c.isNull(c.getColumnIndexOrThrow("source_key"))?"":c.getString(c.getColumnIndexOrThrow("source_key"));
-        s.calories=c.getInt(c.getColumnIndexOrThrow("calories"));
+        s.calories=correctGarminKcal(c.getInt(c.getColumnIndexOrThrow("calories")),s.source);
         return s;
     }
     String exportJson() throws Exception {
