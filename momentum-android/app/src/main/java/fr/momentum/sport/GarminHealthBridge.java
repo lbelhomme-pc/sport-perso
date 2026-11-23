@@ -207,7 +207,9 @@ public final class GarminHealthBridge {
             case ExerciseSessionType.EXERCISE_SESSION_TYPE_BOOT_CAMP:return "WOD";
             // Garmin classe les entraînements HYROX génériques dans « Other workout ».
             case ExerciseSessionType.EXERCISE_SESSION_TYPE_OTHER_WORKOUT:return "HYROX";
-            default:return "Autre";
+            // Choix personnel : les activités Garmin « Autre » sont tes séances HYROX.
+            // Tu peux toujours reclasser une séance directement dans l'éditeur.
+            default:return "HYROX";
         }
     }
     void loadHr(SportStore.Session item,ExerciseSessionRecord record,Runnable next){
@@ -256,7 +258,7 @@ public final class GarminHealthBridge {
                        !c.getEndTime().isAfter(record.getEndTime()))
                         // API Android : getInCalories() retourne des petites calories (cal).
                         // Les écrans sportifs affichent des kilocalories (kcal).
-                        calories+=c.getEnergy().getInCalories()/1000.0;
+                        calories+=WorkoutMetrics.toKilocalories(c.getEnergy().getInCalories());
                 }
                 if(calories>0)item.calories=(int)Math.round(calories);
                 next.run();
