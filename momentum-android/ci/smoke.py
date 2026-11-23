@@ -2,7 +2,7 @@
 """Test smoke UI sur émulateur Android après compilation Gradle."""
 import re, subprocess, time, unicodedata, xml.etree.ElementTree as ET
 
-PKG="fr.momentum.sport.garmin"
+PKG="fr.momentum.sport.garmin151"
 COMPONENT=PKG+"/fr.momentum.sport.MainActivity"
 TIMER=PKG+"/fr.momentum.sport.TimerActivity"
 
@@ -131,6 +131,14 @@ def main():
     find_text("Minuteur")
     print("Écran Chronos validé via la navigation")
     adb("shell","input","keyevent","4")
+    # La création manuelle doit rester accessible même si Santé Connect ne synchronise rien.
+    tap(find_text("Saisir une séance sans synchronisation"))
+    find_text("Nouvelle séance")
+    find_text("HEURE DE DÉBUT")
+    find_text("HYROX")
+    print("Saisie manuelle et heure de début accessibles")
+    tap(find_text("Enregistrer la séance"))
+    find_text("Garmin Connect")
     sdk=int(adb("shell","getprop","ro.build.version.sdk"))
     if sdk>=34:
         find_text("Garmin Connect")
