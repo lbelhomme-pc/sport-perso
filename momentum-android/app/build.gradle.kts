@@ -3,11 +3,11 @@ android {
   namespace = "fr.momentum.sport"
   compileSdk = 35
   defaultConfig {
-    applicationId = "fr.momentum.sport.garmin"
+    applicationId = "fr.momentum.sport.garmin151"
     minSdk = 26
     targetSdk = 34
-    versionCode = 150
-    versionName = "1.5.0"
+    versionCode = 151
+    versionName = "1.5.1"
   }
   buildTypes { release { isMinifyEnabled = false } }
   compileOptions {
