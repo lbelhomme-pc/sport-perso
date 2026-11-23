@@ -41,6 +41,7 @@ public final class SportStore extends SQLiteOpenHelper {
             s.sets=j.optInt("sets",0);s.reps=j.optInt("reps",0);s.weight=j.optDouble("weight",0);
             s.source=j.optString("source","");s.sourceKey=j.optString("sourceKey","");
             s.calories=correctGarminKcal(j.optInt("calories",0),s.source);
+            if("Garmin Connect".equals(s.source)&&"Autre".equals(s.sport))s.sport="HYROX";
             return s;
         }
         void detectFromNote(){
