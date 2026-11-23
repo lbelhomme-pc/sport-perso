@@ -177,11 +177,8 @@ public final class SportStore extends SQLiteOpenHelper {
         }
         if(candidates.size()!=1)return null;
         Session manual=candidates.get(0);
-        long timeDifference=Math.abs(manual.time-incoming.time);
-        boolean closeStart=timeDifference<=90*60*1000L;
-        boolean closeDuration=manual.duration>0 && incoming.duration>0
-            && Math.abs(manual.duration-incoming.duration)<=Math.max(12,incoming.duration/5);
-        return closeStart||closeDuration?manual:null;
+        return WorkoutMetrics.likelySameWorkout(manual.time,manual.duration,
+            incoming.time,incoming.duration)?manual:null;
     }
     void clearAll(){getWritableDatabase().delete(TABLE,null,null);}
     void delete(long id){getWritableDatabase().delete(TABLE,"id=?",new String[]{Long.toString(id)});}
