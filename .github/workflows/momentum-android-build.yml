@@ -1,7 +1,7 @@
 name: Momentum Android APK
 on:
   push:
-    branches: [fix/momentum-android-138, feat/momentum-exercises-140, fix/momentum-false-series-141, feat/momentum-shortcuts-142, feat/momentum-garmin-health-150]
+    branches: [fix/momentum-android-138, feat/momentum-exercises-140, fix/momentum-false-series-141, feat/momentum-shortcuts-142, feat/momentum-garmin-health-150, fix/momentum-garmin-151]
     paths:
       - 'momentum-android/**'
       - '.github/workflows/momentum-android-build.yml'
@@ -24,11 +24,18 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10.2'
+      - name: Test Garmin calories, legacy conversion and manual matching
+        run: |
+          mkdir -p /tmp/momentum-unit
+          javac -d /tmp/momentum-unit \
+            momentum-android/app/src/main/java/fr/momentum/sport/WorkoutMetrics.java \
+            momentum-android/ci/WorkoutMetricsTest.java
+          java -cp /tmp/momentum-unit fr.momentum.sport.WorkoutMetricsTest
       - name: Compile debug APK
         run: gradle -p momentum-android :app:assembleDebug --no-daemon --stacktrace
       - uses: actions/upload-artifact@v4
         with:
-          name: MomentumSport-v1.5.0-Garmin-${{ matrix.api }}
+          name: MomentumSport-v1.5.1-Garmin-${{ matrix.api }}
           path: momentum-android/app/build/outputs/apk/debug/app-debug.apk
       - name: Enable KVM for emulator
         run: |
